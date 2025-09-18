@@ -54,8 +54,6 @@ export const dynamicEllipsis: Action<HTMLElement, DynamicEllipsisOptions> = (ele
 
 				// Apply the measured height to the ::before pseudo-element via CSS custom property
 				element.style.setProperty('--dynamic-min-height', `${measuredHeight}px`);
-
-				console.log('Dynamic ellipsis: measured height', measuredHeight, 'px for element', element);
 			}
 		}, debounceMs);
 	}
