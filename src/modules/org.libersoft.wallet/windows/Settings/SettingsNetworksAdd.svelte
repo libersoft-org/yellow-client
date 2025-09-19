@@ -90,6 +90,14 @@
 		gap: 10px;
 		height: 50px;
 	}
+
+	.network .name {
+		min-width: 0; /* Allow text to shrink */
+	}
+
+	.network-icon {
+		flex-shrink: 0; /* Prevent icon from shrinking */
+	}
 </style>
 
 <ButtonBar>
@@ -120,13 +128,15 @@
 	<Tbody>
 		{#each filteredDefaultNetworks as n, index}
 			<TbodyTr>
-				<Td padding="0" data-testid="wallet-settings-default-network-name@{n.name}">
-					<div class="network">
+				<Td class="ellipsis" padding="0" data-testid="wallet-settings-default-network-name@{n.name}">
+					<span class="network">
 						{#if n.currency?.iconURL}
-							<Icon img={n.currency.iconURL} alt={n.name} padding="0px" />
+							<span class="network-icon td__icon">
+								<Icon img={n.currency.iconURL} alt={n.name} padding="0px" />
+							</span>
 						{/if}
-						<div class="name">{n.name}</div>
-					</div>
+						<span class="name td__text">{n.name}</span>
+					</span>
 				</Td>
 				<Td>
 					<TableActionItems align="center">

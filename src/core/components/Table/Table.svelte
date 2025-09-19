@@ -26,14 +26,8 @@
 		border: 1px solid var(--secondary-background);
 		border-radius: 10px;
 		border-spacing: 0;
-	}
-
-	table.hide-border {
-		border: none;
-	}
-
-	table.expand {
-		width: 100%;
+		padding-bottom: 0;
+		font-size: clamp(14px, 2vw, 16px);
 	}
 </style>
 

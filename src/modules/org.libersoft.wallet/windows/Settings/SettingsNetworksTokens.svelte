@@ -116,6 +116,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
+		overflow: hidden;
 	}
 
 	.info .details .name {
@@ -124,6 +125,13 @@
 
 	.info .details .address {
 		font-size: 12px;
+	}
+
+	.info .details .address,
+	.info .details .name {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 </style>
 
@@ -155,7 +163,7 @@
 							<Td>
 								<DragHandle />
 							</Td>
-							<Td expand>
+							<Td class="ellipsis">
 								<div class="info">
 									<Icon img={token.item?.iconURL || 'modules/' + module.identifier + '/img/token.svg'} alt={contractAddress} size="30px" padding="0px" />
 									<div class="details">

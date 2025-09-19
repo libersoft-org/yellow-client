@@ -17,6 +17,7 @@
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
+	import { dynamicEllipsis } from '@/core/actions/dynamicEllipsis';
 	const refreshInterval = 30;
 	interface ITokenData {
 		crypto: IBalance;
@@ -58,6 +59,21 @@
 	function updateReactiveSet<T>(set: Set<T>, updater: (set: Set<T>) => void): Set<T> {
 		updater(set);
 		return new Set(set);
+	}
+
+	// Helpers to split formatted balance into value and symbol parts
+	function getBalanceParts(b: IBalance, fractionDigits?: number): { value: string; symbol: string } {
+		try {
+			const formattedRaw = fractionDigits !== undefined ? formatBalance(b, fractionDigits) : formatBalance(b);
+			const formatted = (formattedRaw ?? '').toString();
+			const lastSpace = formatted.lastIndexOf(' ');
+			if (lastSpace > 0) {
+				return { value: formatted.slice(0, lastSpace), symbol: formatted.slice(lastSpace + 1) };
+			}
+			return { value: formatted, symbol: (b?.currency ?? '') as string };
+		} catch (e) {
+			return { value: '', symbol: (b?.currency ?? '') as string };
+		}
 	}
 
 	function getTokensWithContracts() {
@@ -460,12 +476,6 @@
 		gap: 10px;
 	}
 
-	.column {
-		display: flex;
-		flex-direction: column;
-		gap: 5px;
-	}
-
 	.name {
 		font-size: 20px;
 		font-weight: bold;
@@ -477,6 +487,7 @@
 
 	.balance {
 		display: flex;
+		flex-wrap: wrap;
 		align-items: center;
 		gap: 10px;
 	}
@@ -485,28 +496,95 @@
 		flex-grow: 1;
 		display: flex;
 		flex-direction: column;
+		overflow: hidden;
 	}
 
-	.balance .info .amount {
+	.balance :where(.amount__value, .amount__symbol) {
 		font-size: 18px;
 		font-weight: bold;
 	}
 
-	.balance .info .fiat {
+	.balance .amount {
+		display: flex;
+		align-items: center;
+		gap: 5px;
+		min-width: 0;
+		flex: 1;
+		max-width: fit-content;
+	}
+
+	.balance .amount__value {
+		flex: 1;
+		min-width: 0;
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
+	.balance .amount__symbol {
+		flex-shrink: 0;
+	}
+
+	.balance .fiat {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.balance .fiat-wrapper {
+		width: 100%;
+		flex-basis: 100%;
+	}
+
+	.balance-row {
+		row-gap: 0;
+	}
+
+	.balance :where(.fiat__value, .fiat__symbol) {
 		font-size: 13px;
 	}
 
 	.item {
 		display: flex;
 		flex-direction: column;
-		padding: 10px;
-		align-items: center;
 	}
 
 	.item .currency {
 		display: flex;
 		align-items: center;
 		gap: 10px;
+	}
+
+	:global(.ellipsis.ellipsis-balance) {
+		width: 70%;
+	}
+
+	:global(.ellipsis.ellipsis-token-balance) .td__text {
+		flex: initial;
+	}
+
+	.spinner-wrapper {
+		display: flex;
+		justify-content: center;
+		align-items: center;
+	}
+
+	@media (max-width: 768px) {
+		.balance {
+			padding-left: 50px;
+		}
+
+		/* Dynamic ellipsis for mobile - ::before gets dynamic height */
+		:global(.ellipsis.ellipsis-token-balance.dynamic-ellipsis::after) {
+			content: ''; /* Remove the ::after for dynamic ellipsis */
+			display: none; /* Hide the ::after pseudo-element for dynamic ellipsis */
+		}
+
+		/* NFT balance uses ::before with dynamic height - no overrides needed */
+
+		:global(.ellipsis.ellipsis-nft-balance .td__text) {
+			flex: initial;
+		}
 	}
 </style>
 
@@ -531,13 +609,13 @@
 
 {#snippet itemRow(iconURL, name, symbol, address, balanceData: ITokenData | null = null, isLoadingName = false, isLoadingBalance = false, refreshFn: (() => void) | null = null)}
 	<Tr>
-		<Td padding="0" expand>
+		<Td class={$isMobile ? 'ellipsis ellipsis-token-balance dynamic-ellipsis' : 'ellipsis ellipsis-balance dynamic-ellipsis'} use={dynamicEllipsis} useParams={{ minHeight: 20 }}>
 			{#if $debug}
 				<pre>{stringifyWithBigInt(balanceData)}</pre>
 			{/if}
 			<Clickable onClick={selectCurrency}>
-				<div class="item">
-					<div class="currency">
+				<div class={$isMobile ? 'item multi-row' : ''}>
+					<div class="currency td__row">
 						{#if isLoadingName}
 							{@render spinner()}
 						{:else}
@@ -552,21 +630,21 @@
 			</Clickable>
 		</Td>
 		{#if !$isMobile}
-			<Td>
-				<div class="balance">
-					{#if isLoadingBalance}
+			<Td class="ellipsis ellipsis-token-balance dynamic-ellipsis" use={dynamicEllipsis} useParams={{ minHeight: 20 }}>
+				{#if isLoadingBalance}
+					<div class="spinner-wrapper">
 						{@render spinner()}
-					{:else if balanceData}
-						{@render balanceInfo(balanceData)}
-					{:else}
-						<div class="balance">
-							<div class="info">
-								<div class="amount">Cannot retrieve balance</div>
-								<div class="fiat">(click refresh icon to retry)</div>
-							</div>
+					</div>
+				{:else if balanceData}
+					{@render balanceInfo(balanceData)}
+				{:else}
+					<div class="balance">
+						<div class="info">
+							<div class="amount">Cannot retrieve balance</div>
+							<div class="fiat">(click refresh icon to retry)</div>
 						</div>
-					{/if}
-				</div>
+					</div>
+				{/if}
 			</Td>
 		{/if}
 		<Td>
@@ -578,29 +656,36 @@
 {/snippet}
 
 {#snippet balanceInfo(balanceData)}
-	<div class="balance">
-		<div class="info">
+	<div class="balance balance-row td__row">
+		{#if balanceData?.crypto}
+			{@const bp = getBalanceParts(balanceData.crypto)}
 			<div class="amount">
-				{#if balanceData?.crypto}
-					{formatBalance(balanceData.crypto)}
-				{:else}
-					{@render spinner()}
-				{/if}
+				<span class="amount__value td__text">{bp.value}</span>
+				<span class="amount__symbol td__icon">{bp.symbol}</span>
 			</div>
-			{#if balanceData?.fiat}
-				<div class="fiat">{formatBalance(balanceData.fiat, 2)}</div>
+		{:else}
+			{@render spinner()}
+		{/if}
+
+		{#if balanceData?.fiat}
+			{@const fp = getBalanceParts(balanceData.fiat, 2)}
+			<div class="fiat-wrapper">
+				<div class="fiat">
+					<span class="fiat__value td__text">{fp.value}</span>
+					<span class="fiat__symbol td__icon">{fp.symbol}</span>
+				</div>
+			</div>
+		{/if}
+		{#if $debug}
+			{#if balanceData?.timestamp}
+				<div class="fiat">Last update: {balanceData.timestamp.toLocaleTimeString()}</div>
 			{/if}
-			{#if $debug}
-				{#if balanceData?.timestamp}
-					<div class="fiat">Last update: {balanceData.timestamp.toLocaleTimeString()}</div>
-				{/if}
-				<!-- TODO - add countdown
-				{#if countdown > 0}
-					<div class="fiat">Refresh in: {countdown} s</div>
-				{/if}
-				-->
+			<!-- TODO - add countdown
+			{#if countdown > 0}
+				<div class="fiat">Refresh in: {countdown} s</div>
 			{/if}
-		</div>
+			-->
+		{/if}
 	</div>
 {/snippet}
 
@@ -609,28 +694,28 @@
 {/snippet}
 
 {#snippet currencyIcon(iconURL, symbol, size = '40px')}
-	<Icon img={iconURL || 'modules/' + module.identifier + '/img/token.svg'} alt={symbol || '?'} {size} padding="0px" />
+	<span class="td__icon">
+		<Icon img={iconURL || 'modules/' + module.identifier + '/img/token.svg'} alt={symbol || '?'} {size} padding="0px" />
+	</span>
 {/snippet}
 
 {#snippet currencyNameAndSymbol(name: string | null | undefined, symbol: string | null | undefined, address: string | null | undefined = null, isLoading: boolean = false)}
-	<div class="column">
-		<div class="name">
-			{#if isLoading}
-				{@render spinner()}
-			{:else if name && symbol}
-				{name} ({symbol})
-			{:else if name && !symbol}
-				{name}
-			{:else if !name && symbol}
-				{symbol}
-			{:else}
-				Unknown
-			{/if}
-		</div>
-		{#if ($debug || (!name && !symbol)) && !!address}
-			<div class="address">{address}</div>
+	<div class="name td__text">
+		{#if isLoading}
+			{@render spinner()}
+		{:else if name && symbol}
+			{name} ({symbol})
+		{:else if name && !symbol}
+			{name}
+		{:else if !name && symbol}
+			{symbol}
+		{:else}
+			Unknown
 		{/if}
 	</div>
+	{#if ($debug || (!name && !symbol)) && !!address}
+		<div class="address">{address}</div>
+	{/if}
 {/snippet}
 
 <!--{#snippet refresh(contractAddress)}-->
@@ -731,7 +816,7 @@
 							</Tr>
 						{/if}
 						<Tr>
-							<Td padding="0" expand>
+							<Td padding="0" expand class="ellipsis ellipsis-nft-balance dynamic-ellipsis" use={dynamicEllipsis} useParams={{ minHeight: 30 }}>
 								<Clickable onClick={() => selectNFT('')}>
 									<div class="item">
 										<div class="currency">
@@ -745,7 +830,7 @@
 								</Clickable>
 							</Td>
 							{#if !$isMobile}
-								<Td>
+								<Td class="ellipsis ellipsis-nft-balance dynamic-ellipsis" use={dynamicEllipsis} useParams={{ minHeight: 30 }}>
 									{@render nftBalanceInfo(contractInfo)}
 								</Td>
 							{/if}
