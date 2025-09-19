@@ -1,21 +1,42 @@
-<script>
-	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	export let content;
-	export let onClick;
+<script lang="ts">
+	interface Props {
+		isLike: boolean;
+		onClick: () => void;
+	}
+	let { isLike = false, onClick }: Props = $props();
+
+	const content = isLike ? '👍' : '👎';
+	const type = isLike ? 'like' : 'nope';
 </script>
 
 <style>
-	.photo-card-button {
+	.overlay-button {
+		width: 40px;
+		height: 40px;
+		border-radius: 50%;
+		border: none;
 		display: flex;
 		align-items: center;
 		justify-content: center;
-		padding: 10px;
-		border: 1px solid #000;
-		border-radius: 50%;
-		box-shadow: var(--shadow);
+		font-size: 20px;
+		cursor: pointer;
+		transition: transform 0.2s ease;
+		flex-shrink: 0;
+	}
+
+	.overlay-button:hover {
+		transform: scale(1.1);
+	}
+
+	.overlay-button.like {
+		background-color: #080;
+	}
+
+	.overlay-button.nope {
+		background-color: #f00;
 	}
 </style>
 
-<Clickable {onClick}>
-	<div class="photo-card-button">{content}</div>
-</Clickable>
+<button class="overlay-button {type}" onclick={onClick}>
+	{content}
+</button>
