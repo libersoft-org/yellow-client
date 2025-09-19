@@ -16,6 +16,6 @@
 		<Icon img="img/cross.svg" onClick={closePage} colorVariable="--secondary-foreground" visibleOnMobile={false} />
 	{/snippet}
 </Bar>
-<Page>
+<Page paddingDesktop="0px" paddingMobile="0px">
 	<Map />
 </Page>

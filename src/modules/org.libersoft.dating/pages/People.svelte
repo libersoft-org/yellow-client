@@ -129,32 +129,6 @@
 		opacity: 0.95;
 		text-shadow: 0 2px 4px rgba(0, 0, 0, 0.8);
 	}
-
-	@media (max-width: 768px) {
-		.people-container {
-			padding: 12px;
-			gap: 16px;
-		}
-
-		.user-name {
-			font-size: 18px;
-		}
-
-		.user-info {
-			padding: 10px 12px;
-		}
-	}
-
-	@media (max-width: 480px) {
-		.people-container {
-			padding: 8px;
-			gap: 12px;
-		}
-
-		.user-info {
-			padding: 8px 10px;
-		}
-	}
 </style>
 
 <Bar>
