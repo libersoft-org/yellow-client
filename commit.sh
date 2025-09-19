@@ -17,7 +17,7 @@ if [ "$#" -eq 0 ]; then
  fi
  # Clean the commit message - remove quotes and sanitize
  COMMIT_MSG=$(echo "$COMMIT_MSG" | sed 's/"//g' | sed "s/'//g")
- echo "Generated: $COMMIT_MSG"
+ echo "\033[33mGENERATED COMMIT MESSAGE:\033[0m $COMMIT_MSG"
  COMMIT_MESSAGE="$COMMIT_MSG"
 else
  # Sanitize user-provided message
