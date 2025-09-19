@@ -71,7 +71,7 @@
 	{#if $addressBook.length > 0}
 		<Input placeholder="Filter addresses..." bind:value={filter} bind:this={elFilter} />
 		<div use:tableDrag={{ items: filteredAddressBook, onReorder: handleAddressBookReorder }}>
-			<Table>
+			<Table breakpoint="0">
 				<Thead>
 					<TheadTr>
 						<Th></Th>
@@ -87,7 +87,7 @@
 								<DragHandle />
 							</Td>
 							<Td bold>{a.name}</Td>
-							<Td shorten>{a.address}</Td>
+							<Td class="ellipsis"><span>{a.address}</span></Td>
 							<Td>
 								<TableActionItems align="center">
 									<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => addEditItem(a)} />

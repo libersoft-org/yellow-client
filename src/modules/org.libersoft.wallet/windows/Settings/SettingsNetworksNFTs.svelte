@@ -110,6 +110,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 2px;
+		overflow: hidden;
 	}
 
 	.info .details .name {
@@ -123,6 +124,14 @@
 	.info .details .token-id {
 		font-size: 11px;
 		color: var(--tertiary-foreground);
+	}
+
+	.info .details .address,
+	.info .details .name,
+	.info .details .token-id {
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
 	}
 </style>
 
@@ -154,7 +163,7 @@
 							<Td>
 								<DragHandle />
 							</Td>
-							<Td expand>
+							<Td expand class="ellipsis">
 								<div class="info">
 									<Icon img={'modules/' + module.identifier + '/img/nft.svg'} alt={contractAddress} size="30px" padding="0px" />
 									<div class="details">

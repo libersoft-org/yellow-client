@@ -86,7 +86,7 @@
 	}
 
 	input:focus {
-		outline: 2px solid var(--primary-harder-background);
+		outline: none;
 	}
 
 	input:disabled {
@@ -106,6 +106,10 @@
 		border: 1px solid var(--default-foreground);
 		border-radius: 10px;
 		background-color: var(--default-background);
+	}
+
+	.input-button-wrapper:focus-within {
+		outline: 2px solid var(--primary-harder-background);
 	}
 </style>
 
