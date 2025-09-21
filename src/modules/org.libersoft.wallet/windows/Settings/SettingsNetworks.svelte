@@ -81,14 +81,6 @@
 		flex-direction: column;
 		gap: 10px;
 	}
-
-	.network {
-		display: flex;
-		align-items: center;
-		padding: 0 10px;
-		gap: 10px;
-		height: 50px;
-	}
 </style>
 
 <div class="networks" data-testid="wallet-settings-networks">
@@ -116,13 +108,16 @@
 						<Td>
 							<DragHandle />
 						</Td>
-						<Td padding="0" expand data-testid="wallet-settings-network-name@{n.name}">
-							<div class="network">
+
+						<Td class="ellipsis" padding="0" expand data-testid="wallet-settings-network-name@{n.name}">
+							<span class="td__row">
 								{#if n.currency?.iconURL}
-									<Icon img={n.currency.iconURL} alt={n.name} padding="0px" />
+									<span class="td__icon">
+										<Icon img={n.currency.iconURL} alt={n.name} padding="0px" />
+									</span>
 								{/if}
-								<div class="name">{n.name}</div>
-							</div>
+								<span class="td__text">{n.name}</span>
+							</span>
 						</Td>
 						<Td>
 							<TableActionItems align="center">

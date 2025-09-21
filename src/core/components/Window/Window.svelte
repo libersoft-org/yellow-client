@@ -6,6 +6,38 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Portal from '@/core/components/Portal/Portal.svelte';
 
+	// Suppress ResizeObserver loop errors globally
+	if (typeof window !== 'undefined' && !(window as any).__resizeObserverErrorHandled) {
+		// Mark as handled to prevent multiple setups
+		(window as any).__resizeObserverErrorHandled = true;
+
+		// Override the global error handler to suppress ResizeObserver errors
+		const originalOnError = window.onerror;
+		window.onerror = function (message, source, lineno, colno, error) {
+			if (typeof message === 'string' && message.includes('ResizeObserver loop completed with undelivered notifications')) {
+				return true; // Suppress this error
+			}
+			// Call original handler for all other errors
+			if (originalOnError) {
+				return originalOnError.call(this, message, source, lineno, colno, error);
+			}
+			return false;
+		};
+
+		// Also handle unhandled promise rejections that might contain ResizeObserver errors
+		const originalOnUnhandledRejection = window.onunhandledrejection;
+		window.onunhandledrejection = function (event) {
+			if (event.reason && typeof event.reason === 'string' && event.reason.includes('ResizeObserver loop completed with undelivered notifications')) {
+				event.preventDefault();
+				return;
+			}
+			// Call original handler for all other rejections
+			if (originalOnUnhandledRejection) {
+				originalOnUnhandledRejection.call(this, event);
+			}
+		};
+	}
+
 	export interface IWindowBodyWithOnOpen<TParams extends readonly unknown[] = readonly unknown[]> {
 		onOpen?(...args: TParams): void | Promise<void>;
 	}
@@ -57,6 +89,7 @@
 
 	setContext('setTitle', setTitle);
 	setContext('Popup', { close });
+	setContext('elWindow', { open, close, maximize, restore });
 
 	$effect(() => {
 		if (!$isMobile) return;
@@ -80,7 +113,7 @@
 
 		if (elWindow) {
 			let didInit = false;
-			resizeObserver = new ResizeObserver(() => {
+			resizeObserver = new ResizeObserver(entries => {
 				if (isDragging) return;
 				if (didInit && showContent) {
 					requestAnimationFrame(handleContentResize);

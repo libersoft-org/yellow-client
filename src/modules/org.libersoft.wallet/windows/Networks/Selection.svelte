@@ -35,13 +35,20 @@
 </script>
 
 <style>
-	.item {
-		display: flex;
+	.network-selection {
+		display: inline-grid;
+		grid-auto-flow: column;
+		grid-template-columns: auto 1fr;
 		align-items: center;
 		gap: 10px;
-		padding: 10px;
-		min-height: 44px;
-		box-sizing: border-box;
+		max-width: 100%;
+		white-space: nowrap;
+		overflow: hidden;
+		text-overflow: ellipsis;
+	}
+
+	.network-selection > span {
+		min-width: 0;
 	}
 </style>
 
@@ -51,12 +58,14 @@
 	<Tbody>
 		{#each filteredNetworks as n}
 			<TbodyTr data-network-name={n.name}>
-				<Td padding="0">
-					<Clickable onClick={() => selectNetwork(n.guid)} expand>
-						<div class="item">
-							<Icon img={n.currency.iconURL} size="24px" padding="0" />
-							<span>{n.name}</span>
-						</div>
+				<Td padding="0 10px" class="ellipsis">
+					<Clickable onClick={() => selectNetwork(n.guid)}>
+						<span class="network-selection">
+							<span class="td__icon">
+								<Icon img={n.currency.iconURL} size="24px" padding="0" />
+							</span>
+							<span class="td__text">{n.name}</span>
+						</span>
 					</Clickable>
 				</Td>
 			</TbodyTr>

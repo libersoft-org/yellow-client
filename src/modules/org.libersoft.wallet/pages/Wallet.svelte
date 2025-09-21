@@ -82,12 +82,25 @@
 		border-radius: 10px;
 		background-color: var(--secondary-background);
 		color: var(--secondary-foreground);
+		min-width: 0;
+		overflow: hidden;
+	}
+
+	.bar .left {
+		display: flex;
+		flex-direction: column;
+		align-items: flex-start;
+		gap: 5px;
+		flex-shrink: 1;
+		min-width: 0;
+		max-width: 250px; /* Give it a reasonable max width */
 	}
 
 	.bar .left .status {
 		display: flex;
 		align-items: center;
 		gap: 5px;
+		flex-shrink: 0;
 	}
 
 	.bar .left .status .indicator {
@@ -110,6 +123,10 @@
 
 	.bar .left .server {
 		font-size: 12px;
+		max-width: 250px;
+		flex-shrink: 1;
+		min-width: 0;
+		width: 100%; /* Take full width of parent container */
 	}
 
 	.bar .right {
@@ -148,10 +165,28 @@
 		display: flex;
 		gap: 10px;
 		justify-content: space-between;
+		min-width: 0;
 	}
 
 	.network-address.mobile {
 		flex-direction: column;
+	}
+
+	/* Ensure dropdowns can shrink properly on larger screens */
+	@media (min-width: 769px) {
+		:global(.network-address [data-testid='wallet-network-dropdown']) {
+			flex-shrink: 1;
+			min-width: 0;
+			width: auto;
+			max-width: 50%;
+		}
+
+		:global(.network-address [data-testid='wallet-address-dropdown']) {
+			flex-shrink: 1;
+			min-width: 0;
+			width: auto;
+			max-width: 50%;
+		}
 	}
 </style>
 

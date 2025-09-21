@@ -38,9 +38,6 @@
 </script>
 
 <style>
-	.wallet {
-		padding: 10px;
-	}
 </style>
 
 <Button img="modules/{module.identifier}/img/wallet.svg" text="Manage wallets" onClick={clickManageWallets} />
@@ -55,9 +52,9 @@
 		<Tbody>
 			{#each filteredWallets as wallet, index}
 				<TbodyTr>
-					<Td padding="0">
+					<Td padding="0 10px" class="ellipsis">
 						<Clickable onClick={async () => await clickSelectWallet(wallet)} data-wallet-name={wallet.name}>
-							<div class="wallet">{wallet.name}</div>
+							<span>{wallet.name}</span>
 						</Clickable>
 					</Td>
 				</TbodyTr>

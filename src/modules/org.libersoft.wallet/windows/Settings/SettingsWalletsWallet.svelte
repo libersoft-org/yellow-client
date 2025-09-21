@@ -73,6 +73,12 @@
 		gap: 2px;
 	}
 
+	.info :where(.name, .details) {
+		overflow: hidden;
+		text-overflow: ellipsis;
+		white-space: nowrap;
+	}
+
 	.info .details .name {
 		font-weight: bold;
 	}
@@ -108,7 +114,7 @@
 							<Td>
 								<DragHandle />
 							</Td>
-							<Td expand>
+							<Td expand class="ellipsis">
 								<div class="info">
 									<div class="details">
 										<div class="name">{address.name} (ID: {address.index})</div>
