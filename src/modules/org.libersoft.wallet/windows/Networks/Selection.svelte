@@ -35,15 +35,6 @@
 </script>
 
 <style>
-	.item {
-		display: flex;
-		align-items: center;
-		gap: 10px;
-		padding: 10px;
-		min-height: 44px;
-		box-sizing: border-box;
-	}
-
 	.network-selection {
 		display: inline-grid;
 		grid-auto-flow: column;

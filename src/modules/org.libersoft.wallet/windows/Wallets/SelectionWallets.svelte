@@ -38,9 +38,6 @@
 </script>
 
 <style>
-	.wallet {
-		padding: 10px;
-	}
 </style>
 
 <Button img="modules/{module.identifier}/img/wallet.svg" text="Manage wallets" onClick={clickManageWallets} />

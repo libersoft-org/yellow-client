@@ -395,7 +395,7 @@
 		{/if}
 		<div class="main">
 			<MessageBarRecorder />
-			<div bind:this={elAttachment} data-testid="attachment-button" on:mousedown={handleAttachmentMousedown}>
+			<div bind:this={elAttachment} data-testid="attachment-button" on:mousedown={handleAttachmentMousedown} role="button" tabindex="0">
 				<Icon img="modules/{identifier}/img/attachment.svg" colorVariable="--primary-background" alt="Attachment" size="32px" padding="0px" />
 			</div>
 			{#if expressionsAsContextMenu}
