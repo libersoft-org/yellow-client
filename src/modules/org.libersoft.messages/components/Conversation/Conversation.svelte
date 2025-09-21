@@ -1,21 +1,21 @@
 <script>
-	import { onDestroy, onMount, setContext, tick } from 'svelte';
-	import { hideSidebarMobile } from '@/core/core.ts';
+	import { setContext, tick } from 'svelte';
 	import { get, writable } from 'svelte/store';
-	import { selectedConversation } from '../../messages.js';
-	import ProfileBar from '../ProfileBar/ProfileBar.svelte';
-	import MessagesList from '../MessagesList/MessagesList.svelte';
-	import MessageBar from '../MessageBar/MessageBar.svelte';
+	import { selectedConversation, closeConversation } from '@/org.libersoft.messages/scripts/messages.js';
+	import Content from '@/core/components/Content/Content.svelte';
+	import ProfileBar from '@/org.libersoft.messages/components/ProfileBar/ProfileBar.svelte';
+	import MessagesList from '@/org.libersoft.messages/components/MessagesList/MessagesList.svelte';
+	import MessageBar from '@/org.libersoft.messages/components/MessageBar/MessageBar.svelte';
+	import { windowFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	let message_bar;
 	let oldSelectedConversation;
 	let messagesContext = {};
+	let fileUploadWindowFiles = writable([]);
+
 	setContext('MessagesContext', messagesContext);
 
 	$: messagesContext.messageBar = message_bar;
 	$: update($selectedConversation);
-
-	let showFileUploadModal = writable(false);
-	let fileUploadModalFiles = writable([]);
 
 	async function update(selectedConversation) {
 		if (selectedConversation) {
@@ -26,55 +26,32 @@
 		}
 	}
 
-	onMount(async () => {
-		console.log('conversation mounted for:', get(selectedConversation));
-		window.addEventListener('keydown', onKeydown);
-	});
-
-	onDestroy(() => {
-		if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
-	});
-
-	function closeConversation() {
-		selectedConversation.set(null);
-		hideSidebarMobile.set(false);
-	}
-
 	export async function setBarFocus() {
 		await tick();
 		await message_bar?.setBarFocus();
 	}
 
-	async function onKeydown(event) {
-		//console.log('Conversation keyDown: ', event.key);
-		if (event.key === 'Escape' && get(selectedConversation)) {
-			closeConversation();
-			return;
+	function setFileUploadWindow(value) {
+		if (!!value !== get(windowFileUploadStore)?.isOpen()) fileUploadWindowFiles.set([]);
+		if (value) {
+			get(windowFileUploadStore)?.open();
+		} else {
+			get(windowFileUploadStore)?.close();
 		}
 	}
 
-	function setFileUploadModal(value) {
-		if (value !== $showFileUploadModal) {
-			fileUploadModalFiles.set([]);
-		}
-		showFileUploadModal.set(value);
-	}
-
-	setContext('FileUploadModal', { showFileUploadModal, fileUploadModalFiles, setFileUploadModal });
+	// Set up context for expressions menu state (Android only)
+	let expressionsMenuOpen = false;
+	setContext('expressionsMenuOpen', {
+		setOpen: open => {
+			expressionsMenuOpen = open;
+		},
+	});
+	setContext('FileUploadWindow', { fileUploadWindowFiles, setFileUploadWindow });
 </script>
 
-<style>
-	.conversation {
-		display: flex;
-		flex-direction: column;
-		height: 100vh;
-		overflow: hidden;
-		background: var(--background-image) 0 0 / 400px repeat;
-	}
-</style>
-
-<div role="none" class="conversation" onkeydown={onKeydown}>
+<Content>
 	<ProfileBar {closeConversation} />
 	<MessagesList {setBarFocus} conversation={$selectedConversation} />
 	<MessageBar bind:this={message_bar} />
-</div>
+</Content>

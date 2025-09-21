@@ -1,13 +1,18 @@
-<script>
-	import TopBar from '@/core/components/TopBar/TopBar.svelte';
+<script lang="ts">
+	import { isMobile } from '@/core/scripts/stores.ts';
+	import { selectedConversation, photoRadius } from '@/org.libersoft.messages/scripts/messages.js';
+	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import Photo from '@/core/Photo/Photo.svelte';
-	import { selectedConversation, photoRadius } from '../../messages.js';
-	import { isMobile } from '@/core/core.ts';
-	export let closeConversation;
+	import Photo from '@/core/components/Photo/Photo.svelte';
+	interface Props {
+		closeConversation: () => void;
+	}
+	let { closeConversation }: Props = $props();
 
 	function clickClose() {
+		console.log('clickClose');
 		closeConversation();
+		console.log('after closeConversation');
 	}
 </script>
 
@@ -37,10 +42,10 @@
 	}
 </style>
 
-<TopBar>
-	<svelte:fragment slot="left">
+<Bar>
+	{#snippet left()}
 		{#if $isMobile}
-			<Icon img="img/back.svg" alt="Back" colorVariable="--secondary-foreground" padding="10px" onClick={clickClose} />
+			<Icon testId="profile-bar-back-button" img="img/back.svg" alt="Back" colorVariable="--secondary-foreground" padding="10px" onClick={clickClose} />
 		{/if}
 		<Photo size="38px" radius={$photoRadius} />
 		<div class="description">
@@ -49,8 +54,8 @@
 			{/if}
 			<div class="address">{$selectedConversation.address}</div>
 		</div>
-	</svelte:fragment>
-	<svelte:fragment slot="right">
-		<Icon img="img/close.svg" alt="Close" colorVariable="--secondary-foreground" onClick={clickClose} visibleOnMobile={false} />
-	</svelte:fragment>
-</TopBar>
+	{/snippet}
+	{#snippet right()}
+		<Icon img="img/cross.svg" alt="Close" colorVariable="--secondary-foreground" onClick={clickClose} visibleOnMobile={false} />
+	{/snippet}
+</Bar>

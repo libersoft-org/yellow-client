@@ -1,40 +1,34 @@
 <script>
-	import '@/css/app.css';
+	import '@/app.css';
 	import { onMount, onDestroy, setContext } from 'svelte';
 	import { get } from 'svelte/store';
 	import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
-	import { init, keyboardHeight, documentHeight, active_account, accounts_config, selected_corepage_id, selected_module_id, isClientFocused, hideSidebarMobile, module_decls, debug, product } from '../core/core.ts';
-	import { initBrowserNotifications, initCustomNotifications } from '@/core/notifications.ts';
-	import { mobileWidth, mobileClass, isMobile } from '@/core/stores.ts';
-	import { selected_theme_index } from '@/core/themes.js';
+	import { init, active_account, accounts_config, setModule } from '../core/scripts/core.ts';
+	import { isClientFocused, hideSidebarMobile, selected_corepage_id, selected_module_id, module_decls, product, debug, documentHeight, keyboardHeight, mobileWidth, mobileClass, isMobile, welcomeWizardWindow } from '@/core/scripts/stores.ts';
+	import { initBrowserNotifications, initCustomNotifications } from '@/core/scripts/notifications.ts';
+	import { selected_theme_index, initBrowserThemeDetection } from '@/core/scripts/themes.ts';
 	import Menu from '@/core/components/Menu/Menu.svelte';
 	import MenuBar from '@/core/components/Menu/MenuBar.svelte';
 	import ModuleBar from '@/core/components/ModuleBar/ModuleBar.svelte';
 	import AccountBar from '@/core/components/Account/AccountBar.svelte';
-	import WelcomeSidebar from '@/core/pages/WelcomePage/WelcomeSidebar.svelte';
-	import WelcomeContent from '@/core/pages/WelcomePage/WelcomeContent.svelte';
+	import WelcomeSidebar from '@/core/pages/Welcome/Sidebar.svelte';
+	import WelcomeContent from '@/core/pages/Welcome/Content.svelte';
 	import AccountsContent from '@/core/pages/AccountsPage/AccountsContent.svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
+	import Window from '@/core/components/Window/Window.svelte';
 	import Wizard from '@/core/components/Wizard/Wizard.svelte';
 	import WizardWelcomeStep1 from '@/core/wizard/WelcomeStep1.svelte';
 	import WizardWelcomeStep2 from '@/core/wizard/WelcomeStep2.svelte';
 	import WizardWelcomeStep3 from '@/core/wizard/WelcomeStep3.svelte';
 	import WizardWelcomeStep4 from '@/core/wizard/WelcomeStep4.svelte';
-	import { createTrayIcon, destroyTrayIcon } from '@/core/tray_icon.ts';
-	import '../modules/org.libersoft.messages/module.js';
-	import '../modules/org.libersoft.contacts/module.js';
-	import '../modules/org.libersoft.wallet/module.js';
-	import '../modules/org.libersoft.dating/module.js';
-	import '../modules/org.libersoft.iframes/module.js';
-	import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/messages.js';
-	import { setDefaultWindowSize, initWindow } from '../core/tauri-app.ts';
-	import { initZoom } from '@/core/zoom.ts';
-
-	let menus = [];
-	setContext('menus', menus);
-
-	let sidebarSize = localStorageSharedStore('sidebarSize', undefined);
-
+	import { createTrayIcon, destroyTrayIcon } from '@/core/scripts/tray_icon.ts';
+	import '@/org.libersoft.messages/scripts/module.ts';
+	import '@/org.libersoft.contacts/scripts/module.ts';
+	import '@/org.libersoft.wallet/scripts/module';
+	import '@/org.libersoft.dating/scripts/module.ts';
+	import '@/org.libersoft.iframes/scripts/module.ts';
+	import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/scripts/messages.js';
+	import { setDefaultWindowSize, initWindow } from '../core/scripts/tauri-app.ts';
+	import { initZoom } from '@/core/scripts/zoom.ts';
 	const wizardData = {
 		steps: [
 			{ title: 'Welcome', component: WizardWelcomeStep1 },
@@ -50,7 +44,9 @@
 			content: AccountsContent,
 		},
 	};
-	let showWelcomeWizard = false;
+	let menus = [];
+	let sidebarSize = localStorageSharedStore('sidebarSize', undefined);
+	let elWindowWelcome;
 	let content;
 	let isMenuOpen = false;
 	let sideBar;
@@ -59,6 +55,8 @@
 	let selectedCorePage;
 	let selectedModuleDecl;
 	let contentElement;
+
+	setContext('menus', menus);
 	setContext('contentElement', contentElement);
 
 	$: selectedCorePage = corePages[$selected_corepage_id];
@@ -72,26 +70,10 @@
 	}
 
 	onMount(async () => {
-		console.log('+page onMount');
-
-		// Catch all synchronous errors
-		window.addEventListener('error', event => {
-			// event.error is the Error object
-			console.error('Uncaught error:', event.error);
-			console.error('Stack trace:\n', event.error?.stack);
-		});
-
-		// Catch unhandled promise rejections
-		window.addEventListener('unhandledrejection', event => {
-			const reason = event.reason;
-			console.error('Unhandled promise rejection:', reason);
-			console.error('Stack trace:\n', reason?.stack || reason);
-		});
-
+		//console.log('+page onMount');
 		if ('serviceWorker' in window.navigator) {
-			console.log('+page registering service worker');
+			//console.log('+page registering service worker');
 			const SW_VERSION = '_version_v1_'; // change this to force update the service worker
-
 			// TODO: rm after testing and dev
 			const existing = await navigator.serviceWorker.getRegistrations();
 			for (const reg of existing) {
@@ -100,18 +82,15 @@
 					console.log('Unregistered old SW:', reg.active.scriptURL);
 				}
 			}
-
 			navigator.serviceWorker.register(`service-worker.js?v=${SW_VERSION}`);
-
 			navigator.serviceWorker.ready.then(registration => {
-				console.log('+page service worker ready');
+				/*console.log('+page service worker ready');
 				console.log('Service worker registration:', registration);
 				console.log('Service worker active:', registration.active);
 				console.log('Service worker script URL:', registration.active.scriptURL);
 				console.log('Service worker state:', registration.active.state);
-				console.log('Service worker scope:', registration.scope);
+				console.log('Service worker scope:', registration.scope);**/
 				window.sw = registration;
-
 				navigator.serviceWorker.addEventListener('message', e => {
 					if (e.data.type === 'GET_FILE_INFO') {
 						const { accId, uploadId } = e.data.payload;
@@ -122,7 +101,6 @@
 					if (e.data.type === 'GET_CHUNK') {
 						const { accId, uploadId, start, end } = e.data.payload;
 						const getChunk = getFileChunkFactory(uploadId);
-
 						getChunk({
 							offsetBytes: start,
 							chunkSize: end + 1 - start,
@@ -142,20 +120,15 @@
 		initBrowserNotifications();
 		initCustomNotifications();
 		initWindow();
-
-		if ($sidebarSize) {
-			setSidebarSize($sidebarSize);
-		}
+		initBrowserThemeDetection();
+		if ($sidebarSize) setSidebarSize($sidebarSize);
 		window.addEventListener('focus', () => isClientFocused.set(true));
 		window.addEventListener('blur', () => isClientFocused.set(false));
 		//window.addEventListener('keydown', onkeydown);
 		window?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
-		if ($accounts_config.length === 0) {
-			console.log('showWelcomeWizard = true');
-			showWelcomeWizard = true;
-		}
+		if ($accounts_config.length === 0) elWindowWelcome?.open();
+		welcomeWizardWindow.set(elWindowWelcome);
 		setupIframeListener();
-
 		// TODO: I don't know what this is, test out
 		//document.body.style.touchAction = 'none';
 		//document.documentElement.style.touchAction = 'none';
@@ -173,23 +146,24 @@
 		await destroyTrayIcon();
 	});
 
+	// Capture initial height when keyboard is closed
+	let initialViewportHeight = window.innerHeight;
+
 	function updateAppHeight() {
 		//console.log('updateAppHeight');
-
 		if ('virtualKeyboard' in navigator) {
 			navigator.virtualKeyboard.addEventListener('geometrychange', event => {
 				//console.log('virtualKeyboard geometrychange:', event.target.boundingRect);
 			});
 		}
-
 		const visualViewport = window.visualViewport;
 		let viewportHeight;
 		if (visualViewport) {
 			viewportHeight = visualViewport.height;
-			let clientHeight = visualViewport.clientHeight;
-			//console.log('clientHeight:', clientHeight);
-			let keyboardHeightValue = viewportHeight - clientHeight;
-			//console.log('keyboardHeightValue:', keyboardHeightValue);
+
+			// Simple and reliable keyboard height detection
+			let keyboardHeightValue = initialViewportHeight - visualViewport.height;
+
 			if (keyboardHeightValue < 0) keyboardHeightValue = 0;
 			keyboardHeight.set(keyboardHeightValue);
 		} else viewportHeight = window.innerHeight;
@@ -204,9 +178,7 @@
 		//console.log('viewportHeight:', viewportHeight);
 		//console.log('document.documentElement.clientHeight:', document.documentElement.clientHeight);
 	}
-
 	let px_ratio = window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth;
-
 	window.addEventListener('resize', () => {
 		var newPx_ratio = window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth;
 		if (newPx_ratio != px_ratio) {
@@ -226,26 +198,13 @@
 	}
 
 	function onSelectModule(id) {
-		selected_corepage_id.set(null);
 		//console.log('onSelectModule: ' + id);
-		selected_module_id.set(id);
-		//console.log('selected_module_id: ' + $selected_module_id);
-		//console.log('active_account: ', $active_account);
-		//console.log('accounts_config: ', $accounts_config);
-		if (!$active_account) return;
-		accounts_config.update(accounts => {
-			accounts.forEach(account => {
-				if (account.id === $active_account.id) {
-					account.settings = account.settings ? account.settings : {};
-					account.settings.last_module_id = id;
-				}
-			});
-			return accounts;
-		});
+		setModule(id);
 	}
 
 	function onCloseModule() {
-		selected_module_id.set(null);
+		setModule(null);
+		updateLastModuleId(null);
 	}
 
 	function startResizeSideBar() {
@@ -272,7 +231,6 @@
 		// if (moduleBarItems) {
 		// 	moduleBarItems.style.height = 'auto';
 		// }
-
 		if (isResizingSideBar) {
 			e.preventDefault();
 			// delta from mouse move
@@ -293,22 +251,16 @@
 	}
 
 	isMobile.subscribe(v => {
-		console.log('isMobile: ', v);
-		if (v) {
-			sidebarWidth = '';
-		} else {
-			sidebarWidth = ($sidebarSize || 300) + 'px';
-		}
+		//console.log('isMobile: ', v);
+		if (v) sidebarWidth = '';
+		else sidebarWidth = ($sidebarSize || 300) + 'px';
 	});
 
-	async function onkeydown(event) {
+	function onkeydown(event) {
 		//console.log('window onkeydown: ', event);
 		if (event.ctrlKey && (event.key === '`' || event.key === '~' || event.key === ';')) debug.update(d => !d);
-
 		// Handle Ctrl + 0 to toggle between theme index 0 and 1
-		if (event.ctrlKey && event.key === '0') {
-			selected_theme_index.update(current => (current === 0 ? 1 : 0));
-		}
+		if (event.ctrlKey && event.key === '0') selected_theme_index.update(current => (current === 0 ? 1 : 0));
 	}
 </script>
 
@@ -323,10 +275,10 @@
 	}
 
 	.sidebar {
+		z-index: 5;
 		display: flex;
 		flex-direction: column;
 		position: relative;
-		z-index: 5;
 		max-height: 100%;
 		box-shadow: var(--shadow);
 		background-color: var(--secondary-background);
@@ -345,13 +297,12 @@
 	}
 
 	.resizer {
+		z-index: 6;
 		position: absolute;
-		z-index: 1;
 		top: 0;
 		bottom: 0;
 		width: 5px;
 		cursor: ew-resize;
-		/*background-color: #0d0;*/
 	}
 
 	.resizer.mobile {
@@ -372,7 +323,6 @@
 </svelte:head>
 <div class="app" style:--sidebar-width={sidebarWidth}>
 	<div class="sidebar {$mobileClass} {$hideSidebarMobile && $isMobile ? 'hidden-on-mobile' : ''}" style:min-width={sidebarWidth} style:max-width={sidebarWidth} style:width={sidebarWidth} bind:this={sideBar}>
-		<Menu bind:showMenu={isMenuOpen} />
 		<MenuBar onOpenMenu={() => (isMenuOpen = true)} />
 		<AccountBar />
 		<ModuleBar {onSelectModule} {onCloseModule} />
@@ -395,4 +345,5 @@
 		{/if}
 	</div>
 </div>
-<Modal body={Wizard} bind:show={showWelcomeWizard} params={wizardData} />
+<Menu bind:showMenu={isMenuOpen} />
+<Window body={Wizard} bind:this={elWindowWelcome} params={wizardData} testId="welcome-wizard" />

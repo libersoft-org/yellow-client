@@ -1,5 +1,8 @@
 <script lang="ts">
-	import { findAccount, selected_corepage_id, accounts_config, hideSidebarMobile } from '@/core/core.ts';
+	import { onMount, onDestroy, tick } from 'svelte';
+	import { findAccount, accounts_config, setCorePage } from '@/core/scripts/core.ts';
+	import Content from '@/core/components/Content/Content.svelte';
+	import Page from '@/core/components/Content/ContentPage.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
@@ -11,125 +14,124 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
-	import ModalAccountsAddEdit from '@/core/modals/Accounts/AccountsAddEdit.svelte';
-	import ModalAccountsDelete from '@/core/modals/Accounts/AccountsDelete.svelte';
-	import AccountsExport from '@/core/modals/Accounts/AccountsExport.svelte';
-	import AccountsImport from '@/core/modals/Accounts/AccountsImport.svelte';
-	import Accordion from '@/core/components/Accordion/Accordion.svelte';
-	import Paper from '@/core/components/Paper/Paper.svelte';
-	import TopBar from '@/core/components/TopBar/TopBar.svelte';
-	import TopBarTitle from '@/core/components/TopBar/TopBarTitle.svelte';
+	import WindowAccountsAddEdit from '@/core/windows/Accounts/AccountsAddEdit.svelte';
+	import DialogAccountsDelete from '@/core/dialogs/AccountsDelete.svelte';
+	import WindowAccountsImport from '@/core/windows/Accounts/AccountsImport.svelte';
+	import WindowAccountsExport from '@/core/windows/Accounts/AccountsExport.svelte';
+	import Bar from '@/core/components/Content/ContentBar.svelte';
+	import BarTitle from '@/core/components/Content/ContentBarTitle.svelte';
 	import AccountStatusIconIconAndText from '@/core/components/Account/AccountStatusIconIconAndText.svelte';
-	let showAddEditAccountModal: boolean = $state(false);
-	let showDelAccountModal: boolean = $state(false);
-	let showExportModal: boolean = $state(false);
-	let showImportModal: boolean = $state(false);
-	let idItem: string | null = $state(null);
-	let accountTitle: string = $state('');
+	let idItem: string | null | undefined = $state(null);
+	let windowKey: number = $state(0);
+	let elWindowAccountsAddEdit: WindowAccountsAddEdit | null = $state(null);
+	let elWindowAccountsImport: WindowAccountsImport;
+	let elWindowAccountsExport: WindowAccountsExport;
+	let elDialogAccountsDelete: DialogAccountsDelete;
 
-	function back() {
-		hideSidebarMobile.set(false);
-		selected_corepage_id.set(null);
+	onMount(() => {
+		window.addEventListener('keydown', onKeydown);
+		console.log('[AccountsContent], accounts_config:', $accounts_config);
+	});
+
+	onDestroy(() => {
+		if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
+	});
+
+	$effect(() => {
+		console.log('[AccountsContent] idItem:', idItem);
+	});
+
+	function onKeydown(event) {
+		if (event.key === 'Escape') setCorePage(null);
 	}
 
-	function addAccountModal() {
+	function back() {
+		setCorePage(null);
+	}
+
+	async function addAccountWindow() {
 		idItem = null;
-		showAddEditAccountModal = true;
+		windowKey++; // Force window component to recreate
+		console.log('[AccountsContent] Opening Add/Edit Account window, idItem set to', idItem, 'windowKey:', windowKey);
+		await tick();
+		elWindowAccountsAddEdit?.open();
 	}
 
 	function clickEdit(id: string) {
 		idItem = id;
-		showAddEditAccountModal = true;
+		elWindowAccountsAddEdit?.open();
 	}
 
 	const clickDel = (id: string) => {
 		idItem = id;
-		showDelAccountModal = true;
+		elDialogAccountsDelete?.open();
 	};
 
-	function clickExport() {
-		showExportModal = true;
+	function clickImport() {
+		elWindowAccountsImport?.open();
 	}
 
-	function clickImport() {
-		showImportModal = true;
+	function clickExport() {
+		elWindowAccountsExport?.open();
 	}
 </script>
 
-<style>
-	.accounts {
-		background: var(--background-image) 0 0 / 400px repeat;
-
-		.accounts-wrapper {
-			display: flex;
-			flex-direction: column;
-			gap: 10px;
-			padding: 10px;
-			height: 100dvh;
-		}
-	}
-
-	:global(.button) {
-		white-space: nowrap;
-	}
-</style>
-
-{#snippet accountTable(account)}
-	<Table>
-		<Thead>
-			<TheadTr>
-				<Th>Server</Th>
-				<Th>Address</Th>
-				<Th>Enabled</Th>
-				<Th>Action</Th>
-			</TheadTr>
-		</Thead>
-		<Tbody>
-			<TbodyTr>
-				<Td title="Server">{account.credentials.server}</Td>
-				<Td title="Address">{account.credentials.address}</Td>
-				<Td title="Enabled">{account.enabled ? 'Yes' : 'No'}</Td>
-				<Td title="Action">
-					<TableActionItems>
-						<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickEdit(account.id)} />
-						<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickDel(account.id)} />
-					</TableActionItems>
-				</Td>
-			</TbodyTr>
-		</Tbody>
-	</Table>
-{/snippet}
-
-{#snippet status(account)}
-	<div class="optional-data">
-		<AccountStatusIconIconAndText account={findAccount(account.id)} />
-	</div>
-{/snippet}
-
-<div class="accounts">
-	<TopBar>
-		<svelte:fragment slot="left">
-			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
-			<TopBarTitle text="Account management" />
-		</svelte:fragment>
-		<svelte:fragment slot="right">
-			<Icon img="img/close.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnMobile={false} />
-		</svelte:fragment>
-	</TopBar>
-	<div class="accounts-wrapper">
-		<Paper>
-			<ButtonBar>
-				<Button img="img/accounts.svg" colorVariable="--primary-foreground" text="Add a new account" onClick={addAccountModal} />
-				<Button img="img/export.svg" colorVariable="--primary-foreground" text="Export" onClick={clickExport} />
-				<Button img="img/import.svg" colorVariable="--primary-foreground" text="Import" onClick={clickImport} />
-			</ButtonBar>
-			<Accordion items={$accounts_config.map(a => ({ ...a, name: a.settings?.title }))} activeIndex={null} content={accountTable} header={status} expandAllOnDesktop={true} mode="multiple" />
-		</Paper>
-	</div>
-</div>
-
-<Modal title={idItem === null ? 'Add a new account' : 'Edit account'} body={ModalAccountsAddEdit} params={{ id: idItem || null }} bind:show={showAddEditAccountModal} width="fit-content" />
-<Modal title="Export all accounts" body={AccountsExport} bind:show={showExportModal} width="700px" />
-<Modal title="Import accounts" body={AccountsImport} bind:show={showImportModal} width="700px" />
-<Modal title="Delete the account" body={ModalAccountsDelete} params={{ id: idItem }} bind:show={showDelAccountModal} />
+<Content>
+	<Bar>
+		{#snippet left()}
+			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} testId="accounts-content-back-button" />
+			<BarTitle text="Account management" />
+		{/snippet}
+		{#snippet right()}
+			<Icon img="img/cross.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnMobile={false} testId="accounts-content-close-button" />
+		{/snippet}
+	</Bar>
+	<Page gap="10px" column>
+		<ButtonBar>
+			<Button img="img/accounts-add.svg" text="Add a new account" onClick={addAccountWindow} data-testid="add-account-button" />
+			<Button img="img/import.svg" text="Import" onClick={clickImport} data-testid="accounts-import-button" />
+			<Button img="img/export.svg" text="Export" onClick={clickExport} data-testid="accounts-export-button" />
+		</ButtonBar>
+		{#if $accounts_config.length > 0}
+			{#each $accounts_config as account (account.id)}
+				<Table>
+					<Thead>
+						<TheadTr>
+							<Th>{account.settings.title}</Th>
+							<Th align="right"><AccountStatusIconIconAndText account={findAccount(account.id)} /></Th>
+						</TheadTr>
+					</Thead>
+					<Tbody>
+						<TbodyTr>
+							<Td bold>Server:</Td>
+							<Td data-testid="account-server@{account.credentials.address}@{account.credentials.server}">{account.credentials.server}</Td>
+						</TbodyTr>
+						<TbodyTr>
+							<Td bold>Address:</Td>
+							<Td data-testid="account-address@{account.credentials.address}@{account.credentials.server}">{account.credentials.address}</Td>
+						</TbodyTr>
+						<TbodyTr>
+							<Td bold>Enabled:</Td>
+							<Td data-testid="account-enabled@{account.credentials.address}@{account.credentials.server}">{account.enabled ? 'Yes' : 'No'}</Td>
+						</TbodyTr>
+						<TbodyTr>
+							<Td bold>Action:</Td>
+							<Td>
+								<TableActionItems>
+									<Icon img="img/edit.svg" alt="Edit" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickEdit(account.id)} testId="edit-account-button" />
+									<Icon img="img/del.svg" alt="Delete" colorVariable="--primary-foreground" size="20px" padding="5px" onClick={() => clickDel(account.id)} testId="delete-account-button" />
+								</TableActionItems>
+							</Td>
+						</TbodyTr>
+					</Tbody>
+				</Table>
+			{/each}
+		{/if}
+	</Page>
+</Content>
+{#key windowKey}
+	<WindowAccountsAddEdit params={{ id: idItem || null }} bind:this={elWindowAccountsAddEdit} />
+{/key}
+<WindowAccountsImport bind:this={elWindowAccountsImport} />
+<WindowAccountsExport bind:this={elWindowAccountsExport} />
+<DialogAccountsDelete id={idItem || ''} bind:this={elDialogAccountsDelete} />
