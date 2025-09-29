@@ -819,6 +819,12 @@ async function setupAccountInWizard(
  */
 async function getExportedJSON(page: Page): Promise<string> {
 	return await test.step('Get exported JSON content', async () => {
+		// Check if we need to reveal the content first
+		const revealButton = page.getByTestId('accounts-export-reveal-button');
+		if (await revealButton.isVisible()) {
+			await revealButton.click();
+		}
+
 		const codeElement = page.locator('[data-testid="accounts-export-code-editor"]');
 		await expect(codeElement).toBeVisible();
 		return (await codeElement.inputValue()) || '';

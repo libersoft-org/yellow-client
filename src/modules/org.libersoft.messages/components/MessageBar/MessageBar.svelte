@@ -36,6 +36,8 @@
 	let lastDocumentHeight = 0;
 	let videoInputRef;
 	let showVideoRecorder = false;
+	let pendingBottomSheetOpen = false;
+	let waitingForKeyboardClose = false;
 
 	isMobile.subscribe(value => {
 		expressionsAsContextMenu = !value;
@@ -43,6 +45,7 @@
 	});
 
 	let { setFileUploadWindow } = getContext('FileUploadWindow');
+	let expressionsMenuOpen = getContext('expressionsMenuOpen');
 
 	documentHeight.subscribe(value => {
 		if (value != lastDocumentHeight) {
@@ -52,7 +55,6 @@
 	});
 
 	onMount(async () => {
-		console.log('MessageBar mounted');
 		await init_emojis();
 		/*setInterval(() => {
    let v = get(debugBuffer);
@@ -75,16 +77,15 @@
 	});
 
 	export async function openExpressions(tab) {
-		console.log('openExpressions', tab);
 		if (expressionsAsContextMenu) {
-			console.log('openExpressions as context menu:', expressionsMenu);
-			console.log('elExpressions.offsetLeft:', elExpressions.offsetLeft, 'elExpressions.offsetTop:', elExpressions.offsetTop, 'elExpressions.offsetWidth:', elExpressions.offsetWidth, 'elExpressions.offsetHeight:', elExpressions.offsetHeight);
 			expressionsMenu?.openMenu({ x: elExpressions.getBoundingClientRect().x, y: 0 });
+			// Notify MessagesList that expressions menu is open
+			expressionsMenuOpen?.setOpen(true);
 		} else {
-			expressionsBottomSheetOpen = true;
+			// Use delay-based opening for mobile bottom sheet
+			handleBottomSheetOpenWithDelay();
 		}
 		await tick();
-		console.log('elExpressions:', elExpressions);
 		await expressions?.setCategory(null, tab);
 	}
 
@@ -120,7 +121,6 @@
 	}
 
 	function resizeMessage() {
-		console.log('resizeMessage handleResize (scroll?)');
 		handleResize(true /*TODO: save*/);
 		const maxHeight = 200;
 		const textarea = elMessage;
@@ -180,6 +180,17 @@
 		}
 	}
 
+	function onMessageInputFocus(event) {
+		// Close bottom sheet when user wants to type
+		if (expressionsBottomSheetOpen) {
+			expressionsBottomSheetOpen = false;
+			expressionsMenuOpen?.setOpen(false);
+		}
+		// Also clear any pending opening
+		pendingBottomSheetOpen = false;
+		waitingForKeyboardClose = false;
+	}
+
 	function clickRecord(event) {
 		console.log('clicked on record mic / camera - long press to record, short press to switch mic / camera');
 	}
@@ -192,21 +203,45 @@
 		console.log('clicked on location');
 	}
 
+	function handleAttachmentMousedown(event) {
+		// Check if keyboard is currently open
+		const currentKeyboardHeight = get(keyboardHeight);
+		if (currentKeyboardHeight && currentKeyboardHeight > 50) {
+			// Check if the input field is currently focused
+			const wasInputFocused = document.activeElement === elMessage;
+
+			// Let the context menu open, then check if we need to restore focus
+			setTimeout(() => {
+				// Only restore focus if it was focused before AND it lost focus
+				if (wasInputFocused && document.activeElement !== elMessage) {
+					elMessage.focus();
+				}
+			}, 10);
+		}
+	}
+
 	isMobile.subscribe(value => {
 		expressionsAsContextMenu = !value;
 	});
 
 	documentHeight.subscribe(value => {
-		console.log('documentHeight handleResize (scroll?)');
 		handleResize(true); // TODO: save wasScrolledToBottom2 before showing bottom sheet /// periodically?
 	});
 
 	keyboardHeight.subscribe(value => {
-		console.log('keyboardHeight:', value);
 		if (value > 100) {
 			if (get(isMobile)) {
-				console.log('adjusting expressionsHeight from keyboardHeight:', value);
 				expressionsHeight = value + 'px';
+			}
+		}
+
+		// Check if we're waiting for keyboard to close and it's now closed
+		if (waitingForKeyboardClose) {
+			if (!value || value < 50) {
+				waitingForKeyboardClose = false;
+				pendingBottomSheetOpen = false;
+				expressionsBottomSheetOpen = true;
+				expressionsMenuOpen?.setOpen(true);
 			}
 		}
 	});
@@ -217,32 +252,68 @@
 	}
 
 	function closeExpressions() {
-		//console.log('closeExpressions');
 		//if (expressionsBottomSheetOpen) handleResize(true); // TODO: save wasScrolledToBottom2 before showing bottom sheet
 		expressionsBottomSheetOpen = false;
 		expressionsMenu?.close();
+		// Clear any pending opening
+		pendingBottomSheetOpen = false;
+		waitingForKeyboardClose = false;
+		// Notify MessagesList that expressions menu is closed
+		expressionsMenuOpen?.setOpen(false);
 	}
 
 	$: update2(expressionsAsContextMenu, expressionsBottomSheetOpen);
 	function update2(expressionsAsContextMenu, expressionsBottomSheetOpen) {
-		if (!expressionsAsContextMenu && expressionsBottomSheetOpen) {
-			elMessage.blur();
-		}
+		// Removed auto-blur to prevent interference with delay logic
+		// The blur is now handled manually in handleBottomSheetOpenWithDelay
 	}
 
 	function elMessageBlur(event) {
 		//console.log('elMessageBlur');
 		if (elBottomSheet?.contains(event.relatedTarget)) return;
+
+		// Don't close if we have a pending bottom sheet opening
+		if (pendingBottomSheetOpen || waitingForKeyboardClose) {
+			return;
+		}
+
 		expressionsBottomSheetOpen = false;
+		// Notify MessagesList that expressions menu is closed (bottom sheet)
+		expressionsMenuOpen?.setOpen(false);
 	}
 
 	const onVideoRecordClick = async () => {
 		videoInputRef.click();
 	};
 
+	// Reactive bottom sheet opening - waits for keyboard to actually close
+	function handleBottomSheetOpenWithDelay() {
+		// Prevent multiple simultaneous requests
+		if (pendingBottomSheetOpen || waitingForKeyboardClose) {
+			return;
+		}
+
+		const currentKeyboardHeight = get(keyboardHeight);
+		const currentIsMobile = get(isMobile);
+
+		// If keyboard is not open, open bottom sheet immediately
+		if (!currentKeyboardHeight || currentKeyboardHeight < 50) {
+			expressionsBottomSheetOpen = true;
+			expressionsMenuOpen?.setOpen(true);
+			return;
+		}
+
+		// Keyboard is open - close it first, then wait for it to actually close
+		waitingForKeyboardClose = true;
+		pendingBottomSheetOpen = true;
+		elMessage.blur(); // Start closing keyboard
+
+		// The keyboardHeight subscriber will handle opening the bottom sheet
+		// when the keyboard actually closes (height becomes 0)
+	}
+
 	onMount(() => {
 		videoInputRef.addEventListener('change', function (event) {
-			console.log('event.target.files', event.target.files);
 			const recipientEmail = get(selectedConversation).address;
 			const file = event.target.files[0]; // Get the selected video file
 			if (file) {
@@ -312,7 +383,7 @@
 <Bar position="bottom" height="auto" bind:element={elMessageBar}>
 	<div class="message-bar" data-sent-message-uid={lastSentMessageUid}>
 		{#if showVideoRecorder}
-			<div class="video-recorder-wrapper">
+			<div class="video-recorder-wrapper open">
 				<VideoRecorderContainer />
 			</div>
 		{/if}
@@ -324,17 +395,35 @@
 		{/if}
 		<div class="main">
 			<MessageBarRecorder />
-			<div bind:this={elAttachment} data-testid="attachment-button">
-				<Icon img="modules/{identifier}/img/attachment.svg" colorVariable="--primary-background" alt="Attachment" size="32px" padding="0px" isButton />
+			<div bind:this={elAttachment} data-testid="attachment-button" on:mousedown={handleAttachmentMousedown} role="button" tabindex="0">
+				<Icon img="modules/{identifier}/img/attachment.svg" colorVariable="--primary-background" alt="Attachment" size="32px" padding="0px" />
 			</div>
 			{#if expressionsAsContextMenu}
-				<div bind:this={elExpressions}>
+				<div bind:this={elExpressions} class="expressions-button">
 					<Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--primary-background" alt="Emoji" size="32px" padding="0px" isButton />
 				</div>
 			{:else}
-				<Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--primary-background" alt="Emoji" size="32px" padding="0px" onClick={() => (expressionsBottomSheetOpen = !expressionsBottomSheetOpen)} />
+				<div class="expressions-button">
+					<Icon
+						img="modules/{identifier}/img/emoji.svg"
+						colorVariable="--primary-background"
+						alt="Emoji"
+						size="32px"
+						padding="0px"
+						onClick={() => {
+							if (expressionsBottomSheetOpen) {
+								// Close bottom sheet immediately
+								expressionsBottomSheetOpen = false;
+								expressionsMenuOpen?.setOpen(false);
+							} else {
+								// Smart opening with keyboard delay
+								handleBottomSheetOpenWithDelay();
+							}
+						}}
+					/>
+				</div>
 			{/if}
-			<textarea data-testid="message-input" id="message-input" class="message-textarea" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={onKeyDown} on:blur={elMessageBlur}></textarea>
+			<textarea data-testid="message-input" id="message-input" class="message-textarea" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={onKeyDown} on:blur={elMessageBlur} on:focus={onMessageInputFocus}></textarea>
 			<!--<Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32px" padding="0px" onClick={onVideoRecordClick} />-->
 			{#if !elMessage?.value}
 				<Icon img="modules/{identifier}/img/video-message.svg" colorVariable="--primary-background" alt="Record video message" size="32px" padding="0px" onClick={() => (showVideoRecorder = !showVideoRecorder)} />
@@ -363,14 +452,12 @@
 	<Clickable
 		onClick={() => {
 			expressionsAsContextMenu = !expressionsAsContextMenu;
-			console.log('expressionsAsContextMenu:', expressionsAsContextMenu, 'expressionsBottomSheetOpen:', expressionsBottomSheetOpen);
 		}}
 	>
 		expressionsBottomSheetOpen: {expressionsBottomSheetOpen}
 		expressionsAsContextMenu: {expressionsAsContextMenu}
 	</Clickable>
 {/if}
-
 {#if !expressionsAsContextMenu && expressionsBottomSheetOpen}
 	<div class="bottom-sheet" style="height: {expressionsHeight};" bind:this={elBottomSheet}>
 		<Expressions bind:this={expressions} height={expressionsHeight} isBottomSheet />

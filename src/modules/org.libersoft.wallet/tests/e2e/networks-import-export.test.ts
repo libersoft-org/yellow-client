@@ -1,7 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
 import { setupConsoleLogging, closeWelcomeWizardWindow, expectErrorMessage, switchModule, clickBreadcrumb } from '@/core/tests/e2e/test-utils.js';
-import { clickSettingsMenuButton } from '@/core/tests/e2e/test-utils.ts';
 
 test.describe.parallel('Networks Import/Export Functionality', () => {
 	test.beforeEach(async ({ page }) => {
@@ -21,6 +20,8 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 
 		// Switch to wallet module
 		await switchModule(page, 'org.libersoft.wallet');
+
+		await page.getByTestId('wallet-welcome-wizard-Window-close').click();
 	});
 
 	test.describe('JSON Import Tests', () => {
@@ -697,6 +698,12 @@ async function confirmReplaceNetworksDialog(page: Page): Promise<void> {
  */
 async function getExportedNetworksJSON(page: Page): Promise<string> {
 	return await test.step('Get exported networks JSON content', async () => {
+		// Check if we need to reveal the content first
+		const revealButton = page.getByTestId('networks-export-reveal-button');
+		if (await revealButton.isVisible()) {
+			await revealButton.click();
+		}
+
 		const codeElement = page.locator('[data-testid="networks-export-code-editor"]');
 		await expect(codeElement).toBeVisible();
 		return (await codeElement.inputValue()) || '';

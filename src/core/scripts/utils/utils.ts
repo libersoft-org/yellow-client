@@ -14,8 +14,15 @@ export function order(dict: { [key: string]: { order?: number; id: number | stri
 }
 
 export function getGuid(length = 40): string {
+	const chars = '0123456789abcdefghijklmnopqrstuvwxyz';
 	let result = '';
-	while (result.length < length) result += Math.random().toString(36);
+	const array = new Uint8Array(length);
+	crypto.getRandomValues(array);
+
+	for (let i = 0; i < length; i++) {
+		result += chars[array[i] % chars.length];
+	}
+
 	return result;
 }
 

@@ -41,7 +41,7 @@
 	{/if}
 	<div>
 		<span class="bold">Contract Address:</span>
-		<span>{nft.item?.contract_address || 'Unknown'}</span>
+		<span><span>{nft.item?.contract_address || 'Unknown'}</span></span>
 	</div>
 	{#if nft.item?.token_id}
 		<div>
