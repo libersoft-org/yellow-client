@@ -1,7 +1,6 @@
 <script lang="ts">
-	import { getGuid } from '@/core/scripts/utils/utils.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
-	import { addNFT, editNFT, type INFT, type INFTData } from 'libersoft-crypto/network';
+	import { addNFT, editNFT, type INftConf } from 'libersoft-crypto/network';
 	import { validateForm } from '@/core/scripts/utils/form.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
@@ -12,7 +11,7 @@
 	interface Props {
 		close: () => void;
 		networkGuid: string;
-		item?: INFT;
+		item?: INftConf;
 	}
 	let { close, networkGuid, item }: Props = $props();
 	let nftContractAddress: string | undefined = $state();
@@ -22,7 +21,7 @@
 	let elNftContractAddress: Input | undefined = $state();
 	let elNftTokenId: Input | undefined = $state();
 
-	let nftData: INFTData = $derived.by(() => ({
+	let nftData: { contract_address: string; token_id: string } = $derived.by(() => ({
 		contract_address: nftContractAddress || '',
 		token_id: nftTokenId || '', // Required for ERC1155 contracts
 
@@ -37,9 +36,9 @@
 
 	export function onOpen(): void {
 		error = null;
-		if (item?.item) {
-			nftContractAddress = item.item.contract_address;
-			nftTokenId = item.item.token_id;
+		if (item) {
+			nftContractAddress = item.contract_address;
+			nftTokenId = item.token_id;
 		}
 		elNftContractAddress?.focus();
 	}
@@ -55,13 +54,13 @@
 
 	function clickAdd() {
 		if (!validateFields()) return;
-		addNFT(networkGuid, nftData);
+		addNFT(networkGuid, nftData.contract_address, nftData.token_id);
 		close();
 	}
 
 	function clickEdit() {
 		if (!validateFields() || !item?.guid) return;
-		editNFT(networkGuid, item.guid, nftData);
+		editNFT(networkGuid, item.guid, nftData.contract_address, nftData.token_id);
 		close();
 	}
 
