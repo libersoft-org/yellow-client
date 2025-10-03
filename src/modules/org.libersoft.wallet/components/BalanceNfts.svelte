@@ -24,80 +24,6 @@
 </script>
 
 <style>
-	.wallet-balance {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-	}
-
-	.name {
-		font-size: 20px;
-		font-weight: bold;
-	}
-
-	.address {
-		font-size: 12px;
-	}
-
-	.balance {
-		display: flex;
-		flex-wrap: wrap;
-		align-items: center;
-		gap: 10px;
-	}
-
-	.balance .info {
-		flex-grow: 1;
-		display: flex;
-		flex-direction: column;
-		overflow: hidden;
-	}
-
-	.balance :where(.amount__value, .amount__symbol) {
-		font-size: 18px;
-		font-weight: bold;
-	}
-
-	.balance .amount {
-		display: flex;
-		align-items: center;
-		gap: 5px;
-		min-width: 0;
-		flex: 1;
-		max-width: fit-content;
-	}
-
-	.balance .amount__value {
-		flex: 1;
-		min-width: 0;
-		overflow: hidden;
-		text-overflow: ellipsis;
-		white-space: nowrap;
-	}
-
-	.balance .amount__symbol {
-		flex-shrink: 0;
-	}
-
-	.balance .fiat {
-		white-space: nowrap;
-		overflow: hidden;
-		text-overflow: ellipsis;
-	}
-
-	.balance .fiat-wrapper {
-		width: 100%;
-		flex-basis: 100%;
-	}
-
-	.balance-row {
-		row-gap: 0;
-	}
-
-	.balance :where(.fiat__value, .fiat__symbol) {
-		font-size: 13px;
-	}
-
 	.item {
 		display: flex;
 		flex-direction: column;
@@ -113,21 +39,7 @@
 		width: 70%;
 	}
 
-	:global(.ellipsis.ellipsis-token-balance) .td__text {
-		flex: initial;
-	}
-
-	.spinner-wrapper {
-		display: flex;
-		justify-content: center;
-		align-items: center;
-	}
-
 	@media (max-width: 768px) {
-		.balance {
-			padding-left: 50px;
-		}
-
 		/* Dynamic ellipsis for mobile - ::before gets dynamic height */
 		:global(.ellipsis.ellipsis-token-balance.dynamic-ellipsis::after) {
 			content: ''; /* Remove the ::after for dynamic ellipsis */
