@@ -21,46 +21,6 @@
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 
 	import { dynamicEllipsis } from '@/core/actions/dynamicEllipsis';
-	import BalanceTable from '@/org.libersoft.wallet/components/BalanceTable.svelte';
-	import BalanceNfts from '@/org.libersoft.wallet/components/BalanceNfts.svelte';
-
-	// Cleanup function for refresh system
-	let cleanupRefreshSystem: (() => void) | null = null;
-
-	// Lifecycle
-	onMount(() => {
-		// Initialize the crypto library's refresh system
-		cleanupRefreshSystem = initializeRefreshSystem();
-	});
-
-	onDestroy(() => {
-		// Cleanup the refresh system
-		if (cleanupRefreshSystem) {
-			cleanupRefreshSystem();
-			cleanupRefreshSystem = null;
-		}
-	});
-
-	// Event handlers
-	function selectCurrency() {
-		console.log('SELECTED CURRENCY:', $selectedNetwork?.currency);
-	}
-
-	function selectToken(contractAddress: string) {
-		console.log('SELECTED TOKEN:', contractAddress);
-	}
-
-	function selectNFT(url: string) {
-		console.log('SELECTED NFT:', url);
-		window.open(url, '_blank');
-	}
-
-	// Manual refresh trigger
-	function refreshBalances() {
-		refresh();
-	}
-
-	// Use the derived stores from tokens.ts and nfts.ts for display-ready data
 </script>
 
 <style>
@@ -175,48 +135,60 @@
 		}
 
 		/* NFT balance uses ::before with dynamic height - no overrides needed */
-
 		:global(.ellipsis.ellipsis-nft-balance .td__text) {
 			flex: initial;
 		}
 	}
 </style>
 
-{#if $debug}
-	<div class="debug-info">
-		<h3>Debug Info</h3>
-		<div>Selected Network: {$selectedNetwork?.name || 'None'}</div>
-		<div>Selected Address: {$selectedAddress?.address || 'None'}</div>
-		<div>Native Balance: {$balance ? JSON.stringify($balance.crypto) : 'None'}</div>
-		<div>Native Fiat: {$balance?.fiat ? JSON.stringify($balance.fiat) : 'None'}</div>
-		<div>NFTs: {$nftsForDisplay.length}</div>
-	</div>
-{/if}
-
-<div class="wallet-balance">
-	{#if $selectedNetwork && $selectedAddress}
-		<BalanceTable
-			title={'Currency'}
-			items={[
-				{
-					iconURL: $selectedNetwork?.currency?.iconURL,
-					name: null,
-					symbol: $selectedNetwork?.currency?.symbol,
-					address: null,
-					balanceData: balance,
-					isLoadingName: false,
-					isLoadingBalance: isLoadingBalance,
-					refreshFn: refreshBalance,
-				},
-			]}
-		/>
-
-		{#if $tokensForDisplay.length > 0}
-			<BalanceTable title={'Token'} items={$tokensForDisplay} />
-		{/if}
-
-		{#if $nftsForDisplay && $nftsForDisplay.length > 0}
-			<BalanceNfts />
-		{/if}
-	{/if}
-</div>
+<Table>
+	<Thead>
+		<TheadTr backgroundColor="--secondary-background" color="--secondary-foreground">
+			<Th>NFT Contract</Th>
+			{#if !$isMobile}
+				<Th>Collection</Th>
+			{/if}
+			<Th></Th>
+		</TheadTr>
+	</Thead>
+	<Tbody>
+		{#each $nftsForDisplay as nft}
+			{#if $debug}
+				<Tr>
+					<Td colspan={3} style="background: lightblue; padding: 5px;">
+						<strong>Debug NFT:</strong>
+						{nft.contract_address} | contractInfo: {JSON.stringify(nft.collectionInfo)}
+					</Td>
+				</Tr>
+			{/if}
+			<Tr>
+				<Td padding="0" expand class="ellipsis ellipsis-nft-balance dynamic-ellipsis" use={dynamicEllipsis} useParams={{ minHeight: 30 }}>
+					<Clickable onClick={() => selectNFT('')}>
+						<div class="item">
+							<div class="currency">
+								{@render currencyIcon('modules/' + module.identifier + '/img/nft.svg', 'NFT Contract')}
+								{@render currencyNameAndSymbol(nft.collectionInfo?.loading ? 'Loading...' : nft.collectionInfo?.name || 'Unknown NFT', nft.collectionInfo?.collection || 'Unknown Collection', nft.contract_address)}
+							</div>
+							{#if $isMobile}
+								{@render nftBalanceInfo(nft)}
+							{/if}
+						</div>
+					</Clickable>
+				</Td>
+				{#if !$isMobile}
+					<Td class="ellipsis ellipsis-nft-balance dynamic-ellipsis" use={dynamicEllipsis} useParams={{ minHeight: 30 }}>
+						{@render nftBalanceInfo(nft)}
+					</Td>
+				{/if}
+				<Td>
+					<Icon img="img/reset.svg" alt="Refresh" colorVariable="--primary-foreground" size="16px" padding="5px" onClick={() => rrrrrrr()} />
+					{#if nft?.external_url}
+						<Clickable onClick={() => selectNFT(nft.external_url!)}>
+							<Icon img="img/external-link.svg" alt="View" size="16px" />
+						</Clickable>
+					{/if}
+				</Td>
+			</Tr>
+		{/each}
+	</Tbody>
+</Table>
