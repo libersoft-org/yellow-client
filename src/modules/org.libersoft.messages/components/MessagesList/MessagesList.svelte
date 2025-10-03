@@ -28,42 +28,6 @@
 	import WindowStickersetDetails from '@/org.libersoft.messages/windows/WindowStickersetDetails.svelte';
 	import WindowForwardMessage from '@/org.libersoft.messages/windows/ForwardMessage.svelte';
 
-	// Android detection and mobile keyboard handling
-	let isAndroid = false;
-	let shouldShowSpacer = true;
-
-	onMount(() => {
-		// Detect Android specifically
-		isAndroid = /Android/i.test(navigator.userAgent);
-		console.log('isAndroid:', isAndroid);
-	});
-
-	// Reactive bottom position for ScrollButton
-	$: scrollButtonBottom = isAndroid ? '62px' : '5px';
-
-	// Get expressions menu state from context
-	let expressionsMenuOpen = false;
-
-	// Get the context and set up reactive updates
-	let expressionsMenuContext;
-	try {
-		expressionsMenuContext = getContext('expressionsMenuOpen');
-		if (expressionsMenuContext) {
-			// Override the setOpen function to also update our local state
-			const originalSetOpen = expressionsMenuContext.setOpen;
-			expressionsMenuContext.setOpen = (open: boolean) => {
-				expressionsMenuOpen = open;
-				originalSetOpen(open);
-			};
-		}
-	} catch (e) {
-		// Context not available, ignore
-	}
-
-	// Reactive spacer visibility for Android keyboard adjustment
-	$: showAndroidSpacer = isAndroid && ($keyboardHeight > 0 || $keyboardHeight === 0) && shouldShowSpacer;
-	$: androidSpacerHeight = expressionsMenuOpen ? '10px' : '72px';
-
 	interface IMessageItem {
 		uid: string;
 		type: 'message' | 'loader' | 'hole' | 'unseen_marker' | 'no_messages' | 'initial_loading_placeholder';
@@ -111,13 +75,52 @@
 
 	export let conversation: any;
 	export let setBarFocus: () => Promise<void>;
+
+	// Android detection and mobile keyboard handling
+	let isAndroid = false;
+	let shouldShowSpacer = true;
+
+	onMount(() => {
+		// Detect Android specifically
+		isAndroid = /Android/i.test(navigator.userAgent);
+		console.log('isAndroid:', isAndroid);
+	});
+
+	// Reactive bottom position for ScrollButton
+	$: scrollButtonBottom = isAndroid ? '62px' : '5px';
+
+	/// todo solve this with a store or something?
+
+	// Get expressions menu state from context
+	let expressionsMenuOpen = false;
+
+	// Get the context and set up reactive updates
+	let expressionsMenuContext;
+	try {
+		expressionsMenuContext = getContext('expressionsMenuOpen');
+		if (expressionsMenuContext) {
+			// Override the setOpen function to also update our local state
+			const originalSetOpen = expressionsMenuContext.setOpen;
+			expressionsMenuContext.setOpen = (open: boolean) => {
+				expressionsMenuOpen = open;
+				originalSetOpen(open);
+			};
+		}
+	} catch (e) {
+		// Context not available, ignore
+	}
+
+	/// End of expressions menu context handling
+
+	// Reactive spacer visibility for Android keyboard adjustment
+	$: showAndroidSpacer = isAndroid && ($keyboardHeight > 0 || $keyboardHeight === 0) && shouldShowSpacer;
+	$: androidSpacerHeight = expressionsMenuOpen ? '10px' : '72px';
+
 	let scrollButtonVisible: boolean = true;
 	let elMessages: HTMLDivElement;
 	let elMessagesContainer: HTMLDivElement;
 	let elUnseenMarker: HTMLDivElement;
 	let elWindowStickersetDetails: any;
-	let anchorElement: HTMLDivElement;
-	//let oldLastID: number | null = null;
 	let itemsCount: number = 0;
 	let itemsArray: (IMessageItem | ILoaderItem | IHoleItem)[] = [];
 	let loaders: ILoaderItem[] = [];
@@ -782,7 +785,7 @@
 						<Message bind:this={m.el} {enableScroll} {disableScroll} message={m} elContainer={elMessages} />
 					{/if}
 				{/each}
-				<div bind:this={anchorElement}></div>
+				<div></div>
 				<!-- Android spacer for keyboard adjustment -->
 				{#if showAndroidSpacer}
 					<div class="android-spacer show" style="min-height: {androidSpacerHeight}; max-height: {androidSpacerHeight};"></div>

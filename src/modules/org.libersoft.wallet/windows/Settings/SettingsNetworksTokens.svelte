@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { getContext, tick } from 'svelte';
-	import { type INetwork, type IToken, findNetworkByGuid, reorderTokens } from 'libersoft-crypto/network';
-	import { getTokenInfo } from 'libersoft-crypto/balance';
+	import { type INetwork, findNetworkByGuid, reorderTokens } from 'libersoft-crypto/network';
+	import type { ITokenConf } from 'libersoft-crypto/tokens';
+	import { getTokenInfo } from 'libersoft-crypto/tokens';
 	import { tableDrag } from '@/core/actions/tableDrag.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
@@ -23,7 +24,7 @@
 	}
 	let { item }: Props = $props();
 	let network: INetwork | undefined = $derived(findNetworkByGuid(item));
-	let tokenToDelete: IToken | undefined = $state();
+	let tokenToDelete: ITokenConf | undefined = $state();
 	let tokenToDeleteInfo: { name: string; symbol: string } | null | undefined = $state();
 	let elDialogDel: DialogTokenDel | undefined = $state();
 	let tokenInfos = $state(new Map<string, { name: string; symbol: string } | null>());
@@ -54,8 +55,8 @@
 	$effect(() => {
 		if (network?.tokens) {
 			network.tokens.forEach(token => {
-				if (token.item?.contract_address) {
-					loadTokenInfo(token.item.contract_address);
+				if (token.contract_address) {
+					loadTokenInfo(token.contract_address);
 				}
 			});
 		}
@@ -65,15 +66,15 @@
 		setSettingsSection('networks-tokens-add-' + item);
 	}
 
-	function clickTokenEdit(token: IToken): void {
+	function clickTokenEdit(token: ITokenConf): void {
 		/// FIXME: escape dashes in item guid
 		setSettingsSection('networks-tokens-edit-' + item + '-' + token.guid);
 	}
 
-	async function delTokenDialog(token: IToken): Promise<void> {
+	async function delTokenDialog(token: ITokenConf): Promise<void> {
 		tokenToDelete = token;
 		// Get token info from our loaded map
-		const contractAddress = token.item?.contract_address;
+		const contractAddress = token.contract_address;
 		tokenToDeleteInfo = contractAddress ? tokenInfos.get(contractAddress) : undefined;
 		await tick();
 		elDialogDel?.open();
@@ -156,7 +157,7 @@
 				</Thead>
 				<Tbody>
 					{#each network.tokens as token, i (token.guid)}
-						{@const contractAddress = token.item?.contract_address}
+						{@const contractAddress = token.contract_address}
 						{@const tokenInfo = contractAddress ? tokenInfos.get(contractAddress) : null}
 						{@const isLoading = contractAddress ? loadingTokenInfos.has(contractAddress) : false}
 						<TbodyTr>
@@ -165,7 +166,7 @@
 							</Td>
 							<Td class="ellipsis">
 								<div class="info">
-									<Icon img={token.item?.iconURL || 'modules/' + module.identifier + '/img/token.svg'} alt={contractAddress} size="30px" padding="0px" />
+									<Icon img={token.iconURL || 'modules/' + module.identifier + '/img/token.svg'} alt={contractAddress} size="30px" padding="0px" />
 									<div class="details">
 										{#if isLoading}
 											<Spinner size="16px" />

@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { getContext, tick } from 'svelte';
-	import { type INetwork, type INFT, findNetworkByGuid, reorderNFTs } from 'libersoft-crypto/network';
+	import { type INetwork, findNetworkByGuid, reorderNFTs } from 'libersoft-crypto/network';
+	import type { INftConf } from 'libersoft-crypto/nfts';
 	import { tableDrag } from '@/core/actions/tableDrag.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
@@ -24,7 +25,7 @@
 
 	let { item }: Props = $props();
 	let network: INetwork | undefined = $derived(findNetworkByGuid(item));
-	let nftToDelete: INFT | undefined = $state();
+	let nftToDelete: INftConf | undefined = $state();
 	let elDialogDel: DialogNFTDel | undefined = $state();
 	let contractInfos = $state(new Map<string, { name: string; symbol: string } | null>());
 	let loadingContractInfos = $state(new Set<string>());
@@ -56,8 +57,8 @@
 	$effect(() => {
 		if (network?.nfts) {
 			network.nfts.forEach(nft => {
-				if (nft.item?.contract_address) {
-					loadContractInfo(nft.item.contract_address);
+				if (nft.contract_address) {
+					loadContractInfo(nft.contract_address);
 				}
 			});
 		}
@@ -67,11 +68,11 @@
 		setSettingsSection('networks-nfts-add-' + item);
 	}
 
-	function clickNFTEdit(nft: INFT): void {
+	function clickNFTEdit(nft: INftConf): void {
 		setSettingsSection('networks-nfts-edit-' + item + '-' + nft.guid);
 	}
 
-	async function delNFTDialog(nft: INFT): Promise<void> {
+	async function delNFTDialog(nft: INftConf): Promise<void> {
 		nftToDelete = nft;
 		await tick();
 		elDialogDel?.open();
@@ -155,7 +156,7 @@
 				</Thead>
 				<Tbody>
 					{#each network.nfts as nft, i (nft.guid)}
-						{@const contractAddress = nft.item?.contract_address}
+						{@const contractAddress = nft.contract_address}
 						{@const contractInfo = contractAddress ? contractInfos.get(contractAddress) : null}
 						{@const isLoading = contractAddress ? loadingContractInfos.has(contractAddress) : false}
 						{@const displayName = contractInfo?.name || 'NFT Contract'}

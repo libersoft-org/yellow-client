@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
-	import { type INetwork, type IToken, findNetworkByGuid, addToken } from 'libersoft-crypto/network';
+	import { type INetwork, type ITokenConf, findNetworkByGuid, addToken } from 'libersoft-crypto/network';
 	import { getGuid } from '@/core/scripts/utils/utils.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
@@ -84,7 +84,7 @@
 
 	function isTokenAlreadyAdded(contractAddress: string): boolean {
 		if (!network?.tokens) return false;
-		return network.tokens.some(token => token.item?.contract_address?.toLowerCase() === contractAddress.toLowerCase());
+		return network.tokens.some(token => token.contract_address?.toLowerCase() === contractAddress.toLowerCase());
 	}
 
 	function addPopularToken(popularToken: CoinGeckoToken): void {
@@ -97,12 +97,10 @@
 			return;
 		}
 
-		const token: IToken = {
+		const token: ITokenConf = {
 			guid: getGuid(),
-			item: {
-				contract_address: contractAddress,
-				iconURL: popularToken.logoURI,
-			},
+			contract_address: contractAddress,
+			iconURL: popularToken.logoURI,
 		};
 
 		addToken(network.guid, token);
