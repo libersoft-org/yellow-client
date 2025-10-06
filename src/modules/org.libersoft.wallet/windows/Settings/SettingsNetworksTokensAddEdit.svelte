@@ -3,6 +3,7 @@
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { addToken, editToken, type ITokenConf } from 'libersoft-crypto/network';
 	import { validateForm } from '@/core/scripts/utils/form.ts';
+	import { isValidContractAddress } from 'libersoft-crypto/address-validation';
 	import Label from '@/core/components/Label/Label.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -44,8 +45,14 @@
 	function validateFields(): boolean {
 		tokenIcon = tokenIcon?.trim();
 		tokenContractAddress = tokenContractAddress?.trim();
+
 		const validationConfig = [{ field: tokenContractAddress, element: elTokenContractAddress, required: 'Contract address is required' }];
 		error = validateForm(validationConfig);
+
+		if (!error && tokenContractAddress && !isValidContractAddress(tokenContractAddress)) {
+			error = 'Invalid contract address format';
+		}
+
 		return !error;
 	}
 
