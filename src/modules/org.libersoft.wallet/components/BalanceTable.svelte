@@ -15,6 +15,8 @@
 	import BalanceTableSpinner from '@/org.libersoft.wallet/components/BalanceTableSpinner.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import { getBalanceParts } from 'libersoft-crypto/balance';
+	import CurrencyIcon from '@/org.libersoft.wallet/components/CurrencyIcon.svelte';
+	import CurrencyNameAndSymbol from '@/org.libersoft.wallet/components/CurrencyNameAndSymbol.svelte';
 
 	let { title, items } = $props();
 
@@ -39,21 +41,6 @@
 </script>
 
 <style>
-	.wallet-balance {
-		display: flex;
-		flex-direction: column;
-		gap: 10px;
-	}
-
-	.name {
-		font-size: 20px;
-		font-weight: bold;
-	}
-
-	.address {
-		font-size: 12px;
-	}
-
 	.balance {
 		display: flex;
 		flex-wrap: wrap;
@@ -187,8 +174,8 @@
 						{#if isLoadingName}
 							<BalanceTableSpinner />
 						{:else}
-							{@render currencyIcon(iconURL, name)}
-							{@render currencyNameAndSymbol(name, symbol, address)}
+							<CurrencyIcon {iconURL} symbol={name} />
+							<CurrencyNameAndSymbol {name} {symbol} {address} />
 						{/if}
 					</div>
 					{#if $isMobile}
@@ -221,31 +208,6 @@
 			{/if}
 		</Td>
 	</Tr>
-{/snippet}
-
-{#snippet currencyIcon(iconURL, symbol, size = '40px')}
-	<span class="td__icon">
-		<Icon img={iconURL || 'modules/' + module.identifier + '/img/token.svg'} alt={symbol || '?'} {size} padding="0px" />
-	</span>
-{/snippet}
-
-{#snippet currencyNameAndSymbol(name: string | null | undefined, symbol: string | null | undefined, address: string | null | undefined = null, isLoading: boolean = false)}
-	<div class="name td__text">
-		{#if isLoading}
-			<BalanceTableSpinner />
-		{:else if name && symbol}
-			{name} ({symbol})
-		{:else if name && !symbol}
-			{name}
-		{:else if !name && symbol}
-			{symbol}
-		{:else}
-			Unknown
-		{/if}
-	</div>
-	{#if ($debug || (!name && !symbol)) && !!address}
-		<div class="address">{address}</div>
-	{/if}
 {/snippet}
 
 {#snippet balanceInfo(balanceData)}
