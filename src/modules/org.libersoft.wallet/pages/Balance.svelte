@@ -1,26 +1,12 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
-	import { module } from '@/org.libersoft.wallet/scripts/module';
-	import { debug, isMobile } from '@/core/scripts/stores.ts';
+	import { debug } from '@/core/scripts/stores.ts';
 	import { selectedNetwork } from 'libersoft-crypto/network';
-	import { balance, isLoadingBalance, formatBalance, refreshBalance, type IBalance } from 'libersoft-crypto/balance';
+	import { balance, isLoadingBalance, refreshBalance } from 'libersoft-crypto/balance';
 	import { tokensForDisplay } from 'libersoft-crypto/tokens';
 	import { nftsForDisplay } from 'libersoft-crypto/nfts';
 	import { initializeRefreshSystem, refresh } from 'libersoft-crypto/refresh';
-	import { isRefreshingExchangeRates } from 'libersoft-crypto/fiat';
 	import { selectedAddress } from 'libersoft-crypto/wallet';
-	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import Table from '@/core/components/Table/Table.svelte';
-	import Thead from '@/core/components/Table/TableThead.svelte';
-	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
-	import Th from '@/core/components/Table/TableTheadTh.svelte';
-	import Tbody from '@/core/components/Table/TableTbody.svelte';
-	import Tr from '@/core/components/Table/TableTbodyTr.svelte';
-	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-	import Icon from '@/core/components/Icon/Icon.svelte';
-	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-
-	import { dynamicEllipsis } from '@/core/actions/dynamicEllipsis';
 	import BalanceTable from '@/org.libersoft.wallet/components/BalanceTable.svelte';
 	import BalanceNfts from '@/org.libersoft.wallet/components/BalanceNfts.svelte';
 

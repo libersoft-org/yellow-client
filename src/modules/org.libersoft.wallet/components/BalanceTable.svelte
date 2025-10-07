@@ -17,6 +17,7 @@
 	import { getBalanceParts } from 'libersoft-crypto/balance';
 	import CurrencyIcon from '@/org.libersoft.wallet/components/CurrencyIcon.svelte';
 	import CurrencyNameAndSymbol from '@/org.libersoft.wallet/components/CurrencyNameAndSymbol.svelte';
+	import type { IBalanceWithFiat } from 'libersoft-crypto';
 
 	let { title, items } = $props();
 
@@ -25,14 +26,7 @@
 		name: string | null | undefined;
 		symbol: string | null | undefined;
 		address: string | null | undefined;
-		balanceData:
-			| {
-					amount: string; // In token units (not in wei)
-					fiatAmount: string | null; // In fiat currency
-					fiatCurrency: string | null; // Fiat currency code, e.g. USD
-			  }
-			| null
-			| undefined;
+		balanceData: IBalanceWithFiat | null | undefined;
 		isLoadingName: boolean;
 		isLoadingBalance: boolean;
 		refreshFn: (() => void) | null | undefined;
