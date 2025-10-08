@@ -5,7 +5,7 @@
 	import { selectedNetwork } from 'libersoft-crypto/network';
 	import { balance, isLoadingBalance, formatBalance, type IBalance } from 'libersoft-crypto/balance';
 	import { tokensForDisplay } from 'libersoft-crypto/tokens';
-	import { nftsForDisplay } from 'libersoft-crypto/nfts';
+	import { nftsForDisplay, refreshNftBalance } from 'libersoft-crypto/nfts';
 	import { refresh } from 'libersoft-crypto/refresh';
 	import { isRefreshingExchangeRates } from 'libersoft-crypto/fiat';
 	import { selectedAddress } from 'libersoft-crypto/wallet';
@@ -27,12 +27,16 @@
 
 	// Event handlers
 	function openExternalNftUrl(url: string) {
-		console.log('SELECTED NFT:', url);
+		console.log('SELECTED NFT url:', url);
 		window.open(url, '_blank');
 	}
 
 	function refreshNfts() {
 		refresh();
+	}
+
+	function refreshSingleNft(guid: string) {
+		refreshNftBalance(guid);
 	}
 </script>
 
@@ -82,7 +86,9 @@
 				<Tr>
 					<Td colspan={3} style="background: lightblue; padding: 5px;">
 						<strong>Debug NFT:</strong>
-						{JSON.stringify(nft)}
+						<pre>
+						{JSON.stringify(nft, null, 2)}
+						</pre>
 					</Td>
 				</Tr>
 			{/if}
@@ -92,7 +98,7 @@
 						<div class="item">
 							<div class="currency">
 								<CurrencyIcon iconURL={'modules/' + module.identifier + '/img/nft.svg'} symbol={'NFT Contract'} />
-								<CurrencyNameAndSymbol name={nft.collectionInfo?.name || 'Unknown NFT'} symbol={'Unknown Collection'} address={nft.nft.contract_address} />
+								<CurrencyNameAndSymbol name={nft.displayName} address={nft.conf.contract_address} />
 							</div>
 							{#if $isMobile}
 								{@render nftBalanceInfo(nft)}
@@ -106,7 +112,7 @@
 					</Td>
 				{/if}
 				<Td>
-					<Icon img="img/reset.svg" alt="Refresh" colorVariable="--primary-foreground" size="16px" padding="5px" onClick={refreshNfts} />
+					<Icon img="img/reset.svg" alt="Refresh" colorVariable="--primary-foreground" size="16px" padding="5px" onClick={() => refreshSingleNft(nft.conf.guid)} />
 				</Td>
 			</Tr>
 		{/each}
@@ -116,11 +122,10 @@
 {#snippet nftBalanceInfo(contractInfo)}
 	<div class="balance">
 		<div class="info">
-			{#if contractInfo?.loading}
+			{#if contractInfo?.isLoadingBalance}
 				<div class="amount"><BalanceTableSpinner /></div>
 			{:else}
-				<div class="amount">Owned: {contractInfo?.balance || 0}</div>
-				<div class="fiat">{contractInfo?.collection || 'Unknown Collection'}</div>
+				<div class="amount">Owned: {contractInfo?.balance?.amount || 0}</div>
 			{/if}
 		</div>
 	</div>
