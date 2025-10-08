@@ -3,7 +3,7 @@
 	import { debug } from '@/core/scripts/stores.ts';
 	import { selectedNetwork } from 'libersoft-crypto/network';
 	import { balance, isLoadingBalance, refreshBalance } from 'libersoft-crypto/balance';
-	import { tokensForDisplay } from 'libersoft-crypto/tokens';
+	import { tokensForDisplay, refreshTokenBalance } from 'libersoft-crypto/tokens';
 	import { nftsForDisplay } from 'libersoft-crypto/nfts';
 	import { initializeRefreshSystem, refresh } from 'libersoft-crypto/refresh';
 	import { selectedAddress } from 'libersoft-crypto/wallet';
@@ -87,7 +87,20 @@
 		/>
 
 		{#if $tokensForDisplay.length > 0}
-			<BalanceTable title={'Token'} items={$tokensForDisplay} />
+			<BalanceTable
+				title={'Token'}
+				items={$tokensForDisplay.map(token => ({
+					iconURL: token.conf.iconURL,
+					name: token.info?.name,
+					symbol: token.info?.symbol || 'UNKNOWN',
+					address: token.conf.contract_address,
+					balanceData: token.balance,
+					isLoadingName: token.isLoadingInfo,
+					isLoadingBalance: token.isLoadingBalance,
+					refreshFn: () => refreshTokenBalance(token.conf.contract_address || ''),
+					selectCurrency: () => selectToken(token.conf.contract_address || ''),
+				}))}
+			/>
 		{/if}
 
 		{#if $nftsForDisplay && $nftsForDisplay.length > 0}

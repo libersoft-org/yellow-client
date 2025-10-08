@@ -10,7 +10,7 @@
 <Label text="Currency conversion">
 	<Select bind:value={$fiat}>
 		{#each currencies as currency}
-			<Option value={currency}>{currency}</Option>
+			<Option value={currency} text={currency} />
 		{/each}
 	</Select>
 </Label>

@@ -7,7 +7,7 @@
 	import { selectedAddress } from 'libersoft-crypto/wallet';
 	import { selectedNetwork, type ICurrency } from 'libersoft-crypto/network';
 	import { currencies } from 'libersoft-crypto/currencies';
-	import { tokens } from 'libersoft-crypto/tokens';
+	import { tokenConfs } from 'libersoft-crypto/tokens';
 	import { provider } from 'libersoft-crypto/provider';
 	import { getBatchTokensInfo } from 'libersoft-crypto/tokens';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';
@@ -149,7 +149,7 @@
 	}
 
 	async function loadTokenInfos() {
-		const tokensWithContracts = $tokens.filter(token => token.contract_address);
+		const tokensWithContracts = $tokenConfs.filter(token => token.contract_address);
 		if (!tokensWithContracts.length) return;
 		isLoadingTokenInfos = true;
 		try {

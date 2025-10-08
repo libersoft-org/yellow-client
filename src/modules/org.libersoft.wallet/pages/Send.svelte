@@ -5,7 +5,7 @@
 	import { sendAddress } from 'libersoft-crypto/wallet';
 	import { selectedNetwork, selectedNetworkID, networks, type ICurrency } from 'libersoft-crypto/network';
 	import { currencies } from 'libersoft-crypto/currencies';
-	import { tokens } from 'libersoft-crypto/tokens';
+	import { tokenConfs } from 'libersoft-crypto/tokens';
 	import { selectedAddress } from 'libersoft-crypto/wallet';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { validateForm, type FormValidatorConfig } from '@/core/scripts/utils/form.ts';
@@ -328,7 +328,7 @@
 	}
 
 	async function loadTokenInfos() {
-		const tokensWithContracts = $tokens.filter(token => token.contract_address);
+		const tokensWithContracts = $tokenConfs.filter(token => token.contract_address);
 		if (!tokensWithContracts.length) return;
 		isLoadingTokenInfos = true;
 		try {
