@@ -73,9 +73,9 @@
 <Table>
 	<Thead>
 		<TheadTr backgroundColor="--secondary-background" color="--secondary-foreground">
-			<Th>NFT Contract</Th>
+			<Th>NFT</Th>
 			{#if !$isMobile}
-				<Th>Collection</Th>
+				<Th>Balance</Th>
 			{/if}
 			<Th></Th>
 		</TheadTr>
@@ -124,8 +124,11 @@
 		<div class="info">
 			{#if contractInfo?.isLoadingBalance}
 				<div class="amount"><BalanceTableSpinner /></div>
+			{:else if contractInfo?.balance}
+				<div class="amount">{contractInfo.balance.amount}</div>
 			{:else}
-				<div class="amount">Owned: {contractInfo?.balance?.amount || 0}</div>
+				<div class="amount">Cannot retrieve balance</div>
+				<div class="fiat">(click refresh icon to retry)</div>
 			{/if}
 		</div>
 	</div>
