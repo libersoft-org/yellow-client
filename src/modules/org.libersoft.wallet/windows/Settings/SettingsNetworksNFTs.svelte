@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { getContext, tick } from 'svelte';
-	import { type INetwork, findNetworkByGuid, reorderNFTs } from 'libersoft-crypto/network';
+	import { fromStore, get } from 'svelte/store';
+	import { type INetwork, findNetworkByGuid, reorderNFTs, networks } from 'libersoft-crypto/network';
 	import type { INftConf } from 'libersoft-crypto/nfts';
 	import { tableDrag } from '@/core/actions/tableDrag.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
@@ -24,45 +25,14 @@
 	}
 
 	let { item }: Props = $props();
-	let network: INetwork | undefined = $derived(findNetworkByGuid(item));
+	let network: INetwork | undefined = $state();
+	$effect(() => {
+		network = findNetworkByGuid(item);
+	});
+
 	let nftToDelete: INftConf | undefined = $state();
 	let elDialogDel: DialogNFTDel | undefined = $state();
-	let contractInfos = $state(new Map<string, { name: string; symbol: string } | null>());
-	let loadingContractInfos = $state(new Set<string>());
 	const setSettingsSection = getContext<Function>('setSettingsSection');
-
-	async function loadContractInfo(contractAddress: string): Promise<void> {
-		if (contractInfos.has(contractAddress) || loadingContractInfos.has(contractAddress)) return;
-
-		loadingContractInfos.add(contractAddress);
-		loadingContractInfos = new Set(loadingContractInfos); // Trigger reactivity
-
-		try {
-			// Try to get NFT collection info from blockchain
-			// This could be expanded to get actual collection name and symbol from contract
-			const info = { name: 'NFT Contract', symbol: 'NFT' }; // For now, basic placeholder
-			contractInfos.set(contractAddress, info);
-			contractInfos = new Map(contractInfos); // Trigger reactivity
-		} catch (error) {
-			console.warn(`Failed to load contract info for ${contractAddress}:`, error);
-			contractInfos.set(contractAddress, null);
-			contractInfos = new Map(contractInfos); // Trigger reactivity
-		} finally {
-			loadingContractInfos.delete(contractAddress);
-			loadingContractInfos = new Set(loadingContractInfos); // Trigger reactivity
-		}
-	}
-
-	// Load contract info for all NFT contracts when network changes
-	$effect(() => {
-		if (network?.nfts) {
-			network.nfts.forEach(nft => {
-				if (nft.contract_address) {
-					loadContractInfo(nft.contract_address);
-				}
-			});
-		}
-	});
 
 	function clickNFTAdd(): void {
 		setSettingsSection('networks-nfts-add-' + item);
@@ -157,9 +127,8 @@
 				<Tbody>
 					{#each network.nfts as nft, i (nft.guid)}
 						{@const contractAddress = nft.contract_address}
-						{@const contractInfo = contractAddress ? contractInfos.get(contractAddress) : null}
-						{@const isLoading = contractAddress ? loadingContractInfos.has(contractAddress) : false}
-						{@const displayName = contractInfo?.name || 'NFT Contract'}
+						{@const displayName = 'NFT Contract'}
+						{@const isLoading = false}
 						<TbodyTr>
 							<Td>
 								<DragHandle />
@@ -174,7 +143,7 @@
 											<div class="name">{displayName}</div>
 										{/if}
 										<div class="address">{contractAddress || 'No contract address'}</div>
-										<div class="token-id" style="font-style: italic;">All NFTs from this contract will be automatically loaded</div>
+										<div class="token-id" style="font-style: italic;"># {nft.token_id}</div>
 									</div>
 								</div>
 							</Td>
