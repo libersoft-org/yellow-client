@@ -3,12 +3,15 @@
 	import { debug } from '@/core/scripts/stores.ts';
 	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment, estimatedTransactionTimes, avgBlockTimeStore, confirmationBlocksStore, sendTransaction } from 'libersoft-crypto/transaction';
 	import { sendAddress } from 'libersoft-crypto/wallet';
-	import { selectedNetwork, selectedNetworkID, currencies, tokens, networks, type ICurrency } from 'libersoft-crypto/network';
+	import { selectedNetwork, selectedNetworkID, networks, type ICurrency } from 'libersoft-crypto/network';
+	import { currencies } from 'libersoft-crypto/currencies';
+	import { tokenConfs } from 'libersoft-crypto/tokens';
 	import { selectedAddress } from 'libersoft-crypto/wallet';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { validateForm, type FormValidatorConfig } from '@/core/scripts/utils/form.ts';
 	import { provider } from 'libersoft-crypto/provider';
-	import { getBalance, getTokenBalanceByAddress, getBatchTokensInfo, formatBalance, type IBalance } from 'libersoft-crypto/balance';
+	import { getBalance, formatBalance, type IBalance } from 'libersoft-crypto/balance';
+	import { getTokenBalanceByAddress, getBatchTokensInfo } from 'libersoft-crypto/tokens';
 	import { formatUnits, parseUnits } from 'ethers';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
@@ -325,7 +328,7 @@
 	}
 
 	async function loadTokenInfos() {
-		const tokensWithContracts = $tokens.filter(token => token.contract_address);
+		const tokensWithContracts = $tokenConfs.filter(token => token.contract_address);
 		if (!tokensWithContracts.length) return;
 		isLoadingTokenInfos = true;
 		try {

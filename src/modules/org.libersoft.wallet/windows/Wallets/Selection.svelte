@@ -12,7 +12,7 @@
 	//console.log('Wallets.svelte - $wallets:', $wallets);
 
 	let walletsItems = $derived.by(() => {
-		console.log('Wallets.svelte - generating walletsItems for wallets:', $wallets);
+		//console.log('Wallets.svelte - generating walletsItems for wallets:', $wallets);
 		return $wallets.map((wallet: IWallet) => ({
 			title: wallet.name,
 			name: 'wallets-' + wallet.guid,

@@ -18,12 +18,12 @@
 
 	$: module_decls_ordered = order($module_decls);
 
-	$: console.log('module-bar module_decls_ordered:', module_decls_ordered);
+	//$: console.log('module-bar module_decls_ordered:', module_decls_ordered);
 
 	$: module_data = $active_account?.module_data || {};
 
-	$: console.log('module-bar active_account:', $active_account);
-	$: console.log('module-bar active_account.module_data:', $active_account?.module_data);
+	//$: console.log('module-bar active_account:', $active_account);
+	//$: console.log('module-bar active_account.module_data:', $active_account?.module_data);
 
 	//$: console.log('module-bar module_data:', module_data);
 	$: module_data_ordered = order(module_data);
@@ -31,10 +31,10 @@
 	$: selectLastModule(module_data);
 
 	function selectLastModule(module_data) {
-		console.debug('selectLastModule: lastModuleSelected: ', module_data);
-		console.debug('acc.settings?.last_module_id: ', $active_account?.settings?.last_module_id);
+		//console.debug('selectLastModule: lastModuleSelected: ', module_data);
+		//console.debug('acc.settings?.last_module_id: ', $active_account?.settings?.last_module_id);
 		if (!lastModuleSelected /* && module_data_ordered && module_data_ordered.length > 0 */) {
-			console.log('selectLastModule: lastModuleSelected: ', lastModuleSelected);
+			//console.log('selectLastModule: lastModuleSelected: ', lastModuleSelected);
 			let acc = get(active_account);
 			//console.log('selectLastModule: acc: ', acc);
 			let id = acc?.settings?.last_module_id;
@@ -48,7 +48,7 @@
 	}
 
 	function clickSetModule(id) {
-		console.log('clickSetModule: ' + id);
+		//console.log('clickSetModule: ' + id);
 		if ($selected_module_id === id) onCloseModule();
 		else onSelectModule(id);
 		lastModuleSelected = true;

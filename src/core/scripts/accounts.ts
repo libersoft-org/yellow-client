@@ -49,7 +49,7 @@ export function selectAccount(id: string) {
 export function active_account_module_data(module_id: string) {
 	return derived(active_account, ($active_account: IAccount | null) => {
 		if (!$active_account) {
-			console.log('no active account => no module data.');
+			//console.log('no active account => no module data.');
 			return null;
 		}
 		//console.log('$active_account:', $active_account, 'MODULE ID:', module_id);
@@ -248,7 +248,7 @@ function reconnectAccount(account: AccountStore) {
 	}
 
 	let acc = get(account);
-	log.debug('RECONNECT ACCOUNT', acc);
+	//log.debug('RECONNECT ACCOUNT', acc);
 	if (!acc.enabled) return;
 	if (acc.suspended) {
 		log.debug('account suspended. not reconnecting.');
@@ -263,7 +263,7 @@ function reconnectAccount(account: AccountStore) {
 
 	disconnectAccount(acc);
 	let socket_id;
-	log.debug('acc.socket.readyState:', acc.socket?.readyState);
+	//log.debug('acc.socket.readyState:', acc.socket?.readyState);
 	if (!acc.socket || acc.socket.readyState === WebSocket.CLOSED || acc.socket.readyState === WebSocket.CONNECTING || acc.socket.readyState === WebSocket.CLOSING || acc.socket.url !== acc.credentials.server) {
 		if (acc.socket) {
 			if (acc.socket.readyState !== WebSocket.CLOSED) {
@@ -276,7 +276,7 @@ function reconnectAccount(account: AccountStore) {
 			}
 		}
 		socket_id = ++acc.socket_id;
-		log.debug('Creating new WebSocket:', acc.credentials.server);
+		//log.debug('Creating new WebSocket:', acc.credentials.server);
 		acc.status = 'Connecting...';
 		acc.lastCommsTs = Date.now();
 		acc.lastTransmissionTs = Date.now();
@@ -385,10 +385,10 @@ function clearPingTimer(acc: IAccount) {
 }
 
 function sendLoginCommand(account: AccountStore) {
-	log.debug('Sending login command');
+	//log.debug('Sending login command');
 	let acc = get(account);
 	send(acc, account, 'core', 'user_login', { address: acc.credentials.address, password: acc.credentials.password }, false, (req, res) => {
-		log.debug('Login response:', res);
+		//log.debug('Login response:', res);
 		if (res.error !== false) {
 			acc.error = res.message;
 			acc.status = 'Login failed.';

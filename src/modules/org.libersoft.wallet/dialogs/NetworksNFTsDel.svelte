@@ -1,9 +1,11 @@
 <script lang="ts">
-	import { deleteNFT, type INFT } from 'libersoft-crypto/network';
+	import { deleteNFT } from 'libersoft-crypto/network';
+	import type { INftConf } from 'libersoft-crypto/nfts';
+	import { nftTokenMetadatas } from 'libersoft-crypto/nfts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		networkGuid: string;
-		nft: INFT;
+		nft: INftConf;
 	}
 	let { networkGuid, nft }: Props = $props();
 	let elDialog;
@@ -33,20 +35,21 @@
 
 {#snippet question()}
 	<div>Would you like to delete this NFT contract?<br /><br /></div>
-	{#if nft.item?.name}
+	{@const nftInfo = $nftTokenMetadatas.get(nft.guid)}
+	{#if nftInfo?.name}
 		<div>
 			<span class="bold">Name:</span>
-			<span>{nft.item.name}</span>
+			<span>{nftInfo.name}</span>
 		</div>
 	{/if}
 	<div>
 		<span class="bold">Contract Address:</span>
-		<span><span>{nft.item?.contract_address || 'Unknown'}</span></span>
+		<span>{nft.contract_address || 'Unknown'}</span>
 	</div>
-	{#if nft.item?.token_id}
+	{#if nft.token_id}
 		<div>
 			<span class="bold">Token ID:</span>
-			<span>{nft.item.token_id}</span>
+			<span>{nft.token_id}</span>
 		</div>
 	{/if}
 {/snippet}

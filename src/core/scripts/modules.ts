@@ -28,7 +28,7 @@ export function initModules() {
 }
 
 function initModuleComms(acc: IAccount, module_id: string, decl: IModuleDeclaration) {
-	console.log('initModuleComms:', decl);
+	//console.log('initModuleComms:', decl);
 	if (!acc.module_data[module_id]) {
 		if (decl.callbacks.initData) acc.module_data[module_id] = decl.callbacks?.initData(acc);
 		else acc.module_data[module_id] = {};

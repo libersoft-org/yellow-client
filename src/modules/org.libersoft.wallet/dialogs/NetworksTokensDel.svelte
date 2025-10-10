@@ -1,9 +1,10 @@
 <script lang="ts">
-	import { deleteToken, type IToken } from 'libersoft-crypto/network';
+	import { deleteToken } from 'libersoft-crypto/network';
+	import type { ITokenConf } from 'libersoft-crypto/tokens';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		networkGuid: string;
-		token: IToken;
+		token: ITokenConf;
 		tokenInfo?: { name: string; symbol: string } | null;
 	}
 	let { networkGuid, token, tokenInfo }: Props = $props();
@@ -42,7 +43,7 @@
 	{/if}
 	<div>
 		<span class="bold">Contract Address:</span>
-		<span>{token.item?.contract_address || 'Unknown'}</span>
+		<span>{token.contract_address || 'Unknown'}</span>
 	</div>
 {/snippet}
 <Dialog data={dialogData} bind:this={elDialog} />

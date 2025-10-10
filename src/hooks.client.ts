@@ -25,5 +25,5 @@ export async function handleError(eee: any): Promise<{ message: string }> {
 }
 
 export function init() {
-	console.log('Client-side initialization complete');
+	//console.log('Client-side initialization complete');
 }
