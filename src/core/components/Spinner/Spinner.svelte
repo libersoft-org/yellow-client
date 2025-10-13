@@ -29,5 +29,5 @@
 </style>
 
 {#if show}
-	<div class="spinner" style:width={size} style:min-width={size} style:height={size} style:min-height={size} style:--spinner-color="var({colorVariable})" style:--spinner-thickness={thickness}></div>
+	<div class="spinner" style:width={size} style:min-width={size} style:height={size} style:min-height={size} style:--spinner-color="var({colorVariable})" style:--spinner-thickness={thickness}>¯\_(ツ)_/¯</div>
 {/if}
