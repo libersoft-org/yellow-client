@@ -151,6 +151,7 @@
 	}
 
 	function onDragEnd() {
+		console.log('[Window] onDragEnd called for window:', title);
 		isDragging = false;
 		hasBeenUserPositioned = true;
 		requestAnimationFrame(snapTransformIntoBounds);
@@ -166,8 +167,11 @@
 			elWindow?.focus();
 			showContent = true;
 			await tick();
-			centerWindow();
-			requestAnimationFrame(snapTransformIntoBounds);
+			// Use requestAnimationFrame to ensure DOM is fully updated before centering
+			requestAnimationFrame(() => {
+				centerWindow();
+				requestAnimationFrame(snapTransformIntoBounds);
+			});
 		} else {
 			showContent = false;
 		}
@@ -185,10 +189,15 @@
 		const centerX = (browserWidth - windowWidth) / 2;
 		const centerY = (browserHeight - windowHeight) / 2;
 
+		console.log('[Window] centerWindow for:', title, 'before - left:', elWindow.style.left, 'top:', elWindow.style.top, 'transform:', elWindow.style.transform);
+		console.log('[Window] centerWindow calculated - centerX:', centerX, 'centerY:', centerY, 'browserWidth:', browserWidth, 'browserHeight:', browserHeight, 'windowWidth:', windowWidth, 'windowHeight:', windowHeight);
+
 		// Apply absolute positioning instead of transform
 		elWindow.style.left = `${centerX}px`;
 		elWindow.style.top = `${centerY}px`;
 		elWindow.style.transform = 'none';
+
+		console.log('[Window] centerWindow for:', title, 'after - left:', elWindow.style.left, 'top:', elWindow.style.top, 'transform:', elWindow.style.transform);
 
 		// Update last browser dimensions
 		lastBrowserWidth = browserWidth;
@@ -202,8 +211,11 @@
 		const widthDiff = currentWidth - lastBrowserWidth;
 		const heightDiff = currentHeight - lastBrowserHeight;
 
+		console.log('[Window] handleWindowResize for:', title, 'hasBeenUserPositioned:', hasBeenUserPositioned, 'widthDiff:', widthDiff, 'heightDiff:', heightDiff);
+
 		// If window hasn't been user-positioned, just re-center it
 		if (!hasBeenUserPositioned) {
+			console.log('[Window] Re-centering window:', title);
 			centerWindow();
 			return;
 		}
