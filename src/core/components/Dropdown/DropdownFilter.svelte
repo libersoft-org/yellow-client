@@ -36,7 +36,7 @@
 	$effect(() => {
 		if (selected) {
 			// Find the corresponding option for the selected object
-			const correspondingOption = options.find(option => option.value === selected);
+			const correspondingOption = options.find(option => $state.snapshot(option).value === $state.snapshot(selected));
 			if (correspondingOption) inputValue = correspondingOption.label;
 		} else inputValue = '';
 	});

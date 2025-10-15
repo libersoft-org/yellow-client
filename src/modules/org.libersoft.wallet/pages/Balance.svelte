@@ -6,17 +6,28 @@
 	import { tokensForDisplay, refreshTokenBalance } from 'libersoft-crypto/tokens';
 	import { nftsForDisplay } from 'libersoft-crypto/nfts';
 	import { initializeRefreshSystem, refresh } from 'libersoft-crypto/refresh';
-	import { selectedAddress } from 'libersoft-crypto/wallet';
+	import { selectedAddress, setSendCurrency } from 'libersoft-crypto/wallet';
+	import { setSection } from '@/org.libersoft.wallet/scripts/ui';
 	import BalanceTable from '@/org.libersoft.wallet/components/BalanceTable.svelte';
 	import BalanceNfts from '@/org.libersoft.wallet/components/BalanceNfts.svelte';
 	import { stringifyWithBigInt } from '@/core/scripts/utils/utils.js';
+	import { section } from '@/org.libersoft.wallet/scripts/ui';
 
 	onMount(() => {
 		return initializeRefreshSystem();
 	});
 
-	function selectToken(contractAddress: string) {
-		console.log('SELECTED TOKEN:', contractAddress);
+	function selectToken(symbol: string) {
+		console.log('SELECTED TOKEN:', symbol);
+		setSendCurrency($state.snapshot(symbol)); // Use snapshot to get plain value from proxy
+		setSection('send');
+		console.log('Set send currency to:', symbol, 'and switched to section', $section);
+	}
+
+	function selectNativeCurrency(symbol: string) {
+		console.log('SELECTED NATIVE CURRENCY:', symbol);
+		setSendCurrency($state.snapshot(symbol)); // Use snapshot to get plain value from proxy
+		setSection('send');
 	}
 </script>
 
@@ -53,6 +64,7 @@
 					isLoadingName: false,
 					isLoadingBalance: $isLoadingBalance,
 					refreshFn: refreshBalance,
+					selectCurrency: () => selectNativeCurrency($selectedNetwork?.currency?.symbol || ''),
 				},
 			]}
 		/>
@@ -69,7 +81,7 @@
 					isLoadingName: token.isLoadingInfo,
 					isLoadingBalance: token.isLoadingBalance,
 					refreshFn: () => refreshTokenBalance(token.conf.contract_address || ''),
-					selectCurrency: () => selectToken(token.conf.contract_address || ''),
+					selectCurrency: () => selectToken(token.info?.symbol || 'UNKNOWN'),
 				}))}
 			/>
 		{/if}

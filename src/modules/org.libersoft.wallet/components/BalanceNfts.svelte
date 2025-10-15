@@ -28,11 +28,7 @@
 	// Event handlers
 	function openExternalNftUrl(url: string) {
 		console.log('SELECTED NFT url:', url);
-		window.open(url, '_blank');
-	}
-
-	function refreshNfts() {
-		refresh();
+		//window.open(url, '_blank');
 	}
 
 	function refreshSingleNft(guid: string) {
@@ -95,11 +91,10 @@
 			<Tr>
 				<Td padding="0" expand class="ellipsis ellipsis-nft-balance dynamic-ellipsis" use={dynamicEllipsis} useParams={{ minHeight: 30 }}>
 					<!--{JSON.stringify(nft.tokenMetadata)}-->
-					<img src={nft.tokenMetadata?.image || 'modules/' + module.identifier + '/img/nft.svg'} alt="NFT" style="width: 40px; height: 40px; object-fit: contain; margin-right: 10px; border-radius: 4px;" />
 					<Clickable onClick={() => openExternalNftUrl(nft.tokenMetadata?.external_url || '')}>
 						<div class="item">
 							<div class="currency">
-								<CurrencyIcon iconURL={'modules/' + module.identifier + '/img/nft.svg'} symbol={'NFT Contract'} />
+								<CurrencyIcon iconURL={nft.tokenMetadata?.image || 'modules/' + module.identifier + '/img/nft.svg'} symbol={'NFT Contract'} />
 								<CurrencyNameAndSymbol name={nft.displayName} address={nft.conf.contract_address} />
 							</div>
 							{#if $isMobile}

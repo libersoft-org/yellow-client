@@ -69,6 +69,7 @@ export function parseQRData(data: string, currencies: ICurrency[]): ParsedQRData
 			const value = params.get('value');
 
 			// Find native currency
+			// FIXME: This simply picks the first currency without a contract address, assumes networks match
 			const nativeCurrency = currencies.find(c => !c.contract_address);
 			if (!nativeCurrency) {
 				return { error: 'Native currency not found' };
