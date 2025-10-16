@@ -10,7 +10,7 @@ export interface ParsedQRData {
 	error?: string;
 }
 
-export function parseQRData(data: string, currencies: ICurrency[]): ParsedQRData {
+export function parseQRData(data: string): ParsedQRData {
 	// Handle plain addresses
 	if (!data.startsWith('ethereum:')) {
 		return { address: data };
@@ -68,19 +68,12 @@ export function parseQRData(data: string, currencies: ICurrency[]): ParsedQRData
 			const params = new URLSearchParams(remaining);
 			const value = params.get('value');
 
-			// Find native currency
-			// FIXME: This simply picks the first currency without a contract address, assumes networks match
-			const nativeCurrency = currencies.find(c => !c.contract_address);
-			if (!nativeCurrency) {
-				return { error: 'Native currency not found' };
-			}
-
 			let amount: string | undefined;
 			if (value) {
 				amount = formatUnits(value, 18);
 			}
 
-			return { address: target, amount, currency: nativeCurrency, chainID: parsedChainID };
+			return { address: target, amount, chainID: parsedChainID };
 		} else {
 			// Just an address
 			return { address: target, chainID: parsedChainID };

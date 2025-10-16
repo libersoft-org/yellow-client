@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { onMount, onDestroy, untrack } from 'svelte';
+	import { onMount } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
-	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment, estimatedTransactionTimes, avgBlockTimeStore, confirmationBlocksStore, sendTransaction } from 'libersoft-crypto/transaction';
+	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment, estimatedTransactionTimes, avgBlockTimeStore, confirmationBlocksStore, sendTransaction, logTransaction } from 'libersoft-crypto/transaction';
 	import { sendAddress, sendCurrency } from 'libersoft-crypto/wallet';
 	import { selectedNetwork, selectedNetworkID, networks, type ICurrency } from 'libersoft-crypto/network';
 	import { currencies } from 'libersoft-crypto/currencies';
@@ -32,8 +32,6 @@
 	import { parseQRData } from '@/org.libersoft.wallet/scripts/payment-qr.ts';
 	import { ensureWalletConnection, networksWindow, settingsWindow, setSection } from '@/org.libersoft.wallet/scripts/ui';
 	import { playAudio } from '@/core/scripts/notifications.ts';
-	import { addTransactionToLog } from 'libersoft-crypto/log';
-	import { get } from 'svelte/store';
 	let currency: ICurrency | null | undefined = $state();
 	let amount: string | number | undefined = $state();
 	let error: string | null | undefined = $state();
@@ -62,13 +60,6 @@
 	let qrChainID: number | null = $state(null);
 	let qrContractAddress: string | null = $state(null);
 	let selectedCurrencySymbol = $state(''); // Computed property to get the selected currency symbol
-
-	$effect(() => {
-		get(tokenInfos);
-		untrack(() => {
-			updateCurrencyOptions();
-		});
-	});
 
 	// Track subscriptions for cleanup
 	let networkUnsubscribe: (() => void) | null = null;
@@ -249,23 +240,20 @@
 			}
 		});
 
-		isInitialized = true; // Mark as initialized to enable reactive effects
-	});
+		const tokenInfosUnsubscribe = tokenInfos.subscribe(() => {
+			// When tokenInfos update, refresh currency options to get updated names/symbols
+			updateCurrencyOptions();
+		});
 
-	onDestroy(() => {
-		// Clean up subscriptions
-		if (networkUnsubscribe) {
-			networkUnsubscribe();
-			networkUnsubscribe = null;
-		}
-		if (addressUnsubscribe) {
-			addressUnsubscribe();
-			addressUnsubscribe = null;
-		}
-		if (feeLevelUnsubscribe) {
-			feeLevelUnsubscribe();
-			feeLevelUnsubscribe = null;
-		}
+		isInitialized = true; // Mark as initialized to enable reactive effects
+
+		return () => {
+			// Cleanup on destroy
+			if (networkUnsubscribe) networkUnsubscribe();
+			if (addressUnsubscribe) addressUnsubscribe();
+			if (feeLevelUnsubscribe) feeLevelUnsubscribe();
+			if (tokenInfosUnsubscribe) tokenInfosUnsubscribe();
+		};
 	});
 
 	function scanQRCode() {
@@ -276,7 +264,7 @@
 	}
 
 	function handleQRScanned(data: string) {
-		const parsed = parseQRData(data, $currencies);
+		const parsed = parseQRData(data);
 
 		if (parsed.error) {
 			qrError = parsed.error;
@@ -295,14 +283,14 @@
 		}
 
 		// Handle currency selection from QR data
-		if (parsed.currency) {
+		if (!qrContractAddress) {
 			// Native currency
-			const matchingOption = currencyOptions.find(opt => !opt.value.contract_address && $state.snapshot(opt.value.symbol) === $state.snapshot(parsed.currency?.symbol));
-			currency = matchingOption?.value || parsed.currency;
+			const matchingOption = $state.snapshot(currencyOptions).find(opt => !opt.value.contract_address);
+			currency = matchingOption?.value;
 			handleCurrencyChange();
 		} else if (qrCurrency) {
 			// Token QR: qrCurrency reactively found the token by contract address
-			const matchingOption = currencyOptions.find(opt => $state.snapshot(opt.value.contract_address) === $state.snapshot(qrCurrency.contract_address));
+			const matchingOption = $state.snapshot(currencyOptions).find(opt => opt.value.contract_address === $state.snapshot(qrCurrency.contract_address));
 			currency = matchingOption?.value || qrCurrency;
 			handleCurrencyChange();
 		} else if (parsed.contractAddress) {
@@ -481,17 +469,11 @@
 		console.log('ONYES - awaiting ensureWalletConnection...');
 		if (await ensureWalletConnection()) {
 			console.log('ensureWalletConnection passed, sending transaction...');
-			console.log('SENDING TRANSACTION');
 
 			try {
-				const hash = await sendTransaction(params.address, params.amount, params.fee, params.contractAddress);
+				const hash = await sendTransaction(params.address, params.amount, params.fee, params.contractAddress, selectedCurrencySymbol, currentBalanceData?.decimals);
+
 				console.log('Transaction sent, hash:', hash);
-
-				// Add transaction to log immediately after getting hash
-				const decimals = params.contractAddress ? currentBalanceData?.decimals || 18 : 18;
-				const symbol = params.contractAddress ? selectedCurrencySymbol : $selectedNetwork?.currency?.symbol || '';
-
-				addTransactionToLog(params.address, params.amount, symbol, decimals, params.contractAddr ?? undefined, hash ?? undefined);
 
 				playAudio('modules/' + module.identifier + '/audio/payment.mp3');
 
