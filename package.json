@@ -57,7 +57,7 @@
     "hex-to-css-filter": "^6.0.0",
     "jsqr": "^1.4.0",
     "leaflet": "^1.9.4",
-    "libersoft-crypto": "https://github.com/libersoft-org/crypto-utils#29fa2b8",
+    "libersoft-crypto": "https://github.com/libersoft-org/crypto-utils#51a3dfc",
     "lodash": "^4.17.21",
     "lodash-es": "^4.17.21",
     "lottie-web": "^5.12.2",
@@ -114,6 +114,5 @@
     "vite-plugin-checker": "^0.8.0",
     "vite-plugin-devtools-json": "^0.2.0",
     "vitest": "3.1.4"
-  },
-  "packageManager": "yarn@1.22.22+sha512.a6b2f7906b721bba3d67d4aff083df04dad64c399707841b7acf00f6b133b7ac24255f2652fa22ae3534329dc6180534e98d17432037ff6fd140556e2bb3137e"
+  }
 }
