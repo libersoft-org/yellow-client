@@ -5,9 +5,11 @@
 	import { generatePaymentURL } from '@/org.libersoft.wallet/scripts/payment-qr.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { selectedAddress } from 'libersoft-crypto/wallet';
-	import { selectedNetwork, currencies, tokens, type ICurrency } from 'libersoft-crypto/network';
+	import { selectedNetwork, type ICurrency } from 'libersoft-crypto/network';
+	import { currencies } from 'libersoft-crypto/currencies';
+	import { tokenConfs } from 'libersoft-crypto/tokens';
 	import { provider } from 'libersoft-crypto/provider';
-	import { getBatchTokensInfo } from 'libersoft-crypto/balance';
+	import { getBatchTokensInfo } from 'libersoft-crypto/tokens';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';
 	import TabsItem from '@/core/components/Tabs/TabsItem.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
@@ -147,7 +149,7 @@
 	}
 
 	async function loadTokenInfos() {
-		const tokensWithContracts = $tokens.filter(token => token.contract_address);
+		const tokensWithContracts = $tokenConfs.filter(token => token.contract_address);
 		if (!tokensWithContracts.length) return;
 		isLoadingTokenInfos = true;
 		try {

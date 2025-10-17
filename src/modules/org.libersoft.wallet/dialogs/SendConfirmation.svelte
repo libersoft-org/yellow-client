@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { formatBalance, getTokenDecimals, getTokenInfo } from 'libersoft-crypto/balance';
+	import { formatBalance } from 'libersoft-crypto/balance';
+	import { getTokenDecimals, getTokenInfo } from 'libersoft-crypto/tokens';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { selectedNetwork } from 'libersoft-crypto/network';
 	import { type IPayment, sendTransaction } from 'libersoft-crypto/transaction';

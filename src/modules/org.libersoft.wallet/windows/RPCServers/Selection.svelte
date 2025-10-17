@@ -1,5 +1,6 @@
 <script lang="ts">
-	import { selectedNetwork, getRPCServersFromNetwork, checkAllRPCServers, checkRPCServer, formatLatency, formatBlockNumber, formatBlockAge, type IRPCServer, type INetwork } from 'libersoft-crypto/network';
+	import { selectedNetwork, getRPCServersFromNetwork, checkAllRPCServers, checkRPCServer, formatLatency, formatBlockNumber, formatBlockAge, type INetwork } from 'libersoft-crypto/network';
+	import type { IRPCServer } from 'libersoft-crypto/provider';
 	import { rpcURL, selectRPCURL } from 'libersoft-crypto/provider';
 	import { onMount } from 'svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';

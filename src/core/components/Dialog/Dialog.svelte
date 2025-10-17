@@ -24,7 +24,7 @@
 	}
 	let { data, width }: Props = $props();
 	let elWindow: Window;
-	let buttonElements: (Button | undefined)[] = [];
+	let buttonElements = $state<(Button | undefined)[]>([]);
 
 	export async function open() {
 		elWindow?.open();

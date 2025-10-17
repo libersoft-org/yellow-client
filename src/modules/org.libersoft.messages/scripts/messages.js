@@ -54,7 +54,7 @@ class Message {
 }
 
 export function initData(acc) {
-	console.log('initData', acc);
+	//console.log('initData: ', acc);
 	let result = {
 		online: writable(false),
 		selectedConversation: writable(null),
@@ -91,7 +91,7 @@ export function onModuleSelected(selected) {
 }
 
 export function selectConversation(conversation) {
-	console.log('SELECTcONVERSATION conversation:', conversation, 'conversation.acc:', conversation.acc, 'conversation.acc?.deref:', conversation.acc?.deref);
+	//console.log('SELECTcONVERSATION conversation:', conversation, 'conversation.acc:', conversation.acc, 'conversation.acc?.deref:', conversation.acc?.deref);
 	selectedConversation.set(conversation);
 	events.set([]);
 	messagesArray.set([]);
@@ -108,9 +108,9 @@ export function listConversations(acc) {
 		}
 		if (res.data?.conversations) {
 			let conversationsArray = acc.module_data[identifier].conversationsArray;
-			console.log('listConversations into:', get(conversationsArray));
+			//console.log('listConversations into:', get(conversationsArray));
 			conversationsArray.set(res.data.conversations.map(c => sanitizeConversation(acc, c)));
-			console.log('listConversations:', get(conversationsArray));
+			//console.log('listConversations:', get(conversationsArray));
 		}
 	});
 }
@@ -162,13 +162,13 @@ export function init() {
 }
 
 async function refresh(acc) {
-	console.log('refresh sendQueuedMessages...', acc);
+	//console.log('refresh sendQueuedMessages...', acc);
 	await sendOutgoingMessages(acc);
 	if (get(acc.module_data[identifier].selectedConversation)) {
-		console.log('refresh listMessages...', acc);
+		//console.log('refresh listMessages...', acc);
 		listMessages(acc, get(acc.module_data[identifier].selectedConversation).address);
 	}
-	console.log('refresh listConversations...', acc);
+	//console.log('refresh listConversations...', acc);
 	listConversations(acc);
 }
 
@@ -184,7 +184,7 @@ export async function initUpload(files, uploadType, recipients) {
 	const { uploads } = fileUploadManager.beginUpload(files, uploadType, acc, {
 		chunkSize: get(uploadChunkSize),
 	});
-	console.log('uploads', uploads);
+	//console.log('uploads', uploads);
 	const acceptedVideoTypes = ['video/mp4', 'video/webm', 'video/quicktime'];
 	const acceptedAudioTypes = ['audio/mp4', 'audio/mpeg', 'audio/wav', 'audio/webm'];
 	const acceptedImageTypes = [
@@ -788,9 +788,9 @@ export function toggleMessageReaction(message, reaction) {
 
 async function sendOutgoingMessages(acc) {
 	/* try to send outgoing messages. Ensure they are sent in creation order. Break on error */
-	console.log('sendOutgoingMessages for acc', acc.id);
+	//console.log('sendOutgoingMessages for acc', acc.id);
 	for (const message of await messages_db.outgoing.where('account').equals(acc.id).toArray()) {
-		console.log('sendOutgoingMessages found queued message:', message.data.uid);
+		//console.log('sendOutgoingMessages found queued message:', message.data.uid);
 		let res = await new Promise(resolve => {
 			sendData(acc, active_account, 'message_send', message.data, true, (req, res) => {
 				resolve(res);

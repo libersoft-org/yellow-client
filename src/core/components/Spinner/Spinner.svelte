@@ -5,12 +5,11 @@
 		size?: string;
 	}
 	let { show = true, colorVariable = '--primary-foreground', size = '40px' }: Props = $props();
-	let thickness = $derived(`calc(${size} * 0.2)`);
+	let thickness = $derived(`calc(${size} * 0.25)`);
 </script>
 
 <style>
 	.spinner {
-		padding: 10px;
 		margin: 0 auto;
 		border-radius: 50%;
 		background:
@@ -29,5 +28,5 @@
 </style>
 
 {#if show}
-	<div class="spinner" style:width={size} style:min-width={size} style:height={size} style:min-height={size} style:--spinner-color="var({colorVariable})" style:--spinner-thickness={thickness}></div>
+	<div class="spinner" style:width={size} style:min-width={size} style:max-width={size} style:height={size} style:min-height={size} style:max-height={size} style:--spinner-color="var({colorVariable})" style:--spinner-thickness={thickness}></div>
 {/if}

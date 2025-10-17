@@ -32,7 +32,7 @@
 	let shouldShowWizard = $derived(!(get(networks)?.length > 0 && get(wallets)?.length > 0));
 
 	onMount(() => {
-		console.log('Wallet module initialiddddddzed');
+		//console.log('Wallet module initialized');
 		/*if ($debug) {
 			//$settingsWindow?.open('wallets-add-hw-trezor');
 			$settingsWindow?.open('wallets-add');
@@ -72,6 +72,7 @@
 		display: flex;
 		flex-direction: column;
 		gap: 10px;
+		width: 100%;
 	}
 
 	.bar {
@@ -190,15 +191,16 @@
 	}
 </style>
 
-{#if $debug}
-	<div class="buttons">
-		<Button text="TrezorWindow" onClick={toggleTrezorWindow} />
-		<Button text="LedgerWindow" onClick={toggleLedgerWindow} />
-		<Button text="Add a new wallet > Trezor" onClick={() => $settingsWindow?.open('wallets-add-hw-trezor')} />
-		<Button text="Add a new wallet > Ledger" onClick={() => $settingsWindow?.open('wallets-add-hw-ledger')} />
-	</div>
-{/if}
 <div class="body">
+	{#if $debug}
+		<div class="buttons">
+			<Button text="TrezorWindow" onClick={toggleTrezorWindow} /><br />
+			<Button text="LedgerWindow" onClick={toggleLedgerWindow} /><br />
+			<Button text="Add a new wallet > Trezor" onClick={() => $settingsWindow?.open('wallets-add-hw-trezor')} /><br />
+			<Button text="Add a new wallet > Ledger" onClick={() => $settingsWindow?.open('wallets-add-hw-ledger')} /><br />
+		</div>
+	{/if}
+
 	<div class="network-address" class:mobile={$isMobile}>
 		<Dropdown text={$selectedNetwork ? $selectedNetwork.name : '--- Select your network ---'} onClick={async () => await $networksWindow?.open()} data-testid="wallet-network-dropdown" />
 		{#if shouldShowWizard}

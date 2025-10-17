@@ -38,9 +38,6 @@
 	}
 </script>
 
-<style>
-</style>
-
 <Window {testId} title={settingsObject.title} bind:this={elWindow} width="600px" optionalIcon={backIcon}>
 	<BaseSettingsSubtree bind:this={elBaseSettingsSubtree} {settingsObject} bind:activeName {testId} />
 </Window>

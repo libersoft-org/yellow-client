@@ -1,8 +1,9 @@
 <script lang="ts">
 	import { getGuid } from '@/core/scripts/utils/utils.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
-	import { addToken, editToken, type IToken } from 'libersoft-crypto/network';
+	import { addToken, editToken, type ITokenConf } from 'libersoft-crypto/network';
 	import { validateForm } from '@/core/scripts/utils/form.ts';
+	import { isValidContractAddress } from 'libersoft-crypto/address-validation';
 	import Label from '@/core/components/Label/Label.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -12,7 +13,7 @@
 	interface Props {
 		close: () => void;
 		networkGuid: string;
-		item?: IToken;
+		item?: ITokenConf;
 		contractAddress?: string;
 	}
 	let { close, networkGuid, item, contractAddress }: Props = $props();
@@ -22,20 +23,18 @@
 	let tokenContractAddress: string | undefined = $state();
 	let error: string | null | undefined = $state();
 	let elTokenContractAddress: Input | undefined = $state();
-	let token: IToken = $derived.by(() => ({
+	let token: ITokenConf = $derived.by(() => ({
 		guid: item?.guid || getGuid(),
-		item: {
-			contract_address: tokenContractAddress || '',
-			iconURL: tokenIcon,
-		},
+		contract_address: tokenContractAddress || '',
+		iconURL: tokenIcon,
 	}));
 
 	export function onOpen(): void {
 		error = null;
-		if (item?.item) {
+		if (item) {
 			tokenGuid = item.guid;
-			tokenIcon = item.item.iconURL;
-			tokenContractAddress = item.item.contract_address;
+			tokenIcon = item.iconURL;
+			tokenContractAddress = item.contract_address;
 		} else if (contractAddress) {
 			// Pre-fill contract address from QR code
 			tokenContractAddress = contractAddress;
@@ -46,8 +45,14 @@
 	function validateFields(): boolean {
 		tokenIcon = tokenIcon?.trim();
 		tokenContractAddress = tokenContractAddress?.trim();
+
 		const validationConfig = [{ field: tokenContractAddress, element: elTokenContractAddress, required: 'Contract address is required' }];
 		error = validateForm(validationConfig);
+
+		if (!error && tokenContractAddress && !isValidContractAddress(tokenContractAddress)) {
+			error = 'Invalid contract address format';
+		}
+
 		return !error;
 	}
 
