@@ -117,7 +117,6 @@
 {#snippet nftBalanceInfo(contractInfo)}
 	<div class="balance">
 		<div class="info">
-			aa<BalanceTableSpinner />bb
 			{#if contractInfo?.isLoadingBalance}
 				<div class="amount"><BalanceTableSpinner /></div>
 			{:else if contractInfo?.balance}
