@@ -12,7 +12,6 @@
 	import BalanceNfts from '@/org.libersoft.wallet/components/BalanceNfts.svelte';
 	import { stringifyWithBigInt } from '@/core/scripts/utils/utils.js';
 	import { section } from '@/org.libersoft.wallet/scripts/ui';
-	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 
 	onMount(() => {
 		return initializeRefreshSystem();
