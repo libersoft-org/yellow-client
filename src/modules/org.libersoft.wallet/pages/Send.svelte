@@ -32,6 +32,9 @@
 	import { parseQRData } from '@/org.libersoft.wallet/scripts/payment-qr.ts';
 	import { ensureWalletConnection, networksWindow, settingsWindow, setSection } from '@/org.libersoft.wallet/scripts/ui';
 	import { playAudio } from '@/core/scripts/notifications.ts';
+
+	let isInitialized = $state(false);
+	let showQRScanner = $state(false);
 	let currency: ICurrency | null | undefined = $state();
 	let amount: string | number | undefined = $state();
 	let error: string | null | undefined = $state();
@@ -42,6 +45,7 @@
 	let remainingBalance: bigint | undefined = $state();
 	let remainingNativeBalance: bigint | undefined = $state();
 	let remainingTokenBalance: bigint | undefined = $state();
+
 	let remainingBalanceObj: IBalance | undefined = $derived.by(() => {
 		return remainingBalance !== undefined ? { amount: remainingBalance, currency: $selectedNetwork?.currency?.symbol || '', decimals: 18 } : undefined;
 	});
@@ -51,24 +55,20 @@
 	let remainingTokenBalanceObj: IBalance | undefined = $derived.by(() => {
 		return remainingTokenBalance !== undefined && currentBalanceData ? { amount: remainingTokenBalance, currency: currentBalanceData.currency, decimals: currentBalanceData.decimals } : undefined;
 	});
+
 	let elAddressInput: Input | undefined = $state();
 	let elCurrencyDropdown: DropdownFilter | undefined = $state();
 	let elAmountInput: Input | undefined = $state();
 	let elFeeInput: Input | undefined = $state();
-	let showQRScanner = $state(false);
+
 	let qrError: string | null = $state(null);
 	let qrChainID: number | null = $state(null);
 	let qrContractAddress: string | null = $state(null);
+
+	let currencyOptions = $state<Array<{ label: string; icon: { img: string; size: string }; value: ICurrency }>>([]);
 	let selectedCurrencySymbol = $state(''); // Computed property to get the selected currency symbol
 
-	// Track subscriptions for cleanup
-	let networkUnsubscribe: (() => void) | null = null;
-	let addressUnsubscribe: (() => void) | null = null;
-	let feeLevelUnsubscribe: (() => void) | null = null;
-	let isInitialized = $state(false);
-	let currencyOptions = $state<Array<{ label: string; icon: { img: string; size: string }; value: ICurrency }>>([]);
-
-	// Function to update currency options
+	// Function to update currency options based on 'libersoft-crypto/currencies'
 	function updateCurrencyOptions() {
 		currencyOptions = $currencies.map(currency => {
 			let label = currency.symbol || 'Unknown';
@@ -87,19 +87,19 @@
 		});
 	}
 
-	// Helper function for handling network changes - reload currencies and data
-	function handleNetworkChange(newNetwork: typeof $selectedNetwork, currentNetwork: typeof $selectedNetwork) {
-		// Only reset if the actual network (not just RPC) changed - compare by network GUID
-		const networkChanged = newNetwork?.guid !== currentNetwork?.guid;
+	// Helper function for handling network changes - reload currencies and data // uhh
+	function handleNetworkChange(newNetwork, currentNetwork) {
+		const networkChanged = newNetwork !== currentNetwork;
 		if (isInitialized && networkChanged) {
-			console.log('Send: Network changed - reloading data');
+			console.log('Send: Network switched - reloading data');
+
 			// Reset state and reload data
 			currency = null;
 			error = null;
 			currentBalanceData = undefined;
 			nativeBalanceData = undefined;
 			updateBalance();
-			updateCurrencyOptions(); // Update currency options on network change
+
 			// Estimate transaction fee for new network only on actual network change
 			if ($provider && $selectedNetwork && $selectedAddress) {
 				console.log('Send: Estimating fee due to network change');
@@ -127,7 +127,6 @@
 		//console.log('(oldCurrency !== currency):', oldCurrency !== currency);
 
 		// Only proceed if currency actually changed
-
 		const c = $state.snapshot(currency);
 
 		//console.log('Send: handleCurrencyChange called. Current currency:', oldCurrency, 'New currency:', c);
@@ -185,7 +184,7 @@
 		}
 	}
 
-	// Wrapper for estimateTransactionFee with logging
+	// debug wrapper for estimateTransactionFee
 	function estimateFeeWithLogging(contractAddress: string | undefined, reason: string) {
 		console.log(`Send: Estimating transaction fee - ${reason}`);
 		estimateTransactionFee(contractAddress);
@@ -209,39 +208,35 @@
 		}
 
 		// Set up subscriptions to watch for network and address changes
-		let currentNetworkGuid = $selectedNetwork?.guid;
+		let currentNetwork = $selectedNetworkID;
 		let currentAddress = $selectedAddress;
 		let currentFeeLevel = $feeLevel;
 		oldCurrency = currency; // Initialize current currency tracking
 		oldAmount = amount; // Initialize current amount tracking
+
 		// Subscribe to network changes - track only GUID changes, not entire object
-		networkUnsubscribe = selectedNetwork.subscribe(newNetwork => {
-			const newNetworkGuid = newNetwork?.guid;
-			if (currentNetworkGuid !== newNetworkGuid) {
-				// Create minimal network objects for the handler
-				const currentNetworkObj = { guid: currentNetworkGuid };
-				const newNetworkObj = { guid: newNetworkGuid };
-				handleNetworkChange(newNetworkObj as any, currentNetworkObj as any);
-				currentNetworkGuid = newNetworkGuid;
+		const networkUnsubscribe = selectedNetworkID.subscribe(newNetwork => {
+			if (currentNetwork !== newNetwork) {
+				handleNetworkChange(newNetwork, currentNetwork);
+				currentNetwork = newNetwork;
 			}
 		});
 
 		// Subscribe to address changes
-		addressUnsubscribe = selectedAddress.subscribe(newAddress => {
+		const addressUnsubscribe = selectedAddress.subscribe(newAddress => {
 			handleAddressChange(newAddress, currentAddress);
 			currentAddress = newAddress;
 		});
 
 		// Subscribe to fee level changes
-		feeLevelUnsubscribe = feeLevel.subscribe(newFeeLevel => {
+		const feeLevelUnsubscribe = feeLevel.subscribe(newFeeLevel => {
 			if (isInitialized && newFeeLevel !== currentFeeLevel) {
 				handleFeeLevelChange();
 				currentFeeLevel = newFeeLevel;
 			}
 		});
 
-		const tokenInfosUnsubscribe = tokenInfos.subscribe(() => {
-			// When tokenInfos update, refresh currency options to get updated names/symbols
+		const currenciesUnsubscribe = currencies.subscribe(() => {
 			updateCurrencyOptions();
 		});
 
@@ -252,7 +247,7 @@
 			if (networkUnsubscribe) networkUnsubscribe();
 			if (addressUnsubscribe) addressUnsubscribe();
 			if (feeLevelUnsubscribe) feeLevelUnsubscribe();
-			if (tokenInfosUnsubscribe) tokenInfosUnsubscribe();
+			if (currenciesUnsubscribe) currenciesUnsubscribe();
 		};
 	});
 
@@ -325,13 +320,9 @@
 		}
 	}
 
-	// Computed property to check if network matches
-	let networkMatches = $derived(qrChainID === null || $state.snapshot($selectedNetwork?.chainID) === $state.snapshot(qrChainID));
-
-	// currency object based on qrContractAddress and $currencies
-	let qrCurrency: ICurrency | undefined = $derived($state.snapshot(qrContractAddress) ? $state.snapshot($currencies).find(c => c.contract_address === $state.snapshot(qrContractAddress)) : undefined);
-
-	let needsTokenAdd = $derived(qrContractAddress && !qrCurrency && networkMatches);
+	function handleQRError(error: string) {
+		qrError = error;
+	}
 
 	// Find the network that matches the QR chain ID
 	let qrNetwork = $derived(qrChainID ? $networks.find(n => $state.snapshot(n.chainID) === $state.snapshot(qrChainID)) : undefined);
@@ -339,9 +330,13 @@
 	// Check if we have the network configured
 	let hasQRNetwork = $derived(!!qrNetwork);
 
-	function handleQRError(error: string) {
-		qrError = error;
-	}
+	// Computed property to check if QR network matches
+	let networkMatches = $derived(qrChainID === null || $state.snapshot($selectedNetwork?.chainID) === $state.snapshot(qrChainID));
+
+	// currency object based on qrContractAddress and $currencies
+	let qrCurrency: ICurrency | undefined = $derived($state.snapshot(qrContractAddress) ? $state.snapshot($currencies).find(c => c.contract_address === $state.snapshot(qrContractAddress)) : undefined);
+
+	let needsTokenAdd = $derived(qrContractAddress && !qrCurrency && networkMatches);
 
 	async function updateBalance() {
 		try {
