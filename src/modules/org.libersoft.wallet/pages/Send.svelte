@@ -68,6 +68,67 @@
 	let currencyOptions = $state<Array<{ label: string; icon: { img: string; size: string }; value: ICurrency }>>([]);
 	let selectedCurrencySymbol = $state(''); // Computed property to get the selected currency symbol
 
+	onMount(() => {
+		elAddressInput?.focus();
+
+		const preSelectedCurrency = $sendCurrency;
+		if (preSelectedCurrency) {
+			const matchingCurrency = $currencies.find(c => $state.snapshot(c.symbol) === preSelectedCurrency);
+			//console.log('Matching currency:', matchingCurrency);
+			if (matchingCurrency) {
+				//				console.log('Send: Setting pre-selected currency:', matchingCurrency);
+				currency = matchingCurrency;
+				//console.log('Send: Currency after setting pre-selected:', currency);
+				handleCurrencyChange();
+			}
+			// Clear the sendCurrency after using it
+			sendCurrency.set(null);
+		}
+
+		// Set up subscriptions to watch for network and address changes
+		let currentNetwork = $selectedNetworkID;
+		let currentAddress = $selectedAddress;
+		let currentFeeLevel = $feeLevel;
+		oldCurrency = currency; // Initialize current currency tracking
+		oldAmount = amount; // Initialize current amount tracking
+
+		// Subscribe to network changes - track only GUID changes, not entire object
+		const networkUnsubscribe = selectedNetworkID.subscribe(newNetwork => {
+			if (currentNetwork !== newNetwork) {
+				handleNetworkChange(newNetwork, currentNetwork);
+				currentNetwork = newNetwork;
+			}
+		});
+
+		// Subscribe to address changes
+		const addressUnsubscribe = selectedAddress.subscribe(newAddress => {
+			handleAddressChange(newAddress, currentAddress);
+			currentAddress = newAddress;
+		});
+
+		// Subscribe to fee level changes
+		const feeLevelUnsubscribe = feeLevel.subscribe(newFeeLevel => {
+			if (isInitialized && newFeeLevel !== currentFeeLevel) {
+				handleFeeLevelChange();
+				currentFeeLevel = newFeeLevel;
+			}
+		});
+
+		const currenciesUnsubscribe = currencies.subscribe(() => {
+			updateCurrencyOptions();
+		});
+
+		isInitialized = true; // Mark as initialized to enable reactive effects
+
+		return () => {
+			// Cleanup on destroy
+			if (networkUnsubscribe) networkUnsubscribe();
+			if (addressUnsubscribe) addressUnsubscribe();
+			if (feeLevelUnsubscribe) feeLevelUnsubscribe();
+			if (currenciesUnsubscribe) currenciesUnsubscribe();
+		};
+	});
+
 	// Function to update currency options based on 'libersoft-crypto/currencies'
 	function updateCurrencyOptions() {
 		currencyOptions = $currencies.map(currency => {
@@ -189,67 +250,6 @@
 		console.log(`Send: Estimating transaction fee - ${reason}`);
 		estimateTransactionFee(contractAddress);
 	}
-
-	onMount(() => {
-		elAddressInput?.focus();
-
-		const preSelectedCurrency = $sendCurrency;
-		if (preSelectedCurrency) {
-			const matchingCurrency = $currencies.find(c => $state.snapshot(c.symbol) === preSelectedCurrency);
-			//console.log('Matching currency:', matchingCurrency);
-			if (matchingCurrency) {
-				//				console.log('Send: Setting pre-selected currency:', matchingCurrency);
-				currency = matchingCurrency;
-				//console.log('Send: Currency after setting pre-selected:', currency);
-				handleCurrencyChange();
-			}
-			// Clear the sendCurrency after using it
-			sendCurrency.set(null);
-		}
-
-		// Set up subscriptions to watch for network and address changes
-		let currentNetwork = $selectedNetworkID;
-		let currentAddress = $selectedAddress;
-		let currentFeeLevel = $feeLevel;
-		oldCurrency = currency; // Initialize current currency tracking
-		oldAmount = amount; // Initialize current amount tracking
-
-		// Subscribe to network changes - track only GUID changes, not entire object
-		const networkUnsubscribe = selectedNetworkID.subscribe(newNetwork => {
-			if (currentNetwork !== newNetwork) {
-				handleNetworkChange(newNetwork, currentNetwork);
-				currentNetwork = newNetwork;
-			}
-		});
-
-		// Subscribe to address changes
-		const addressUnsubscribe = selectedAddress.subscribe(newAddress => {
-			handleAddressChange(newAddress, currentAddress);
-			currentAddress = newAddress;
-		});
-
-		// Subscribe to fee level changes
-		const feeLevelUnsubscribe = feeLevel.subscribe(newFeeLevel => {
-			if (isInitialized && newFeeLevel !== currentFeeLevel) {
-				handleFeeLevelChange();
-				currentFeeLevel = newFeeLevel;
-			}
-		});
-
-		const currenciesUnsubscribe = currencies.subscribe(() => {
-			updateCurrencyOptions();
-		});
-
-		isInitialized = true; // Mark as initialized to enable reactive effects
-
-		return () => {
-			// Cleanup on destroy
-			if (networkUnsubscribe) networkUnsubscribe();
-			if (addressUnsubscribe) addressUnsubscribe();
-			if (feeLevelUnsubscribe) feeLevelUnsubscribe();
-			if (currenciesUnsubscribe) currenciesUnsubscribe();
-		};
-	});
 
 	function scanQRCode() {
 		showQRScanner = !showQRScanner;
