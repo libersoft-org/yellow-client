@@ -1,11 +1,11 @@
 <script>
-	import { add_stickerset_to_favorites, remove_stickerset_from_favorites, stickerset_in_favorites, stickerset_favorites } from '../../stickers.js';
-	import { debug } from '@/core/core.ts';
+	import { onDestroy, onMount } from 'svelte';
+	import { add_stickerset_to_favorites, remove_stickerset_from_favorites, stickerset_in_favorites, stickerset_favorites } from '@/org.libersoft.messages/scripts/stickers.js';
+	import { debug } from '@/core/scripts/stores.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
-	import StickerSetPart from './StickerSetPart.svelte';
-	import { stickers_db } from '../../db.ts';
-	import { onDestroy, onMount } from 'svelte';
+	import StickerSetPart from '@/org.libersoft.messages/components/Stickers/StickerSetPart.svelte';
+	import { stickers_db } from '@/org.libersoft.messages/scripts/db.ts';
 	export let intersecting = true;
 	export let stickerset = {};
 	export let showall = false;
@@ -121,7 +121,7 @@
 		<StickerSetPart {stickerset} items={first} {intersecting} />
 	</div>
 	{#if !showall}
-		<Button img="img/{expanded ? 'up' : 'down'}.svg" colorVariable="--primary-foreground" onClick={clickExpand} />
+		<Button img="img/{expanded ? 'up' : 'down'}.svg" onClick={clickExpand} />
 	{/if}
 	{#if showall || expanded}
 		<div class="set">

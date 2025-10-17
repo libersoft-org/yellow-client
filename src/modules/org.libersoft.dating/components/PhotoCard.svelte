@@ -1,44 +1,87 @@
-<script>
-	import CardButton from './PhotoCardButton.svelte';
-	export let photo;
-	//export let onYes;
-	//export let onNo;
-	let moving = false;
+<script lang="ts">
+	import PhotoCardButton from './PhotoCardButton.svelte';
+	import { type IPhotoCard } from '@/org.libersoft.dating/scripts/photocards.ts';
+	interface Props {
+		photo: IPhotoCard;
+		onCardRemoved?: () => void;
+	}
+	let { photo, onCardRemoved }: Props = $props();
+	let moving = $state(false);
 	let startX = 0;
-	let currentX = 0;
+	let currentX = $state(0);
 	let threshold = 100;
+	let isDragging = $state(false);
 
 	function startSwipe(e) {
 		moving = true;
-		startX = e.touches[0].clientX;
+		isDragging = true;
+		startX = e.touches ? e.touches[0].clientX : e.clientX;
+		e.preventDefault();
 	}
 
 	function moveSwipe(e) {
-		currentX = e.touches[0].clientX - startX;
-		// We can add effects, for example: transform: translateX(currentX + 'px');
+		if (!isDragging) return;
+		const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+		currentX = clientX - startX;
+		// Limit boundary values
+		if (currentX > window.innerWidth / 2) currentX = window.innerWidth / 2;
+		if (currentX < -window.innerWidth / 2) currentX = -window.innerWidth / 2;
+		e.preventDefault();
 	}
 
 	function endSwipe(e) {
+		if (!isDragging) return;
 		e.preventDefault();
 		e.stopPropagation();
 		moving = false;
+		isDragging = false;
 		if (currentX > threshold) {
+			// Swipe right - Yes
 			currentX = window.innerWidth;
-			setTimeout(onYes, 300);
+			setTimeout(() => {
+				console.log('Yes');
+				onCardRemoved?.();
+				currentX = 0; // Reset position for next card
+			}, 300);
 		} else if (currentX < -threshold) {
+			// Swipe left - No
 			currentX = -window.innerWidth;
-			setTimeout(onNo, 300);
+			setTimeout(() => {
+				console.log('No');
+				onCardRemoved?.();
+				currentX = 0; // Reset position for next card
+			}, 300);
 		} else {
+			// Insufficient swipe - return card back
 			currentX = 0;
+		}
+	}
+
+	// Function for handling mouse leave event
+	function handleMouseLeave(e) {
+		if (isDragging) {
+			endSwipe(e);
 		}
 	}
 
 	function onYes() {
 		console.log('Yes');
+		// Animate swipe right
+		currentX = window.innerWidth;
+		setTimeout(() => {
+			onCardRemoved?.();
+			currentX = 0; // Reset position for next card
+		}, 300);
 	}
 
 	function onNo() {
 		console.log('No');
+		// Animate swipe left
+		currentX = -window.innerWidth;
+		setTimeout(() => {
+			onCardRemoved?.();
+			currentX = 0; // Reset position for next card
+		}, 300);
 	}
 </script>
 
@@ -47,45 +90,46 @@
 		position: relative;
 		display: flex;
 		flex-direction: column;
-		width: 300px;
-		height: 400px;
+		width: 100%;
+		height: 100%;
 		border-radius: 10px;
-		background-color: #eee;
 		overflow: hidden;
-		/*align-items: center;
-  justify-content: space-between;*/
 		touch-action: pan-y;
 		transition: transform 0.3s ease-out;
+		cursor: grab;
+		user-select: none;
 	}
 
 	.photo-card.moving {
 		transition: none;
+		cursor: grabbing;
 	}
 
 	.photo-card img {
 		width: 100%;
-		height: auto;
+		height: 100%;
 		object-fit: cover;
+		flex: 1;
 	}
 
 	.photo-card .overlay {
+		z-index: 2;
 		position: absolute;
 		bottom: 0;
 		left: 0;
 		width: 100%;
-		background: rgba(0, 0, 0, 0.5);
-		color: white;
-		z-index: 2;
+		background: var(--default-foreground);
+		color: var(--default-background);
 		padding: 10px;
-		text-align: center;
+		box-sizing: border-box;
+		display: flex;
+		align-items: center;
+		justify-content: space-between;
 	}
 
-	.card-buttons {
-		display: flex;
-		width: 100%;
-		justify-content: space-around;
-		margin-bottom: 10px;
-		z-index: 3000;
+	.overlay-content {
+		flex: 1;
+		text-align: center;
 	}
 
 	.overlay .title {
@@ -93,16 +137,46 @@
 		font-weight: bold;
 		padding-bottom: 10px;
 	}
+
+	.swipe-indicator {
+		position: absolute;
+		top: 50%;
+		transform: translateY(-50%);
+		font-size: 48px;
+		font-weight: bold;
+		opacity: 0;
+		transition: opacity 0.2s ease-out;
+		z-index: 4;
+		pointer-events: none;
+	}
+
+	.swipe-indicator.like {
+		right: 20px;
+		color: #4caf50;
+	}
+
+	.swipe-indicator.nope {
+		left: 20px;
+		color: #f44336;
+	}
+
+	.swipe-indicator.visible {
+		opacity: 1;
+	}
 </style>
 
-<div class="photo-card {moving ? 'moving' : ''}" style="transform: translateX({currentX}px)" on:touchstart={e => startSwipe(e)} on:touchmove={e => moveSwipe(e)} on:touchend={e => endSwipe(e)}>
+<div class="photo-card {moving ? 'moving' : ''}" style="transform: translateX({currentX}px)" role="button" tabindex="0" ontouchstart={e => startSwipe(e)} ontouchmove={e => moveSwipe(e)} ontouchend={e => endSwipe(e)} onmousedown={e => startSwipe(e)} onmousemove={e => moveSwipe(e)} onmouseup={e => endSwipe(e)} onmouseleave={e => handleMouseLeave(e)}>
 	<img src={photo.img} alt={photo.name} />
 	<div class="overlay">
-		<div class="title">{photo.name}</div>
-		<div>{photo.description}</div>
+		<PhotoCardButton isLike={false} onClick={onNo} />
+		<div class="overlay-content">
+			<div class="title">{photo.name}</div>
+			<div>{photo.description}</div>
+		</div>
+		<PhotoCardButton isLike onClick={onYes} />
 	</div>
-	<div class="card-buttons">
-		<CardButton on:click={onNo} content="👎" />
-		<CardButton on:click={onYes} content="👍" />
-	</div>
+
+	<!-- Swipe indicators -->
+	<div class="swipe-indicator like {currentX > threshold ? 'visible' : ''}">👍 LIKE</div>
+	<div class="swipe-indicator nope {currentX < -threshold ? 'visible' : ''}">👎 NOPE</div>
 </div>

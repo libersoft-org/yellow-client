@@ -1,40 +1,81 @@
-<script>
-	import Modal from '../Modal/Modal.svelte';
+<script lang="ts">
+	import { type Snippet, tick } from 'svelte';
+	import Window from '@/core/components/Window/Window.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
-	import Icon from '../Icon/Icon.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
+	interface Props {
+		data?: IDialogData;
+		width?: string;
+	}
+	export interface IDialogData {
+		title?: string;
+		body?: string | Snippet;
+		icon?: string;
+		buttons?: IDialogButton[];
+	}
+	export interface IDialogButton {
+		img?: string;
+		text?: string;
+		onClick?: (e: Event) => void;
+		expand?: boolean;
+		testId?: string;
+		focus?: boolean;
+	}
+	let { data, width }: Props = $props();
+	let elWindow: Window;
+	let buttonElements = $state<(Button | undefined)[]>([]);
 
-	export let data;
-	let show = false;
-
-	export function open() {
-		show = true;
+	export async function open() {
+		elWindow?.open();
+		await tick();
+		await tick();
+		const focusButton = data?.buttons?.find(button => button.focus);
+		if (focusButton && data?.buttons) {
+			const focusIndex = data.buttons.indexOf(focusButton);
+			if (focusIndex !== -1 && buttonElements[focusIndex]) {
+				buttonElements[focusIndex]?.focus();
+			}
+		}
 	}
 
 	export function close() {
-		show = false;
+		elWindow?.close();
 	}
 </script>
 
 <style>
 	.top {
 		display: flex;
-		gap: 20px;
-		padding: 10px;
+		align-items: flex-start;
+		gap: 10px;
 	}
 </style>
 
-<Modal title={data.title} bind:show width="400px">
-	<div class="top">
-		{#if data.icon}
-			<Icon img={data.icon} alt="" size="50px" padding="0px" />
+<Window title={data?.title} {width} bind:this={elWindow}>
+	{#snippet top()}
+		<div class="top">
+			{#if data?.icon}
+				<Icon img={data?.icon} alt="" colorVariable="--primary-foreground" size="50px" padding="0px" />
+			{/if}
+			{#if data?.body}
+				<div>
+					{#if typeof data.body === 'string'}
+						{@html data.body}
+					{:else}
+						{@render data.body()}
+					{/if}
+				</div>
+			{/if}
+		</div>
+	{/snippet}
+	{#snippet bottom()}
+		{#if data?.buttons && data.buttons.length > 0}
+			<ButtonBar expand>
+				{#each data.buttons as button, index}
+					<Button {...button} data-testid={button.testId} bind:this={buttonElements[index]} />
+				{/each}
+			</ButtonBar>
 		{/if}
-		<div>{data.body}</div>
-	</div>
-	<ButtonBar>
-		{#each data.buttons as button}
-			<Button {...button} />
-		{/each}
-	</ButtonBar>
-	<!-- <Button text="Close" onClick={() => (show = false)} /> -->
-</Modal>
+	{/snippet}
+</Window>

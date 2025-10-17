@@ -2,7 +2,7 @@
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Sticker from './Sticker.svelte';
 	import { getContext } from 'svelte';
-	import { htmlEscape } from '../../messages.js';
+	import { htmlEscape } from '@/org.libersoft.messages/scripts/messages.js';
 	import StickerSetPart from './StickerSetPart.svelte';
 	export let sticker;
 	export let stickerset;
@@ -39,11 +39,13 @@
 			box-shadow 0.3s ease;
 	}
 
-	.sticker:hover {
-		z-index: 90;
+	.sticker:hover,
+	:global(.clickable:focus-visible) .sticker,
+	:global(.clickable.focused) .sticker {
+		z-index: 51;
 		transform: scale(1.2);
 		background-color: var(--primary-soft-background);
-		box-shadow: 0 8px 20px rgba(0, 0, 0, 0.45);
+		box-shadow: var(--shadow);
 	}
 </style>
 

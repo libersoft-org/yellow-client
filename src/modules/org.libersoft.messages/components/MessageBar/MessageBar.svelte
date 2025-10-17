@@ -1,44 +1,51 @@
 <script>
-	import { keyboardHeight, documentHeight, debug, isMobile } from '@/core/core.ts';
-	import { handleResize, identifier, initUpload, sendMessage, selectedConversation } from '../../messages.js';
 	import { onMount, setContext, tick, getContext } from 'svelte';
+	import { documentHeight, keyboardHeight, isMobile, debug } from '@/core/scripts/stores.ts';
+	import { handleResize, identifier, initUpload, sendMessage, selectedConversation } from '@/org.libersoft.messages/scripts/messages.js';
+	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
 	import ContextMenuItem from '@/core/components/ContextMenu/ContextMenuItem.svelte';
-	import Modal from '@/core/components/Modal/Modal.svelte';
-	import ModalHtml from '../../modals/Html.svelte';
-	import ModalFileUpload from '../../modals/FileUpload.svelte';
+	import Window from '@/core/components/Window/Window.svelte';
+	import WindowFileUpload from '../../windows/FileUpload.svelte';
+	import WindowHtml from '../../windows/Html.svelte';
 	import Expressions from '../Expressions/Expressions.svelte';
-	import { init_emojis } from '../../emojis.js';
+	import { init_emojis } from '@/org.libersoft.messages/scripts/emojis.js';
 	import { get } from 'svelte/store';
 	import MessageBarRecorder from './MessageBarRecorder.svelte';
 	import audioRecorderStore from '@/org.libersoft.messages/stores/AudioRecorderStore.ts';
 	import MessageBarReply from '@/org.libersoft.messages/components/MessageBar/MessageBarReply.svelte';
 	import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReplyStore.ts';
 	import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
-	// import ModalNewConversation from '@/org.libersoft.messages/modals/NewConversation.svelte';
-	import VideoRecorderModalBody from '@/org.libersoft.messages/modals/VideoRecorderModalBody.svelte';
+	import VideoRecorderContainer from '../VideoRecorder/VideoRecorderContainer.svelte';
+	import { windowFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	let expressionsMenu;
 	let elBottomSheet;
 	let elAttachment;
 	let elExpressions;
 	let elMessage;
 	let elMessageBar;
+	let elWindowVideoRecorder;
+	let elWindowHTML;
 	let text;
 	let expressions;
-	let showHTMLModal = false;
 	let expressionsHeight = '500px';
 	let expressionsBottomSheetOpen = false;
 	let expressionsAsContextMenu = true;
 	let lastDocumentHeight = 0;
 	let videoInputRef;
-	let showVideoRecorderModal = false;
+	let showVideoRecorder = false;
+	let pendingBottomSheetOpen = false;
+	let waitingForKeyboardClose = false;
 
 	isMobile.subscribe(value => {
 		expressionsAsContextMenu = !value;
 		expressionsHeight = value ? '250px' : '500px';
 	});
+
+	let { setFileUploadWindow } = getContext('FileUploadWindow');
+	let expressionsMenuOpen = getContext('expressionsMenuOpen');
 
 	documentHeight.subscribe(value => {
 		if (value != lastDocumentHeight) {
@@ -48,7 +55,6 @@
 	});
 
 	onMount(async () => {
-		console.log('MessageBar mounted');
 		await init_emojis();
 		/*setInterval(() => {
    let v = get(debugBuffer);
@@ -71,16 +77,15 @@
 	});
 
 	export async function openExpressions(tab) {
-		console.log('openExpressions', tab);
 		if (expressionsAsContextMenu) {
-			console.log('openExpressions as context menu:', expressionsMenu);
-			console.log('elExpressions.offsetLeft:', elExpressions.offsetLeft, 'elExpressions.offsetTop:', elExpressions.offsetTop, 'elExpressions.offsetWidth:', elExpressions.offsetWidth, 'elExpressions.offsetHeight:', elExpressions.offsetHeight);
 			expressionsMenu?.openMenu({ x: elExpressions.getBoundingClientRect().x, y: 0 });
+			// Notify MessagesList that expressions menu is open
+			expressionsMenuOpen?.setOpen(true);
 		} else {
-			expressionsBottomSheetOpen = true;
+			// Use delay-based opening for mobile bottom sheet
+			handleBottomSheetOpenWithDelay();
 		}
 		await tick();
-		console.log('elExpressions:', elExpressions);
 		await expressions?.setCategory(null, tab);
 	}
 
@@ -98,9 +103,12 @@
 		setBarFocus();
 	}
 
+	let lastSentMessageUid = null;
+
 	export async function doSendMessage(message, html) {
 		//console.log('doSendMessage', message);
-		await sendMessage(message, html ? 'html' : 'plaintext');
+		const uid = await sendMessage(message, html ? 'html' : 'plaintext');
+		lastSentMessageUid = uid;
 		await setBarFocus();
 		closeExpressions();
 	}
@@ -113,7 +121,6 @@
 	}
 
 	function resizeMessage() {
-		console.log('resizeMessage handleResize (scroll?)');
 		handleResize(true /*TODO: save*/);
 		const maxHeight = 200;
 		const textarea = elMessage;
@@ -159,7 +166,7 @@
 		}, 5000);
 	}
 
-	function keyEnter(event) {
+	function onKeyDown(event) {
 		if (event.key === 'Enter' && !event.shiftKey) {
 			event.preventDefault();
 			clickSend(event);
@@ -173,35 +180,68 @@
 		}
 	}
 
+	function onMessageInputFocus(event) {
+		// Close bottom sheet when user wants to type
+		if (expressionsBottomSheetOpen) {
+			expressionsBottomSheetOpen = false;
+			expressionsMenuOpen?.setOpen(false);
+		}
+		// Also clear any pending opening
+		pendingBottomSheetOpen = false;
+		waitingForKeyboardClose = false;
+	}
+
 	function clickRecord(event) {
 		console.log('clicked on record mic / camera - long press to record, short press to switch mic / camera');
 	}
 
 	function sendHTML() {
-		showHTMLModal = true;
+		elWindowHTML?.open();
 	}
 
 	function sendLocation() {
 		console.log('clicked on location');
 	}
 
-	let { showFileUploadModal, setFileUploadModal } = getContext('FileUploadModal');
+	function handleAttachmentMousedown(event) {
+		// Check if keyboard is currently open
+		const currentKeyboardHeight = get(keyboardHeight);
+		if (currentKeyboardHeight && currentKeyboardHeight > 50) {
+			// Check if the input field is currently focused
+			const wasInputFocused = document.activeElement === elMessage;
+
+			// Let the context menu open, then check if we need to restore focus
+			setTimeout(() => {
+				// Only restore focus if it was focused before AND it lost focus
+				if (wasInputFocused && document.activeElement !== elMessage) {
+					elMessage.focus();
+				}
+			}, 10);
+		}
+	}
 
 	isMobile.subscribe(value => {
 		expressionsAsContextMenu = !value;
 	});
 
 	documentHeight.subscribe(value => {
-		console.log('documentHeight handleResize (scroll?)');
 		handleResize(true); // TODO: save wasScrolledToBottom2 before showing bottom sheet /// periodically?
 	});
 
 	keyboardHeight.subscribe(value => {
-		console.log('keyboardHeight:', value);
 		if (value > 100) {
 			if (get(isMobile)) {
-				console.log('adjusting expressionsHeight from keyboardHeight:', value);
 				expressionsHeight = value + 'px';
+			}
+		}
+
+		// Check if we're waiting for keyboard to close and it's now closed
+		if (waitingForKeyboardClose) {
+			if (!value || value < 50) {
+				waitingForKeyboardClose = false;
+				pendingBottomSheetOpen = false;
+				expressionsBottomSheetOpen = true;
+				expressionsMenuOpen?.setOpen(true);
 			}
 		}
 	});
@@ -212,32 +252,68 @@
 	}
 
 	function closeExpressions() {
-		//console.log('closeExpressions');
 		//if (expressionsBottomSheetOpen) handleResize(true); // TODO: save wasScrolledToBottom2 before showing bottom sheet
 		expressionsBottomSheetOpen = false;
 		expressionsMenu?.close();
+		// Clear any pending opening
+		pendingBottomSheetOpen = false;
+		waitingForKeyboardClose = false;
+		// Notify MessagesList that expressions menu is closed
+		expressionsMenuOpen?.setOpen(false);
 	}
 
 	$: update2(expressionsAsContextMenu, expressionsBottomSheetOpen);
 	function update2(expressionsAsContextMenu, expressionsBottomSheetOpen) {
-		if (!expressionsAsContextMenu && expressionsBottomSheetOpen) {
-			elMessage.blur();
-		}
+		// Removed auto-blur to prevent interference with delay logic
+		// The blur is now handled manually in handleBottomSheetOpenWithDelay
 	}
 
 	function elMessageBlur(event) {
 		//console.log('elMessageBlur');
 		if (elBottomSheet?.contains(event.relatedTarget)) return;
+
+		// Don't close if we have a pending bottom sheet opening
+		if (pendingBottomSheetOpen || waitingForKeyboardClose) {
+			return;
+		}
+
 		expressionsBottomSheetOpen = false;
+		// Notify MessagesList that expressions menu is closed (bottom sheet)
+		expressionsMenuOpen?.setOpen(false);
 	}
 
 	const onVideoRecordClick = async () => {
 		videoInputRef.click();
 	};
 
+	// Reactive bottom sheet opening - waits for keyboard to actually close
+	function handleBottomSheetOpenWithDelay() {
+		// Prevent multiple simultaneous requests
+		if (pendingBottomSheetOpen || waitingForKeyboardClose) {
+			return;
+		}
+
+		const currentKeyboardHeight = get(keyboardHeight);
+		const currentIsMobile = get(isMobile);
+
+		// If keyboard is not open, open bottom sheet immediately
+		if (!currentKeyboardHeight || currentKeyboardHeight < 50) {
+			expressionsBottomSheetOpen = true;
+			expressionsMenuOpen?.setOpen(true);
+			return;
+		}
+
+		// Keyboard is open - close it first, then wait for it to actually close
+		waitingForKeyboardClose = true;
+		pendingBottomSheetOpen = true;
+		elMessage.blur(); // Start closing keyboard
+
+		// The keyboardHeight subscriber will handle opening the bottom sheet
+		// when the keyboard actually closes (height becomes 0)
+	}
+
 	onMount(() => {
 		videoInputRef.addEventListener('change', function (event) {
-			console.log('event.target.files', event.target.files);
 			const recipientEmail = get(selectedConversation).address;
 			const file = event.target.files[0]; // Get the selected video file
 			if (file) {
@@ -252,115 +328,141 @@
 
 <style>
 	.message-bar {
-		position: sticky;
-		bottom: 0;
-		background-color: var(--secondary-background);
-		box-shadow: var(--shadow);
+		display: flex;
+		flex-direction: column;
+		gap: 10px;
+		flex-grow: 1;
+		height: 100%;
 	}
 
-	.message-bar-main {
+	.top {
+		display: flex;
+		flex-grow: 1;
+	}
+
+	.main {
 		display: flex;
 		align-items: end;
 		gap: 10px;
-		padding: 10px;
-	}
-
-	.message-bar-top {
-		display: flex;
+		flex-grow: 1;
 	}
 
 	.message-textarea {
 		flex-grow: 1;
+		width: 100%;
 		padding: 5px;
 		border: 0;
-		border-bottom: 2px solid #ddd;
+		border-bottom: 2px solid var(--secondary-foreground);
 		outline: none;
+		resize: none;
+		overflow-y: auto;
+		box-sizing: border-box;
 		font-family: inherit;
 		font-size: 16px;
 		background-color: transparent;
-		color: #fff;
-		resize: none;
-		overflow-y: auto;
-		width: 100%;
-		box-sizing: border-box;
+		color: var(--secondary-foreground);
 	}
 
 	.bottom-sheet {
 		border-radius: 10px;
-		border: 10px solid #000;
+		border: 10px solid var(--primary-foreground);
+	}
+
+	.video-recorder-wrapper {
+		overflow: hidden;
+		transition: max-height 0.3s ease-in-out;
+		max-height: 0;
+		display: flex;
+		flex-direction: column;
+		min-height: calc(100vh - 153px);
+		height: calc(100vh - 153px);
+		padding-bottom: 2rem;
 	}
 </style>
 
-<div class="message-bar" bind:this={elMessageBar}>
-	<input bind:this={videoInputRef} type="file" id="videoInput" accept="video/*" capture="camera" style:display="none" />
-
-	<div class="message-bar-top">
-		{#if $isMessageReplyOpen && $replyTo && $replyTo.type === ReplyToType.MESSAGE}
-			<MessageBarReply name={$replyTo?.data?.address_to} replyToMessage={$replyTo?.data?.message} onClose={() => messageBarReplyStore.close()} />
-		{/if}
-	</div>
-	<div class="message-bar-main">
-		<MessageBarRecorder />
-
-		<div bind:this={elAttachment} data-testid="attachment-button">
-			<Icon img="modules/{identifier}/img/attachment.svg" colorVariable="--primary-background" alt="Attachment" size="32px" padding="0px" isButton />
-		</div>
-
-		{#if expressionsAsContextMenu}
-			<div bind:this={elExpressions}>
-				<Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--primary-background" alt="Emoji" size="32px" padding="0px" isButton />
+<Bar position="bottom" height="auto" bind:element={elMessageBar}>
+	<div class="message-bar" data-sent-message-uid={lastSentMessageUid}>
+		{#if showVideoRecorder}
+			<div class="video-recorder-wrapper open">
+				<VideoRecorderContainer />
 			</div>
-		{:else}
-			<Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--primary-background" alt="Emoji" size="32px" padding="0px" onClick={() => (expressionsBottomSheetOpen = !expressionsBottomSheetOpen)} />
 		{/if}
-
-		<textarea data-testid="message-input" id="message-input" class="message-textarea" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={keyEnter} on:blur={elMessageBlur}></textarea>
-		<!--<Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32px" padding="0px" onClick={onVideoRecordClick} />-->
-		<Icon img="modules/{identifier}/img/video-message.svg" colorVariable="--primary-background" alt="Record video message" size="32px" padding="0px" onClick={() => (showVideoRecorderModal = true)} />
-		<Icon img="modules/{identifier}/img/mic.svg" colorVariable="--primary-background" alt="Record voice message" size="32px" padding="0px" onClick={() => audioRecorderStore.setOpen(true)} />
-		<Icon data-testid="messagebarsend" img="modules/{identifier}/img/send.svg" colorVariable="--primary-background" alt="Send" size="32px" padding="0px" onClick={clickSend} />
-		{#if $debug}
-			<Icon img="modules/{identifier}/img/send.svg" colorVariable="--primary-background" alt="Send" size="20px" padding="0px" onClick={debugClickSendSplit} />
+		<input type="file" id="videoInput" style:display="none" accept="video/*" capture="camera" bind:this={videoInputRef} />
+		{#if $isMessageReplyOpen && $replyTo && $replyTo.type === ReplyToType.MESSAGE}
+			<div class="top">
+				<MessageBarReply name={$replyTo?.data?.address_to} replyToMessage={$replyTo?.data?.message} onClose={() => messageBarReplyStore.close()} />
+			</div>
 		{/if}
+		<div class="main">
+			<MessageBarRecorder />
+			<div bind:this={elAttachment} data-testid="attachment-button" on:mousedown={handleAttachmentMousedown} role="button" tabindex="0">
+				<Icon img="modules/{identifier}/img/attachment.svg" colorVariable="--primary-background" alt="Attachment" size="32px" padding="0px" />
+			</div>
+			{#if expressionsAsContextMenu}
+				<div bind:this={elExpressions} class="expressions-button">
+					<Icon img="modules/{identifier}/img/emoji.svg" colorVariable="--primary-background" alt="Emoji" size="32px" padding="0px" isButton />
+				</div>
+			{:else}
+				<div class="expressions-button">
+					<Icon
+						img="modules/{identifier}/img/emoji.svg"
+						colorVariable="--primary-background"
+						alt="Emoji"
+						size="32px"
+						padding="0px"
+						onClick={() => {
+							if (expressionsBottomSheetOpen) {
+								// Close bottom sheet immediately
+								expressionsBottomSheetOpen = false;
+								expressionsMenuOpen?.setOpen(false);
+							} else {
+								// Smart opening with keyboard delay
+								handleBottomSheetOpenWithDelay();
+							}
+						}}
+					/>
+				</div>
+			{/if}
+			<textarea data-testid="message-input" id="message-input" class="message-textarea" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={onKeyDown} on:blur={elMessageBlur} on:focus={onMessageInputFocus}></textarea>
+			<!--<Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32px" padding="0px" onClick={onVideoRecordClick} />-->
+			{#if !elMessage?.value}
+				<Icon img="modules/{identifier}/img/video-message.svg" colorVariable="--primary-background" alt="Record video message" size="32px" padding="0px" onClick={() => (showVideoRecorder = !showVideoRecorder)} />
+				<Icon img="modules/{identifier}/img/mic.svg" colorVariable="--primary-background" alt="Record voice message" size="32px" padding="0px" onClick={() => audioRecorderStore.setOpen(true)} />
+			{:else}
+				<Icon testId="messagebarsend" img="modules/{identifier}/img/send.svg" colorVariable="--primary-background" alt="Send" size="32px" padding="0px" onClick={clickSend} />
+			{/if}
+			{#if $debug}
+				<Icon img="modules/{identifier}/img/send.svg" colorVariable="--primary-background" alt="Send" size="20px" padding="0px" onClick={debugClickSendSplit} />
+			{/if}
+		</div>
 	</div>
-</div>
-
-<ContextMenu target={elAttachment} disableRightClick={true} bottomOffset={elMessageBar?.getBoundingClientRect().height}>
+</Bar>
+<ContextMenu target={elAttachment} disableRightClick bottomOffset={elMessageBar?.getBoundingClientRect().height}>
 	<ContextMenuItem img="modules/{identifier}/img/video_message-black.svg" label="Video message" onClick={onVideoRecordClick} />
-	<ContextMenuItem img="modules/{identifier}/img/file.svg" label="File" onClick={() => setFileUploadModal(true)} data-testid="file-attachment-button" />
+	<ContextMenuItem img="modules/{identifier}/img/file.svg" label="File" onClick={() => setFileUploadWindow(true)} data-testid="file-attachment-button" />
 	<ContextMenuItem img="modules/{identifier}/img/html.svg" label="HTML" onClick={sendHTML} />
 	<ContextMenuItem img="modules/{identifier}/img/map.svg" label="Location" onClick={sendLocation} />
 </ContextMenu>
-
 {#if expressionsAsContextMenu}
-	<ContextMenu bind:this={expressionsMenu} target={elExpressions} width="380px" height={expressionsHeight} scrollable={false} disableRightClick={true} bottomOffset={elMessageBar?.getBoundingClientRect().height}>
+	<ContextMenu bind:this={expressionsMenu} target={elExpressions} width="380px" height={expressionsHeight} scrollable={false} disableRightClick bottomOffset={elMessageBar?.getBoundingClientRect().height}>
 		<Expressions bind:this={expressions} height={expressionsHeight} />
 	</ContextMenu>
 {/if}
-
-<!--
-<Modal body={Expressions} width="363px" bind:show={showExpressions} />
--->
-
-<Modal title="HTML composer" body={ModalHtml} bind:show={showHTMLModal} />
-<Modal title="File Upload" body={ModalFileUpload} bind:show={$showFileUploadModal} params={{ setFileUploadModal: setFileUploadModal }} />
-
 {#if $debug}
 	<Clickable
 		onClick={() => {
 			expressionsAsContextMenu = !expressionsAsContextMenu;
-			console.log('expressionsAsContextMenu:', expressionsAsContextMenu, 'expressionsBottomSheetOpen:', expressionsBottomSheetOpen);
 		}}
 	>
 		expressionsBottomSheetOpen: {expressionsBottomSheetOpen}
 		expressionsAsContextMenu: {expressionsAsContextMenu}
 	</Clickable>
 {/if}
-
 {#if !expressionsAsContextMenu && expressionsBottomSheetOpen}
 	<div class="bottom-sheet" style="height: {expressionsHeight};" bind:this={elBottomSheet}>
-		<Expressions bind:this={expressions} height={expressionsHeight} isBottomSheet={true} />
+		<Expressions bind:this={expressions} height={expressionsHeight} isBottomSheet />
 	</div>
 {/if}
 
-<Modal title="Video recorder" body={VideoRecorderModalBody} bind:show={showVideoRecorderModal} />
+<Window title="File upload" body={WindowFileUpload} params={{ setFileUploadWindow: setFileUploadWindow }} bind:this={$windowFileUploadStore} />
+<Window title="HTML composer" body={WindowHtml} bind:this={elWindowHTML} width="700px" height="500px" max resizable />

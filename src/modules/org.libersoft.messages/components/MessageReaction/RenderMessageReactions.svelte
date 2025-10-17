@@ -1,42 +1,36 @@
 <script lang="ts">
-	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	//import Emoji from "../Emoji/Emoji.svelte";
-	import { emoji_render, rgi_to_codepoints } from '../../emojis';
-	import Tooltip from '@/core/components/Tooltip/Tooltip.svelte';
 	import { get } from 'svelte/store';
-	import { active_account } from '@/core/core';
-	import { highlightElement } from '@/core/utils/animationUtils.ts';
-	import _union from 'lodash/union';
-	import _isEqual from 'lodash/isEqual';
+	import { active_account } from '@/core/scripts/core.ts';
+	import { highlightElement } from '@/core/scripts/utils/animationUtils.ts';
+	import { emoji_render, rgi_to_codepoints } from '@/org.libersoft.messages/scripts/emojis.js';
+	import union from 'lodash/union';
+	import isEqual from 'lodash/isEqual';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Tooltip from '@/core/components/Tooltip/Tooltip.svelte';
+
+	if (import.meta.env.VITE_YELLOW_CLIENT_DEBUG) {
+		console.debug(union, isEqual);
+	}
 
 	interface Props {
 		reactions: any[];
 		onReactionClick: (codepoints_rgi: string) => void;
 	}
-
 	let { reactions, onReactionClick }: Props = $props();
 	let tooltipButton = $state<{ ref: HTMLElement; reactions: any[] } | null>(null);
-
 	const groupedReactions = $derived.by(() => {
-		if (!reactions || !reactions.length) {
-			return {};
-		}
+		if (!reactions || !reactions.length) return {};
 		const grouped = {};
 		for (const reaction of reactions) {
 			const codepoints_rgi = reaction.emoji_codepoints_rgi;
-			if (!grouped[codepoints_rgi]) {
-				grouped[codepoints_rgi] = [];
-			}
+			if (!grouped[codepoints_rgi]) grouped[codepoints_rgi] = [];
 			grouped[codepoints_rgi].push(reaction);
 		}
 		return grouped;
 	});
 
 	const showTooltip = (e, reactions, rgi) => {
-		if (tooltipButton && tooltipButton.ref === e.target) {
-			return;
-		}
-
+		if (tooltipButton && tooltipButton.ref === e.target) return;
 		tooltipButton = {
 			reactions,
 			ref: e.target,
@@ -48,9 +42,7 @@
 	};
 
 	const renderInfoFromReactions = (reactions: any[]) => {
-		if (!reactions || !reactions.length) {
-			return '';
-		}
+		if (!reactions || !reactions.length) return '';
 		const activeAccount = get(active_account);
 		if (!activeAccount) {
 			console.warn('No active account available');
@@ -59,7 +51,6 @@
 		const myUserAddress = activeAccount.credentials.address;
 		const didIReact = reactions.some(r => r.user_address === myUserAddress);
 		const otherReactionAddresses = reactions.filter(r => r.user_address !== myUserAddress).map(r => r.user_address);
-
 		const emoji = emoji_render(rgi_to_codepoints(reactions[0].emoji_codepoints_rgi));
 		if (didIReact && otherReactionAddresses.length) {
 			return 'You and ' + otherReactionAddresses.join(', ') + ' have reacted with ' + emoji;
@@ -75,7 +66,7 @@
 	};
 
 	let prevReactions: any | null = null;
-	let buttonRefs = {};
+	let buttonRefs = $state({});
 	/**
 	 * Animations handler by detecting changes in reactions
 	 */
@@ -85,9 +76,7 @@
 			return;
 		}
 
-		if (_isEqual(prevReactions, groupedReactions)) {
-			return;
-		}
+		if (isEqual(prevReactions, groupedReactions)) return;
 		// find difference by comparing groups lengths
 		const prevKeys = Object.keys(prevReactions);
 		const newKeys = Object.keys(groupedReactions);
@@ -99,8 +88,7 @@
 			}
 			return false;
 		});
-
-		_union(added, removed, modified).forEach(a => highlightElement(buttonRefs[a]));
+		union(added, removed, modified).forEach(a => highlightElement(buttonRefs[a]));
 		prevReactions = groupedReactions;
 	});
 </script>
@@ -116,13 +104,15 @@
 	.reaction-box {
 		flex: 0 0 auto;
 		padding: 4px 8px;
-		background: #ffffff;
+		background: var(--primary-softer-background);
 		border-radius: 8px;
-		border: 1px solid #d7d1d1;
+		border: 1px solid var(--primary-foreground);
 	}
 
-	.reaction-box:hover {
-		border-color: #c5bcbc;
+	.reaction-box:hover,
+	:global(.clickable:focus-visible) .reaction-box,
+	:global(.clickable.focused) .reaction-box {
+		background-color: var(--primary-background);
 	}
 </style>
 

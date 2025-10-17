@@ -1,15 +1,15 @@
-<script>
+<script lang="ts">
 	import { onMount, onDestroy, tick, getContext } from 'svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	export let onVisible;
 	const threshold = 0.1;
-	let loading = false;
+	let loading: boolean = false;
 	let loaderElement;
-	let _loaderIsVisible = true;
+	let _loaderIsVisible: boolean = true;
 	let observer;
 	let timer;
-	let observing = false;
-	let contentElement = getContext('contentElement');
+	let observing: boolean = false;
+	let contentElement = getContext('contentElement') as Element | null;
 
 	onMount(async () => {
 		await tick();
@@ -37,5 +37,5 @@
 </script>
 
 <div bind:this={loaderElement}>
-	<Spinner bind:show={loading} />
+	<Spinner show={loading} />
 </div>

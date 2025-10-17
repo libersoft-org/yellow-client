@@ -1,11 +1,11 @@
-import { type FileDownload, type FileUpload, type FileUploadRecord, FileUploadRecordStatus, FileUploadRecordType, type MakeFileDownloadData, type MakeFileUploadData, type MakeFileUploadRecordData } from './types.ts';
+import { type IFileDownload, type IFileUpload, type IFileUploadRecord, FileUploadRecordStatus, FileUploadRecordType, type MakeFileDownloadData, type MakeFileUploadData, type MakeFileUploadRecordData } from './types.ts';
 import { v4 as uuidv4 } from 'uuid';
 import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
 import _debug from 'debug';
 
 const debug = _debug('libersoft:messages:services:FileUploadService');
 
-export function makeFileUploadRecord(data: MakeFileUploadRecordData): FileUploadRecord {
+export function makeFileUploadRecord(data: MakeFileUploadRecordData): IFileUploadRecord {
 	const defaults = {
 		id: uuidv4(),
 		status: FileUploadRecordStatus.BEGUN,
@@ -22,7 +22,7 @@ export function makeFileUploadRecord(data: MakeFileUploadRecordData): FileUpload
 	return Object.assign(defaults, data);
 }
 
-export function makeFileUpload(data: MakeFileUploadData): FileUpload {
+export function makeFileUpload(data: MakeFileUploadData): IFileUpload {
 	const defaults = {
 		chunksSent: [],
 		uploadInterval: null,
@@ -30,7 +30,7 @@ export function makeFileUpload(data: MakeFileUploadData): FileUpload {
 	return Object.assign(defaults, data);
 }
 
-export function makeFileDownload(data: MakeFileDownloadData): FileDownload {
+export function makeFileDownload(data: MakeFileDownloadData): IFileDownload {
 	const defaults = {
 		chunksReceived: [],
 		data: null,
@@ -65,7 +65,7 @@ export async function base64ToUint8Array(base64: string) {
 export function assembleFile(file: string | Blob, fileName?: string) {
 	const downloadLink = document.createElement('a');
 	downloadLink.href = file instanceof Blob ? URL.createObjectURL(file) : file;
-	downloadLink.download = fileName || (file instanceof Blob ? file.name : 'unknown_file');
+	downloadLink.download = fileName || (file instanceof File ? file.name : 'unknown_file'); // fixme: file is (string | Blob), but Blob does not have name property
 	downloadLink.target = '_blank';
 	downloadLink.style.display = 'none';
 

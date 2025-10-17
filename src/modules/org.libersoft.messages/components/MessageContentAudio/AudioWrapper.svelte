@@ -1,8 +1,10 @@
-<script>
-	import { writable } from 'svelte/store';
-
-	let { children, node } = $props();
-	let ref = writable();
+<script lang="ts">
+	interface Props {
+		children?: any[];
+		node?: any;
+	}
+	let { children, node }: Props = $props();
+	let ref: HTMLDivElement | undefined = $state();
 </script>
 
 <style>
@@ -21,7 +23,7 @@
 
 <div class="audio-wrap" bind:this={ref}>
 	<div class="audio-list">
-		{#each children as child (child.tagUniqueId)}
+		{#each children || [] as child (child.tagUniqueId)}
 			{#if child.component}
 				<child.component {...child.props} />
 			{/if}

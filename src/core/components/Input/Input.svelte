@@ -1,29 +1,62 @@
 <script lang="ts">
+	import Icon from '@/core/components/Icon/Icon.svelte';
 	interface Props {
 		type?: 'text' | 'number' | 'email' | 'password' | 'search' | 'tel' | 'url' | 'color';
 		placeholder?: string;
 		value?: string | number;
+		enabled?: boolean;
 		displayValue?: string | number;
-		grow?: boolean;
+		expand?: boolean;
 		minWidth?: string;
 		maxWidth?: string;
 		onKeydown?: (e: KeyboardEvent) => void;
+		onFocus?: (e: FocusEvent) => void;
+		onBlur?: (e: FocusEvent) => void;
+		onClick?: (e: MouseEvent) => void;
 		min?: number;
 		max?: number;
 		step?: number;
-		inputRef?: HTMLInputElement;
+		icon?: {
+			img: string;
+			alt: string;
+			onClick?: (e: Event) => void;
+			colorVariable?: string;
+		};
+		inputRef?: HTMLInputElement; // TODO: is it really prop?
 		'data-testid'?: string;
+		onChange?: (value: string | number) => void;
 	}
-
-	let { type = 'text', placeholder = '', value = $bindable(), displayValue = undefined, inputRef = $bindable(), grow = false, minWidth = undefined, maxWidth = undefined, onKeydown = undefined, min = undefined, max = undefined, step = undefined, 'data-testid': testId = undefined }: Props = $props();
+	let { type = 'text', placeholder = '', value = $bindable(), enabled = true, displayValue, expand = true, minWidth, maxWidth, onKeydown, onFocus, onBlur, onClick, min, max, step, icon, inputRef = $bindable(), 'data-testid': testId, onChange }: Props = $props();
 
 	function handleKeydown(e) {
 		if (onKeydown) onKeydown(e);
 	}
 
+	function handleFocus(e) {
+		if (onFocus) onFocus(e);
+	}
+
+	function handleBlur(e) {
+		if (onBlur) onBlur(e);
+	}
+
+	function handleClick(e) {
+		if (onClick) onClick(e);
+	}
+
 	function handleChange(e: Event) {
 		const target = e.target as HTMLInputElement;
-		value = type === 'number' ? Number(target.value) : target.value;
+		setValue(target.value);
+	}
+
+	function handleInput(e: Event) {
+		const target = e.target as HTMLInputElement;
+		setValue(target.value);
+	}
+
+	function setValue(newValue: string | number) {
+		value = type === 'number' ? Number(newValue) : newValue;
+		onChange?.(value);
 	}
 
 	export function focus() {
@@ -33,9 +66,8 @@
 
 <style>
 	input {
-		box-sizing: content-box;
+		box-sizing: border-box;
 		padding: 10px;
-		border: 1px solid var(--default-foreground);
 		border-radius: 10px;
 		font-family: inherit;
 		font-size: inherit;
@@ -43,9 +75,49 @@
 		color: var(--default-foreground);
 	}
 
+	.no-button {
+		border: 1px solid var(--default-foreground);
+	}
+
+	.button {
+		width: 100%;
+		border: 0;
+		outline: none;
+	}
+
 	input:focus {
+		outline: none;
+	}
+
+	input:disabled {
+		border: 1px solid var(--disabled-foreground);
+		background-color: var(--disabled-background);
+		color: var(--disabled-foreground);
+	}
+
+	input.expand {
+		width: 100%;
+	}
+
+	.input-button-wrapper {
+		display: flex;
+		box-sizing: border-box;
+		align-items: center;
+		border: 1px solid var(--default-foreground);
+		border-radius: 10px;
+		background-color: var(--default-background);
+	}
+
+	.input-button-wrapper:focus-within {
 		outline: 2px solid var(--primary-harder-background);
 	}
 </style>
 
-<input data-testid={testId} value={displayValue !== undefined ? displayValue : value} onchange={handleChange} style:flex-grow={grow ? '1' : undefined} style:max-width={maxWidth && 'calc(' + maxWidth + ' - 22px)'} style:min-width={minWidth && 'calc(' + minWidth + ' - 22px)'} {type} {placeholder} {min} {max} {step} bind:this={inputRef} onkeydown={e => handleKeydown(e)} />
+{#if icon}
+	<div class="input-button-wrapper" style:max-width={maxWidth && maxWidth} style:min-width={minWidth && minWidth}>
+		<input class="button" class:expand {type} {placeholder} bind:this={inputRef} bind:value onkeydown={e => handleKeydown(e)} oninput={handleInput} onfocus={handleFocus} onblur={handleBlur} onclick={handleClick} />
+		<Icon img={icon.img} alt={icon.alt} colorVariable={icon.colorVariable ? icon.colorVariable : ''} size="20px" padding="10px" onClick={icon.onClick} />
+	</div>
+{:else}
+	<input class="no-button" data-testid={testId} value={displayValue !== undefined ? displayValue : value} disabled={!enabled} onchange={handleChange} oninput={handleInput} class:expand style:max-width={maxWidth && maxWidth} style:min-width={minWidth && minWidth} {type} {placeholder} {min} {max} {step} bind:this={inputRef} onkeydown={e => handleKeydown(e)} onfocus={handleFocus} onblur={handleBlur} onclick={handleClick} />
+{/if}

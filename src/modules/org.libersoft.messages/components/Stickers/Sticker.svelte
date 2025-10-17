@@ -1,11 +1,12 @@
 <script>
-	import { debug } from '@/core/core.ts';
-	import lottie from 'lottie-web';
-	import pako from 'pako';
 	import { getContext, onMount, onDestroy } from 'svelte';
 	import { readable } from 'svelte/store';
-	import { identifier } from '../../messages.js';
-	import { expressions_renderer, animate_all_expressions } from '../../expressions.svelte.ts';
+	import lottie from 'lottie-web';
+	import pako from 'pako';
+	import { debug } from '@/core/scripts/stores.ts';
+	import { identifier } from '@/org.libersoft.messages/scripts/messages.js';
+	import { expressions_renderer, animate_all_expressions } from '@/org.libersoft.messages/scripts/expressions.svelte.ts';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 	export let file = '';
 	export let size = 200;
 	export let intersecting;
@@ -248,10 +249,6 @@
 		max-height: 100%;
 		object-fit: contain;
 	}
-
-	.error {
-		font-size: 10px;
-	}
 </style>
 
 <div class="sticker" role="button" tabindex="0" bind:this={componentContainer} on:mouseover={() => (mouseOver = true)} on:mouseleave={() => (mouseOver = false)} on:focus={() => (mouseOver = true)} on:blur={() => (mouseOver = false)}>
@@ -263,7 +260,7 @@
 	{/if}
 	{#if error}
 		<img class="image" style="width: {size}px; height: {size}px;" src="modules/{identifier}/img/question.svg" alt="" />
-		<div class="error">{error}</div>
+		<Alert type="error" message={error} />
 	{:else if isLottie}
 		<div class="lottie" style="width: {size}px; height: {size}px;" bind:this={animContainer}></div>
 	{:else if isImage && intersecting}

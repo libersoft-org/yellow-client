@@ -1,19 +1,17 @@
 <script lang="ts">
-	import Button from '../components/Button/Button.svelte';
-	import Input from '../components/Input/Input.svelte';
-	import Label from '../components/Label/Label.svelte';
-	import { log, TAURI, TAURI_MOBILE, BROWSER } from '../tauri.ts';
-	import { mobileClass } from '../stores.ts';
-	import { offerNativeDownload, saveNativeDownloadChunk, finishNativeDownload, openNativeDownload, defaultDownloadFolder, NativeDownload } from '../files.svelte.ts';
-	import { platform, type as osType } from '@tauri-apps/plugin-os';
 	import { onMount } from 'svelte';
-
+	import { platform, type as osType } from '@tauri-apps/plugin-os';
+	import { log, TAURI, TAURI_MOBILE, BROWSER } from '@/core/scripts/tauri.ts';
+	import { mobileClass } from '@/core/scripts/stores.ts';
+	import { offerNativeDownload, saveNativeDownloadChunk, finishNativeDownload, openNativeDownload, defaultDownloadFolder, NativeDownload } from '@/core/scripts/files.svelte.ts';
+	import Button from '@/core/components/Button/Button.svelte';
+	import Input from '@/core/components/Input/Input.svelte';
+	import Label from '@/core/components/Label/Label.svelte';
 	// Generate filename with compact datetime format: MMDD-HHmmss
 	const now = new Date();
 	const dateStr = (now.getMonth() + 1).toString().padStart(2, '0') + now.getDate().toString().padStart(2, '0') + '-' + now.getHours().toString().padStart(2, '0') + now.getMinutes().toString().padStart(2, '0') + '-' + Math.round(now.getSeconds() / 10).toString();
 	let fileName = $state(`x-${dateStr}.html`);
 	let appendContent = $state('<html><body>Hello from mobile file test!\nAppended content</body></html>');
-
 	let download: NativeDownload | null = $state(null);
 	let result: any = $state('');
 	let platformInfo = $state({
@@ -134,7 +132,7 @@
 
 	.platform-info-item strong {
 		min-width: 50px;
-		font-weight: 600;
+		font-weight: bold;
 	}
 
 	.file-info {
@@ -154,7 +152,7 @@
 	/* Compact inputs and labels globally */
 	:global(.files2-test label) {
 		font-size: 0.75em;
-		font-weight: 500;
+		font-weight: bold;
 		color: var(--text);
 		opacity: 0.8;
 	}
@@ -269,17 +267,17 @@
 			{#if !TAURI_MOBILE}
 				<div class="folder-section {$mobileClass}">
 					<Label>Default folder: {$defaultDownloadFolder || '(not set)'}</Label>
-					<Button onClick={setDefaultFolderFromDownload} disabled={!download?.potential_default_folder}>Set from download</Button>
+					<Button text="Set from download" onClick={setDefaultFolderFromDownload} enabled={!!download?.potential_default_folder} />
 				</div>
 			{/if}
 		</div>
 
 		<!-- Action Buttons -->
 		<div class="buttons-grid {$mobileClass}">
-			<Button onClick={testOfferNativeDownload}>Offer Download</Button>
-			<Button onClick={testSaveNativeDownloadChunk} disabled={!download}>Save Chunk</Button>
-			<Button onClick={testFinishNativeDownload} disabled={!download}>Finish</Button>
-			<Button onClick={testOpenDownload} disabled={!download}>Open</Button>
+			<Button text="Offer download" onClick={testOfferNativeDownload} />
+			<Button text="Save chunk" onClick={testSaveNativeDownloadChunk} enabled={!!download} />
+			<Button text="Finish" onClick={testFinishNativeDownload} enabled={!!download} />
+			<Button text="Open" onClick={testOpenDownload} enabled={!!download} />
 		</div>
 
 		<!-- Status Display -->

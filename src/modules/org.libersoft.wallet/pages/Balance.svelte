@@ -1,115 +1,93 @@
-<script>
-	import Table from '@/core/components/Table/Table.svelte';
-	import Tbody from '@/core/components/Table/TableTbody.svelte';
-	import Tr from '@/core/components/Table/TableTbodyTr.svelte';
-	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-	import Icon from '@/core/components/Icon/Icon.svelte';
-	let tokens = [
-		{
-			icon: 'https://raw.githubusercontent.com/libersoft-org/blockchain-icons/refs/heads/main/tokens/DAI.svg',
-			symbol: 'DAI',
-			amount: {
-				crypto: 105,
-				fiat: 104.98,
-			},
-		},
-		{
-			icon: 'https://raw.githubusercontent.com/libersoft-org/blockchain-icons/refs/heads/main/tokens/DOT.svg',
-			symbol: 'DOT',
-			amount: {
-				crypto: 13.58468432,
-				fiat: 815.23,
-			},
-		},
-	];
+<script lang="ts">
+	import { onMount, onDestroy } from 'svelte';
+	import { debug } from '@/core/scripts/stores.ts';
+	import { selectedNetwork } from 'libersoft-crypto/network';
+	import { balance, isLoadingBalance, refreshBalance } from 'libersoft-crypto/balance';
+	import { tokensForDisplay, refreshTokenBalance } from 'libersoft-crypto/tokens';
+	import { nftsForDisplay } from 'libersoft-crypto/nfts';
+	import { initializeRefreshSystem, refresh } from 'libersoft-crypto/refresh';
+	import { selectedAddress, setSendCurrency } from 'libersoft-crypto/wallet';
+	import { setSection } from '@/org.libersoft.wallet/scripts/ui';
+	import BalanceTable from '@/org.libersoft.wallet/components/BalanceTable.svelte';
+	import BalanceNfts from '@/org.libersoft.wallet/components/BalanceNfts.svelte';
+	import { stringifyWithBigInt } from '@/core/scripts/utils/utils.js';
+	import { section } from '@/org.libersoft.wallet/scripts/ui';
 
-	function selectToken(id) {
-		console.log('SELECTED TOKEN:', id);
+	onMount(() => {
+		return initializeRefreshSystem();
+	});
+
+	function selectToken(symbol: string) {
+		console.log('SELECTED TOKEN:', symbol);
+		setSendCurrency($state.snapshot(symbol)); // Use snapshot to get plain value from proxy
+		setSection('send');
+		console.log('Set send currency to:', symbol, 'and switched to section', $section);
+	}
+
+	function selectNativeCurrency(symbol: string) {
+		console.log('SELECTED NATIVE CURRENCY:', symbol);
+		setSendCurrency($state.snapshot(symbol)); // Use snapshot to get plain value from proxy
+		setSection('send');
 	}
 </script>
 
 <style>
-	.row {
+	.wallet-balance {
 		display: flex;
+		flex-direction: column;
 		gap: 10px;
 	}
-
-	.symbol {
-		font-size: 20px;
-		font-weight: bold;
-	}
-
-	.amount {
-		font-size: 18px;
-		font-weight: bold;
-	}
-
-	.fiat {
-		font-size: 12px;
-	}
 </style>
 
-<Table breakpoint="0px">
-	<Tbody>
-		{#each tokens as t, index}
-			<Tr>
-				<Td>
-					<div class="row">
-						<div><Icon img={t.icon} size="40px" padding="0px" alt={t.symbol} /></div>
-						<div class="symbol">{t.symbol}</div>
-					</div>
-				</Td>
-				<Td>
-					<div class="amount">{t.amount.crypto} {t.symbol}</div>
-					<div class="fiat">({t.amount.fiat} USD)</div>
-				</Td>
-			</Tr>
-		{/each}
-	</Tbody>
-</Table>
-
-<!--
-<script>
-	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	export let icon;
-	export let symbol;
-	export let amount;
-	export let className = '';
-	export let onClick;
-</script>
-
-<style>
-	.item .symbol {
-		flex-grow: 1;
-		font-size: 20px;
-		font-weight: bold;
-	}
-
-	.item .amount {
-		text-align: right;
-	}
-
-	.item .amount .crypto {
-		font-weight: bold;
-		font-size: 18px;
-	}
-
-	.item .amount .fiat {
-		font-size: 14px;
-		color: #555;
-	}
-</style>
-
-<Clickable {onClick}>
-	<div class="item {className}">
-		{#if icon}
-			<div class="icon"><img src={icon} alt={symbol} /></div>
-		{/if}
-		<div class="symbol">{symbol}</div>
-		<div class="amount">
-			<div class="crypto">{amount.crypto} {symbol}</div>
-			<div class="fiat">({amount.fiat} USD)</div>
-		</div>
+{#if $debug}
+	<div class="debug-info">
+		<h3>Debug Info</h3>
+		<div>Selected Network: {$selectedNetwork?.name || 'None'}</div>
+		<div>Selected Address: {$selectedAddress?.address || 'None'}</div>
+		<div>Native Balance: {$balance ? stringifyWithBigInt($balance.crypto) : 'None'}</div>
+		<div>Native Fiat: {$balance?.fiat ? stringifyWithBigInt($balance.fiat) : 'None'}</div>
+		<div>NFTs: {$nftsForDisplay.length}</div>
 	</div>
-</Clickable>
--->
+{/if}
+
+<div class="wallet-balance">
+	{#if $selectedNetwork && $selectedAddress}
+		<BalanceTable
+			title={'Currency'}
+			items={[
+				{
+					iconURL: $selectedNetwork?.currency?.iconURL,
+					name: null,
+					symbol: $selectedNetwork?.currency?.symbol,
+					address: null,
+					balanceData: $balance,
+					isLoadingName: false,
+					isLoadingBalance: $isLoadingBalance,
+					refreshFn: refreshBalance,
+					selectCurrency: () => selectNativeCurrency($selectedNetwork?.currency?.symbol || ''),
+				},
+			]}
+		/>
+
+		{#if $tokensForDisplay.length > 0}
+			<BalanceTable
+				title={'Token'}
+				items={$tokensForDisplay.map(token => ({
+					iconURL: token.conf.iconURL,
+					name: token.info?.name,
+					symbol: token.info?.symbol || 'UNKNOWN',
+					address: token.conf.contract_address,
+					balanceData: token.balance,
+					isLoadingName: token.isLoadingInfo,
+					isLoadingBalance: token.isLoadingBalance,
+					refreshFn: () => refreshTokenBalance(token.conf.contract_address || ''),
+					selectCurrency: () => selectToken(token.info?.symbol || 'UNKNOWN'),
+				}))}
+			/>
+		{/if}
+
+		{#if $nftsForDisplay && $nftsForDisplay.length > 0}
+			<BalanceNfts />
+		{/if}
+	{/if}
+</div>

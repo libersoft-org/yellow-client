@@ -9,7 +9,7 @@ export enum LocalFileStatus {
 	READY = 'READY',
 }
 
-export interface LocalFile {
+export interface ILocalFile {
 	id: number;
 	localFileStatus: LocalFileStatus;
 	fileTransferId: string;
@@ -19,7 +19,7 @@ export interface LocalFile {
 	fileBlob?: Blob;
 }
 
-// export interface LocalFileChunk {
+// export interface ILocalFileChunk {
 //  id: number;
 //  fileTransferId: string;
 //  chunkId: number;
@@ -30,7 +30,7 @@ export interface LocalFile {
 // }
 
 export class FilesLocalDB extends Dexie {
-	files!: Dexie.Table<LocalFile, number>;
+	files!: Dexie.Table<ILocalFile, number>;
 	// filesChunks!: Dexie.Table<LocalFileChunk, number>;
 
 	constructor() {
@@ -41,16 +41,16 @@ export class FilesLocalDB extends Dexie {
 		});
 	}
 
-	async addFile(file: Omit<LocalFile, 'id'>) {
+	async addFile(file: Omit<ILocalFile, 'id'>) {
 		console.log('AAA adding file');
-		return this.files.add(file as LocalFile);
+		return this.files.add(file as ILocalFile);
 	}
 
 	async findFile(fileTransferId: string) {
 		return this.files.where({ fileTransferId }).first();
 	}
 
-	async updateFile(fileTransferId: string, update: Partial<LocalFile>) {
+	async updateFile(fileTransferId: string, update: Partial<ILocalFile>) {
 		// const f = await this.files.where({ fileTransferId }).first();
 		return await this.files.where({ fileTransferId }).modify(update);
 	}

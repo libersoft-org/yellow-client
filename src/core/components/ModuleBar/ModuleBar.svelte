@@ -1,80 +1,88 @@
 <script>
-	import { active_account, module_decls, selected_module_id } from '../../core.ts';
 	import { get } from 'svelte/store';
+	import { active_account } from '@/core/scripts/core.ts';
+	import { module_decls, selected_module_id } from '@/core/scripts/stores.ts';
+	import resize from '@/core/actions/resizeObserver.ts';
+	import { order } from '@/core/scripts/utils/utils.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import ModuleBarItem from './ModuleBarItem.svelte';
-	import resize from '@/core/actions/resizeObserver.ts';
-	import { order } from '@/core/utils/utils.ts';
+	import ModuleBarItem from '@/core/components/ModuleBar/ModuleBarItem.svelte';
 	export let onSelectModule;
 	export let onCloseModule;
-	let itemsHeight = '50px';
 	let itemsEl;
 	let module_data;
 	let lastModuleSelected = false;
 	let expanded = false;
 	let module_decls_ordered = [];
 	let expandEnabled = false;
-	let isTransitioning = false;
 
 	$: module_decls_ordered = order($module_decls);
+
+	//$: console.log('module-bar module_decls_ordered:', module_decls_ordered);
+
 	$: module_data = $active_account?.module_data || {};
+
+	//$: console.log('module-bar active_account:', $active_account);
+	//$: console.log('module-bar active_account.module_data:', $active_account?.module_data);
+
 	//$: console.log('module-bar module_data:', module_data);
 	$: module_data_ordered = order(module_data);
 	//$: console.log('module-bar module_data_ordered:', module_data_ordered);
 	$: selectLastModule(module_data);
 
 	function selectLastModule(module_data) {
-		console.log('selectLastModule: lastModuleSelected: ', module_data);
-		if (!lastModuleSelected && module_data_ordered && module_data_ordered.length > 0) {
+		//console.debug('selectLastModule: lastModuleSelected: ', module_data);
+		//console.debug('acc.settings?.last_module_id: ', $active_account?.settings?.last_module_id);
+		if (!lastModuleSelected /* && module_data_ordered && module_data_ordered.length > 0 */) {
 			//console.log('selectLastModule: lastModuleSelected: ', lastModuleSelected);
-			lastModuleSelected = true;
 			let acc = get(active_account);
 			//console.log('selectLastModule: acc: ', acc);
-			let id = acc.settings?.last_module_id;
+			let id = acc?.settings?.last_module_id;
 			//console.log('selectLastModule: ', module_data);
 			//console.log('selectLastModule: id: ', id);
-			if (module_data[id]) onSelectModule(id);
+			if (id /* && module_data[id]*/) {
+				lastModuleSelected = true;
+				onSelectModule(id);
+			}
 		}
 	}
 
-	function onTransitionEnd() {
-		isTransitioning = false;
-	}
-
 	function clickSetModule(id) {
-		console.log('clickSetModule: ' + id);
+		//console.log('clickSetModule: ' + id);
 		if ($selected_module_id === id) onCloseModule();
 		else onSelectModule(id);
 		lastModuleSelected = true;
 	}
 
 	function clickExpand() {
+		const el = itemsEl;
+		const full = el.scrollHeight + 'px';
+		if (expanded) {
+			el.style.maxHeight = full;
+			void el.offsetHeight;
+			el.style.maxHeight = '50px';
+			const tidy = () => {
+				scrollToSelected();
+				el.removeEventListener('transitionend', tidy);
+			};
+			el.addEventListener('transitionend', tidy);
+		} else {
+			el.style.maxHeight = '50px';
+			void el.offsetHeight;
+			el.style.maxHeight = full;
+			const tidy = () => {
+				el.style.maxHeight = '';
+				el.removeEventListener('transitionend', tidy);
+			};
+			el.addEventListener('transitionend', tidy);
+		}
 		expanded = !expanded;
 	}
 
-	function getPaddingHeight(el) {
-		const style = getComputedStyle(el);
-		return parseFloat(style.paddingTop) + parseFloat(style.paddingBottom);
-	}
-
-	$: {
-		if (expanded && itemsEl) {
-			const padding = getPaddingHeight(itemsEl);
-			const height = itemsEl.scrollHeight - padding;
-			itemsHeight = `${height}px`;
-			isTransitioning = true;
-			setTimeout(() => {
-				if (expanded) itemsHeight = 'auto';
-			}, 300);
-		} else if (!expanded && itemsEl) {
-			const padding = getPaddingHeight(itemsEl);
-			const height = itemsEl.scrollHeight - padding;
-			itemsHeight = `${height}px`;
-			requestAnimationFrame(() => {
-				itemsHeight = '50px';
-			});
-		}
+	function scrollToSelected() {
+		if (!$selected_module_id || !itemsEl) return;
+		const selectedElement = itemsEl.querySelector(`[data-module-id="${$selected_module_id}"]`);
+		if (selectedElement) selectedElement.scrollIntoView({ block: 'center' });
 	}
 
 	function onResize(entry) {
@@ -85,6 +93,7 @@
 			return total + child.getBoundingClientRect().width;
 		}, 0);
 		expandEnabled = childrenTotalWidth > width;
+		scrollToSelected();
 	}
 </script>
 
@@ -103,17 +112,26 @@
 		flex-direction: row;
 		align-items: center;
 		justify-content: center;
+		max-height: 50px;
+		flex: 1;
 		row-gap: 10px;
 		flex-wrap: wrap;
 		padding: 10px;
 		margin: 0;
 		overflow: hidden;
 		will-change: height;
+		transition: max-height 0.25s linear;
 	}
 
-	.items.expanded {
-		overflow: visible;
-		height: initial;
+	.module-bar.expanded .items {
+		max-height: none;
+	}
+
+	.dropdown-wrapper {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		height: 70px;
 	}
 
 	.dropdown {
@@ -121,46 +139,34 @@
 		align-items: flex-start;
 		justify-content: center;
 		height: 100%;
-		width: max-content;
-		cursor: default;
-
-		:global(.icon) {
-			transform: rotate(0deg);
-			transition: transform 0.3s ease;
-
-			:global(.module-bar &) {
-				position: relative;
-				top: 14px;
-
-				&:is(.expanded &) {
-					transform: rotate(180deg);
-				}
-			}
-		}
-
-		&:not(.expand-enabled &) {
-			display: none;
-		}
 	}
 
-	.module-bar:not(.expand-enabled) .dropdown {
-		opacity: 0.3;
-		cursor: default;
-		pointer-events: none;
+	.dropdown :global(.icon) {
+		position: relative;
+		transform: rotate(0deg);
+		transition: transform 0.3s ease;
+	}
+
+	.module-bar.expanded .dropdown :global(.icon) {
+		transform: rotate(180deg);
+	}
+
+	.module-bar:not(.expand-enabled) .dropdown-wrapper {
+		display: none;
 	}
 </style>
 
-<div class="module-bar" class:expand-enabled={expandEnabled}>
-	<div use:resize={onResize} bind:this={itemsEl} class="items {expanded ? 'expanded' : ''}" style="height: {itemsHeight}; transition: height 0.25s cubic-bezier(0.4,0,0.2,1);" on:transitionend={onTransitionEnd}>
+<div class="module-bar" class:expand-enabled={expandEnabled} class:expanded>
+	<div class="items" use:resize={onResize} bind:this={itemsEl}>
 		{#each module_decls_ordered as decl (decl.id)}
-			<div>
-				<ModuleBarItem online={$active_account?.module_data[decl.id]?.online} selected={$selected_module_id === decl.id} {decl} {clickSetModule} />
-			</div>
+			<ModuleBarItem online={$active_account?.module_data[decl.id]?.online} selected={$selected_module_id === decl.id} {decl} {clickSetModule} />
 		{/each}
 	</div>
-	<Clickable disabled={!expandEnabled}>
-		<div class="dropdown {expanded ? 'expanded' : ''}">
-			<Icon img={'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--secondary-foreground" size="20px" padding="10" onClick={clickExpand} />
-		</div>
-	</Clickable>
+	<div class="dropdown-wrapper">
+		<Clickable enabled={expandEnabled} onClick={clickExpand}>
+			<div class="dropdown">
+				<Icon img={'img/down.svg'} alt={expanded ? '▲' : '▼'} colorVariable="--secondary-foreground" size="20px" padding="10" />
+			</div>
+		</Clickable>
+	</div>
 </div>

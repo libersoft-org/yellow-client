@@ -1,7 +1,10 @@
-<script>
-	export let img;
-	export let alt;
-	export let enabled = false;
+<script lang="ts">
+	interface Props {
+		img?: string;
+		alt?: string;
+		enabled?: boolean;
+	}
+	let { img, alt, enabled = false }: Props = $props();
 </script>
 
 <style>

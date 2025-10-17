@@ -1,12 +1,10 @@
 <script>
-	import { deleteMessage, identifier, processMessage, setMessageSeen, toggleMessageReaction } from '../../messages.js';
-	import { debug } from '@/core/core.ts';
+	import { deleteMessage, identifier, processMessage, setMessageSeen, toggleMessageReaction } from '@/org.libersoft.messages/scripts/messages.js';
 	import { onDestroy, onMount, tick } from 'svelte';
-	import { isClientFocused } from '@/core/core.ts';
-	import { stripHtml } from '../../messages.js';
+	import { isClientFocused, debug } from '@/core/scripts/stores.ts';
+	import { stripHtml } from '@/org.libersoft.messages/scripts/utils/htmlUtils.ts';
 	import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
 	import ContextMenuItem from '@/core/components/ContextMenu/ContextMenuItem.svelte';
-
 	// import Image from './image.svelte';
 	// import Audio from './audio.svelte';
 	// import Video from './video.svelte';
@@ -14,21 +12,14 @@
 	// import Map from './map.svelte';
 	import MessageContent from '../MessageContent/MessageContent.svelte';
 	// import Reply from './msgReply/Reply.svelte';
-	import messageBarReplyStore, { ReplyToType } from '../../stores/MessageBarReplyStore.ts';
-	import forwardMessageStore from '../../stores/ForwardMessageStore.ts';
-	import MessageReaction from '../MessageReaction/MessageReaction.svelte';
-	import RenderMessageReactions from '../MessageReaction/RenderMessageReactions.svelte';
-
+	import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReplyStore.ts';
+	import { forwardMessageStore } from '@/org.libersoft.messages/stores/ForwardMessageStore.ts';
+	import MessageReaction from '@/org.libersoft.messages/components/MessageReaction/MessageReaction.svelte';
+	import RenderMessageReactions from '@/org.libersoft.messages/components/MessageReaction/RenderMessageReactions.svelte';
 	export let message;
 	export let elContainer;
-
 	export let enableScroll;
 	export let disableScroll;
-
-	export function getRef() {
-		return elMessage;
-	}
-
 	let seenTxt;
 	let checkmarks;
 	let observer;
@@ -52,15 +43,9 @@
 	let touchX;
 	let touchY;
 	let messageContent;
+	let renderedTs;
 
 	$: update(message);
-	// console.log('updated message:', message);
-	function update(message) {
-		if (messageContent) return;
-		//  console.log('update message:', message);
-		messageContent = processMessage(message);
-	}
-
 	//$: console.log('messageContent:', messageContent);
 	$: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
 	$: seenTxt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
@@ -68,23 +53,40 @@
 	//$: console.log('Core.isClientFocused:', $isClientFocused);
 	$: maybeSetSeen(isVisible, $isClientFocused);
 
+	export function getRef() {
+		return elMessage;
+	}
+
+	// console.log('updated message:', message);
+	function update(message) {
+		if (messageContent) return;
+		//  console.log('update message:', message);
+		messageContent = processMessage(message);
+	}
+
 	function maybeSetSeen(isVisible, isClientFocused) {
-		console.log('isVisible:', isVisible, 'isClientFocused:', isClientFocused);
+		//console.log('isVisible:', isVisible, 'isClientFocused:', isClientFocused);
 		if (!isVisible || !isClientFocused) {
-			console.log('not setting seen because not visible or not focused');
+			//console.log('not setting seen because not visible or not focused');
 			return;
 		}
 		if (message.seen) {
-			console.log('not setting seen because already set');
+			//console.log('not setting seen because already set');
 			observer.disconnect();
 			isVisible = false;
 		} else {
-			console.log('setMessageSeen..');
-			setMessageSeen(message, () => {
-				console.log('seen set succesfully, disconnecting observer.');
-				observer.disconnect();
-				isVisible = false;
-			});
+			//console.log('setMessageSeen..');
+
+			const window_was_active_when_message_was_received = isClientFocused && Date.now() - renderedTs < 150;
+			setMessageSeen(
+				message,
+				() => {
+					console.log('seen set succesfully, disconnecting observer.');
+					observer.disconnect();
+					isVisible = false;
+				},
+				!(message.just_received && window_was_active_when_message_was_received)
+			);
 		}
 	}
 
@@ -200,6 +202,8 @@
    e.preventDefault();
   }, wheelOpt);*/
 
+		renderedTs = new Date().getTime();
+
 		if (!message.seen && !message.just_sent) {
 			if (message.is_outgoing && !(message.address_to === message.address_from)) {
 				console.log('no need to set seen');
@@ -295,7 +299,6 @@
 
 <style>
 	.message {
-		--animation-highlight-duration: 0.7s;
 		--message-max-width: 60%;
 		position: relative;
 		max-width: var(--message-max-width);
@@ -345,7 +348,7 @@
 	:global(.message .text a) {
 		font-weight: bold;
 		text-decoration: none;
-		color: #a60;
+		color: var(--primary-harder-background);
 	}
 
 	:global(.message .text img) {
@@ -393,11 +396,11 @@
 	}
 </style>
 
-<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} role="button" tabindex="0" data-testid="message-item" on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove} on:contextmenu={rightClickContextMenu}>
+<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} role="button" tabindex="0" data-testid="message-item" data-uid={message.uid} on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove} on:contextmenu={rightClickContextMenu}>
 	<div bind:this={elIntersectionObserver}></div>
 	<!--<Reply name="Someone" text="Some text" />-->
 	<!--<Image file="https://cdn.britannica.com/87/196687-138-2D734164/facts-parrots.jpg" />-->
-	<!--<Audio file="modules/{identifier}/audio/message.mp3" />-->
+	<!--<Audio file="audio/notification.mp3" />-->
 	<!--<Video file="https://file-examples.com/storage/fe3abb0cc967520c59b97f1/2017/04/file_example_MP4_1920_18MG.mp4" />-->
 	<!--<Map latitude="50.0755", longitude="14.4378" />-->
 	<!--<FileTransfer file="text.mp4" uploaded="10485760000" total="20000000000" />-->
@@ -433,10 +436,15 @@
 </div>
 
 <ContextMenu bind:this={menu} target={elCaret}>
-	<ContextMenuItem img="img/copy.svg" label="Copy original" onClick={copyOriginal} />
-	<ContextMenuItem img="img/copy.svg" label="Copy text only" onClick={copyTextOnly} />
-	<ContextMenuItem img="img/copy.svg" label="Copy HTML" onClick={copyMessageHTML} />
-	<ContextMenuItem img="modules/{identifier}/img/reply.svg" label="Reply" onClick={replyMessage} data-testid="reply-context-menu-item" />
-	<ContextMenuItem img="modules/{identifier}/img/forward.svg" label="Forward" onClick={forwardMessage} />
-	<ContextMenuItem img="modules/{identifier}/img/delete.svg" label="Delete" onClick={onMessageDelete} />
+	{#if message.format === 'plaintext'}
+		<ContextMenuItem img="img/copy.svg" label="Copy" onClick={copyOriginal} testId={'message-context-menu-' + message.uid + '-copy'} />
+	{:else}
+		<ContextMenuItem img="img/copy.svg" label="Copy original" onClick={copyOriginal} testId={'message-context-menu-' + message.uid + '-copy-original'} />
+		<ContextMenuItem img="img/copy.svg" label="Copy text only" onClick={copyTextOnly} testId={'message-context-menu-' + message.uid + '-copy-text-only'} />
+		<ContextMenuItem img="img/copy.svg" label="Copy HTML" onClick={copyMessageHTML} testId={'message-context-menu-' + message.uid + '-copy-html'} />
+	{/if}
+
+	<ContextMenuItem img="modules/{identifier}/img/reply.svg" label="Reply" onClick={replyMessage} testId={'message-context-menu-' + message.uid + '-reply'} />
+	<ContextMenuItem img="modules/{identifier}/img/forward.svg" label="Forward" onClick={forwardMessage} testId={'message-context-menu-' + message.uid + '-forward'} />
+	<ContextMenuItem img="modules/{identifier}/img/delete.svg" label="Delete" onClick={onMessageDelete} testId={'message-context-menu-' + message.uid + '-delete'} />
 </ContextMenu>

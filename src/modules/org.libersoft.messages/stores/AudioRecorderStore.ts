@@ -1,11 +1,11 @@
 import { derived, writable } from 'svelte/store';
 
-export interface AudioRecorderStoreValue {
+export interface IAudioRecorderStoreValue {
 	open: boolean;
 }
 
 export class AudioRecorderStore {
-	store = writable<AudioRecorderStoreValue>({
+	store = writable<IAudioRecorderStoreValue>({
 		open: false,
 	});
 

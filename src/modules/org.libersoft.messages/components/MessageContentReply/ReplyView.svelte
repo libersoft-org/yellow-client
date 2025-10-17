@@ -1,11 +1,14 @@
-<script>
-	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import { jumpToMessage } from '../../messages.js';
+<script lang="ts">
 	import { get } from 'svelte/store';
-	import { active_account } from '@/core/core.ts';
-	export let address = '';
-	export let text = '';
-	export let uid = '';
+	import { active_account } from '@/core/scripts/core.ts';
+	import { jumpToMessage } from '@/org.libersoft.messages/scripts/messages.js';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	interface Props {
+		address?: string;
+		text?: string;
+		uid?: string;
+	}
+	let { address, text, uid }: Props = $props();
 
 	function clickReply() {
 		let acc = get(active_account);
@@ -18,20 +21,21 @@
 		display: flex;
 		flex-direction: column;
 		padding: 4px 0 4px 10px;
-		border: 1px solid #080;
+		border: 1px solid var(--primary-background);
 		border-radius: 10px;
-		border-left: 8px solid #080;
+		border-left: 8px solid var(--primary-background);
 		margin: 0 0 5px 0;
+		background-color: var(--secondary-background);
 	}
 
 	.reply .name {
 		font-size: 12px;
 		font-weight: bold;
-		color: #080;
+		color: var(--primary-background);
 	}
 
 	.reply .text {
-		color: #555;
+		color: var(--secondary-foreground);
 	}
 
 	.reply-wrap {

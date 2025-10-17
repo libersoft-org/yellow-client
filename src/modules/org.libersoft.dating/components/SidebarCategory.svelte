@@ -1,18 +1,27 @@
-<script>
+<script lang="ts">
 	import SidebarItem from '@/core/components/Sidebar/SidebarItem.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import { module } from '../module.js';
-	export let img = null;
-	export let label;
-	export let active = false;
-	export let onClick;
-	export let colorVariable = '--primary-foreground';
+	import { module } from '@/org.libersoft.dating/scripts/module.ts';
+	interface Props {
+		img?: string;
+		label?: string;
+		active?: boolean;
+		onClick?: (e: Event) => void;
+		colorVariable?: string;
+	}
+	let { img, label, active = false, onClick, colorVariable = '--primary-foreground' }: Props = $props();
 </script>
 
 <style>
 	.sidebar-category {
 		display: flex;
 		gap: 10px;
+	}
+
+	.title {
+		white-space: nowrap;
+		text-overflow: ellipsis;
+		overflow: hidden;
 	}
 </style>
 
@@ -23,7 +32,7 @@
 				<Icon img="modules/{module.identifier}/img/{img}" {colorVariable} alt={label} size="20px" padding="0px" />
 			{/if}
 			{#if label}
-				<div>{label}</div>
+				<div class="title">{label}</div>
 			{/if}
 		</div>
 	</SidebarItem>
