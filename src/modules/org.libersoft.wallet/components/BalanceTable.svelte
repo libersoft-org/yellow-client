@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { debug, isMobile } from '@/core/scripts/stores.ts';
-	import { module } from '@/org.libersoft.wallet/scripts/module';
 
 	import Table from '@/core/components/Table/Table.svelte';
 	import Thead from '@/core/components/Table/TableThead.svelte';

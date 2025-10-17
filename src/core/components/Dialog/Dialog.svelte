@@ -26,10 +26,6 @@
 	let elWindow: Window;
 	let buttonElements = $state<(Button | undefined)[]>([]);
 
-	function setButtonElement(index: number, el: Button | undefined) {
-		buttonElements[index] = el;
-	}
-
 	export async function open() {
 		elWindow?.open();
 		await tick();

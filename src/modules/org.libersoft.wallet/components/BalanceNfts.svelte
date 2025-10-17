@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { debug, isMobile } from '@/core/scripts/stores.ts';
 	import { selectedNetwork } from 'libersoft-crypto/network';
@@ -18,7 +17,6 @@
 	import Tr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 
 	import { dynamicEllipsis } from '@/core/actions/dynamicEllipsis';
 	import BalanceTableSpinner from '@/org.libersoft.wallet/components/BalanceTableSpinner.svelte';
@@ -119,6 +117,7 @@
 {#snippet nftBalanceInfo(contractInfo)}
 	<div class="balance">
 		<div class="info">
+			aa<BalanceTableSpinner />bb
 			{#if contractInfo?.isLoadingBalance}
 				<div class="amount"><BalanceTableSpinner /></div>
 			{:else if contractInfo?.balance}

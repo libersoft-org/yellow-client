@@ -151,7 +151,7 @@
 	}
 
 	function onDragEnd() {
-		console.log('[Window] onDragEnd called for window:', title);
+		//console.log('[Window] onDragEnd called for window:', title);
 		isDragging = false;
 		hasBeenUserPositioned = true;
 		requestAnimationFrame(snapTransformIntoBounds);
@@ -189,15 +189,15 @@
 		const centerX = (browserWidth - windowWidth) / 2;
 		const centerY = (browserHeight - windowHeight) / 2;
 
-		console.log('[Window] centerWindow for:', title, 'before - left:', elWindow.style.left, 'top:', elWindow.style.top, 'transform:', elWindow.style.transform);
-		console.log('[Window] centerWindow calculated - centerX:', centerX, 'centerY:', centerY, 'browserWidth:', browserWidth, 'browserHeight:', browserHeight, 'windowWidth:', windowWidth, 'windowHeight:', windowHeight);
+		//console.log('[Window] centerWindow for:', title, 'before - left:', elWindow.style.left, 'top:', elWindow.style.top, 'transform:', elWindow.style.transform);
+		//console.log('[Window] centerWindow calculated - centerX:', centerX, 'centerY:', centerY, 'browserWidth:', browserWidth, 'browserHeight:', browserHeight, 'windowWidth:', windowWidth, 'windowHeight:', windowHeight);
 
 		// Apply absolute positioning instead of transform
 		elWindow.style.left = `${centerX}px`;
 		elWindow.style.top = `${centerY}px`;
 		elWindow.style.transform = 'none';
 
-		console.log('[Window] centerWindow for:', title, 'after - left:', elWindow.style.left, 'top:', elWindow.style.top, 'transform:', elWindow.style.transform);
+		//console.log('[Window] centerWindow for:', title, 'after - left:', elWindow.style.left, 'top:', elWindow.style.top, 'transform:', elWindow.style.transform);
 
 		// Update last browser dimensions
 		lastBrowserWidth = browserWidth;
@@ -211,11 +211,11 @@
 		const widthDiff = currentWidth - lastBrowserWidth;
 		const heightDiff = currentHeight - lastBrowserHeight;
 
-		console.log('[Window] handleWindowResize for:', title, 'hasBeenUserPositioned:', hasBeenUserPositioned, 'widthDiff:', widthDiff, 'heightDiff:', heightDiff);
+		//console.log('[Window] handleWindowResize for:', title, 'hasBeenUserPositioned:', hasBeenUserPositioned, 'widthDiff:', widthDiff, 'heightDiff:', heightDiff);
 
 		// If window hasn't been user-positioned, just re-center it
 		if (!hasBeenUserPositioned) {
-			console.log('[Window] Re-centering window:', title);
+			//console.log('[Window] Re-centering window:', title);
 			centerWindow();
 			return;
 		}
@@ -327,19 +327,19 @@
 	}
 
 	export async function open<TParams extends readonly unknown[] = readonly unknown[]>(...params: TParams) {
-		console.log('Opening window with params:', params, title);
+		//console.log('Opening window with params:', params, title);
 		setShow(true);
-		console.debug('Window set to show, focusing window', title);
+		//console.debug('Window set to show, focusing window', title);
 		elWindow?.focus();
-		console.debug('Window focused', title);
+		//console.debug('Window focused', title);
 		//await tick();
-		console.debug('tick2...', title);
+		//console.debug('tick2...', title);
 		await tick();
-		console.debug('tick2 complete', title);
+		//console.debug('tick2 complete', title);
 		bringToFront(windowId);
-		console.debug('Window opened, calling onOpen if exists', title);
+		//console.debug('Window opened, calling onOpen if exists', title);
 		await (elWindowBody as IWindowBodyWithOnOpen<TParams>)?.onOpen?.(...params);
-		console.debug('onOpen call complete', title);
+		//console.debug('onOpen call complete', title);
 	}
 
 	export function close() {

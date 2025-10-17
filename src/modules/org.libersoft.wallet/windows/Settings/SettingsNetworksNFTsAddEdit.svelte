@@ -21,6 +21,11 @@
 	let elNftContractAddress: Input | undefined = $state();
 	let elNftTokenId: Input | undefined = $state();
 
+	/* todo: start using:
+	import { nftsForDisplay } from 'libersoft-crypto/nfts';
+	...
+	*/
+
 	let nftData: { contract_address: string; token_id: string } = $derived.by(() => ({
 		contract_address: nftContractAddress || '',
 		token_id: nftTokenId || '', // Required for ERC1155 contracts
