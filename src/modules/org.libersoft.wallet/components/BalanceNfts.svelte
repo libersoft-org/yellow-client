@@ -46,6 +46,27 @@
 		gap: 10px;
 	}
 
+	.balance {
+		display: flex;
+		flex-wrap: wrap;
+		gap: 10px;
+	}
+
+	.balance .info {
+		flex-grow: 1;
+		display: flex;
+		flex-direction: column;
+		overflow: hidden;
+		align-items: center;
+	}
+
+	.balance .amount {
+		gap: 5px;
+		min-width: 0;
+		flex: 1;
+		max-width: fit-content;
+	}
+
 	:global(.ellipsis.ellipsis-balance) {
 		width: 70%;
 	}
