@@ -2,7 +2,9 @@
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { debug, isMobile } from '@/core/scripts/stores.ts';
 	import { selectedNetwork } from 'libersoft-crypto/network';
-	import { balance, isLoadingBalance, formatBalance, type IBalance } from 'libersoft-crypto/balance';
+	import { nativeBalance, isLoadingNativeBalance } from 'libersoft-crypto/native';
+	import { formatBalance } from 'libersoft-crypto/balance';
+	import type { IBalance } from 'libersoft-crypto/types';
 	import { tokensForDisplay } from 'libersoft-crypto/tokens';
 	import { nftsForDisplay, refreshNftBalance } from 'libersoft-crypto/nfts';
 	import { refresh } from 'libersoft-crypto/refresh';

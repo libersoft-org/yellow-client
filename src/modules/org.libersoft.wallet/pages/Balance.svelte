@@ -2,7 +2,7 @@
 	import { onMount, onDestroy } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
 	import { selectedNetwork } from 'libersoft-crypto/network';
-	import { balance, isLoadingBalance, refreshBalance } from 'libersoft-crypto/balance';
+	import { nativeBalance, isLoadingNativeBalance, refreshBalance } from 'libersoft-crypto/native';
 	import { tokensForDisplay, refreshTokenBalance } from 'libersoft-crypto/tokens';
 	import { nftsForDisplay } from 'libersoft-crypto/nfts';
 	import { initializeRefreshSystem, refresh } from 'libersoft-crypto/refresh';
@@ -44,8 +44,8 @@
 		<h3>Debug Info</h3>
 		<div>Selected Network: {$selectedNetwork?.name || 'None'}</div>
 		<div>Selected Address: {$selectedAddress?.address || 'None'}</div>
-		<div>Native Balance: {$balance ? stringifyWithBigInt($balance.crypto) : 'None'}</div>
-		<div>Native Fiat: {$balance?.fiat ? stringifyWithBigInt($balance.fiat) : 'None'}</div>
+		<div>Native Balance: {$nativeBalance ? stringifyWithBigInt($nativeBalance.crypto) : 'None'}</div>
+		<div>Native Fiat: {$nativeBalance?.fiat ? stringifyWithBigInt($nativeBalance.fiat) : 'None'}</div>
 		<div>NFTs: {$nftsForDisplay.length}</div>
 	</div>
 {/if}
@@ -60,9 +60,9 @@
 					name: null,
 					symbol: $selectedNetwork?.currency?.symbol,
 					address: null,
-					balanceData: $balance,
+					balanceData: $nativeBalance,
 					isLoadingName: false,
-					isLoadingBalance: $isLoadingBalance,
+					isLoadingBalance: $isLoadingNativeBalance,
 					refreshFn: refreshBalance,
 					selectCurrency: () => selectNativeCurrency($selectedNetwork?.currency?.symbol || ''),
 				},

@@ -48,21 +48,31 @@ export function parseQRData(data: string): ParsedQRData {
 		}
 
 		if (remaining.startsWith('/transfer')) {
-			// ERC-20 token format
 			const params = new URLSearchParams(remaining.slice('/transfer'.length));
 			const address = params.get('address');
 			const uint256 = params.get('uint256');
+			const tokenId = params.get('tokenId');
 
-			if (!address) return { error: 'Missing address in token payment' };
+			if (!address) return { error: 'Missing address in token/NFT payment' };
 
-			let amount: string | undefined;
-			if (uint256) {
-				// Convert from wei using token decimals (default 18 if not found)
-				const decimals = 18; // We could look this up, but 18 is common default
-				amount = formatUnits(uint256, decimals);
+			if (tokenId) {
+				// NFT format - uint256 represents quantity, tokenId is the specific NFT
+				let amount: string | undefined;
+				if (uint256) {
+					// For NFTs, amount is already in integer format (no decimals)
+					amount = uint256;
+				}
+				return { address, amount, contractAddress: target, chainID: parsedChainID };
+			} else {
+				// ERC-20 token format
+				let amount: string | undefined;
+				if (uint256) {
+					// Convert from wei using token decimals (default 18 if not found)
+					const decimals = 18; // We could look this up, but 18 is common default
+					amount = formatUnits(uint256, decimals);
+				}
+				return { address, amount, contractAddress: target, chainID: parsedChainID };
 			}
-
-			return { address, amount, contractAddress: target, chainID: parsedChainID };
 		} else if (remaining.startsWith('?')) {
 			// Native currency format
 			const params = new URLSearchParams(remaining);
@@ -91,13 +101,27 @@ export interface PaymentURLOptions {
 }
 
 export function generatePaymentURL({ address, chainID, currency, amount }: PaymentURLOptions): string {
-	if (!currency?.contract_address) {
+	if (currency?.type === 'native') {
 		// Native currency payment (ETH) according to ERC-681
 		// Format: ethereum:{address}@{chainID}?value={amount}
 		return `ethereum:${address}@${chainID}${amount ? `?value=${amount.toString()}` : ''}`;
-	} else {
+	} else if (currency?.type === 'token') {
 		// ERC-20 token payment according to ERC-681
 		// Format: ethereum:{contract_address}@{chainID}/transfer?address={address}&uint256={amount}
 		return `ethereum:${currency.contract_address}@${chainID}/transfer?address=${address}${amount ? `&uint256=${amount.toString()}` : ''}`;
+	} else if (currency?.type === 'nft') {
+		// NFT payment according to ERC-681
+		// For NFTs, the amount represents the quantity being transferred
+		// Format: ethereum:{contract_address}@{chainID}/transfer?address={address}&uint256={amount}&tokenId={tokenId}
+		const params = new URLSearchParams();
+		params.set('address', address);
+		if (amount) {
+			params.set('uint256', amount.toString());
+		}
+		params.set('tokenId', currency.tokenId);
+		return `ethereum:${currency.contract_address}@${chainID}/transfer?${params.toString()}`;
+	} else {
+		// Fallback for no currency
+		return `ethereum:${address}@${chainID}`;
 	}
 }

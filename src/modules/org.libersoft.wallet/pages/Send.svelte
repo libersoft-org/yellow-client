@@ -10,8 +10,11 @@
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { validateForm, type FormValidatorConfig } from '@/core/scripts/utils/form.ts';
 	import { provider } from 'libersoft-crypto/provider';
-	import { getBalance, formatBalance, type IBalance } from 'libersoft-crypto/balance';
+	import { formatBalance } from 'libersoft-crypto/balance';
+	import { nativeBalance, getBalance } from 'libersoft-crypto/native';
+	import type { IBalance } from 'libersoft-crypto/types';
 	import { getTokenBalanceByAddress, getBatchTokensInfo } from 'libersoft-crypto/tokens';
+	import { getNftBalanceByAddress, nftBalances } from 'libersoft-crypto/nfts';
 	import { formatUnits, parseUnits } from 'ethers';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
@@ -118,6 +121,32 @@
 			updateCurrencyOptions();
 		});
 
+		// Subscribe to native balance changes for real-time updates
+		const nativeBalanceUnsubscribe = nativeBalance.subscribe(newBalance => {
+			if (isInitialized && currency?.type === 'native' && newBalance?.crypto) {
+				console.log('Send: Native balance changed - updating currentBalanceData');
+				currentBalanceData = newBalance.crypto;
+				updateRemainingBalance();
+			}
+		});
+
+		// Subscribe to NFT balance changes for real-time verification
+		const nftBalanceUnsubscribe = nftBalances.subscribe(balanceMap => {
+			if (isInitialized && currency?.type === 'nft') {
+				const nftGuid = `${currency.contract_address}_${currency.tokenId}`;
+				const nftBalance = balanceMap.get(nftGuid);
+				if (nftBalance) {
+					console.log('Send: NFT balance changed - updating currentBalanceData');
+					currentBalanceData = {
+						amount: BigInt(nftBalance.amount),
+						currency: currency.symbol,
+						decimals: 0,
+					};
+					updateRemainingBalance();
+				}
+			}
+		});
+
 		isInitialized = true; // Mark as initialized to enable reactive effects
 
 		return () => {
@@ -126,6 +155,8 @@
 			if (addressUnsubscribe) addressUnsubscribe();
 			if (feeLevelUnsubscribe) feeLevelUnsubscribe();
 			if (currenciesUnsubscribe) currenciesUnsubscribe();
+			if (nativeBalanceUnsubscribe) nativeBalanceUnsubscribe();
+			if (nftBalanceUnsubscribe) nftBalanceUnsubscribe();
 		};
 	});
 
@@ -134,11 +165,13 @@
 		currencyOptions = $currencies.map(currency => {
 			let label = currency.symbol || 'Unknown';
 			// For tokens with contract addresses, get proper name and symbol from tokenInfos
-			if (currency.contract_address) {
+			if (currency.type === 'token') {
 				const tokenInfo = $tokenInfos.get(currency.contract_address);
 				if (tokenInfo && tokenInfo.symbol !== 'UNKNOWN') label = `${tokenInfo.name} (${tokenInfo.symbol})`;
 				else if (tokenInfo?.name && tokenInfo.name !== 'Unknown Token') label = tokenInfo.name;
 				else label = `Token (${currency.contract_address.slice(0, 8)}...)`;
+			} else if (currency.type === 'nft') {
+				label = `${currency.symbol} (NFT)`;
 			}
 			return {
 				label: label,
@@ -160,12 +193,6 @@
 			currentBalanceData = undefined;
 			nativeBalanceData = undefined;
 			updateBalance();
-
-			// Estimate transaction fee for new network only on actual network change
-			if ($provider && $selectedNetwork && $selectedAddress) {
-				console.log('Send: Estimating fee due to network change');
-				estimateFeeWithLogging((currency as any)?.contract_address, 'network change');
-			}
 		}
 	}
 
@@ -200,7 +227,8 @@
 				updateBalance();
 				if ($provider && $selectedNetwork && $selectedAddress) {
 					console.log('Send: Estimating fee due to currency change');
-					estimateFeeWithLogging(c?.contract_address, 'currency change');
+					const contractAddress = c?.type === 'token' || c?.type === 'nft' ? c.contract_address : undefined;
+					estimateFeeWithLogging(contractAddress, 'currency change');
 				}
 			}
 			oldCurrency = c;
@@ -218,9 +246,11 @@
 			return;
 		}
 		// For tokens with contract addresses, get proper symbol from tokenInfos
-		if (currency.contract_address) {
+		if (currency.type === 'token') {
 			const tokenInfo = $tokenInfos.get(currency.contract_address);
 			selectedCurrencySymbol = tokenInfo?.symbol && tokenInfo.symbol !== 'UNKNOWN' ? tokenInfo.symbol : 'UNKNOWN';
+		} else if (currency.type === 'nft') {
+			selectedCurrencySymbol = currency.symbol;
 		} else {
 			// Use the symbol from currency object for native currency
 			selectedCurrencySymbol = currency?.symbol || '';
@@ -248,7 +278,33 @@
 	// debug wrapper for estimateTransactionFee
 	function estimateFeeWithLogging(contractAddress: string | undefined, reason: string) {
 		console.log(`Send: Estimating transaction fee - ${reason}`);
-		estimateTransactionFee(contractAddress);
+		if (currency?.type === 'nft') {
+			estimateTransactionFee(contractAddress, currency.tokenId, currency.standard);
+		} else {
+			estimateTransactionFee(contractAddress);
+		}
+	}
+
+	// Validate NFT ownership and amount
+	function validateNftTransaction(): string | null {
+		if (currency?.type !== 'nft' || !amount) return null;
+
+		const amountNum = parseInt(amount.toString());
+		if (isNaN(amountNum) || amountNum <= 0) {
+			return 'NFT amount must be a positive integer';
+		}
+
+		// Check if user owns enough NFTs
+		if (currentBalanceData && currentBalanceData.amount < BigInt(amountNum)) {
+			return `Insufficient NFT balance. You own ${currentBalanceData.amount.toString()} but trying to send ${amountNum}`;
+		}
+
+		// ERC-721 specific validation
+		if (currency.standard === 'ERC721' && amountNum !== 1) {
+			return 'ERC-721 NFTs can only be sent one at a time (amount must be 1)';
+		}
+
+		return null; // Valid
 	}
 
 	function scanQRCode() {
@@ -280,12 +336,14 @@
 		// Handle currency selection from QR data
 		if (!qrContractAddress) {
 			// Native currency
-			const matchingOption = $state.snapshot(currencyOptions).find(opt => !opt.value.contract_address);
+			const matchingOption = $state.snapshot(currencyOptions).find(opt => opt.value.type === 'native');
 			currency = matchingOption?.value;
 			handleCurrencyChange();
 		} else if (qrCurrency) {
 			// Token QR: qrCurrency reactively found the token by contract address
-			const matchingOption = $state.snapshot(currencyOptions).find(opt => opt.value.contract_address === $state.snapshot(qrCurrency.contract_address));
+			const qrCurrencySnapshot = $state.snapshot(qrCurrency);
+			const qrContractAddr = qrCurrencySnapshot.type === 'token' || qrCurrencySnapshot.type === 'nft' ? qrCurrencySnapshot.contract_address : undefined;
+			const matchingOption = $state.snapshot(currencyOptions).find(opt => (opt.value.type === 'token' || opt.value.type === 'nft') && opt.value.contract_address === qrContractAddr);
 			currency = matchingOption?.value || qrCurrency;
 			handleCurrencyChange();
 		} else if (parsed.contractAddress) {
@@ -334,16 +392,22 @@
 	let networkMatches = $derived(qrChainID === null || $state.snapshot($selectedNetwork?.chainID) === $state.snapshot(qrChainID));
 
 	// currency object based on qrContractAddress and $currencies
-	let qrCurrency: ICurrency | undefined = $derived($state.snapshot(qrContractAddress) ? $state.snapshot($currencies).find(c => c.contract_address === $state.snapshot(qrContractAddress)) : undefined);
+	let qrCurrency: ICurrency | undefined = $derived($state.snapshot(qrContractAddress) ? $state.snapshot($currencies).find(c => (c.type === 'token' || c.type === 'nft') && c.contract_address === $state.snapshot(qrContractAddress)) : undefined);
 
 	let needsTokenAdd = $derived(qrContractAddress && !qrCurrency && networkMatches);
 
 	async function updateBalance() {
 		try {
 			nativeBalanceData = (await getBalance()) || undefined;
-			if (currency?.contract_address) currentBalanceData = (await getTokenBalanceByAddress(currency.contract_address)) || undefined;
-			else if (currency) currentBalanceData = nativeBalanceData;
-			else currentBalanceData = undefined;
+			if (currency?.type === 'token') {
+				currentBalanceData = (await getTokenBalanceByAddress(currency.contract_address)) || undefined;
+			} else if (currency?.type === 'nft') {
+				currentBalanceData = (await getNftBalanceByAddress(currency.contract_address, currency.tokenId)) || undefined;
+			} else if (currency) {
+				currentBalanceData = nativeBalanceData;
+			} else {
+				currentBalanceData = undefined;
+			}
 		} catch (e) {
 			console.error('Error updating balance:', e);
 			currentBalanceData = undefined;
@@ -359,15 +423,22 @@
 			return;
 		}
 		try {
-			const amountBigInt = parseUnits(amount.toString().replace(',', '.'), currentBalanceData.decimals || 18);
+			let amountBigInt: bigint;
+			if (currency?.type === 'nft') {
+				// For NFTs, always use whole numbers (0 decimals)
+				amountBigInt = BigInt(parseInt(amount.toString()));
+			} else {
+				// For tokens and native currency, use proper decimals
+				amountBigInt = parseUnits(amount.toString().replace(',', '.'), currentBalanceData.decimals || 18);
+			}
 			const feeBigInt = parseUnits($fee.toString(), 18); // Fee is always in native currency (18 decimals)
 			// If sending native currency
-			if (!currency?.contract_address) {
+			if (currency?.type === 'native') {
 				remainingBalance = currentBalanceData.amount - amountBigInt - feeBigInt;
 				remainingTokenBalance = undefined;
 				remainingNativeBalance = undefined;
-			} else {
-				// If sending token
+			} else if (currency?.type === 'token' || currency?.type === 'nft') {
+				// If sending token or NFT
 				// Token balance: current token balance - amount sent
 				remainingTokenBalance = currentBalanceData.amount - amountBigInt;
 				// Native balance: current native balance - fee
@@ -386,13 +457,16 @@
 		try {
 			const feeBigInt = parseUnits($fee.toString(), 18); // Fee is always in native currency (18 decimals)
 			// If sending native currency, subtract fee from balance
-			if (!currency?.contract_address) {
+			if (currency?.type === 'native') {
 				let maxAmount = currentBalanceData.amount - feeBigInt;
 				if (maxAmount < 0) maxAmount = 0n;
 				amount = formatUnits(maxAmount, currentBalanceData.decimals || 18);
-			} else {
+			} else if (currency?.type === 'token') {
 				// If sending token, use full token balance (fee is paid in native currency)
 				amount = formatUnits(currentBalanceData.amount, currentBalanceData.decimals || 18);
+			} else if (currency?.type === 'nft') {
+				// For NFTs, use full balance (as integer)
+				amount = currentBalanceData.amount.toString();
 			}
 		} catch (e) {
 			console.error('Error setting max amount:', e);
@@ -418,8 +492,16 @@
 				element: elAmountInput,
 				required: 'Amount is required',
 				validate: value => {
-					const etherAmount = getEtherAmount(value);
-					if (!etherAmount) return 'Invalid amount';
+					// NFT-specific validation
+					const nftError = validateNftTransaction();
+					if (nftError) return nftError;
+
+					// General amount validation for non-NFTs
+					if (currency?.type !== 'nft') {
+						const etherAmount = getEtherAmount(value);
+						if (!etherAmount) return 'Invalid amount';
+					}
+
 					return null;
 				},
 			},
@@ -442,9 +524,12 @@
 		}
 		// If validation passes, create payment
 		let etherAmount: bigint;
-		if (currency?.contract_address && currentBalanceData) {
-			// For tokens, use the correct decimals
+		if (currency?.type === 'token' && currentBalanceData) {
+			// For tokens, use the correct decimals from token info
 			etherAmount = parseUnits(amount!.toString().replace(',', '.'), currentBalanceData.decimals || 18);
+		} else if (currency?.type === 'nft') {
+			// For NFTs, always use 0 decimals (whole numbers only)
+			etherAmount = BigInt(parseInt(amount!.toString()));
 		} else {
 			// For native currency, use 18 decimals
 			etherAmount = getEtherAmount(amount || 0)!;
@@ -455,7 +540,9 @@
 			amount: etherAmount,
 			fee: etherFee!,
 			symbol: currency?.symbol,
-			contractAddress: currency?.contract_address,
+			contractAddress: currency?.type === 'token' || currency?.type === 'nft' ? currency.contract_address : undefined,
+			tokenId: currency?.type === 'nft' ? currency.tokenId : undefined,
+			nftStandard: currency?.type === 'nft' ? currency.standard : undefined,
 		};
 		elDialogSend?.open();
 	}
@@ -549,7 +636,7 @@
 		</Label>
 		<Label text="Amount">
 			<div class="row">
-				<Input bind:value={amount} bind:this={elAmountInput} enabled={!!($selectedNetwork && $selectedAddress)} onChange={handleAmountChange} data-testid="wallet-send-amount-input" />
+				<Input bind:value={amount} bind:this={elAmountInput} enabled={!!($selectedNetwork && $selectedAddress)} onChange={handleAmountChange} type={currency?.type === 'nft' ? 'number' : 'text'} step={currency?.type === 'nft' ? 1 : undefined} min={currency?.type === 'nft' ? 1 : undefined} data-testid="wallet-send-amount-input" />
 				{#if currency}
 					<div>{selectedCurrencySymbol}</div>
 				{/if}
@@ -574,7 +661,7 @@
 					<div>{$selectedNetwork?.currency?.symbol || ''}</div>
 				{/if}
 				{#if !$feeLoading && $feeLevel !== 'custom' && $provider && $selectedNetwork && $selectedAddress}
-					<Icon img="img/reset.svg" alt="Refresh" colorVariable="--primary-foreground" size="30px" padding="0" onClick={() => estimateFeeWithLogging(currency?.contract_address, 'manual refresh')} />
+					<Icon img="img/reset.svg" alt="Refresh" colorVariable="--primary-foreground" size="30px" padding="0" onClick={() => estimateFeeWithLogging(currency?.type === 'token' || currency?.type === 'nft' ? currency.contract_address : undefined, 'manual refresh')} />
 				{/if}
 			</div>
 		</Label>
@@ -595,7 +682,7 @@
 					<Td>
 						{#if currentBalanceData && currency}
 							<div>{formatBalance(currentBalanceData)}</div>
-							{#if currency?.contract_address}
+							{#if currency?.type === 'token' || currency?.type === 'nft'}
 								{#if nativeBalanceData}
 									<div>{formatBalance(nativeBalanceData)}</div>
 								{:else}
@@ -614,7 +701,7 @@
 					<Td>
 						{#if !currency || !amount || amount === '' || amount === 0}
 							<div>-</div>
-						{:else if !currency?.contract_address}
+						{:else if currency?.type === 'native'}
 							{#if remainingBalanceObj}
 								<div>{formatBalance(remainingBalanceObj)}</div>
 							{:else}
