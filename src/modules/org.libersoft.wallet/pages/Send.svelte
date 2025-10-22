@@ -15,6 +15,7 @@
 	import type { IBalance } from 'libersoft-crypto/types';
 	import { getBatchTokensInfo, tokenBalances } from 'libersoft-crypto/tokens';
 	import { nftBalances, nftBalanceKey } from 'libersoft-crypto/nfts';
+	import { isValidContractAddress } from 'libersoft-crypto/address-validation';
 	import { formatUnits, parseUnits } from 'ethers';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
@@ -41,6 +42,7 @@
 	let currency: ICurrency | null | undefined = $state();
 	let amount: string | number | undefined = $state();
 	let error: string | null | undefined = $state();
+	let errorHint: string | null | undefined = $state();
 	let elDialogSend: DialogSend | undefined = $state();
 	let payment: IPayment | undefined = $state();
 
@@ -178,11 +180,22 @@
 				else if (tokenInfo?.name && tokenInfo.name !== 'Unknown Token') label = tokenInfo.name;
 				else label = `Token (${currency.contract_address.slice(0, 8)}...)`;
 			} else if (currency.type === 'nft') {
-				label = `${currency.symbol} (NFT)`;
+				// Handle missing NFT metadata gracefully
+				if (currency.symbol && currency.symbol.trim()) {
+					label = `${currency.symbol} (NFT)`;
+				} else {
+					// Fallback to contract address and token ID for identification
+					const shortContract = currency.contract_address.slice(0, 8);
+					const shortTokenId = currency.tokenId.length > 8 ? currency.tokenId.slice(0, 8) + '...' : currency.tokenId;
+					label = `NFT ${shortContract}...#${shortTokenId}`;
+				}
 			}
 			return {
 				label: label,
-				icon: { img: currency.iconURL || 'modules/' + module.identifier + '/img/token.svg', size: '16px' },
+				icon: {
+					img: currency.iconURL || (currency.type === 'nft' ? 'modules/' + module.identifier + '/img/nft.svg' : 'modules/' + module.identifier + '/img/token.svg'),
+					size: '16px',
+				},
 				value: currency,
 			};
 		});
@@ -270,18 +283,34 @@
 	function validateNftTransaction(): string | null {
 		if (currency?.type !== 'nft' || !amount) return null;
 
-		const amountNum = parseInt(amount.toString());
-		if (isNaN(amountNum) || amountNum <= 0) {
-			return 'NFT amount must be a positive integer';
+		// Validate contract address
+		if (!isValidContractAddress(currency.contract_address)) {
+			return 'Invalid NFT contract address';
+		}
+
+		// Use BigInt for safe parsing of potentially large amounts
+		let amountBigInt: bigint;
+		try {
+			const amountStr = amount.toString().trim();
+			// Check for decimal places (NFTs must be whole numbers)
+			if (amountStr.includes('.') || amountStr.includes(',')) {
+				return 'NFT amount must be a whole number (no decimals)';
+			}
+			amountBigInt = BigInt(amountStr);
+			if (amountBigInt <= 0n) {
+				return 'NFT amount must be greater than 0';
+			}
+		} catch (error) {
+			return 'NFT amount must be a valid positive integer';
 		}
 
 		// Check if user owns enough NFTs
-		if (currentBalanceData && currentBalanceData.amount < BigInt(amountNum)) {
-			return `Insufficient NFT balance. You own ${currentBalanceData.amount.toString()} but trying to send ${amountNum}`;
+		if (currentBalanceData && currentBalanceData.amount < amountBigInt) {
+			return `Insufficient NFT balance. You own ${currentBalanceData.amount.toString()} but trying to send ${amountBigInt.toString()}`;
 		}
 
 		// ERC-721 specific validation
-		if (currency.standard === 'ERC721' && amountNum !== 1) {
+		if (currency.standard === 'ERC721' && amountBigInt !== 1n) {
 			return 'ERC-721 NFTs can only be sent one at a time (amount must be 1)';
 		}
 
@@ -387,8 +416,8 @@
 		try {
 			let amountBigInt: bigint;
 			if (currency?.type === 'nft') {
-				// For NFTs, always use whole numbers (0 decimals)
-				amountBigInt = BigInt(parseInt(amount.toString()));
+				// For NFTs, always use whole numbers (0 decimals) - use BigInt directly for safety
+				amountBigInt = BigInt(amount.toString().trim());
 			} else {
 				// For tokens and native currency, use proper decimals
 				amountBigInt = parseUnits(amount.toString().replace(',', '.'), currentBalanceData.decimals || 18);
@@ -435,14 +464,35 @@
 		}
 	}
 
-	async function send() {
+	// Helper function to set error with optional hint
+	function setError(message: string, hint?: string) {
+		error = message;
+		errorHint = hint || null;
+	}
+
+	// Helper function to clear errors
+	function clearError() {
 		error = null;
+		errorHint = null;
+	}
+
+	async function send() {
+		clearError();
 		// Validation config
 		const validationConfig: FormValidatorConfig = [
 			{
 				field: $sendAddress,
 				element: elAddressInput,
 				required: 'Address is required',
+				validate: value => {
+					// Sanitize and validate address
+					const sanitizedAddress = value?.toString().trim();
+					if (!sanitizedAddress) return 'Address is required';
+					if (!isValidContractAddress(sanitizedAddress)) {
+						return 'Invalid address format. Address must be a valid Ethereum address (0x followed by 40 hex characters)';
+					}
+					return null;
+				},
 			},
 			{
 				field: currency,
@@ -481,7 +531,7 @@
 		// Validate form
 		const validationError = validateForm(validationConfig);
 		if (validationError) {
-			error = validationError;
+			setError(validationError);
 			return;
 		}
 		// If validation passes, create payment
@@ -490,15 +540,17 @@
 			// For tokens, use the correct decimals from token info
 			etherAmount = parseUnits(amount!.toString().replace(',', '.'), currentBalanceData.decimals || 18);
 		} else if (currency?.type === 'nft') {
-			// For NFTs, always use 0 decimals (whole numbers only)
-			etherAmount = BigInt(parseInt(amount!.toString()));
+			// For NFTs, always use 0 decimals (whole numbers only) - use BigInt directly for safety
+			etherAmount = BigInt(amount!.toString().trim());
 		} else {
 			// For native currency, use 18 decimals
 			etherAmount = getEtherAmount(amount || 0)!;
 		}
 		const etherFee = getEtherAmount($fee);
+		// Sanitize address parameter
+		const sanitizedAddress = $sendAddress!.toString().trim();
 		payment = {
-			address: $sendAddress!.toString(),
+			address: sanitizedAddress,
 			amount: etherAmount,
 			fee: etherFee!,
 			symbol: currency?.symbol,
@@ -525,13 +577,39 @@
 				$sendAddress = '';
 				amount = '';
 				currency = null;
-				error = null;
+				clearError();
 
 				// Navigate to History section
 				setSection('history');
 			} catch (err) {
 				console.error('Transaction failed:', err);
-				error = err instanceof Error ? err.message : 'Transaction failed';
+
+				// Keep the actual error message, but add helpful hints
+				if (err instanceof Error) {
+					const errorMessage = err.message.toLowerCase();
+
+					if (errorMessage.includes('insufficient funds') || errorMessage.includes('insufficient balance')) {
+						setError(err.message, 'Check your balance and network fees. You may need more of the native currency to pay for gas.');
+					} else if (errorMessage.includes('gas') && errorMessage.includes('limit')) {
+						setError(err.message, 'The network may be congested. Try again later or increase the transaction fee.');
+					} else if (errorMessage.includes('nonce')) {
+						setError(err.message, 'This usually resolves itself. Please wait a moment and try again.');
+					} else if (errorMessage.includes('rejected') || errorMessage.includes('denied')) {
+						setError(err.message, 'You may have declined the transaction in your wallet. Try again and approve the transaction.');
+					} else if (errorMessage.includes('network')) {
+						setError(err.message, 'Check your internet connection and try again. The blockchain network may be temporarily unavailable.');
+					} else if (errorMessage.includes('revert')) {
+						if (currency?.type === 'nft') {
+							setError(err.message, 'You may not own this NFT anymore, or it may not be transferable. Check your NFT balance and try again.');
+						} else {
+							setError(err.message, 'The smart contract rejected this transaction. Check the transaction details and try again.');
+						}
+					} else {
+						setError(err.message, 'If this error persists, try refreshing the page or contacting support.');
+					}
+				} else {
+					setError('Transaction failed due to an unknown error', 'Please try again. If the problem persists, try refreshing the page.');
+				}
 			}
 		}
 	}
@@ -681,6 +759,9 @@
 		</Table>
 		{#if error}
 			<Alert type="error" message={error} />
+			{#if errorHint}
+				<Alert type="info" message={errorHint} />
+			{/if}
 		{/if}
 		{#if $debug}
 			<div class="debug">
