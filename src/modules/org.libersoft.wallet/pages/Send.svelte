@@ -11,10 +11,10 @@
 	import { validateForm, type FormValidatorConfig } from '@/core/scripts/utils/form.ts';
 	import { provider } from 'libersoft-crypto/provider';
 	import { formatBalance } from 'libersoft-crypto/balance';
-	import { nativeBalance, getBalance } from 'libersoft-crypto/native';
+	import { nativeBalance } from 'libersoft-crypto/native';
 	import type { IBalance } from 'libersoft-crypto/types';
-	import { getTokenBalanceByAddress, getBatchTokensInfo } from 'libersoft-crypto/tokens';
-	import { getNftBalanceByAddress, nftBalances } from 'libersoft-crypto/nfts';
+	import { getBatchTokensInfo, tokenBalances } from 'libersoft-crypto/tokens';
+	import { nftBalances, nftBalanceKey } from 'libersoft-crypto/nfts';
 	import { formatUnits, parseUnits } from 'ethers';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
@@ -43,8 +43,31 @@
 	let error: string | null | undefined = $state();
 	let elDialogSend: DialogSend | undefined = $state();
 	let payment: IPayment | undefined = $state();
-	let currentBalanceData: IBalance | undefined = $state();
-	let nativeBalanceData: IBalance | undefined = $state();
+
+	let currentBalanceData: IBalance | undefined = $derived.by(() => {
+		if (!currency) return undefined;
+
+		if (currency.type === 'native') {
+			return nativeBalanceData;
+		} else if (currency.type === 'token') {
+			const tokenBalance = $tokenBalances.get(currency.contract_address);
+			return tokenBalance?.crypto;
+		} else if (currency.type === 'nft') {
+			const key = nftBalanceKey(currency.contract_address, currency.tokenId);
+			const nftBalance = $nftBalances.get(key);
+			if (nftBalance) {
+				return {
+					amount: BigInt(nftBalance.amount),
+					currency: currency.symbol,
+					decimals: 0,
+				};
+			}
+		}
+		return undefined;
+	});
+
+	// Reactive native balance data from store
+	let nativeBalanceData: IBalance | undefined = $derived($nativeBalance?.crypto);
 	let remainingBalance: bigint | undefined = $state();
 	let remainingNativeBalance: bigint | undefined = $state();
 	let remainingTokenBalance: bigint | undefined = $state();
@@ -69,7 +92,19 @@
 	let qrContractAddress: string | null = $state(null);
 
 	let currencyOptions = $state<Array<{ label: string; icon: { img: string; size: string }; value: ICurrency }>>([]);
-	let selectedCurrencySymbol = $state(''); // Computed property to get the selected currency symbol
+
+	let selectedCurrencySymbol = $derived.by(() => {
+		if (!currency) return '';
+
+		if (currency.type === 'token') {
+			const tokenInfo = $tokenInfos.get(currency.contract_address);
+			return tokenInfo?.symbol || 'UNKNOWN';
+		} else if (currency.type === 'nft') {
+			return currency.symbol;
+		} else {
+			return currency?.symbol || '';
+		}
+	});
 
 	onMount(() => {
 		elAddressInput?.focus();
@@ -121,32 +156,6 @@
 			updateCurrencyOptions();
 		});
 
-		// Subscribe to native balance changes for real-time updates
-		const nativeBalanceUnsubscribe = nativeBalance.subscribe(newBalance => {
-			if (isInitialized && currency?.type === 'native' && newBalance?.crypto) {
-				console.log('Send: Native balance changed - updating currentBalanceData');
-				currentBalanceData = newBalance.crypto;
-				updateRemainingBalance();
-			}
-		});
-
-		// Subscribe to NFT balance changes for real-time verification
-		const nftBalanceUnsubscribe = nftBalances.subscribe(balanceMap => {
-			if (isInitialized && currency?.type === 'nft') {
-				const nftGuid = `${currency.contract_address}_${currency.tokenId}`;
-				const nftBalance = balanceMap.get(nftGuid);
-				if (nftBalance) {
-					console.log('Send: NFT balance changed - updating currentBalanceData');
-					currentBalanceData = {
-						amount: BigInt(nftBalance.amount),
-						currency: currency.symbol,
-						decimals: 0,
-					};
-					updateRemainingBalance();
-				}
-			}
-		});
-
 		isInitialized = true; // Mark as initialized to enable reactive effects
 
 		return () => {
@@ -155,8 +164,6 @@
 			if (addressUnsubscribe) addressUnsubscribe();
 			if (feeLevelUnsubscribe) feeLevelUnsubscribe();
 			if (currenciesUnsubscribe) currenciesUnsubscribe();
-			if (nativeBalanceUnsubscribe) nativeBalanceUnsubscribe();
-			if (nftBalanceUnsubscribe) nftBalanceUnsubscribe();
 		};
 	});
 
@@ -187,21 +194,17 @@
 		if (isInitialized && networkChanged) {
 			console.log('Send: Network switched - reloading data');
 
-			// Reset state and reload data
+			// Reset state - balance data will update reactively
 			currency = null;
 			error = null;
-			currentBalanceData = undefined;
-			nativeBalanceData = undefined;
-			updateBalance();
 		}
 	}
 
 	// Helper function for handling address changes
 	function handleAddressChange(newAddress: typeof $selectedAddress, currentAddress: typeof $selectedAddress) {
 		if (isInitialized && newAddress !== currentAddress) {
-			console.log('Send: Address changed - reloading balance');
-			// Update balance for new address, but don't recalculate fee
-			updateBalance();
+			console.log('Send: Address changed - balance will update reactively');
+			// Balance data will update reactively through stores
 		}
 	}
 
@@ -223,8 +226,8 @@
 			console.log('(oldCurrency !== currency):', oldCurrency !== c);
 
 			if (isInitialized && c) {
-				console.log('Send: Currency changed - updating balance and fee');
-				updateBalance();
+				console.log('Send: Currency changed - balance will update reactively, estimating fee');
+				// Balance data will update reactively through derived currentBalanceData
 				if ($provider && $selectedNetwork && $selectedAddress) {
 					console.log('Send: Estimating fee due to currency change');
 					const contractAddress = c?.type === 'token' || c?.type === 'nft' ? c.contract_address : undefined;
@@ -232,28 +235,6 @@
 				}
 			}
 			oldCurrency = c;
-		}
-
-		console.log('Send: Updating selectedCurrencySymbol due to currency change');
-		updateCurrencySymbol();
-		console.log('Send: selectedCurrencySymbol is now:', $state.snapshot(selectedCurrencySymbol));
-	}
-
-	// Helper function for updating currency symbol
-	function updateCurrencySymbol() {
-		if (!currency) {
-			selectedCurrencySymbol = '';
-			return;
-		}
-		// For tokens with contract addresses, get proper symbol from tokenInfos
-		if (currency.type === 'token') {
-			const tokenInfo = $tokenInfos.get(currency.contract_address);
-			selectedCurrencySymbol = tokenInfo?.symbol && tokenInfo.symbol !== 'UNKNOWN' ? tokenInfo.symbol : 'UNKNOWN';
-		} else if (currency.type === 'nft') {
-			selectedCurrencySymbol = currency.symbol;
-		} else {
-			// Use the symbol from currency object for native currency
-			selectedCurrencySymbol = currency?.symbol || '';
 		}
 	}
 
@@ -395,25 +376,6 @@
 	let qrCurrency: ICurrency | undefined = $derived($state.snapshot(qrContractAddress) ? $state.snapshot($currencies).find(c => (c.type === 'token' || c.type === 'nft') && c.contract_address === $state.snapshot(qrContractAddress)) : undefined);
 
 	let needsTokenAdd = $derived(qrContractAddress && !qrCurrency && networkMatches);
-
-	async function updateBalance() {
-		try {
-			nativeBalanceData = (await getBalance()) || undefined;
-			if (currency?.type === 'token') {
-				currentBalanceData = (await getTokenBalanceByAddress(currency.contract_address)) || undefined;
-			} else if (currency?.type === 'nft') {
-				currentBalanceData = (await getNftBalanceByAddress(currency.contract_address, currency.tokenId)) || undefined;
-			} else if (currency) {
-				currentBalanceData = nativeBalanceData;
-			} else {
-				currentBalanceData = undefined;
-			}
-		} catch (e) {
-			console.error('Error updating balance:', e);
-			currentBalanceData = undefined;
-			nativeBalanceData = undefined;
-		}
-	}
 
 	function updateRemainingBalance() {
 		if (!currentBalanceData || !amount || !$fee || !currency) {
