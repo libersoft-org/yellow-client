@@ -5,14 +5,16 @@
 	import { selectedNetwork } from 'libersoft-crypto/network';
 	import { type IPayment, sendTransaction } from 'libersoft-crypto/transaction';
 	import { transactionTime, transactionTimeLoading } from 'libersoft-crypto/transaction';
-	import { playAudio } from '@/core/scripts/notifications.ts';
+	//import { playAudio } from '@/core/scripts/notifications.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
+
 	interface Props {
 		params?: IPayment;
 		close?: () => void;
 		onYes?: (params: any) => void;
 	}
+
 	let { params, close, onYes }: Props = $props();
 	let elDialog;
 	let tokenDecimals = $state<number | null>(null);
@@ -41,6 +43,7 @@
 		}
 		loadDecimals();
 	});
+
 	let dialogData = {
 		title: 'Transaction confirmation',
 		body: body,

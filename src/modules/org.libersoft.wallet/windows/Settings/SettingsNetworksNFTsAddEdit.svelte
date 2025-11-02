@@ -8,36 +8,28 @@
 	import Input from '@/core/components/Input/Input.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Form from '@/core/components/Form/Form.svelte';
+
 	interface Props {
 		close: () => void;
 		networkGuid: string;
 		item?: INftConf;
 	}
+
 	let { close, networkGuid, item }: Props = $props();
 	let nftContractAddress: string | undefined = $state();
 	let nftTokenId: string | undefined = $state();
 	let error: string | null | undefined = $state();
-
 	let elNftContractAddress: Input | undefined = $state();
-	let elNftTokenId: Input | undefined = $state();
+
+	let nftData: { contract_address: string; token_id: string } = $derived.by(() => ({
+		contract_address: nftContractAddress || '',
+		token_id: nftTokenId || '0',
+	}));
 
 	/* todo: start using:
 	import { nftsForDisplay } from 'libersoft-crypto/nfts';
 	...
 	*/
-
-	let nftData: { contract_address: string; token_id: string } = $derived.by(() => ({
-		contract_address: nftContractAddress || '',
-		token_id: nftTokenId || '', // Required for ERC1155 contracts
-
-		// hmmm, we could cache this:
-		name: undefined, // Will be loaded from blockchain
-		description: undefined, // Will be loaded from blockchain
-		image: undefined, // Will be loaded from blockchain
-		external_url: undefined, // Will be loaded from blockchain
-	}));
-
-	$inspect(nftData);
 
 	export function onOpen(): void {
 		error = null;
@@ -81,12 +73,8 @@
 		<Input bind:value={nftContractAddress} bind:this={elNftContractAddress} placeholder="0x..." />
 	</Label>
 	<Label text="Token ID (Optional)">
-		<Input bind:value={nftTokenId} bind:this={elNftTokenId} placeholder="Leave empty for ERC721, required for specific ERC1155 tokens" />
+		<Input bind:value={nftTokenId} min={0} placeholder="ERC721 or ERC1155 token ID" />
 	</Label>
-	<div style="font-size: 14px; color: var(--tertiary-foreground); margin-top: 5px;">
-		<strong>ERC721:</strong> Leave Token ID empty to load all NFTs from the contract.<br />
-		<strong>ERC1155:</strong> Specify a Token ID to load a specific token type from the contract.
-	</div>
 	{#if error}
 		<Alert type="error" message={error} />
 	{/if}

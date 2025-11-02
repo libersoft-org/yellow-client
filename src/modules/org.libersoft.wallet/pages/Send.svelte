@@ -549,6 +549,7 @@
 		const etherFee = getEtherAmount($fee);
 		// Sanitize address parameter
 		const sanitizedAddress = $sendAddress!.toString().trim();
+
 		payment = {
 			address: sanitizedAddress,
 			amount: etherAmount,
