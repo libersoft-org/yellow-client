@@ -58,12 +58,15 @@ export class FilesService {
 
 			await filesDB.addFile(newLocalFile);
 
-			this.fileDownloadManager.startDownloadSerial([record], makeDownloadChunkAsyncFn(acc), async download => {
-				newLocalFile.localFileStatus = LocalFileStatus.READY;
-				newLocalFile.fileBlob = new Blob(download.chunksReceived, { type: record.fileMimeType });
-				// const result = await filesDB.updateFile(record.id, newLocalFile);
-				resolve({ localFile: newLocalFile as ILocalFile });
-			});
+			const { downloads } = this.fileDownloadManager.initAndStartDownloads([record], makeDownloadChunkAsyncFn(acc));
+			downloads.forEach(download =>
+				download?.downloadResolver?.promise.then(async download => {
+					newLocalFile.localFileStatus = LocalFileStatus.READY;
+					newLocalFile.fileBlob = new Blob(download.chunksReceived, { type: record.fileMimeType });
+					// const result = await filesDB.updateFile(record.id, newLocalFile);
+					resolve({ localFile: newLocalFile as ILocalFile });
+				})
+			);
 		});
 	}
 }
