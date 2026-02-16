@@ -48,9 +48,11 @@
 	function start() {
 		if (playerInstance) {
 			playerInstance.dispose();
+			playerInstance = null;
 			$player.show();
 		}
 		const record = $player.record();
+		$player.show();
 		record.start();
 		isRecording = true;
 	}
@@ -158,6 +160,11 @@
 		setup().then(_player => {
 			_player.on('deviceReady', () => {
 				const stream = _player.record().stream;
+				console.log('AAAAAAAAAAA playerInstance', playerInstance);
+				recordedBlob.set(null);
+				if (playerInstance) {
+					_player.hide();
+				}
 				if (!micIndicatorRef) {
 					console.debug('micIndicatorRef is not set');
 					return;
@@ -170,7 +177,14 @@
 			_player.on('stopRecord', () => {
 				isRecording = false;
 			});
-			_player.on('finishRecord', function () {
+		});
+
+		onMount(() => {
+			recordedBlob.subscribe(value => {
+				console.log('recordedBlob changed:', value);
+				if (!value) {
+					return;
+				}
 				try {
 					if (sendingRequested) {
 						if (!$recordedBlob) {

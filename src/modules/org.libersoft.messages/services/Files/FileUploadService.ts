@@ -1,7 +1,8 @@
-import { type ICustomFile, type IFileUpload, type IFileUploadBeginOptions, type IFileUploadRecord, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole, type FileUploadStoreType } from './types.ts';
+import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole, type FileUploadStoreType, type ICustomFile, type IFileUpload, type IFileUploadBeginOptions, type PushChunkFnType } from './types.ts';
 import { blobToBase64, makeFileUpload, makeFileUploadRecord } from './utils.ts';
 import EventEmitter from 'events';
 import fileUploadStore from '../../stores/FileUploadStore.ts';
+import { call, exit, run } from 'effection';
 
 export class FileUploadService extends EventEmitter {
 	uploadsStore: FileUploadStoreType;
@@ -15,7 +16,7 @@ export class FileUploadService extends EventEmitter {
 		this.uploadsStore = uploadsStore;
 	}
 
-	beginUpload(files: FileList, type: FileUploadRecordType, acc, options: IFileUploadBeginOptions) {
+	initUploads(files: FileList, type: FileUploadRecordType, acc, pushFn: PushChunkFnType, options: IFileUploadBeginOptions) {
 		const uploads: IFileUpload[] = [];
 		for (let i = 0; i < files.length; i++) {
 			const file = files[i] as ICustomFile;
@@ -33,6 +34,7 @@ export class FileUploadService extends EventEmitter {
 				file,
 				record,
 				acc,
+				pushFn,
 			});
 			this.uploadsStore.set(upload.record.id, upload);
 			uploads.push(upload);
@@ -63,78 +65,81 @@ export class FileUploadService extends EventEmitter {
 		return { chunk, upload, blob };
 	}
 
-	async startUploadSerial(records: IFileUploadRecord[], pushFn: (data: { chunk: any; upload: IFileUpload }) => Promise<void>) {
-		for (let i = 0; i < records.length; i++) {
-			const record = records[i];
-			const upload = this.uploadsStore.get(record.id);
+	startUpload(upload: IFileUpload) {
+		const self = this;
+		const { chunksSent } = upload;
+		const { chunkSize } = upload.record;
+		const record = upload.record;
 
-			if (!upload) {
-				continue;
-			}
-			if (!upload.file) {
-				continue;
-			}
-
-			const { chunksSent } = upload;
-			const { chunkSize } = upload.record;
-
-			upload.pushChunk = async () => {
-				const setRunning = (running: boolean) => {
-					upload.running = running;
-					this.uploadsStore.set(record.id, upload);
-				};
-
-				setRunning(true);
-				if (upload.record.status === FileUploadRecordStatus.CANCELED || upload.record.status === FileUploadRecordStatus.ERROR) {
-					setRunning(false);
-					upload.pushChunk = undefined;
-					return;
-				}
-				if (upload.record.status === FileUploadRecordStatus.PAUSED) {
-					setRunning(false);
-					return;
-				}
-				if (chunksSent.length === Math.ceil(record.fileSize / chunkSize)) {
-					upload.record.status = FileUploadRecordStatus.FINISHED;
-					this.uploadsStore.set(record.id, upload);
-					setRunning(false);
-					setTimeout(() => this.startNextUpload(upload));
-					return;
-				}
-				if (record.type === FileUploadRecordType.P2P && this.p2pThrottleMemory.get(record.id) >= this.p2pMaxBatchChunks) {
-					setRunning(false);
-					return;
-				}
-
-				const lastChunkId = chunksSent[chunksSent.length - 1];
-				const newChunkId = lastChunkId === undefined ? 0 : lastChunkId + 1;
-				const { chunk } = await this.getChunk(upload.record.id, newChunkId, chunkSize);
-
-				await pushFn({ chunk, upload });
-				chunksSent[newChunkId] = newChunkId;
-				this.uploadsStore.set(record.id, upload);
-
-				if (record.type === FileUploadRecordType.P2P) {
-					const throttleMemory = this.p2pThrottleMemory.get(record.id) || 0;
-					this.p2pThrottleMemory.set(record.id, throttleMemory + 1);
-				}
-
-				upload.pushChunk && (await upload.pushChunk());
-			};
-			this.uploadsStore.set(record.id, upload);
-			this.startUpload(upload);
+		if (!upload) {
+			return; // todo: throw
 		}
-	}
-
-	async startUpload(upload: IFileUpload) {
-		console.log('this.uploadsStore.isAnyUploadRunning()', this.uploadsStore.isAnyUploadRunning());
-		if (this.uploadsStore.isAnyUploadRunning()) {
-			return;
+		if (!upload.file) {
+			return; // todo: throw
 		}
-		upload.pushChunk && (await upload.pushChunk());
+
+		function* pushNextChunk() {
+			const lastChunkId = chunksSent[chunksSent.length - 1];
+			const newChunkId = lastChunkId === undefined ? 0 : lastChunkId + 1;
+			const { chunk } = yield* call(() => self.getChunk(upload.record.id, newChunkId, chunkSize));
+			console.log('chunksSent 111', chunksSent);
+
+			if (!upload.pushFn) {
+				yield* exit(1, 'Upload push function is not defined');
+			}
+
+			// @ts-ignore
+			yield* call(() => upload.pushFn({ chunk, upload }));
+			chunksSent[newChunkId] = newChunkId;
+			self.uploadsStore.set(record.id, upload);
+			console.log('chunksSent 222', chunksSent);
+
+			if (record.type === FileUploadRecordType.P2P) {
+				const throttleMemory = self.p2pThrottleMemory.get(record.id) || 0;
+				self.p2pThrottleMemory.set(record.id, throttleMemory + 1);
+			}
+		}
+
+		return run(function* () {
+			try {
+				while (true) {
+					if (upload.record.status === FileUploadRecordStatus.CANCELED || upload.record.status === FileUploadRecordStatus.ERROR || upload.record.status === FileUploadRecordStatus.PAUSED) {
+						break;
+					}
+					if (chunksSent.length === Math.ceil(upload.record.fileSize / chunkSize)) {
+						upload.record.status = FileUploadRecordStatus.FINISHED;
+						self.uploadsStore.set(upload.record.id, upload);
+						break;
+					}
+					if (upload.record.type === FileUploadRecordType.P2P && self.p2pThrottleMemory.get(upload.record.id) >= self.p2pMaxBatchChunks) {
+						//break;
+					}
+
+					if (!upload.running) {
+						upload.running = true;
+						self.uploadsStore.set(upload.record.id, upload);
+					}
+
+					yield* pushNextChunk();
+				}
+			} catch (err) {
+				console.log('AAAAA', err);
+			} finally {
+				console.log('BBBBBBBBB finish');
+				// finish after exit was yielded
+				upload.running = false;
+				self.uploadsStore.set(upload.record.id, upload);
+				if (record.status === FileUploadRecordStatus.FINISHED) {
+					self.startNextUpload(upload);
+				}
+			}
+		});
 	}
 
 	async startNextUpload(lastUpload: IFileUpload) {
+		if (this.uploadsStore.isAnyUploadRunning()) {
+			return;
+		}
 		const uploads = this.uploadsStore.getAll();
 		const lastUploadIndex = uploads.findIndex(upload => upload.record.id === lastUpload.record.id);
 		let nextUpload: IFileUpload | undefined;
@@ -142,7 +147,7 @@ export class FileUploadService extends EventEmitter {
 		// find next suitable upload
 		for (let i = lastUploadIndex + 1; i < uploads.length; i++) {
 			const upload = uploads[i];
-			if (upload.record.type === FileUploadRecordType.SERVER && upload.record.status === FileUploadRecordStatus.BEGUN) {
+			if (upload.file && upload.record.type === FileUploadRecordType.SERVER && upload.record.status === FileUploadRecordStatus.BEGUN) {
 				nextUpload = upload;
 				break;
 			}
@@ -153,18 +158,16 @@ export class FileUploadService extends EventEmitter {
 		}
 	}
 
-	async continueP2PUpload(uploadId: string) {
-		// proceed to next batch
-		const upload = this.uploadsStore.get(uploadId);
-		if (!upload) {
-			return;
-		}
+	async continueP2PUpload(upload: IFileUpload) {
 		if (!upload.file) {
 			return;
 		}
 		// reset throttle memory
-		this.p2pThrottleMemory.set(uploadId, 0);
-		upload.pushChunk && !upload.running && (await upload.pushChunk());
+		this.p2pThrottleMemory.set(upload.record.id, 0);
+		//upload.pushChunk && !upload.running && (await upload.pushChunk());
+		if (!upload.running) {
+			await this.startUpload(upload);
+		}
 	}
 
 	pauseUpload(uploadId: string) {
@@ -187,7 +190,7 @@ export class FileUploadService extends EventEmitter {
 
 		upload.record.status = FileUploadRecordStatus.UPLOADING;
 		this.uploadsStore.set(uploadId, upload);
-		upload.pushChunk && upload.pushChunk();
+		this.startUpload(upload);
 	}
 
 	cancelUpload(uploadId: string) {

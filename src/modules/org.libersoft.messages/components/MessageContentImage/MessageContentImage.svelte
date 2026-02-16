@@ -10,6 +10,7 @@
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
 	let { node, showHiddenImages, hiddenImages, siblings } = $props();
 	let file = node.attributes.file?.value;
 	const YELLOW_SRC_PROTOCOL = 'yellow:';
@@ -111,7 +112,7 @@
 		position: relative;
 	}
 
-	.message-content-image :global(img) {
+	.message-content-image :global(.image img) {
 		border: 1px solid var(--primary-foreground);
 		border-radius: 10px;
 		box-sizing: border-box;
@@ -163,8 +164,20 @@
 
 <div class="message-content-image-wrapper">
 	{#if isYellow}
-		{#if $upload && $upload?.record.status !== FileUploadRecordStatus.FINISHED}
-			<MessageContentAttachment node={{ attributes: { id: { value: yellowId } } }} />
+		{#if $upload && ($upload?.record.status === FileUploadRecordStatus.CANCELED || $upload?.record.status === FileUploadRecordStatus.ERROR)}
+			<!--<MessageContentAttachment node={{ attributes: { id: { value: yellowId } } }} />-->
+			<div class="message-content-image">
+				<div class="spinner-wrap">
+					<Icon img="img/cross.svg" alt="X" colorVariable="--primary-foreground" size="30px" />
+				</div>
+			</div>
+		{:else if $upload && $upload?.record.status !== FileUploadRecordStatus.FINISHED}
+			<!--<MessageContentAttachment node={{ attributes: { id: { value: yellowId } } }} />-->
+			<div class="message-content-image">
+				<div class="spinner-wrap">
+					<Spinner show />
+				</div>
+			</div>
 		{:else}
 			<Clickable onClick={openInGallery}>
 				<div class="message-content-image">

@@ -5,6 +5,7 @@
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
 	import Button from '@/core/components/Button/Button.svelte';
+
 	let { children } = $props();
 	let ref: HTMLDivElement;
 	let attachedUploads = $state<IFileUpload[]>([]);
@@ -15,10 +16,18 @@
 		});
 	});
 
+	$inspect('attachedUploads', attachedUploads);
+	$inspect('downloadableRecords', downloadableRecords);
+
 	// determine if the bulk download action should be shown
 	let showBulkDownloadAction = $derived(downloadableRecords.length > 1);
-	// subscribe to the store to get the uploads
-	fileUploadStore.store.subscribe(uploads => {
+
+	const uploadStore = $derived(fileUploadStore.store);
+	// get the uploads based on present attachment IDs
+	$effect(() => {
+		const uploads = $uploadStore;
+		console.log('!!! attachmentIds', attachmentIds);
+		console.log('!!! uploads', uploads);
 		if (attachmentIds.length === 0) {
 			return;
 		}
@@ -26,6 +35,7 @@
 			return attachmentIds.includes(upload.record.id);
 		});
 	});
+
 	// determine attachments type based on the first attachment
 	const uploadRecordType = $derived.by(() => {
 		return attachedUploads.length > 0 ? attachedUploads[0].record.type : null;
@@ -50,8 +60,8 @@
 	}
 
 	onMount(() => {
-		getAttachmentEls()?.forEach(attachmentEl => {
-			const uploadId = attachmentEl.getAttribute('data-upload-id');
+		children.forEach(child => {
+			const uploadId = child.props?.id;
 			if (uploadId) attachmentIds.push(uploadId);
 		});
 	});
@@ -90,7 +100,7 @@
 	</div>
 	{#if showBulkDownloadAction}
 		<div class="actions">
-			<Button width="80px" img={uploadRecordType === FileUploadRecordType.P2P ? 'img/check.svg' : 'img/download.svg'} text={uploadRecordType === FileUploadRecordType.P2P ? 'Accept all' : 'Download all'} onClick={onAcceptAll} />
+			<Button img={uploadRecordType === FileUploadRecordType.P2P ? 'img/check.svg' : 'img/download.svg'} text={uploadRecordType === FileUploadRecordType.P2P ? 'Accept all' : 'Download all'} onClick={onAcceptAll} />
 		</div>
 	{/if}
 </div>

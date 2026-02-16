@@ -59,7 +59,7 @@
 </style>
 
 {#snippet uploadControls()}
-	<ButtonBar equalize>
+	<ButtonBar>
 		{#if upload.record.status === FileUploadRecordStatus.PAUSED}
 			<Button img="modules/{identifier}/img/play.svg" text="Resume" onClick={() => resumeUpload(uploadId)} enabled={!changingStatus} />
 		{:else}
@@ -70,7 +70,7 @@
 {/snippet}
 {#snippet downloadControls()}
 	{@const isPausedByServer = upload && upload.record.status === FileUploadRecordStatus.PAUSED && upload.role === FileUploadRole.RECEIVER}
-	<ButtonBar equalize>
+	<ButtonBar>
 		{#if download && (download.pausedLocally || !download.running)}
 			<Button img="modules/{identifier}/img/play.svg" text="Resume" onClick={() => resumeDownload(uploadId)} enabled={!isPausedByServer} />
 		{:else}
@@ -122,7 +122,7 @@
 			<FileTransfer uploaded={upload.uploadedBytes} total={upload.record.fileSize} status={statusString} hideSpeed />
 		{/if}
 		<!-- FINISHED UPLOAD - downloading -->
-	{:else if download && upload.record.status === FileUploadRecordStatus.FINISHED}
+	{:else if download && upload.record.status === FileUploadRecordStatus.FINISHED && !download.canceledLocally}
 		<FileTransfer uploaded={downloaded} total={upload.record.fileSize} status={statusString} />
 		{@render downloadControls()}
 		<!-- FINISHED UPLOAD -->
@@ -189,9 +189,9 @@
 		{@render downloadControls()}
 		<!-- P2P BEGUN - waiting for accept -->
 	{:else if upload.record.status === FileUploadRecordStatus.BEGUN}
-		<ButtonBar equalize>
-			<Button width="100px" img="img/check.svg" text="Accept" onClick={onDownload} data-testid="p2p-accept-button" />
-			<Button width="100px" img="img/cancel.svg" text="Cancel" onClick={() => cancelDownload(uploadId)} data-testid="p2p-cancel-button" />
+		<ButtonBar>
+			<Button img="img/check.svg" text="Accept" onClick={onDownload} data-testid="p2p-accept-button" />
+			<Button img="img/cancel.svg" text="Cancel" onClick={() => cancelDownload(uploadId)} data-testid="p2p-cancel-button" />
 		</ButtonBar>
 		<!-- CANCELED UPLOAD -->
 	{:else if upload.record.status === FileUploadRecordStatus.CANCELED}
