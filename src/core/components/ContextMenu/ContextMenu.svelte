@@ -1,77 +1,100 @@
-<script>
-	import { onMount, setContext, getContext, afterUpdate, tick, onDestroy } from 'svelte';
+<script lang="ts">
+	import type { Snippet } from 'svelte';
+	import { onMount, onDestroy, setContext, getContext, tick } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { getGuid } from '@/core/scripts/core.ts';
-	export let target = null;
-	export let open = false;
-	export let x = 0;
-	export let y = 0;
-	export let ref = null;
-	export let width;
-	export let height;
-	export let scrollable = true;
-	export let disableRightClick = false;
-	export let bottomOffset;
-	//export let testId = '';
-	const isOpen = writable(open);
+
+	interface Props {
+		target?: HTMLElement | HTMLElement[] | null;
+		open?: boolean;
+		x?: number;
+		y?: number;
+		ref?: HTMLDivElement | null;
+		width?: string;
+		height?: string;
+		scrollable?: boolean;
+		disableRightClick?: boolean;
+		bottomOffset?: number;
+		children?: Snippet;
+		[key: string]: any;
+	}
+
+	let { target = $bindable(null), open = $bindable(false), x = $bindable(0), y = $bindable(0), ref = $bindable(null), width = $bindable(undefined), height = $bindable(undefined), scrollable = true, disableRightClick = false, bottomOffset = undefined, children, ...restProps }: Props = $props();
+
+	export const isOpen = writable(false);
 	const position = writable([x, y]);
 	const currentIndex = writable(-1);
 	const hasPopup = writable(false);
-	const ctx = getContext('ContextMenu');
-	let options = [];
+	const ctx = getContext('ContextMenu') as any;
 	let direction = 1;
 	let prevX = 0;
 	let prevY = 0;
 	let focusIndex = -1;
-	let openDetail = null;
-	let currentInstance;
-	let menus = getContext('menus');
+	let openDetail: EventTarget | null = null;
+	let currentInstance: string | null = null;
+	let menus = getContext('menus') as any[];
 
-	$: isOpen.set(open);
+	let level = $derived(!ctx ? 1 : 2);
 
-	export function close() {
+	// Track subscribed nodes for proper cleanup
+	let subscribedNodes: HTMLElement[] = [];
+
+	function unsubscribeAll(): void {
+		for (const node of subscribedNodes) {
+			node.removeEventListener('contextmenu', openMenu);
+			node.removeEventListener('mousedown', openMenu);
+		}
+		subscribedNodes = [];
+	}
+
+	function subscribeToTarget(t: HTMLElement | HTMLElement[] | null): void {
+		unsubscribeAll();
+		if (t == null) return;
+		const nodes = Array.isArray(t) ? t : [t];
+		for (const node of nodes) {
+			if (!node) continue;
+			if (!disableRightClick) node.addEventListener('contextmenu', openMenu);
+			node.addEventListener('mousedown', openMenu);
+			subscribedNodes.push(node);
+		}
+	}
+
+	export function close(): void {
 		open = false;
+		isOpen.set(false);
+		currentIndex.set(-1);
 		x = 0;
 		y = 0;
 		prevX = 0;
 		prevY = 0;
 		focusIndex = -1;
-		//console.log('context-menu close currentInstance:', currentInstance, 'menus:', menus);
 		for (let menu of Array.from(menus)) {
 			if (menu.guid === currentInstance) {
-				//console.log('found myself, menus.length:', menus.length);
 				menus.splice(menus.indexOf(menu), 1);
-				//console.log('context-menu close: menus.length:', menus.length);
 				break;
 			}
 		}
-		//console.log('->context-menu close:', menus);
 		currentInstance = null;
 	}
 
-	export async function openMenu(e) {
-		//console.log('context-menu openMenu:', e);
-		// Only proceed for right clicks (button 2) or touch events
-		if (disableRightClick && (e.type === 'contextmenu' || e.button === 2)) return;
-		if (e.button === 1) return;
-		if (e.type === 'touchend') return;
-		e.preventDefault?.();
-		e.stopPropagation?.();
-		console.log('context-menu openMenu type:', e.type);
-		//if (e.type === 'contextmenu') return;
-		if (e.type === 'longpress') e = e.detail;
+	export async function openMenu(e: MouseEvent | TouchEvent | CustomEvent): Promise<void> {
+		const ev = e as any;
+		if (disableRightClick && (ev.type === 'contextmenu' || ev.button === 2)) return;
+		if (ev.button === 1) return;
+		if (ev.type === 'touchend') return;
+		ev.preventDefault?.();
+		ev.stopPropagation?.();
+		console.log('context-menu openMenu type:', ev.type);
+		if (ev.type === 'longpress') {
+			return openMenu(ev.detail);
+		}
 		if (open) {
 			close();
 			return;
 		}
-		//console.log('context-menu close other menus:', menus);
 		let ancestors = getAncestors();
-		//console.log('ancestors:', ancestors);
-		//console.log('menus:', menus);
 		for (let menu of Array.from(menus)) {
-			//console.log('menu:', menu);
-			if (!ancestors.find(a => a === menu.guid)) {
-				//console.log('closing menu:', menu);
+			if (!ancestors.find((a: string) => a === menu.guid)) {
 				menu.close();
 			}
 		}
@@ -79,16 +102,17 @@
 		currentInstance = getGuid();
 		menus.push({ guid: currentInstance, close });
 		await tick();
+		if (!ref) return;
 		const currentHeight = ref.getBoundingClientRect().height;
 		const currentWidth = ref.getBoundingClientRect().width;
 		if (open || x === 0) {
-			let space_left = e.x;
-			let space_right = window.innerWidth - e.x;
-			if (space_left > space_right) x = e.x - currentWidth;
-			else x = e.x;
+			let space_left = ev.x;
+			let space_right = window.innerWidth - ev.x;
+			if (space_left > space_right) x = ev.x - currentWidth;
+			else x = ev.x;
 		}
 		if (x + currentWidth > window.innerWidth) x = Math.max(0, window.innerWidth - currentWidth);
-		let e_y = e.y;
+		let e_y = ev.y;
 		if (open || y === 0) {
 			if (bottomOffset) {
 				e_y = window.innerHeight - currentHeight - bottomOffset;
@@ -99,49 +123,25 @@
 			} else y = e_y;
 		}
 		let newHeight = window.innerHeight - y - 10;
-		if (newHeight < height) height = newHeight + 'px'; // TODO: this doesn't work well, should make the window smaller if the screen is too small
+		if (height && newHeight < parseInt(height)) height = newHeight + 'px';
 		let newWidth = window.innerWidth - x - 10;
-		if (newWidth < width) width = newWidth + 'px'; // TODO: this doesn't work well, should make the window smaller if the screen is too small
+		if (width && newWidth < parseInt(width)) width = newWidth + 'px';
 		position.set([x, y]);
-		//console.log('context-menu openMenu position:', x, y);
 		open = true;
-		openDetail = e.target;
+		isOpen.set(true);
+		openDetail = ev.target;
+
+		// Focus after open
+		await tick();
+		if (ref && level === 1) {
+			if (prevX !== x || prevY !== y) ref.focus();
+			prevX = x;
+			prevY = y;
+		}
 	}
 
-	$: if (target != null) {
-		if (Array.isArray(target)) {
-			target.forEach(node => subscribe(node));
-		} else subscribe(target);
-	}
-
-	function subscribe(node) {
-		if (!node) return;
-		if (!disableRightClick) node.addEventListener('contextmenu', openMenu);
-		node.addEventListener('mousedown', openMenu);
-	}
-
-	onMount(() => {
-		return () => {
-			if (target != null) {
-				if (Array.isArray(target)) {
-					target.forEach(node => {
-						node?.removeEventListener('contextmenu', openMenu);
-						node?.removeEventListener('mousedown', openMenu);
-					});
-				} else {
-					target.removeEventListener('contextmenu', openMenu);
-					target.removeEventListener('mousedown', openMenu);
-				}
-			}
-		};
-	});
-
-	onDestroy(() => {
-		close();
-	});
-
-	function getAncestors() {
-		let result = [];
+	function getAncestors(): string[] {
+		let result: string[] = [];
 		let c = ctx;
 		while (c) {
 			let i = c.instance();
@@ -158,7 +158,7 @@
 		position,
 		isOpen,
 		close,
-		setPopup: popup => {
+		setPopup: (popup: boolean) => {
 			hasPopup.set(popup);
 		},
 	});
@@ -166,28 +166,16 @@
 		close,
 	});
 
-	afterUpdate(() => {
-		if (open) {
-			options = ref.children;
-			console.log('context-menu options:', options);
-			if (level === 1) {
-				if (prevX !== x || prevY !== y) ref.focus();
-				prevX = x;
-				prevY = y;
-			}
-			//onOpen?.(openDetail);
-		} else {
-			//onClose?.();
-		}
-
-		if (!$hasPopup && options[focusIndex]) {
-			console.log('focus:', focusIndex);
-			options[focusIndex].focus();
-		}
+	// Subscribe to target after mount (wait for parent bind:this to resolve)
+	onMount(async () => {
+		await tick();
+		subscribeToTarget(target);
 	});
 
-	$: level = !ctx ? 1 : 2;
-	$: currentIndex.set(focusIndex);
+	onDestroy(() => {
+		unsubscribeAll();
+		close();
+	});
 </script>
 
 <style>
@@ -210,24 +198,16 @@
 </style>
 
 <svelte:window
-	on:mousedown={e => {
-		//console.log('context-menu svelte:window click:', e);
-		//console.log(e.target);
-		let ancestor = e.target.closest('.context-menu');
-		//console.log('ancestor:', ancestor);
+	onmousedown={e => {
+		let ancestor = (e.target as HTMLElement).closest('.context-menu');
 		if (ancestor) return;
 		if (!open) return;
-		//console.log('context-menu svelte:window click close:', e);
 		close();
 	}}
 />
 
-<!-- svelte-ignore a11y-no-noninteractive-element-to-interactive-role -->
+<!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
 
-<!--TODO: parametrize this component to work as either a pop-up (for stickers) or a context menu (for message context menu)
-tabindex="-1" (off for pop-up, on for context menu-proper)
- role="menu"
- -->
 <div
 	bind:this={ref}
 	role="none"
@@ -243,16 +223,8 @@ tabindex="-1" (off for pop-up, on for context menu-proper)
 	style:min-width={width}
 	style:max-width={width}
 	style:overflow={scrollable ? 'auto' : 'hidden'}
-	{...$$restProps}
-	on:keydown={e => {
-		/*if (open) e.preventDefault();  // TODO: parametrize this (off for pop-up, on for context menu-proper)
-  if ($hasPopup) return;
-  if (e.key === 'ArrowDown') {
-   if (focusIndex < options.length - 1) focusIndex++;
-  } else if (e.key === 'ArrowUp') {
-   if (focusIndex === -1) focusIndex = options.length - 1;
-   else if (focusIndex > 0) focusIndex--;
-  }*/
+	{...restProps}
+	onkeydown={e => {
 		if (open && e.key === 'Escape') {
 			console.log('context-menu escape');
 			close();
@@ -261,5 +233,7 @@ tabindex="-1" (off for pop-up, on for context menu-proper)
 		}
 	}}
 >
-	<slot />
+	{#if children}
+		{@render children()}
+	{/if}
 </div>
