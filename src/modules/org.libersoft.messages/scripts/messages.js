@@ -474,6 +474,7 @@ export function deinitData(acc) {
 	acc.events.removeEventListener('new_message', data.new_message_listener);
 	acc.events.removeEventListener('seen_message', data.seen_message_listener);
 	acc.events.removeEventListener('seen_inbox_message', data.seen_inbox_message_listener);
+	acc.events.removeEventListener('message_update', message_update);
 	// file transfer events
 	acc.events.removeEventListener('upload_update', upload_update);
 	acc.events.removeEventListener('ask_for_chunk', ask_for_chunk);

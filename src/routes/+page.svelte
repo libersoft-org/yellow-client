@@ -151,11 +151,6 @@
 
 	function updateAppHeight() {
 		//console.log('updateAppHeight');
-		if ('virtualKeyboard' in navigator) {
-			navigator.virtualKeyboard.addEventListener('geometrychange', event => {
-				//console.log('virtualKeyboard geometrychange:', event.target.boundingRect);
-			});
-		}
 		const visualViewport = window.visualViewport;
 		let viewportHeight;
 		if (visualViewport) {
