@@ -3,7 +3,6 @@
 	import { onMount, onDestroy, setContext, getContext, tick } from 'svelte';
 	import { writable } from 'svelte/store';
 	import { getGuid } from '@/core/scripts/core.ts';
-
 	interface Props {
 		target?: HTMLElement | HTMLElement[] | null;
 		open?: boolean;
@@ -18,24 +17,11 @@
 		children?: Snippet;
 		[key: string]: any;
 	}
-
 	let { target = $bindable(null), open = $bindable(false), x = $bindable(0), y = $bindable(0), ref = $bindable(null), width = $bindable(undefined), height = $bindable(undefined), scrollable = true, disableRightClick = false, bottomOffset = undefined, children, ...restProps }: Props = $props();
-
 	export const isOpen = writable(false);
-	const position = writable([x, y]);
-	const currentIndex = writable(-1);
-	const hasPopup = writable(false);
 	const ctx = getContext('ContextMenu') as any;
-	let direction = 1;
-	let prevX = 0;
-	let prevY = 0;
-	let focusIndex = -1;
-	let openDetail: EventTarget | null = null;
 	let currentInstance: string | null = null;
 	let menus = getContext('menus') as any[];
-
-	let level = $derived(!ctx ? 1 : 2);
-
 	// Track subscribed nodes for proper cleanup
 	let subscribedNodes: HTMLElement[] = [];
 
@@ -62,12 +48,8 @@
 	export function close(): void {
 		open = false;
 		isOpen.set(false);
-		currentIndex.set(-1);
 		x = 0;
 		y = 0;
-		prevX = 0;
-		prevY = 0;
-		focusIndex = -1;
 		for (let menu of Array.from(menus)) {
 			if (menu.guid === currentInstance) {
 				menus.splice(menus.indexOf(menu), 1);
@@ -84,7 +66,6 @@
 		if (ev.type === 'touchend') return;
 		ev.preventDefault?.();
 		ev.stopPropagation?.();
-		console.log('context-menu openMenu type:', ev.type);
 		if (ev.type === 'longpress') {
 			return openMenu(ev.detail);
 		}
@@ -103,22 +84,21 @@
 		menus.push({ guid: currentInstance, close });
 		await tick();
 		if (!ref) return;
-		const currentHeight = ref.getBoundingClientRect().height;
-		const currentWidth = ref.getBoundingClientRect().width;
+		const menuRect = ref.getBoundingClientRect();
 		if (open || x === 0) {
 			let space_left = ev.x;
 			let space_right = window.innerWidth - ev.x;
-			if (space_left > space_right) x = ev.x - currentWidth;
+			if (space_left > space_right) x = ev.x - menuRect.width;
 			else x = ev.x;
 		}
-		if (x + currentWidth > window.innerWidth) x = Math.max(0, window.innerWidth - currentWidth);
+		if (x + menuRect.width > window.innerWidth) x = Math.max(0, window.innerWidth - menuRect.width);
 		let e_y = ev.y;
 		if (open || y === 0) {
 			if (bottomOffset) {
-				e_y = window.innerHeight - currentHeight - bottomOffset;
+				e_y = window.innerHeight - menuRect.height - bottomOffset;
 			}
-			if (window.innerHeight - currentHeight < e_y) {
-				y = e_y - currentHeight;
+			if (window.innerHeight - menuRect.height < e_y) {
+				y = e_y - menuRect.height;
 				if (y < 10) y = 10;
 			} else y = e_y;
 		}
@@ -126,18 +106,8 @@
 		if (height && newHeight < parseInt(height)) height = newHeight + 'px';
 		let newWidth = window.innerWidth - x - 10;
 		if (width && newWidth < parseInt(width)) width = newWidth + 'px';
-		position.set([x, y]);
 		open = true;
 		isOpen.set(true);
-		openDetail = ev.target;
-
-		// Focus after open
-		await tick();
-		if (ref && level === 1) {
-			if (prevX !== x || prevY !== y) ref.focus();
-			prevX = x;
-			prevY = y;
-		}
 	}
 
 	function getAncestors(): string[] {
@@ -154,13 +124,8 @@
 	setContext('ContextMenu', {
 		instance: () => currentInstance,
 		parent: ctx,
-		currentIndex,
-		position,
 		isOpen,
 		close,
-		setPopup: (popup: boolean) => {
-			hasPopup.set(popup);
-		},
 	});
 	setContext('Popup', {
 		close,
@@ -181,7 +146,6 @@
 
 	function handleKeydown(e: KeyboardEvent): void {
 		if (open && e.key === 'Escape') {
-			console.log('context-menu escape');
 			close();
 			e.stopPropagation();
 			e.preventDefault();
@@ -217,7 +181,7 @@
 
 <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
 
-<div bind:this={ref} role="none" tabindex="-1" data-direction={direction} data-level={level} class:context-menu={true} class:context-menu-open={open} style:left="{x}px" style:top="{y}px" style:min-height={height} style:max-height={height} style:min-width={width} style:max-width={width} style:overflow={scrollable ? 'auto' : 'hidden'} {...restProps} onkeydown={handleKeydown}>
+<div bind:this={ref} role="none" tabindex="-1" class:context-menu={true} class:context-menu-open={open} style:left="{x}px" style:top="{y}px" style:min-height={height} style:max-height={height} style:min-width={width} style:max-width={width} style:overflow={scrollable ? 'auto' : 'hidden'} {...restProps} onkeydown={handleKeydown}>
 	{#if children}
 		{@render children()}
 	{/if}
