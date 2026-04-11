@@ -11,7 +11,7 @@ interface DynamicEllipsisOptions {
  * Action that dynamically measures content height and applies it to the ::before pseudo-element
  * of ellipsis table cells, replacing hardcoded heights with flexible sizing
  */
-export const dynamicEllipsis: Action<HTMLElement, DynamicEllipsisOptions> = (element, options = {}) => {
+export const dynamicEllipsis: Action<HTMLElement, DynamicEllipsisOptions> = (element, options: DynamicEllipsisOptions = {}) => {
 	const { minHeight = 0, debounceMs = 25 } = options;
 
 	let resizeObserver: ResizeObserver | null = null;

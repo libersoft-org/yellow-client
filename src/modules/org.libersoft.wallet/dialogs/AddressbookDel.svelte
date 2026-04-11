@@ -8,7 +8,7 @@
 	let elDialog;
 	let dialogData = {
 		title: 'Delete item from address book',
-		body: question,
+		body: question as any,
 		icon: 'img/del.svg',
 		buttons: [
 			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, focus: true },

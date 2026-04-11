@@ -43,7 +43,7 @@
 	});
 	let dialogData = {
 		title: 'Transaction confirmation',
-		body: body,
+		body: body as any,
 		icon: 'modules/' + module.identifier + '/img/send.svg',
 		buttons: [
 			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, focus: true, testId: 'wallet-send-confirm-yes-btn' },

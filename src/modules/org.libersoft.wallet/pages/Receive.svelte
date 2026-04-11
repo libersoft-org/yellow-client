@@ -177,7 +177,7 @@
 				return 18;
 			}
 			const abi = ['function decimals() view returns (uint8)'];
-			const contract = new Contract(contractAddress, abi, $provider);
+			const contract = new Contract(contractAddress, abi, $provider as any);
 			const decimals = await contract.decimals();
 			tokenDecimalsCache.set(contractAddress, Number(decimals));
 			return Number(decimals);

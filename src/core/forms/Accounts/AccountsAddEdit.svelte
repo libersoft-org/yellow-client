@@ -38,8 +38,8 @@
 	let account_id_store = writable<string | null>(null);
 
 	onMount(() => {
-		top = snippet_top;
-		bottom = snippet_bottom;
+		top = snippet_top as any;
+		bottom = snippet_bottom as any;
 	});
 
 	$effect(() => {

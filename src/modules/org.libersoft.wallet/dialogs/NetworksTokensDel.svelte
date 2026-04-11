@@ -11,7 +11,7 @@
 	let elDialog;
 	let dialogData = {
 		title: 'Delete token',
-		body: question,
+		body: question as any,
 		icon: 'img/del.svg',
 		buttons: [
 			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, focus: true },

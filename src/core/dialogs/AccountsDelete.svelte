@@ -27,7 +27,7 @@
 	let dialogData: IDialogData = $derived.by(() => {
 		return {
 			title: 'Delete the account',
-			body: question,
+			body: question as any,
 			icon: 'img/del.svg',
 			buttons: [
 				{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, focus: true, testId: 'delete-account-confirm' },
