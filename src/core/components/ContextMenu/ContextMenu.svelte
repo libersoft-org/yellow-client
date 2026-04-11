@@ -172,6 +172,22 @@
 		subscribeToTarget(target);
 	});
 
+	function handleWindowMousedown(e: MouseEvent): void {
+		let ancestor = (e.target as HTMLElement).closest('.context-menu');
+		if (ancestor) return;
+		if (!open) return;
+		close();
+	}
+
+	function handleKeydown(e: KeyboardEvent): void {
+		if (open && e.key === 'Escape') {
+			console.log('context-menu escape');
+			close();
+			e.stopPropagation();
+			e.preventDefault();
+		}
+	}
+
 	onDestroy(() => {
 		unsubscribeAll();
 		close();
@@ -197,42 +213,11 @@
 	}
 </style>
 
-<svelte:window
-	onmousedown={e => {
-		let ancestor = (e.target as HTMLElement).closest('.context-menu');
-		if (ancestor) return;
-		if (!open) return;
-		close();
-	}}
-/>
+<svelte:window onmousedown={handleWindowMousedown} />
 
 <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
 
-<div
-	bind:this={ref}
-	role="none"
-	tabindex="-1"
-	data-direction={direction}
-	data-level={level}
-	class:context-menu={true}
-	class:context-menu-open={open}
-	style:left="{x}px"
-	style:top="{y}px"
-	style:min-height={height}
-	style:max-height={height}
-	style:min-width={width}
-	style:max-width={width}
-	style:overflow={scrollable ? 'auto' : 'hidden'}
-	{...restProps}
-	onkeydown={e => {
-		if (open && e.key === 'Escape') {
-			console.log('context-menu escape');
-			close();
-			e.stopPropagation();
-			e.preventDefault();
-		}
-	}}
->
+<div bind:this={ref} role="none" tabindex="-1" data-direction={direction} data-level={level} class:context-menu={true} class:context-menu-open={open} style:left="{x}px" style:top="{y}px" style:min-height={height} style:max-height={height} style:min-width={width} style:max-width={width} style:overflow={scrollable ? 'auto' : 'hidden'} {...restProps} onkeydown={handleKeydown}>
 	{#if children}
 		{@render children()}
 	{/if}
