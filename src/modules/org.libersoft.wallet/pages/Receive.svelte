@@ -40,12 +40,14 @@
 		return $currencies.map(currency => {
 			let label = currency.symbol || 'Unknown';
 			// For tokens with contract addresses, get proper name and symbol from tokenInfos
-			if (currency.contract_address) {
+			if (currency.type === 'token') {
 				const tokenInfo = tokenInfos.get(currency.contract_address);
 				if (tokenInfo?.name && tokenInfo?.symbol) label = tokenInfo.name + ' (' + tokenInfo.symbol + ')';
 				else if (tokenInfo?.name && !tokenInfo?.symbol) label = tokenInfo?.name;
 				else if (!tokenInfo?.name && tokenInfo?.symbol) label = tokenInfo?.symbol;
 				else label = 'Unknown token (' + currency.contract_address.slice(0, 8) + '...)';
+			} else if (currency.type === 'nft') {
+				label = `${currency.symbol} (NFT)`;
 			}
 			return {
 				label: label,
@@ -202,13 +204,16 @@
 				if (amount) amount = amount.trim();
 				if (amount) {
 					try {
-						if (!currency.contract_address) {
+						if (currency.type === 'native') {
 							// For native currency (ETH), use 18 decimals
 							amount_value = parseUnits(amount.toString(), 18);
-						} else if (currency.contract_address) {
+						} else if (currency.type === 'token') {
 							// For tokens, get the correct decimals from contract
 							const decimals = await getTokenDecimals(currency.contract_address);
 							amount_value = parseUnits(amount.toString(), decimals);
+						} else if (currency.type === 'nft') {
+							// For NFTs, use integer amounts only
+							amount_value = BigInt(parseInt(amount.toString()));
 						} else {
 							error = 'Invalid currency';
 							return;
