@@ -4,10 +4,9 @@
 	import { loadUploadData, makeDownloadChunkAsyncFn, downloadAttachmentsSerial } from '@/org.libersoft.messages/scripts/messages.js';
 	import { active_account } from '@/core/scripts/core.ts';
 	import { assembleFile, base64ToUint8Array } from '@/org.libersoft.messages/services/Files/utils.ts';
-	import MediaService from '@/org.libersoft.messages/services/Media/MediaService.ts';
 	import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
 	import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
-	import type { IFileDownload, IFileUpload, IFileUploadRecord } from '@/org.libersoft.messages/services/Files/types.ts';
+	import type { IFileDownload, IFileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
 	import _debug from 'debug';
 	import VideoView from '@/org.libersoft.messages/components/MessageContentVideo/VideoView.svelte';
 	import videoJS from 'video.js';

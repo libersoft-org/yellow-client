@@ -5,7 +5,7 @@
 	import { balance, isLoadingBalance, refreshBalance } from 'libersoft-crypto/balance';
 	import { tokensForDisplay, refreshTokenBalance } from 'libersoft-crypto/tokens';
 	import { nftsForDisplay } from 'libersoft-crypto/nfts';
-	import { initializeRefreshSystem, refresh } from 'libersoft-crypto/refresh';
+	import { initializeRefreshSystem } from 'libersoft-crypto/refresh';
 	import { selectedAddress, setSendCurrency } from 'libersoft-crypto/wallet';
 	import { setSection } from '@/org.libersoft.wallet/scripts/ui';
 	import BalanceTable from '@/org.libersoft.wallet/components/BalanceTable.svelte';

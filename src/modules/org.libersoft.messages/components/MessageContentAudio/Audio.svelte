@@ -19,21 +19,13 @@
 	let time = $state('');
 	let upload = $state<IFileUpload | null>(null);
 	let download = writable<IFileDownload | null>(null);
-	let isFullDownloading = $state(false);
 	const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-background');
 	const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--disabled-background');
 	fileDownloadStore.store.subscribe(() => download.set(fileDownloadStore.get(uploadId) || null));
 
-	function getFileChunkFactory(uploadId) {
-		const fn = makeDownloadChunkAsyncFn(get(active_account));
-		return params => fn({ uploadId, ...params });
-	}
-
 	const fullDownloadAudio = () => {
 		if (!upload) return;
-		isFullDownloading = true;
 		downloadAttachmentsSerial([upload.record], download => {
-			isFullDownloading = false;
 			const blob = new Blob(download.chunksReceived, { type: download.record.fileMimeType });
 			const url = URL.createObjectURL(blob);
 			// @ts-ignore
@@ -44,7 +36,7 @@
 		});
 	};
 
-	const setupWavesurfer = async (url: string) => {
+	const setupWavesurfer = async (_url: string) => {
 		if (!upload) return;
 		const { record } = upload;
 		try {

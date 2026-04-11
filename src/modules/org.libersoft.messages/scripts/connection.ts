@@ -18,8 +18,6 @@ interface ISendResponse {
 	[key: string]: any;
 }
 
-type SendCallback = (req: ISendRequest, res: ISendResponse) => void;
-
 interface ISubscriptionInfo {
 	subscribed: boolean;
 	events?: string[];

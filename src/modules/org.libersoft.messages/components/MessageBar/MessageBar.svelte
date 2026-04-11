@@ -190,10 +190,6 @@
 		waitingForKeyboardClose = false;
 	}
 
-	function clickRecord(_event) {
-		console.log('clicked on record mic / camera - long press to record, short press to switch mic / camera');
-	}
-
 	function sendHTML() {
 		elWindowHTML?.open();
 	}
@@ -223,20 +219,20 @@
 		expressionsAsContextMenu = !_value;
 	});
 
-	documentHeight.subscribe(value => {
+	documentHeight.subscribe(_value => {
 		handleResize(true); // TODO: save wasScrolledToBottom2 before showing bottom sheet /// periodically?
 	});
 
-	keyboardHeight.subscribe(value => {
-		if (value > 100) {
+	keyboardHeight.subscribe(_value => {
+		if (_value > 100) {
 			if (get(isMobile)) {
-				expressionsHeight = value + 'px';
+				expressionsHeight = _value + 'px';
 			}
 		}
 
 		// Check if we're waiting for keyboard to close and it's now closed
 		if (waitingForKeyboardClose) {
-			if (!value || value < 50) {
+			if (!_value || _value < 50) {
 				waitingForKeyboardClose = false;
 				pendingBottomSheetOpen = false;
 				expressionsBottomSheetOpen = true;

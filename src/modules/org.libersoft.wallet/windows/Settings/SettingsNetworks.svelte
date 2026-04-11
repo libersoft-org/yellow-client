@@ -100,7 +100,7 @@
 				</TheadTr>
 			</Thead>
 			<Tbody>
-				{#each filteredNetworks as n, _index (n.guid)}
+				{#each filteredNetworks as n (n.guid)}
 					<TbodyTr>
 						<Td>
 							<DragHandle />

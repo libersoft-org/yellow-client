@@ -23,7 +23,7 @@
 	$: update(intersecting);
 	$: first = showall ? stickers : stickers?.slice(0, splitAt);
 	$: rest = showall ? [] : stickers?.slice(splitAt);
-	stickerset_favorites.subscribe(value => (in_favorites = stickerset_in_favorites(stickerset)));
+	stickerset_favorites.subscribe(_value => (in_favorites = stickerset_in_favorites(stickerset)));
 	let favorite_alt;
 	$: favorite_alt = in_favorites ? 'Remove from favorites' : 'Add to favorites';
 	let favorite_icon;

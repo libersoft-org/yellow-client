@@ -29,7 +29,7 @@
 		return grouped;
 	});
 
-	const showTooltip = (e, reactions, rgi) => {
+	const showTooltip = (e, reactions, _rgi) => {
 		if (tooltipButton && tooltipButton.ref === e.target) return;
 		tooltipButton = {
 			reactions,

@@ -156,7 +156,7 @@
 					</TheadTr>
 				</Thead>
 				<Tbody>
-					{#each network.tokens as token, _i (token.guid)}
+					{#each network.tokens as token (token.guid)}
 						{@const contractAddress = token.contract_address}
 						{@const tokenInfo = contractAddress ? tokenInfos.get(contractAddress) : null}
 						{@const isLoading = contractAddress ? loadingTokenInfos.has(contractAddress) : false}

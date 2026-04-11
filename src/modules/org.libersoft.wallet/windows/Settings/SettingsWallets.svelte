@@ -95,7 +95,7 @@
 				</TheadTr>
 			</Thead>
 			<Tbody>
-				{#each filteredWallets as wallet, _index (wallet.guid)}
+				{#each filteredWallets as wallet (wallet.guid)}
 					<TbodyTr>
 						<Td>
 							<DragHandle />

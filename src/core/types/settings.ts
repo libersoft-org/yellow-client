@@ -1,4 +1,3 @@
-import type { ComponentType, SvelteComponent } from 'svelte';
 import type { HTMLAttributes } from 'svelte/elements';
 
 export interface ISettingsMenuItem {

@@ -79,37 +79,6 @@
 		//log.debug('notification added');
 	}
 
-	function clickAddNotification() {
-		log.debug('Clicked on add notification');
-		let notificationData = {
-			id: 'n' + counter,
-			img: 'https://img.freepik.com/free-vector/night-ocean-landscape-full-moon-stars-shine_107791-7397.jpg',
-			title: 'Very ' + counter++,
-			body: 'Lorem ipsum dolor sit amet, ',
-		};
-		notificationData.buttons = [
-			{
-				text: 'Abort',
-				id: 'abort',
-				onClick: onClick.bind(notificationData),
-			},
-			{
-				text: 'Retry',
-				id: 'retry',
-				onClick: onClick.bind(notificationData),
-			},
-			{
-				text: 'Fail',
-				id: 'fail',
-				onClick: onClick.bind(notificationData),
-			},
-		];
-		notificationData.onClick = onClick.bind(notificationData);
-		notificationData.onClose = onClose.bind(notificationData);
-		notifications.update(n => [...n, notificationData]);
-		log.debug('notification added');
-	}
-
 	async function onClose(e) {
 		log.debug('onClose notification');
 		this.onClick(e, 'close');

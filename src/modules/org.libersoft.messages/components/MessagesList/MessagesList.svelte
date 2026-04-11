@@ -529,7 +529,6 @@
 		e.preventDefault();
 		if (!e.dataTransfer) return;
 		const draggedItems = e.dataTransfer.items;
-		const _types = Array.from(e.dataTransfer.types || []);
 		let isDraggingFiles = false;
 		// In Chrome/Firefox: you can safely check item.kind
 		if (draggedItems && draggedItems.length > 0) {

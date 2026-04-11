@@ -11,7 +11,7 @@
 </script>
 
 {#if items}
-	{#each items as s, _index (s.id)}
+	{#each items as s (s.id)}
 		<!--{#if $debug}<code>{JSON.stringify(s)}</code>{/if}-->
 		<StickerSetItem {size} sticker={s} {stickerset} {intersecting} />
 	{/each}

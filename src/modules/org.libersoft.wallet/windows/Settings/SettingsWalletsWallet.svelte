@@ -109,7 +109,7 @@
 					</TheadTr>
 				</Thead>
 				<Tbody>
-					{#each params.wallet.addresses as address, _i (address.index)}
+					{#each params.wallet.addresses as address (address.index)}
 						<TbodyTr>
 							<Td>
 								<DragHandle />

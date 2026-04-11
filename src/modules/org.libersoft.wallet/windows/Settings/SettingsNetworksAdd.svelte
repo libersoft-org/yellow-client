@@ -126,7 +126,7 @@
 		</TheadTr>
 	</Thead>
 	<Tbody>
-		{#each filteredDefaultNetworks as n, _index}
+		{#each filteredDefaultNetworks as n}
 			<TbodyTr>
 				<Td class="ellipsis" padding="0" data-testid="wallet-settings-default-network-name@{n.name}">
 					<span class="network">

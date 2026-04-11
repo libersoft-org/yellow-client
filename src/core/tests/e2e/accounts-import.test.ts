@@ -265,7 +265,7 @@ test.describe.parallel('Accounts Import Functionality', () => {
 		await page.waitForTimeout(1000);
 
 		// Check if window is still visible
-		const _windowVisible = await page.getByTestId('accounts-import-Window').isVisible();
+		await page.getByTestId('accounts-import-Window').isVisible();
 		//console.log('Window still visible after skip:', windowVisible);
 
 		// Should show error that no accounts were imported

@@ -171,14 +171,6 @@
 		//console.log('constructed lottie in ' + (Date.now() - start) + 'ms');
 	}
 
-	async function intersection(entries) {
-		//console.log(entries);
-		entries.sort((a, b) => a.time - b.time);
-		for (let _entry of entries) {
-			isInViewport = entries[0].isIntersecting;
-		}
-	}
-
 	async function loadTgs(file) {
 		try {
 			//let start = Date.now();

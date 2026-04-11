@@ -125,7 +125,7 @@
 					</TheadTr>
 				</Thead>
 				<Tbody>
-					{#each network.nfts as nft, _i (nft.guid)}
+					{#each network.nfts as nft (nft.guid)}
 						{@const contractAddress = nft.contract_address}
 						{@const displayName = 'NFT Contract'}
 						{@const isLoading = false}

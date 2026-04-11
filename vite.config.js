@@ -6,7 +6,6 @@ import fs from 'fs';
 import path from 'path';
 import { execSync } from 'child_process';
 import { sentrySvelteKit } from '@sentry/sveltekit';
-import { svelteInspector } from '@sveltejs/vite-plugin-svelte-inspector';
 import 'dotenv/config';
 import dotenv from 'dotenv';
 

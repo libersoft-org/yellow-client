@@ -50,7 +50,7 @@
 			</TheadTr>
 		</Thead>
 		<Tbody>
-			{#each filteredWallets as wallet, _index}
+			{#each filteredWallets as wallet}
 				<TbodyTr>
 					<Td padding="0 10px" class="ellipsis">
 						<Clickable onClick={async () => await clickSelectWallet(wallet)} data-wallet-name={wallet.name}>
