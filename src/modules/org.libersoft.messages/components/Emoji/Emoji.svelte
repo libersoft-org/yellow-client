@@ -52,7 +52,7 @@
 {/if}
 
 {#if url.endsWith('/lottie.json')}
-	<Sticker file={url} {size} {force_animate} />
+	<Sticker file={url} {size} {force_animate} intersecting={true} />
 {:else}
-	<img style="{!is_single && 'padding: 0 2px;'} min-width: {size}px; min-height: {size}px; max-width: {size}px; max-height: {size}px;" loading="lazy" alt={emoji_render(codepoints)} src={url} onMouseOver={() => (is_mouse_over = true)} onMouseOut={() => (is_mouse_over = false)} />
+	<img style="{!is_single && 'padding: 0 2px;'} min-width: {size}px; min-height: {size}px; max-width: {size}px; max-height: {size}px;" loading="lazy" alt={emoji_render(codepoints)} src={url} on:mouseover={() => (is_mouse_over = true)} on:mouseout={() => (is_mouse_over = false)} on:focus={() => (is_mouse_over = true)} on:blur={() => (is_mouse_over = false)} role="presentation" />
 {/if}

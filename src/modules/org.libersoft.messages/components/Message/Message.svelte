@@ -215,7 +215,7 @@
 					//console.log(entries);
 					entries.sort((a, b) => a.time - b.time);
 					for (let _entry of entries) {
-						isVisible = entries[0].isIntersecting;
+						isVisible = /** @type {IntersectionObserverEntry} */ (entries[0]).isIntersecting;
 						await tick();
 					}
 				},
@@ -434,7 +434,6 @@
 		</div>
 	</div>
 </div>
-
 <ContextMenu bind:this={menu} target={elCaret}>
 	{#if message.format === 'plaintext'}
 		<ContextMenuItem img="img/copy.svg" label="Copy" onClick={copyOriginal} testId={'message-context-menu-' + message.uid + '-copy'} />
@@ -443,7 +442,6 @@
 		<ContextMenuItem img="img/copy.svg" label="Copy text only" onClick={copyTextOnly} testId={'message-context-menu-' + message.uid + '-copy-text-only'} />
 		<ContextMenuItem img="img/copy.svg" label="Copy HTML" onClick={copyMessageHTML} testId={'message-context-menu-' + message.uid + '-copy-html'} />
 	{/if}
-
 	<ContextMenuItem img="modules/{identifier}/img/reply.svg" label="Reply" onClick={replyMessage} testId={'message-context-menu-' + message.uid + '-reply'} />
 	<ContextMenuItem img="modules/{identifier}/img/forward.svg" label="Forward" onClick={forwardMessage} testId={'message-context-menu-' + message.uid + '-forward'} />
 	<ContextMenuItem img="modules/{identifier}/img/delete.svg" label="Delete" onClick={onMessageDelete} testId={'message-context-menu-' + message.uid + '-delete'} />

@@ -65,7 +65,7 @@ export class FileUploadService extends EventEmitter {
 
 	async startUploadSerial(records: IFileUploadRecord[], pushFn: (data: { chunk: any; upload: IFileUpload }) => Promise<void>) {
 		for (let i = 0; i < records.length; i++) {
-			const record = records[i];
+			const record = records[i]!;
 			const upload = this.uploadsStore.get(record.id);
 
 			if (!upload) {
@@ -141,7 +141,7 @@ export class FileUploadService extends EventEmitter {
 
 		// find next suitable upload
 		for (let i = lastUploadIndex + 1; i < uploads.length; i++) {
-			const upload = uploads[i];
+			const upload = uploads[i]!;
 			if (upload.record.type === FileUploadRecordType.SERVER && upload.record.status === FileUploadRecordStatus.BEGUN) {
 				nextUpload = upload;
 				break;

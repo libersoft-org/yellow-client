@@ -41,8 +41,8 @@
 
 	let {
 		// base
-		videoRef = $bindable(),
-		micIndicatorRef = $bindable(),
+		videoRef: _videoRef = $bindable(),
+		micIndicatorRef: _micIndicatorRef = $bindable(),
 		sending = false,
 		// devices
 		audioDevices = [],
@@ -152,7 +152,7 @@
 	</div>
 {/snippet}
 <div class="video-recorder" class:is-recording={isRecording} class:is-muted={isMuted} class:toggle-facing-mode-enabled={enableToggleFacingMode}>
-	<div bind:this={videoRef} class="video-recorder-video-placeholder">
+	<div bind:this={_videoRef} class="video-recorder-video-placeholder">
 		{#if error}
 			<div class="video-recorder-error">
 				<Icon img="img/cross.svg" alt="Error icon" colorVariable="--default-foreground" size="30px" padding="15px" />

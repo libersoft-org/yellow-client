@@ -17,7 +17,8 @@
 	const MessageBar = getContext('MessageBar');
 	let alts = [];
 	let altsMenu;
-	let elContainer;
+	// @ts-expect-error TS6133 - used in template bind:this
+	let _elContainer;
 	let elSearchInput;
 	let search = '';
 	let results;
@@ -160,7 +161,7 @@
  </pre>
 {/if}
 
-<div class="emojiset" bind:this={elContainer} tabindex="-1">
+<div class="emojiset" bind:this={_elContainer} tabindex="-1">
 	<div class="filter">
 		<Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:this={elSearchInput} bind:value={search} placeholder="Search ..." />
 	</div>

@@ -149,7 +149,7 @@
 			doSendMessage(messageToSend, false);
 		}
 		elMessage.value = '';
-		resizeMessage(event);
+		resizeMessage();
 		elMessage.focus();
 		messageBarReplyStore.close();
 	}

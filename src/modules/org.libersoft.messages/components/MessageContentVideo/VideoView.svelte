@@ -26,7 +26,7 @@
 		videoIsFullDownloading: boolean;
 	}
 
-	let { upload, download, thumbnailSrc, videoRef = $bindable(), startVideo, onDownload, uploadId, videoStarted, videoStarting, loadingData, fetchingPoster, posterError, videoIsFullDownloading }: Props = $props();
+	let { upload, download, thumbnailSrc, videoRef: _videoRef = $bindable(), startVideo, onDownload, uploadId, videoStarted, videoStarting, loadingData, fetchingPoster, posterError, videoIsFullDownloading }: Props = $props();
 </script>
 
 <style>
@@ -129,7 +129,7 @@
 				<div>This video can not be streamed in your browser therefore it must be downloaded first.</div>
 			{/if}
 		{/if}
-		<div bind:this={videoRef} class="video"></div>
+		<div bind:this={_videoRef} class="video"></div>
 	</div>
 	{#if !download}
 		<Button img="img/download.svg" onClick={onDownload} text="Download" />

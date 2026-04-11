@@ -18,7 +18,8 @@
 		close?: () => void;
 	}
 	let { close: _close }: Props = $props();
-	let elWindowWallets: Window | undefined;
+	// @ts-expect-error TS6133 - used in template bind:this
+	let _elWindowWallets: Window | undefined;
 	let filter: string | undefined = $state();
 	let filteredWallets = $derived($wallets.filter(wallet => !filter || wallet.name.toLowerCase().includes(filter.toLowerCase())));
 	let elFilter: Input | undefined = $state();
@@ -63,4 +64,4 @@
 	</Table>
 {/if}
 
-<Window title="Manage wallets" body={WindowWallets} bind:this={elWindowWallets} />
+<Window title="Manage wallets" body={WindowWallets} bind:this={_elWindowWallets} />

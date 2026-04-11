@@ -407,7 +407,7 @@
 
 	async function handleEvents(events: IUIEvent[]): Promise<void> {
 		console.log('handleEvents:', events);
-		if (events.length === 1 && events[0].type === 'properties_update') {
+		if (events.length === 1 && events[0]!.type === 'properties_update') {
 			itemsArray = itemsArray;
 			return;
 		}
@@ -432,7 +432,7 @@
 			if (event.type === 'resize') continue;
 			if (event.array === undefined) return;
 			let messages = event.array;
-			if (messages.length === 1 && messages[0].type === 'initial_loading_placeholder') {
+			if (messages.length === 1 && messages[0]!.type === 'initial_loading_placeholder') {
 				loaders = [];
 				holes = [];
 				itemsArray = messages;
@@ -462,7 +462,7 @@
 			let unseen_marker_put = false;
 			//walk all messages, add loaders where there are discontinuities
 			for (let i = 0; i < messages.length; i++) {
-				let m = messages[i];
+				let m = messages[i]!;
 				if (!unseen_marker_put && !m.is_outgoing && (!m.seen || m.keep_unseen_bar)) {
 					//console.log('ADDING-UNSEEN-MARKER');
 					items.push({ type: 'unseen_marker', uid: 'unseen_marker' } as IMessageItem);
@@ -499,7 +499,7 @@
 		let items: IMessageItem[] = [];
 		let lastAuthor: string | null = null;
 		for (let i = 0; i < messages.length; i++) {
-			let message = messages[i];
+			let message = messages[i]!;
 			items.push(message);
 			if (message.type === 'message') {
 				if (lastAuthor == message.author) message.hide_author = true;
@@ -533,7 +533,7 @@
 		// In Chrome/Firefox: you can safely check item.kind
 		if (draggedItems && draggedItems.length > 0) {
 			for (let i = 0; i < draggedItems.length; i++) {
-				if (draggedItems[i].kind === 'file') {
+				if (draggedItems[i]!.kind === 'file') {
 					isDraggingFiles = true;
 					break;
 				}
@@ -754,7 +754,7 @@
 			<div class="dnd-overlay-text">Drop files here to send them</div>
 		</div>
 	</div>
-	{#if itemsArray.length === 0 || (itemsArray.length === 1 && itemsArray[0].type === 'no_messages')}
+	{#if itemsArray.length === 0 || (itemsArray.length === 1 && itemsArray[0]?.type === 'no_messages')}
 		<div class="spacer"></div>
 		<div class="no-messages">
 			{#if $online}

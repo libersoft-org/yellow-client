@@ -9,7 +9,7 @@ export function initModules() {
 			await tick();
 			let module_decls_v = get(module_decls);
 			for (const k in module_decls_v) {
-				const module = module_decls_v[k];
+				const module = module_decls_v[k]!;
 				module.callbacks.onModuleSelected?.(id === module.id);
 			}
 		}),
@@ -17,7 +17,7 @@ export function initModules() {
 			//console.log('MODULES ORDER:', value);
 			let module_decls_v = get(module_decls);
 			for (const k in module_decls_v) {
-				const decl = module_decls_v[k];
+				const decl = module_decls_v[k]!;
 				if (value[decl.id] !== undefined) {
 					decl.order = value[decl.id]!;
 				}

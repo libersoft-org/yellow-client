@@ -19,7 +19,8 @@
 	let error: string | null | undefined = $state();
 
 	let elNftContractAddress: Input | undefined = $state();
-	let elNftTokenId: Input | undefined = $state();
+	// @ts-expect-error TS6133 - used in template bind:this
+	let _elNftTokenId: Input | undefined = $state();
 
 	/* todo: start using:
 	import { nftsForDisplay } from 'libersoft-crypto/nfts';
@@ -81,7 +82,7 @@
 		<Input bind:value={nftContractAddress} bind:this={elNftContractAddress} placeholder="0x..." />
 	</Label>
 	<Label text="Token ID (Optional)">
-		<Input bind:value={nftTokenId} bind:this={elNftTokenId} placeholder="Leave empty for ERC721, required for specific ERC1155 tokens" />
+		<Input bind:value={nftTokenId} bind:this={_elNftTokenId} placeholder="Leave empty for ERC721, required for specific ERC1155 tokens" />
 	</Label>
 	<div style="font-size: 14px; color: var(--tertiary-foreground); margin-top: 5px;">
 		<strong>ERC721:</strong> Leave Token ID empty to load all NFTs from the contract.<br />

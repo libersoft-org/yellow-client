@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { get, writable } from 'svelte/store';
 	import { active_account } from '@/core/scripts/core.ts';
-	import { downloadAttachmentsSerial, identifier, loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/scripts/messages.js';
+	import { downloadAttachmentsSerial, identifier, loadUploadData } from '@/org.libersoft.messages/scripts/messages.js';
 	import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
 	import { humanSize } from '@/core/scripts/utils/fileUtils.js';
 	import MessageContentAttachment from '../MessageContentFile/MessageContentAttachment.svelte';

@@ -5,6 +5,8 @@
 		step?: number | string;
 		value?: number | string;
 		onchange?: (event: Event) => void;
+		'data-testid'?: string;
+		class?: string;
 	}
 	let { min, max, step, value = $bindable(), onchange, ...restProps }: Props = $props();
 </script>

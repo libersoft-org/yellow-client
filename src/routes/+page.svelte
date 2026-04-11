@@ -3,7 +3,7 @@
 	import { onMount, onDestroy, setContext } from 'svelte';
 	import { get } from 'svelte/store';
 	import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
-	import { init, active_account, accounts_config, setModule } from '../core/scripts/core.ts';
+	import { init, active_account, accounts_config, setModule, updateLastModuleId } from '../core/scripts/core.ts';
 	import { isClientFocused, hideSidebarMobile, selected_corepage_id, selected_module_id, module_decls, product, debug, documentHeight, keyboardHeight, mobileWidth, mobileClass, isMobile, welcomeWizardWindow } from '@/core/scripts/stores.ts';
 	import { initBrowserNotifications, initCustomNotifications } from '@/core/scripts/notifications.ts';
 	import { selected_theme_index, initBrowserThemeDetection } from '@/core/scripts/themes.ts';
@@ -47,7 +47,8 @@
 	let menus = [];
 	let sidebarSize = localStorageSharedStore('sidebarSize', undefined);
 	let elWindowWelcome;
-	let content;
+	// @ts-expect-error TS6133 - used in template bind:this
+	let _content;
 	let isMenuOpen = false;
 	let sideBar;
 	let resizer;
@@ -61,7 +62,7 @@
 
 	$: selectedCorePage = corePages[$selected_corepage_id];
 	//$: console.log('selectedCorePage: ', selectedCorePage);
-	$: selectedModuleDecl = $module_decls[$selected_module_id];
+	$: selectedModuleDecl = $selected_module_id !== null ? $module_decls[$selected_module_id] : undefined;
 	//$: console.log('selectedModuleDecl: ', selectedModuleDecl);
 
 	function getFileChunkFactory(uploadId) {
@@ -69,77 +70,82 @@
 		return params => fn({ uploadId, ...params });
 	}
 
-	onMount(async () => {
-		//console.log('+page onMount');
-		if ('serviceWorker' in window.navigator) {
-			//console.log('+page registering service worker');
-			const SW_VERSION = '_version_v1_'; // change this to force update the service worker
-			// TODO: rm after testing and dev
-			const existing = await navigator.serviceWorker.getRegistrations();
-			for (const reg of existing) {
-				if (reg.active && !reg.active.scriptURL.includes(SW_VERSION)) {
-					await reg.unregister();
-					console.log('Unregistered old SW:', reg.active.scriptURL);
-				}
-			}
-			navigator.serviceWorker.register(`service-worker.js?v=${SW_VERSION}`);
-			navigator.serviceWorker.ready.then(registration => {
-				/*console.log('+page service worker ready');
+	onMount(
+		/** @type {any} */ (
+			async () => {
+				//console.log('+page onMount');
+				if ('serviceWorker' in window.navigator) {
+					//console.log('+page registering service worker');
+					const SW_VERSION = '_version_v1_'; // change this to force update the service worker
+					// TODO: rm after testing and dev
+					const existing = await navigator.serviceWorker.getRegistrations();
+					for (const reg of existing) {
+						if (reg.active && !reg.active.scriptURL.includes(SW_VERSION)) {
+							await reg.unregister();
+							console.log('Unregistered old SW:', reg.active.scriptURL);
+						}
+					}
+					navigator.serviceWorker.register(`service-worker.js?v=${SW_VERSION}`);
+					navigator.serviceWorker.ready.then(registration => {
+						/*console.log('+page service worker ready');
 				console.log('Service worker registration:', registration);
 				console.log('Service worker active:', registration.active);
 				console.log('Service worker script URL:', registration.active.scriptURL);
 				console.log('Service worker state:', registration.active.state);
 				console.log('Service worker scope:', registration.scope);**/
-				window.sw = registration;
-				navigator.serviceWorker.addEventListener('message', e => {
-					if (e.data.type === 'GET_FILE_INFO') {
-						const { uploadId } = e.data.payload;
-						loadUploadData(uploadId).then(uploadData => {
-							e.ports[0].postMessage(uploadData.record);
+						/** @type {any} */ (window).sw = registration;
+						navigator.serviceWorker.addEventListener('message', e => {
+							if (e.data.type === 'GET_FILE_INFO') {
+								const { uploadId } = e.data.payload;
+								loadUploadData(uploadId).then(uploadData => {
+									e.ports[0]?.postMessage(uploadData.record);
+								});
+							}
+							if (e.data.type === 'GET_CHUNK') {
+								const { uploadId, start, end } = e.data.payload;
+								const getChunk = getFileChunkFactory(uploadId);
+								getChunk({
+									offsetBytes: start,
+									chunkSize: end + 1 - start,
+								}).then(data => {
+									e.ports[0]?.postMessage(data);
+								});
+							}
 						});
-					}
-					if (e.data.type === 'GET_CHUNK') {
-						const { uploadId, start, end } = e.data.payload;
-						const getChunk = getFileChunkFactory(uploadId);
-						getChunk({
-							offsetBytes: start,
-							chunkSize: end + 1 - start,
-						}).then(data => {
-							e.ports[0].postMessage(data);
-						});
-					}
-				});
-			});
-		} else {
-			console.log('+page This browser does not support service workers.');
-		}
+					});
+				} else {
+					console.log('+page This browser does not support service workers.');
+				}
 
-		initZoom();
-		setDefaultWindowSize();
-		createTrayIcon();
-		initBrowserNotifications();
-		initCustomNotifications();
-		initWindow();
-		initBrowserThemeDetection();
-		if ($sidebarSize) setSidebarSize($sidebarSize);
-		window.addEventListener('focus', () => isClientFocused.set(true));
-		window.addEventListener('blur', () => isClientFocused.set(false));
-		//window.addEventListener('keydown', onkeydown);
-		window?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
-		if ($accounts_config.length === 0) elWindowWelcome?.open();
-		welcomeWizardWindow.set(elWindowWelcome);
-		setupIframeListener();
-		// TODO: I don't know what this is, test out
-		//document.body.style.touchAction = 'none';
-		//document.documentElement.style.touchAction = 'none';
-		const visualViewport = window.visualViewport;
-		if (visualViewport) {
-			visualViewport.addEventListener('resize', updateAppHeight);
-			visualViewport.addEventListener('scroll', updateAppHeight); // is this necessary?
-		} else window.addEventListener('resize', updateAppHeight);
-		updateAppHeight();
-		return init();
-	});
+				initZoom();
+				setDefaultWindowSize();
+				createTrayIcon();
+				initBrowserNotifications();
+				initCustomNotifications();
+				initWindow();
+				initBrowserThemeDetection();
+				if ($sidebarSize) setSidebarSize($sidebarSize);
+				window.addEventListener('focus', () => isClientFocused.set(true));
+				window.addEventListener('blur', () => isClientFocused.set(false));
+				//window.addEventListener('keydown', onkeydown);
+				/** @type {any} */ (window)?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
+				if ($accounts_config.length === 0) elWindowWelcome?.open();
+				welcomeWizardWindow.set(elWindowWelcome);
+				setupIframeListener();
+				// TODO: I don't know what this is, test out
+				//document.body.style.touchAction = 'none';
+				//document.documentElement.style.touchAction = 'none';
+				const visualViewport = window.visualViewport;
+				if (visualViewport) {
+					visualViewport.addEventListener('resize', updateAppHeight);
+					visualViewport.addEventListener('scroll', updateAppHeight); // is this necessary?
+				} else window.addEventListener('resize', updateAppHeight);
+				updateAppHeight();
+				const cleanup = init();
+				return cleanup;
+			}
+		)
+	);
 
 	onDestroy(async () => {
 		console.log('+page onDestroy');
@@ -324,7 +330,7 @@
 		{#if selectedCorePage}
 			<svelte:component this={selectedCorePage.sidebar} />
 		{:else if selectedModuleDecl}
-			<svelte:component this={selectedModuleDecl.panels.sidebar} />
+			<svelte:component this={selectedModuleDecl.panels?.sidebar} />
 		{:else}
 			<WelcomeSidebar />
 		{/if}
@@ -334,7 +340,7 @@
 		{#if selectedCorePage}
 			<svelte:component this={selectedCorePage.content} />
 		{:else if selectedModuleDecl}
-			<svelte:component this={selectedModuleDecl.panels.content} bind:this={content} />
+			<svelte:component this={selectedModuleDecl.panels?.content} bind:this={_content} />
 		{:else}
 			<WelcomeContent />
 		{/if}

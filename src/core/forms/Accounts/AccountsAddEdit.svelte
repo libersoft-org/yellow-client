@@ -17,11 +17,11 @@
 		params: { id: string | null };
 		isInWelcomeWizard?: boolean;
 		save_id?: (id: string) => void;
-		top?: Snippet;
-		bottom?: Snippet;
+		top?: Snippet | undefined;
+		bottom?: Snippet | undefined;
 		close: () => void;
 	}
-	let { params, isInWelcomeWizard = false, save_id, close, top = $bindable(), bottom = $bindable() }: Props = $props();
+	let { params, isInWelcomeWizard = false, save_id, close, top: _top = $bindable(), bottom: _bottom = $bindable() }: Props = $props();
 	let protocolElem: any = null;
 	let protocol = $state('amtp');
 	let error = $state('');
@@ -38,8 +38,8 @@
 	let account_id_store = writable<string | null>(null);
 
 	onMount(() => {
-		top = snippet_top as any;
-		bottom = snippet_bottom as any;
+		_top = snippet_top as any;
+		_bottom = snippet_bottom as any;
 	});
 
 	$effect(() => {
@@ -99,7 +99,7 @@
 				credentials_password = found.credentials.password;
 			}
 			config_enabled = found?.enabled ?? true;
-			config_title = found?.settings?.title ?? 'My account';
+			config_title = found?.settings?.['title'] ?? 'My account';
 		} else {
 			console.log('[EFFECT] New account setup - form will be reset by account_id_store watcher');
 			if (isInWelcomeWizard) {

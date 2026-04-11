@@ -14,8 +14,8 @@ describe('processMessage', () => {
 		expect(format).toBe('html');
 		expect(body.nodeType).toBe(Node.DOCUMENT_FRAGMENT_NODE);
 		expect(body.childNodes.length).toBe(1);
-		expect(body.childNodes[0].nodeType).toBe(Node.TEXT_NODE);
-		expect(body.childNodes[0].textContent).toBe(message);
+		expect(body.childNodes[0]!.nodeType).toBe(Node.TEXT_NODE);
+		expect(body.childNodes[0]!.textContent).toBe(message);
 	});
 
 	test('should wrap custom elements Attachment in AttachmentsWrap', () => {
@@ -24,10 +24,10 @@ describe('processMessage', () => {
 		expect(format).toBe('html');
 		expect(body.nodeType).toBe(Node.DOCUMENT_FRAGMENT_NODE);
 		expect(body.childNodes.length).toBe(1);
-		expect(body.childNodes[0].nodeName.toLowerCase()).toBe('attachmentswrapper');
-		expect(body.childNodes[0].childNodes.length).toBe(3);
-		expect(body.childNodes[0].childNodes[0].nodeName.toLowerCase()).toBe('attachment');
-		expect(body.childNodes[0].childNodes[1].nodeName.toLowerCase()).toBe('attachment');
-		expect(body.childNodes[0].childNodes[2].nodeName.toLowerCase()).toBe('attachment');
+		expect(body.childNodes[0]!.nodeName.toLowerCase()).toBe('attachmentswrapper');
+		expect(body.childNodes[0]!.childNodes.length).toBe(3);
+		expect(body.childNodes[0]!.childNodes[0]!.nodeName.toLowerCase()).toBe('attachment');
+		expect(body.childNodes[0]!.childNodes[1]!.nodeName.toLowerCase()).toBe('attachment');
+		expect(body.childNodes[0]!.childNodes[2]!.nodeName.toLowerCase()).toBe('attachment');
 	});
 });

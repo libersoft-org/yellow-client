@@ -9,11 +9,9 @@
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Import from '@/core/components/Import/Import.svelte';
-
 	interface Props {
 		close: () => void;
 	}
-
 	let { close }: Props = $props();
 	let error: string | null | undefined = $state();
 	let name: string | undefined = $state();
@@ -25,9 +23,7 @@
 
 	function validateRecoveryPhrase(text: string): { valid: boolean; error?: string } {
 		const trimmedText = text.trim();
-		if (!trimmedText) {
-			return { valid: false, error: 'Recovery phrase is required' };
-		}
+		if (!trimmedText) return { valid: false, error: 'Recovery phrase is required' };
 		try {
 			Mnemonic.fromPhrase(trimmedText);
 			return { valid: true };
@@ -41,7 +37,6 @@
 		const validationConfig = [{ field: name, element: elName, required: 'Wallet name is required' }];
 		error = validateForm(validationConfig);
 		if (error) throw new Error(error);
-
 		const mnemonic = Mnemonic.fromPhrase(phrase.trim());
 		addWallet(mnemonic, name!);
 		close();

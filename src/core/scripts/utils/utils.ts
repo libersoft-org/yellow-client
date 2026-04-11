@@ -1,4 +1,4 @@
-export function order(dict: { [key: string]: { order?: number; id: number | string } }): { order?: number; id: number | string }[] {
+export function order(dict: { [key: string]: { order?: number; id: string } }): { order?: number; id: string }[] {
 	//console.log('ORDER dict:', dict);
 	let result = Object.values(dict).sort((a, b) => {
 		let a_order = a.order !== undefined ? a.order : a.id;
@@ -20,7 +20,7 @@ export function getGuid(length = 40): string {
 	crypto.getRandomValues(array);
 
 	for (let i = 0; i < length; i++) {
-		result += chars[array[i] % chars.length];
+		result += chars[array[i]! % chars.length];
 	}
 
 	return result;

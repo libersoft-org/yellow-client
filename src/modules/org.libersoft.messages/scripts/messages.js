@@ -25,7 +25,7 @@ export const photoRadius = localStorageSharedStore('photoRadius', '50%');
 export const messageListMaxWidth = localStorageSharedStore('messageListMaxWidth', '1620');
 export const messageListApplyMaxWidth = localStorageSharedStore('messageListApplyMaxWidth', true);
 export const hideMessageTextInNotifications = localStorageSharedStore('hideMessageTextInNotifications', false);
-export const defaultFileDownloadFolder = localStorageSharedStore('defaultFileDownloadFolder', null);
+export const defaultFileDownloadFolder = localStorageSharedStore('defaultFileDownloadFolder', /** @type {string | null} */ (null));
 export { identifier } from './connection.ts';
 export let md = active_account_module_data(identifier);
 export let online = relay(md, 'online');
@@ -42,6 +42,30 @@ export let galleryFile = relay(md, 'galleryFile');
 export let elWindowNewConversation = writable();
 
 class Message {
+	/** @type {string} */ uid = '';
+	/** @type {string} */ message = '';
+	/** @type {string} */ address_from = '';
+	/** @type {string} */ address_to = '';
+	/** @type {string} */ format = '';
+	/** @type {any} */ created = undefined;
+	/** @type {boolean} */ just_sent = false;
+	/** @type {boolean} */ just_received = false;
+	/** @type {boolean} */ seen = false;
+	/** @type {number|undefined} */ id = undefined;
+	/** @type {number|undefined} */ prev = undefined;
+	/** @type {number|string|undefined} */ next = undefined;
+	/** @type {any[]} */ reactions = [];
+	/** @type {WeakRef|undefined} */ acc = undefined;
+	/** @type {string} */ stripped_text = '';
+	/** @type {boolean} */ is_outgoing = false;
+	/** @type {string} */ remote_address = '';
+	/** @type {boolean} */ received_by_my_homeserver = false;
+	/** @type {boolean} */ is_lazyloaded = false;
+	/** @type {boolean} */ keep_unseen_bar = false;
+	/** @type {string} */ type = '';
+	/** @type {string} */ author = '';
+	/** @type {boolean} */ hide_author = false;
+
 	constructor(acc, data) {
 		Object.assign(this, data);
 		this.acc = new WeakRef(acc);
@@ -240,11 +264,11 @@ export async function initUpload(files, uploadType, recipients) {
 	}, 100);
 	// send upload
 	const records = uploads.map(upload => upload.record);
-	sendData(acc, null, 'upload_begin', { records, recipients }, true, (_req, res) => {
+	sendData(/** @type {import('@/core/scripts/types.ts').IAccount} */ (acc), null, 'upload_begin', { records, recipients }, true, (_req, res) => {
 		if (res.error !== false) {
 			return;
 		}
-		if (uploads?.[0].record.type === FileUploadRecordType.SERVER) {
+		if (uploads?.[0]?.record.type === FileUploadRecordType.SERVER) {
 			fileUploadManager.startUploadSerial(res.allowedRecords, uploadChunkAsync);
 		} else {
 			console.error('Error starting upload'); // TODO: better error
@@ -253,33 +277,35 @@ export async function initUpload(files, uploadType, recipients) {
 }
 
 function uploadChunkAsync({ upload, chunk }) {
-	return new Promise((resolve, reject) => {
-		const op = retry.operation({
-			retries: 3,
-			factor: 1.5,
-			minTimeout: 1000,
-			maxTimeout: 3000,
-		});
-		op.attempt(() => {
-			const retry = res => {
-				const willRetry = op.retry(new Error());
-				if (!willRetry) {
-					reject(res);
-				}
-			};
-			const to = setTimeout(() => {
-				retry();
-			}, 5000); // TODO: maybe longer
-			sendData(upload.acc, null, 'upload_chunk', { chunk }, true, (_req, res) => {
-				clearTimeout(to);
-				if (res.error !== false) {
-					retry(res);
-					return;
-				}
-				resolve();
+	return /** @type {Promise<void>} */ (
+		new Promise((resolve, reject) => {
+			const op = retry.operation({
+				retries: 3,
+				factor: 1.5,
+				minTimeout: 1000,
+				maxTimeout: 3000,
 			});
-		});
-	});
+			op.attempt(() => {
+				const retry = res => {
+					const willRetry = op.retry(new Error());
+					if (!willRetry) {
+						reject(res);
+					}
+				};
+				const to = setTimeout(() => {
+					retry();
+				}, 5000); // TODO: maybe longer
+				sendData(upload.acc, null, 'upload_chunk', { chunk }, true, (_req, res) => {
+					clearTimeout(to);
+					if (res.error !== false) {
+						retry(res);
+						return;
+					}
+					resolve();
+				});
+			});
+		})
+	);
 }
 
 function ask_for_chunk(event) {
@@ -369,45 +395,49 @@ export const makeDownloadChunkAsyncFn =
 
 export function cancelUpload(uploadId) {
 	fileUploadManager.cancelUpload(uploadId);
-	sendData(get(active_account), null, 'upload_cancel', { uploadId }, true, () => {});
+	sendData(/** @type {import('@/core/scripts/types.ts').IAccount} */ (get(active_account)), null, 'upload_cancel', { uploadId }, true, () => {});
 }
 
 export function pauseUpload(uploadId) {
-	return new Promise(resolve => {
-		fileUploadManager.pauseUpload(uploadId);
-		sendData(
-			get(active_account),
-			null,
-			'upload_update_status',
-			{
-				uploadId,
-				status: FileUploadRecordStatus.PAUSED,
-			},
-			true,
-			() => {
-				resolve(); // TODO: handle error if needed
-			}
-		);
-	});
+	return /** @type {Promise<void>} */ (
+		new Promise(resolve => {
+			fileUploadManager.pauseUpload(uploadId);
+			sendData(
+				/** @type {import('@/core/scripts/types.ts').IAccount} */ (get(active_account)),
+				null,
+				'upload_update_status',
+				{
+					uploadId,
+					status: FileUploadRecordStatus.PAUSED,
+				},
+				true,
+				() => {
+					resolve(); // TODO: handle error if needed
+				}
+			);
+		})
+	);
 }
 
 export function resumeUpload(uploadId) {
-	return new Promise(resolve => {
-		fileUploadManager.resumeUpload(uploadId);
-		sendData(
-			get(active_account),
-			null,
-			'upload_update_status',
-			{
-				uploadId,
-				status: FileUploadRecordStatus.UPLOADING,
-			},
-			true,
-			() => {
-				resolve(); // TODO: handle error if needed
-			}
-		);
-	});
+	return /** @type {Promise<void>} */ (
+		new Promise(resolve => {
+			fileUploadManager.resumeUpload(uploadId);
+			sendData(
+				/** @type {import('@/core/scripts/types.ts').IAccount} */ (get(active_account)),
+				null,
+				'upload_update_status',
+				{
+					uploadId,
+					status: FileUploadRecordStatus.UPLOADING,
+				},
+				true,
+				() => {
+					resolve(); // TODO: handle error if needed
+				}
+			);
+		})
+	);
 }
 
 export function pauseDownload(uploadId) {
@@ -437,7 +467,7 @@ export function loadUploadData(uploadId) {
 			resolve(existingUpload);
 			return;
 		}
-		let acc = get(active_account);
+		let acc = /** @type {import('@/core/scripts/types.ts').IAccount} */ (get(active_account));
 		const op = retry.operation({
 			retries: 3,
 			factor: 1.5,
@@ -651,7 +681,7 @@ function findNext(messages, i) {
 }
 
 export function setMessageSeen(message, cb, keep_unseen_bar = true) {
-	let acc = get(active_account);
+	let acc = /** @type {import('@/core/scripts/types.ts').IAccount} */ (get(active_account));
 	log.debug('setMessageSeen', message);
 	deleteNotification(messageNotificationId(message));
 	sendData(acc, active_account, 'message_seen', { uid: message.uid }, true, (_req, res) => {
@@ -684,7 +714,7 @@ export function setMessageSeen(message, cb, keep_unseen_bar = true) {
  *  @param {any} [conversation]
  */
 export function sendMessage(text, format, acc = null, conversation = null) {
-	acc = acc ? acc : get(active_account);
+	acc = acc ? acc : /** @type {import('@/core/scripts/types.ts').IAccount} */ (get(active_account));
 	conversation = conversation ? conversation : get(selectedConversation);
 	let message = new Message(acc, {
 		uid: getGuid(),
@@ -711,7 +741,7 @@ export function sendMessage(text, format, acc = null, conversation = null) {
 
 export async function deleteMessage(message) {
 	console.log('123 deleteMessage', message);
-	const acc = get(active_account);
+	const acc = /** @type {import('@/core/scripts/types.ts').IAccount} */ (get(active_account));
 	const params = {
 		id: message.id,
 		uid: message.uid,
@@ -744,13 +774,14 @@ function sendOutgoingMessage(acc, conversation, params, message, outgoing_messag
 }
 
 /**
- * @param acc
  * @param messageUid
  * @param operation {'set'|'unset'}
+ * @param reaction
+ * @param {import('@/core/scripts/types.ts').IAccount} [acc]
  * @returns {Promise<unknown>}
  */
 export function modifyMessageReaction(messageUid, operation, reaction, acc) {
-	acc = acc ? acc : get(active_account);
+	acc = acc || /** @type {import('@/core/scripts/types.ts').IAccount} */ (get(active_account));
 	return new Promise((resolve, reject) => {
 		const params = {
 			messageUid,
@@ -777,11 +808,12 @@ export function unsetMessageReaction(message, reaction) {
 }
 
 export function toggleMessageReaction(message, reaction) {
-	const userAddress = get(active_account).credentials.address;
+	const userAddress = /** @type {import('@/core/scripts/types.ts').IAccount} */ (get(active_account)).credentials.address;
 	const didUserReact = message.reactions.some(existingReaction => {
 		if (existingReaction.user_address === userAddress && existingReaction.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi) {
 			return true;
 		}
+		return false;
 	});
 	playAudio('modules/' + identifier + '/audio/reaction.mp3');
 	if (didUserReact) {
@@ -972,13 +1004,22 @@ async function showNotification(acc, msg) {
 export function ensureConversationDetails(conversation) {
 	//console.log('ensureConversationDetails', conversation);
 	if (conversation.visible_name) return;
-	let acc = get(active_account);
+	let acc = /** @type {import('@/core/scripts/types.ts').IAccount} */ (get(active_account));
 	//console.log('ensureConversationDetails acc:', acc);
-	_send(acc, active_account, 'core', 'user_userinfo_get', { address: conversation.address }, true, (_req, res) => {
-		if (res.error !== false) return;
-		Object.assign(conversation, res.data);
-		conversationsArray.update(v => v);
-	});
+	_send(
+		acc,
+		/** @type {any} */ (active_account),
+		'core',
+		'user_userinfo_get',
+		{ address: conversation.address },
+		true,
+		(_req, res) => {
+			if (res.error !== false) return;
+			Object.assign(conversation, res.data);
+			conversationsArray.update(v => v);
+		},
+		false
+	);
 }
 
 DOMPurify.addHook('uponSanitizeAttribute', function (node, data) {
@@ -1006,7 +1047,7 @@ DOMPurify.addHook('uponSanitizeElement', (node, data) => {
 		if (CUSTOM_TAGS.find(tag => tag === t)) {
 			// Move children out to after the node. This is a hack to tolerate improperly closed sticker tag. // nope, jsdom (parse5) already produces them "wrong" (right, by spec)
 			while (node.firstChild) {
-				node.parentNode.insertBefore(node.firstChild, node.nextSibling);
+				node.parentNode?.insertBefore(node.firstChild, node.nextSibling);
 			}
 		}
 	}

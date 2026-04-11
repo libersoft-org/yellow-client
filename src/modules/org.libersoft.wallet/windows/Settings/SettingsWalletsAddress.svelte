@@ -7,7 +7,8 @@
 	}
 	let { address = $bindable(), colorVariable = '--primary-foreground' }: Props = $props();
 	let copied = $state(false);
-	let spanElem = $state();
+	// @ts-expect-error TS6133 - used in template bind:this
+	let _spanElem = $state();
 
 	function copyAddressToClipboard() {
 		navigator.clipboard
@@ -39,7 +40,7 @@
 
 <Clickable onClick={copyAddressToClipboard}>
 	<div class="address">
-		<span class="text" bind:this={spanElem}>{copied ? 'Copied!' : address}</span>
+		<span class="text" bind:this={_spanElem}>{copied ? 'Copied!' : address}</span>
 		<Icon img="img/copy.svg" {colorVariable} alt="Copy" size="15px" padding="0px" />
 	</div>
 </Clickable>

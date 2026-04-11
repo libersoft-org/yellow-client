@@ -41,7 +41,6 @@
 
 	function handleAddressReorder(sourceIndex: number, targetIndex: number): void {
 		if (!params.wallet?.addresses) return;
-
 		const reordered = [...params.wallet.addresses];
 		const [moved] = reordered.splice(sourceIndex, 1);
 		reordered.splice(targetIndex, 0, moved!);

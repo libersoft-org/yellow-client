@@ -11,7 +11,8 @@
 	export let size = 200;
 	export let intersecting;
 	export let force_animate = false;
-	let componentContainer;
+	// @ts-expect-error TS6133 - used in template bind:this
+	let _componentContainer;
 	let animContainer;
 	let isLottie = false;
 	let isImage = false;
@@ -23,7 +24,8 @@
 	let anim;
 	let isInViewport = false;
 	let mouseOver = false;
-	let elStaticImg;
+	// @ts-expect-error TS6133 - used in template bind:this
+	let _elStaticImg;
 	let ContextMenu = getContext('ContextMenu');
 	let ContextMenuOpen = ContextMenu ? ContextMenu.isOpen : readable(undefined);
 	let renderer = /** @type {'svg'} */ ('svg');
@@ -31,7 +33,7 @@
 
 	$: update_playing(playing);
 
-	ext = file.split('.').pop().toLowerCase();
+	ext = file.split('.').pop()?.toLowerCase();
 	//  console.log('STICKER file:', file, 'ext:', ext);
 	if (ext === 'lottie' || ext === 'json' || ext === 'tgs') isLottie = true;
 	else isImage = true;
@@ -92,7 +94,7 @@
 		//console.log('create sticker observer');
 		observer = new IntersectionObserver(
 			entries => {
-				isInViewport = entries[entries.length - 1].isIntersecting;
+				isInViewport = entries[entries.length - 1]?.isIntersecting ?? false;
 				//console.log(entries, 'isInViewport: ', isInViewport);
 			},
 			{
@@ -135,7 +137,7 @@
 		/*anim.onComplete = () => {
    console.log('lottie animation completed');
   };*/
-		anim.onLoopComplete = () => {
+		/** @type {any} */ (anim).onLoopComplete = () => {
 			//console.log('lottie animation loop completed');
 			// how to control the rendering fps of a lottie-web animation?
 			//console.log(anim);
@@ -241,7 +243,7 @@
 	}
 </style>
 
-<div class="sticker" role="button" tabindex="0" bind:this={componentContainer} on:mouseover={() => (mouseOver = true)} on:mouseleave={() => (mouseOver = false)} on:focus={() => (mouseOver = true)} on:blur={() => (mouseOver = false)}>
+<div class="sticker" role="button" tabindex="0" bind:this={_componentContainer} on:mouseover={() => (mouseOver = true)} on:mouseleave={() => (mouseOver = false)} on:focus={() => (mouseOver = true)} on:blur={() => (mouseOver = false)}>
 	{#if $debug}
 		renderer: {renderer}
 		isLottie: {isLottie}
@@ -259,7 +261,7 @@
 			style="width: {size}px; height: {size}px;"
 			src={file}
 			alt=""
-			bind:this={elStaticImg}
+			bind:this={_elStaticImg}
 			on:error={e => {
 				static_img_load_error(e);
 			}}

@@ -87,31 +87,25 @@ export class GalleryStore {
 			if (nextIndex < 0) {
 				return store;
 			}
-			store.currentId = store.files[nextIndex].id;
+			store.currentId = store.files[nextIndex]!.id;
 			return store;
 		});
 	}
 
 	next() {
 		this.store.update(store => {
-			if (store.currentId === null) {
-				return store;
-			}
+			if (store.currentId === null) return store;
 			const currentIndex = store.files.findIndex(file => file.id === store.currentId);
 			const nextIndex = currentIndex + 1;
-			if (nextIndex >= store.files.length) {
-				return store;
-			}
-			store.currentId = store.files[nextIndex].id;
+			if (nextIndex >= store.files.length) return store;
+			store.currentId = store.files[nextIndex]!.id;
 			return store;
 		});
 	}
 
 	canPrevious() {
 		return derived(this.store, $store => {
-			if ($store.currentId === null) {
-				return false;
-			}
+			if ($store.currentId === null) return false;
 			const currentIndex = $store.files.findIndex(file => file.id === $store.currentId);
 			return currentIndex > 0;
 		});
@@ -119,9 +113,7 @@ export class GalleryStore {
 
 	canNext() {
 		return derived(this.store, $store => {
-			if ($store.currentId === null) {
-				return false;
-			}
+			if ($store.currentId === null) return false;
 			const currentIndex = $store.files.findIndex(file => file.id === $store.currentId);
 			return currentIndex < $store.files.length - 1;
 		});

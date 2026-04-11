@@ -11,6 +11,7 @@
 		visibleOnMobile?: boolean;
 		visibleOnDesktop?: boolean;
 		onClick?: (e: Event) => void;
+		'data-testid'?: string;
 	}
 	let { img, imgSize = '28px', text, expand = false, enabled = true, visibleOnMobile = true, visibleOnDesktop = true, onClick, ...restProps }: Props = $props();
 

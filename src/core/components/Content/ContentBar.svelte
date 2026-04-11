@@ -9,7 +9,7 @@
 		right?: Snippet;
 		element?: HTMLElement;
 	}
-	let { children, position = 'top', height = 'var(--menu-height)', left, center, right, element = $bindable() }: Props = $props();
+	let { children, position = 'top', height = 'var(--menu-height)', left, center, right, element: _element = $bindable() }: Props = $props();
 </script>
 
 <style>
@@ -54,7 +54,7 @@
 	}
 </style>
 
-<div bind:this={element} class="content-bar {position === 'top' ? 'position-top' : ''} {position === 'bottom' ? 'position-bottom' : ''}" style:min-height={height} style:max-height={height}>
+<div bind:this={_element} class="content-bar {position === 'top' ? 'position-top' : ''} {position === 'bottom' ? 'position-bottom' : ''}" style:min-height={height} style:max-height={height}>
 	{@render children?.()}
 	{#if left}
 		<div class="content-left">

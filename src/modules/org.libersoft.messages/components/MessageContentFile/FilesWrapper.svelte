@@ -28,7 +28,7 @@
 	});
 	// determine attachments type based on the first attachment
 	const uploadRecordType = $derived.by(() => {
-		return attachedUploads.length > 0 ? attachedUploads[0].record.type : null;
+		return attachedUploads.length > 0 ? (attachedUploads[0]?.record.type ?? null) : null;
 	});
 
 	function getAttachmentEls() {

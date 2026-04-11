@@ -1,7 +1,6 @@
 <script lang="ts">
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { debug, isMobile } from '@/core/scripts/stores.ts';
-	import { balance, isLoadingBalance, formatBalance, type IBalance } from 'libersoft-crypto/balance';
 	import { nftsForDisplay, refreshNftBalance } from 'libersoft-crypto/nfts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Table from '@/core/components/Table/Table.svelte';

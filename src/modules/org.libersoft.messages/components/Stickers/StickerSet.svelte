@@ -18,7 +18,8 @@
  */
 	let first, rest;
 	let expanded = false;
-	let clientHeight;
+	// @ts-expect-error TS6133 - used in template bind:clientHeight
+	let _clientHeight;
 	let in_favorites = false;
 	$: update(intersecting);
 	$: first = showall ? stickers : stickers?.slice(0, splitAt);
@@ -103,7 +104,7 @@
 	}
 </style>
 
-<div class="stickerset" style="content-visibility: {intersecting ? 'visible' : 'hidden'}" role="none" bind:clientHeight>
+<div class="stickerset" style="content-visibility: {intersecting ? 'visible' : 'hidden'}" role="none" bind:clientHeight={_clientHeight}>
 	<div class="title-bar">
 		<div class="left">
 			<div class="label">{stickerset.name}</div>

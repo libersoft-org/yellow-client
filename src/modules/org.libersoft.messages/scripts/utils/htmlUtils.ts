@@ -28,28 +28,21 @@ export function wrapConsecutiveElements(fragment: DocumentFragment, xName: strin
 		let consecutiveXs: Element[] = [];
 
 		for (let i = 0; i < children.length; i++) {
-			const child = children[i];
+			const child = children[i]!;
 
-			if (child.nodeType === Node.ELEMENT_NODE && (child as Element).tagName.toLowerCase() === xName) {
-				consecutiveXs.push(child as Element);
-			} else {
-				if (consecutiveXs.length >= minConsecutive) {
-					wrapWithY(consecutiveXs);
-				}
+			if (child.nodeType === Node.ELEMENT_NODE && (child as Element).tagName.toLowerCase() === xName) consecutiveXs.push(child as Element);
+			else {
+				if (consecutiveXs.length >= minConsecutive) wrapWithY(consecutiveXs);
 				consecutiveXs = []; // Reset the sequence if non-X is found
 			}
 		}
 
 		// Handle any trailing sequence of X elements
-		if (consecutiveXs.length >= minConsecutive) {
-			wrapWithY(consecutiveXs);
-		}
+		if (consecutiveXs.length >= minConsecutive) wrapWithY(consecutiveXs);
 
 		// Recurse into child elements
 		children.forEach(child => {
-			if (child.nodeType === Node.ELEMENT_NODE) {
-				processParent(child as Element);
-			}
+			if (child.nodeType === Node.ELEMENT_NODE) processParent(child as Element);
 		});
 	}
 

@@ -51,7 +51,7 @@
 {#if file}
 	<Clickable onClick={handleClick} {onMousedown}>
 		<div class="sticker" style="max-width: {size}px;">
-			<Sticker {size} {file} play_on_start={false} {intersecting} />
+			<Sticker {size} {file} force_animate={false} {intersecting} />
 		</div>
 	</Clickable>
 {/if}

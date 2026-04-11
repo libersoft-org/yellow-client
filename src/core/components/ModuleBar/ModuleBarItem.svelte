@@ -6,7 +6,7 @@
 	interface Props {
 		decl: {
 			id: string;
-			name: string;
+			name?: string;
 		};
 		clickSetModule: (id: string) => void;
 		online: Writable<boolean>;

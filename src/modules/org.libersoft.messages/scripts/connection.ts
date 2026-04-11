@@ -8,16 +8,6 @@ declare global {
 
 export const identifier = 'org.libersoft.messages';
 
-interface ISendRequest {
-	[key: string]: any;
-}
-
-interface ISendResponse {
-	error: boolean;
-	message?: string;
-	[key: string]: any;
-}
-
 interface ISubscriptionInfo {
 	subscribed: boolean;
 	events?: string[];

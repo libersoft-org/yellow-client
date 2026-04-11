@@ -8,8 +8,7 @@
 	import { invoke } from '@tauri-apps/api/core';
 	import { heightLogicalChanged, initPositioning } from './position.ts';
 	export let maxNotifications = 3;
-	let notifications = writable([]);
-	let counter = 0;
+	let notifications = writable(/** @type {any[]} */ ([]));
 	let heightLogical = writable(100);
 
 	// // Catch all synchronous errors (see +layout.svelte)
@@ -26,22 +25,26 @@
 	// 	console.error('+page Stack trace:\n', reason?.stack || reason);
 	// });
 
-	onMount(async () => {
-		log.debug('notifications onMount: CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
-		let deinit;
+	onMount(
+		/** @type {any} */ (
+			async () => {
+				log.debug('notifications onMount: CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
+				let deinit;
 
-		if (window.__TAURI__) {
-			deinit = initPositioning();
-			invoke('show', {});
-		}
-		if (CUSTOM_NOTIFICATIONS) {
-			await initNotificationsPage();
-		} else {
-			log.debug('CUSTOM_NOTIFICATIONS is not defined');
-		}
+				if (window.__TAURI__) {
+					deinit = initPositioning();
+					invoke('show', {});
+				}
+				if (CUSTOM_NOTIFICATIONS) {
+					await initNotificationsPage();
+				} else {
+					log.debug('CUSTOM_NOTIFICATIONS is not defined');
+				}
 
-		return deinit;
-	});
+				return deinit;
+			}
+		)
+	);
 
 	heightLogical.subscribe(async v => {
 		await heightLogicalChanged(v);
@@ -58,7 +61,7 @@
 				addNotificationData(v);
 			}
 		});
-		s.onKeyChange((k, v) => {
+		/** @type {any} */ (s).onKeyChange((k, v) => {
 			log.debug('store.onKeyChange', k, v);
 		});
 		//log.debug('initial store:', await s.entries());
@@ -79,12 +82,14 @@
 		//log.debug('notification added');
 	}
 
+	/** @this {any} */
 	async function onClose(e) {
 		log.debug('onClose notification');
 		this.onClick(e, 'close');
 		onNotificationRemoved(this.id);
 	}
 
+	/** @this {any} */
 	async function onClick(e, data) {
 		e.stopPropagation();
 		log.debug('onClick notification');

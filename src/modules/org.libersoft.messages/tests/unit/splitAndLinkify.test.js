@@ -75,14 +75,14 @@ describe('splitAndLinkify', () => {
 			type: 'plain',
 			value: 'Visit ',
 		});
-		expect(output[1].type).toBe('processed');
-		expect(output[1].value).toContain('https://example.com');
+		expect(output[1]?.type).toBe('processed');
+		expect(output[1]?.value).toContain('https://example.com');
 		expect(output[2]).toEqual({
 			type: 'plain',
 			value: ' and also ',
 		});
-		expect(output[3].type).toBe('processed');
-		expect(output[3].value).toContain('http://test.org');
+		expect(output[3]?.type).toBe('processed');
+		expect(output[3]?.value).toContain('http://test.org');
 		expect(output[4]).toEqual({
 			type: 'plain',
 			value: '!',

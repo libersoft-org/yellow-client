@@ -99,7 +99,7 @@
 		const token: ITokenConf = {
 			guid: getGuid(),
 			contract_address: contractAddress,
-			iconURL: popularToken.logoURI,
+			iconURL: popularToken.logoURI ?? '',
 		};
 
 		addToken(network.guid, token);

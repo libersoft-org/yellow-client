@@ -77,7 +77,7 @@ class MP4Loader extends MediaLoader {
 		return nextOffset;
 	};
 
-	seek = (time: number) => {
+	override seek = (time: number) => {
 		const mp4boxFile = this.mp4boxFile as IMP4File;
 		const specialTime = Math.max(Math.floor(time - 2), 0);
 		// console.log('MP4BOX: seek specialTime:', specialTime);

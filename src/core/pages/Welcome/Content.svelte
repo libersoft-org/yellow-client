@@ -73,11 +73,11 @@
 			<Icon img="img/back.svg" onClick={back} colorVariable="--secondary-foreground" visibleOnDesktop={false} />
 			<BarTitle text="Welcome" />
 		{/snippet}
-		{#if !BROWSER}
-			{#snippet right()}
+		{#snippet right()}
+			{#if !BROWSER}
 				<Icon img="img/cross.svg" onClick={exit} colorVariable="--secondary-foreground" visibleOnMobile={false} />
-			{/snippet}
-		{/if}
+			{/if}
+		{/snippet}
 	</Bar>
 	<Page hAlign="center" vAlign="center">
 		<div class="welcome">

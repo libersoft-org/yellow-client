@@ -43,7 +43,7 @@
 	async function getGifs(_query, _next_pos) {
 		if (_query) last_query = _query;
 		else _query = last_query;
-		let server_val = get(gif_server);
+		let server_val = get(gif_server) ?? '';
 		server_val = server_val.endsWith('/') ? server_val.slice(0, -1) : server_val;
 		let url = `${server_val}/api/search?q=${encodeURIComponent(last_query)}&limit=12`;
 		if (_next_pos) {

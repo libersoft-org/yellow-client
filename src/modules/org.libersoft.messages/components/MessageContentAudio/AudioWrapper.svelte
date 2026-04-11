@@ -4,7 +4,8 @@
 		node?: any;
 	}
 	let { children, node: _node }: Props = $props();
-	let ref: HTMLDivElement | undefined = $state();
+	// @ts-expect-error TS6133 - used in template bind:this
+	let _ref: HTMLDivElement | undefined = $state();
 </script>
 
 <style>
@@ -21,7 +22,7 @@
 	}
 </style>
 
-<div class="audio-wrap" bind:this={ref}>
+<div class="audio-wrap" bind:this={_ref}>
 	<div class="audio-list">
 		{#each children || [] as child (child.tagUniqueId)}
 			{#if child.component}

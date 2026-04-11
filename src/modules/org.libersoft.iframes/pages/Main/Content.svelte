@@ -5,7 +5,8 @@
 	//let url = 'https://yellow-module1.netlify.app/'
 	let url: string = 'http://localhost:5173/';
 	let module_id: string = 'org.libersoft.messages2';
-	let iframe: HTMLIFrameElement;
+	// @ts-expect-error TS6133 - used in template bind:this
+	let _iframe: HTMLIFrameElement;
 
 	onMount(() => {
 		console.log('onMount');
@@ -38,6 +39,7 @@
 			}
 			return res;
 		}
+		return undefined;
 	}
 
 	async function serverCommand(data: any) {
@@ -69,5 +71,5 @@
 <!--<iframe id="iframe1" src="iframe1.html" style="width: 45%; height: 200px;"></iframe>-->
 <!--<iframe id="iframe2" src="iframe2.html" style="width: 45%; height: 200px;"></iframe>-->
 <div class="parent">
-	<iframe bind:this={iframe} sandbox="allow-scripts" src={url} title="content"></iframe>
+	<iframe bind:this={_iframe} sandbox="allow-scripts" src={url} title="content"></iframe>
 </div>

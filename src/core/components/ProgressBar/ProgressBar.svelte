@@ -2,8 +2,9 @@
 	interface Props {
 		moving?: boolean;
 		value?: number;
+		color?: string;
 	}
-	let { moving = false, value = 0 }: Props = $props();
+	let { moving = false, value = 0, color: _color }: Props = $props();
 </script>
 
 <style>

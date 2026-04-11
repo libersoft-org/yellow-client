@@ -8,8 +8,9 @@
 	import { onMount, tick } from 'svelte';
 	interface Props {
 		height?: string;
+		isBottomSheet?: boolean;
 	}
-	let { height }: Props = $props();
+	let { height, isBottomSheet: _isBottomSheet = false }: Props = $props();
 	const expressions = {
 		emojis: Emojis,
 		stickers: Stickers,

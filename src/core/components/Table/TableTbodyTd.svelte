@@ -24,6 +24,7 @@
 			const result = action(tdElement, useParams);
 			return typeof result === 'function' ? result : result?.destroy;
 		}
+		return undefined;
 	});
 
 	let tdElement: HTMLTableCellElement;

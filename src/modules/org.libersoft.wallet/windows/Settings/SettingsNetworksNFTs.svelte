@@ -1,6 +1,5 @@
 <script lang="ts">
 	import { getContext, tick } from 'svelte';
-	import { fromStore, get } from 'svelte/store';
 	import { type INetwork, findNetworkByGuid, reorderNFTs } from 'libersoft-crypto/network';
 	import type { INftConf } from 'libersoft-crypto/nfts';
 	import { tableDrag } from '@/core/actions/tableDrag.ts';

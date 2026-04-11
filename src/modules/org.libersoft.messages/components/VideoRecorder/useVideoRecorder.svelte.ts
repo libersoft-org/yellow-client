@@ -65,7 +65,7 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
 					video: { facingMode: 'user' },
 				});
 				const frontCameraTrack = frontCameraStream.getVideoTracks()[0];
-				const frontDeviceId = frontCameraTrack.getSettings().deviceId;
+				const frontDeviceId = frontCameraTrack?.getSettings().deviceId;
 				userDeviceId.set(frontDeviceId || null);
 				frontCameraStream.getTracks().forEach(track => track.stop());
 			} catch (err) {
@@ -78,7 +78,7 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
 					video: { facingMode: 'environment' },
 				});
 				const rearCameraTrack = rearCameraStream.getVideoTracks()[0];
-				const rearDeviceId = rearCameraTrack.getSettings().deviceId;
+				const rearDeviceId = rearCameraTrack?.getSettings().deviceId;
 				environmentDeviceId.set(rearDeviceId || null);
 				rearCameraStream.getTracks().forEach(track => track.stop());
 			} catch (err) {

@@ -16,7 +16,7 @@ export function setupMicPulseIndicator(stream: MediaStream, micIndicator: HTMLEl
 
 		let sum = 0;
 		for (let i = 0; i < dataArray.length; i++) {
-			sum += dataArray[i] * dataArray[i];
+			sum += dataArray[i]! * dataArray[i]!;
 		}
 		const rms = Math.sqrt(sum / dataArray.length);
 

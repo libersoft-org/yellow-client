@@ -2,28 +2,33 @@ import { writable, get } from 'svelte/store';
 import { stickers_db } from '@/org.libersoft.messages/scripts/db.ts';
 import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
 
-// TODO: this is an extra state that safeguards against triggering the update after a HMR
-window.stickerLibraryUpdaterState = { updating: false };
-import.meta.hot?.dispose(() => (window.stickerLibraryUpdaterState.canceled = true));
+/** @type {any} */
+const _window = window;
 
-export let stickerLibraryUpdaterState = writable({
-	updating: false,
-	status: '',
-	progress: 0,
-	error: null,
-	updated_once: false,
-	canceled: false,
-});
-export let stickerset_favorites = localStorageSharedStore('stickerset_favorites', []);
+// TODO: this is an extra state that safeguards against triggering the update after a HMR
+_window.stickerLibraryUpdaterState = { updating: false };
+import.meta.hot?.dispose(() => (_window.stickerLibraryUpdaterState.canceled = true));
+
+export let stickerLibraryUpdaterState = writable(
+	/** @type {{ updating: boolean, status: string, progress: number, error: boolean | null, updated_once: boolean, canceled: boolean }} */ ({
+		updating: false,
+		status: '',
+		progress: 0,
+		error: null,
+		updated_once: false,
+		canceled: false,
+	})
+);
+export let stickerset_favorites = localStorageSharedStore('stickerset_favorites', /** @type {any[]} */ ([]));
 
 stickerLibraryUpdaterState.subscribe(state => {
 	//console.log('stickerLibraryUpdaterState:', state);
-	window.stickerLibraryUpdaterState = state;
+	_window.stickerLibraryUpdaterState = state;
 });
 export const defaultStickerServers = ['https://stickers.libersoft.org'];
 export let sticker_servers = localStorageSharedStore('sticker_servers', defaultStickerServers);
 export let sticker_server_index = localStorageSharedStore('sticker_server_index', 0);
-export let sticker_server = localStorageSharedStore('sticker_server');
+export let sticker_server = localStorageSharedStore('sticker_server', /** @type {string|undefined} */ (undefined));
 
 function update_sticker_server() {
 	let servers = get(sticker_servers);
@@ -46,8 +51,8 @@ export async function fetchStickerset(stickerServer, id = 0) {
 	// This is a simple fetch of a single sticker set. There is some overlap with updateStickerLibrary, but it's not worth refactoring now
 	id = Number(id);
 	let response = await fetch(sanitizeStickerServerUrl(stickerServer) + '/api/sets?id=' + id);
-	response = await response.json();
-	let sets = response?.data;
+	let responseData = await response.json();
+	let sets = responseData?.data;
 	let stickerset = sets[0];
 	stickerset.url = stickerServer + '/api/sets?id=' + stickerset.id;
 	stickerset.items.forEach(sticker => (sticker.url = stickerServer + '/download/' + (stickerset.animated ? 'animated' : 'static') + '/' + stickerset.alias + '/' + sticker.name));
@@ -76,11 +81,11 @@ function check_sticker_server_url(stickerServer) {
 
 export async function updateStickerLibrary() {
 	console.log('updateStickerLibrary	called');
-	if (window.stickerLibraryUpdaterState?.updating) {
+	if (_window.stickerLibraryUpdaterState?.updating) {
 		console.log('Sticker library update already in progress');
 		return;
 	}
-	if (window.stickerLibraryUpdaterState?.canceled) {
+	if (_window.stickerLibraryUpdaterState?.canceled) {
 		console.log('Sticker library update canceled');
 		return;
 	}
@@ -105,10 +110,10 @@ export async function updateStickerLibrary() {
 	}));
 	console.log('Loading list of stickersets from: ' + stickerServer);
 	let startFetchSets = Date.now();
-	let response;
+	let responseJson;
 	try {
-		response = await fetch(stickerServer2 + '/api/sets');
-		response = await response.json();
+		let response = await fetch(stickerServer2 + '/api/sets');
+		responseJson = await response.json();
 	} catch (e) {
 		console.error('Failed to fetch stickersets:', e);
 		stickerLibraryUpdaterState.update(state => ({
@@ -119,7 +124,7 @@ export async function updateStickerLibrary() {
 		setUpdatingFalse();
 		return;
 	}
-	let sets = response?.data;
+	let sets = responseJson?.data;
 	console.log('Discovered ' + sets.length + ' sticker sets in ' + (Date.now() - startFetchSets) + 'ms');
 	// Delete all stickers that are part of stickerset that has server equal to stickerServer
 	console.log('Clearing old stickers from local database...');
@@ -131,14 +136,20 @@ export async function updateStickerLibrary() {
 			status: 'Deleting old sticker sets from local database ...',
 			progress: 5,
 		}));
-		await stickers_db.stickersets.where('server').equals(stickerServer).delete();
+		await stickers_db.stickersets
+			.where('server')
+			.equals(/** @type {string} */ (stickerServer))
+			.delete();
 		console.log('Delete old stickers...');
 		stickerLibraryUpdaterState.update(state => ({
 			...state,
 			status: 'Deleting old stickers from local database ...',
 			progress: 10,
 		}));
-		await stickers_db.stickers.where('server').equals(stickerServer).delete();
+		await stickers_db.stickers
+			.where('server')
+			.equals(/** @type {string} */ (stickerServer))
+			.delete();
 	});
 	console.log('Done clearing old stickers from database.');
 	console.log('Removed db.stickersets:', await stickers_db.stickersets.toArray());
@@ -161,7 +172,7 @@ export async function updateStickerLibrary() {
 			//await stickers_db.stickersets.bulkAdd(stickersets_batch.splice(0, stickersets_batch.length));
 			await stickers_db.stickers.bulkAdd(stickers_batch.splice(0, stickers_batch.length));
 		}
-		if (window.stickerLibraryUpdaterState.canceled) {
+		if (_window.stickerLibraryUpdaterState.canceled) {
 			console.log('Sticker library update canceled');
 			stickerLibraryUpdaterState.update(state => ({
 				...state,

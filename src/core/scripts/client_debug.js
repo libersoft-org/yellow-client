@@ -1,6 +1,8 @@
 async function initializeFaroIfEnabled() {
 	if (import.meta.env['VITE_FARO_ENABLED'] === 'true') {
+		// @ts-ignore - optional dependency, only available when @grafana/faro-web-sdk is installed
 		const { getWebInstrumentations, initializeFaro } = await import('@grafana/faro-web-sdk');
+		// @ts-ignore - optional dependency, only available when @grafana/faro-web-tracing is installed
 		const { TracingInstrumentation } = await import('@grafana/faro-web-tracing');
 
 		initializeFaro({

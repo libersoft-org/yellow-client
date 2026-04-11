@@ -14,7 +14,7 @@
 	let nextText = $state('Next');
 	const steps = $derived(params.steps);
 	let currentStep = $state(0);
-	const ContentComponent = $derived(steps[currentStep].component);
+	const ContentComponent = $derived(steps[currentStep]!.component);
 	let setTitle = getContext('setTitle') as (title: string) => Promise<void>;
 	let pageChanged = getContext('pageChanged') as () => Promise<void>;
 
@@ -25,8 +25,8 @@
 	setContext('wizard', { setNextText });
 
 	$effect(() => {
-		if (steps[currentStep].title) {
-			setTitle(steps[currentStep].title);
+		if (steps[currentStep]!.title) {
+			setTitle(steps[currentStep]!.title);
 		}
 	});
 

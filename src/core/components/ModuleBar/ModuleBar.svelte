@@ -36,7 +36,7 @@
 			//console.log('selectLastModule: lastModuleSelected: ', lastModuleSelected);
 			let acc = get(active_account);
 			//console.log('selectLastModule: acc: ', acc);
-			let id = acc?.settings?.last_module_id;
+			let id = acc?.settings?.['last_module_id'];
 			//console.log('selectLastModule: ', module_data);
 			//console.log('selectLastModule: id: ', id);
 			if (id /* && module_data[id]*/) {

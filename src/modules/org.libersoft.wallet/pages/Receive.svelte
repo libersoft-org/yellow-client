@@ -18,7 +18,8 @@
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import DropdownFilter from '@/core/components/Dropdown/DropdownFilter.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
-	let addressElement: HTMLElement | undefined = $state();
+	// @ts-expect-error TS6133 - used in template bind:this
+	let _addressElement: HTMLElement | undefined = $state();
 	let addressElementMessage: string | null | undefined = $state();
 	let activeTab: 'address' | 'payment' = $state('address');
 	let walletAddress: string | undefined = $state();
@@ -178,7 +179,7 @@
 			}
 			const abi = ['function decimals() view returns (uint8)'];
 			const contract = new Contract(contractAddress, abi, $provider as any);
-			const decimals = await contract.decimals();
+			const decimals = await contract['decimals']!();
 			tokenDecimalsCache.set(contractAddress, Number(decimals));
 			return Number(decimals);
 		} catch (error) {
@@ -335,7 +336,7 @@
 				<div class="address-wrapper">
 					<Clickable onClick={() => clickCopy()} expand={true}>
 						<div class="address">
-							<div class="text" bind:this={addressElement}>{addressElementMessage || walletAddress}</div>
+							<div class="text" bind:this={_addressElement}>{addressElementMessage || walletAddress}</div>
 							<Icon img="img/copy.svg" alt="Copy" colorVariable="--secondary-foreground" size="15px" padding="0px" />
 						</div>
 					</Clickable>

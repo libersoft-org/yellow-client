@@ -8,6 +8,7 @@
 		colorVariable?: string;
 		onClick?: (e: Event) => void;
 		testId?: string;
+		'data-testid'?: string;
 	}
 	let { img, label, colorVariable = '--primary-foreground', onClick, testId, ...restProps }: Props = $props();
 	let menu = getContext('ContextMenu') as { close: () => void } | undefined;

@@ -41,8 +41,8 @@
 		error = validateForm(validationConfig);
 		if (error) return false;
 		// Update values after validation (trim was applied)
-		name = validationConfig[0].field;
-		address = validationConfig[1].field;
+		name = validationConfig[0]!.field;
+		address = validationConfig[1]!.field;
 		return true;
 	}
 

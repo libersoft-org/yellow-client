@@ -14,7 +14,9 @@ export function lightenColor(hex, percent) {
 	b /= 255;
 	const max = Math.max(r, g, b);
 	const min = Math.min(r, g, b);
-	let h, s, l;
+	let h = 0,
+		s,
+		l;
 	l = (max + min) / 2;
 	if (max === min) h = s = 0;
 	else {

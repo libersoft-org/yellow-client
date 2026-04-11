@@ -108,7 +108,7 @@ export class FileDownloadService extends EventEmitter {
 
 		// find next download
 		for (let i = lastDownloadIndex + 1; i < downloads.length; i++) {
-			const download = downloads[i];
+			const download = downloads[i]!;
 			if (!download.pausedLocally && !download.canceledLocally) {
 				nextDownload = download;
 				break;
