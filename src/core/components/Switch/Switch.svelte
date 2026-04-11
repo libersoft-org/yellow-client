@@ -5,9 +5,10 @@
 		showLabel?: boolean;
 		label?: string;
 		row?: boolean;
+		onchange?: (checked: boolean) => void;
 		'data-testid'?: string;
 	}
-	let { checked = $bindable(), label, showLabel = false, row = false, ...restProps }: Props = $props();
+	let { checked = $bindable(), label, showLabel = false, row = false, onchange, ...restProps }: Props = $props();
 	let mounted = $state(false);
 	let inputId = Math.random().toString(36);
 	let labelId = `${inputId}-label`;
@@ -126,7 +127,7 @@
 			<span class="label">{label}:</span>
 		{/if}
 		<div class="switch-wrapper">
-			<input {...restProps} id={inputId} aria-labelledby={labelId} type="checkbox" bind:checked onkeydown={keyPress} />
+			<input {...restProps} id={inputId} aria-labelledby={labelId} type="checkbox" bind:checked onchange={() => onchange?.(checked ?? false)} onkeydown={keyPress} />
 			<span class="slider {mounted ? 'transition' : ''}"></span>
 		</div>
 	</div>

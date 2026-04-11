@@ -2,29 +2,30 @@
 	import { runOnSystemStartup, showTrayIcon, closeToMinimize } from '@/core/scripts/settings.ts';
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
-	import Thead from '@/core/components/Table/TableThead.svelte';
-	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
-	import Th from '@/core/components/Table/TableTheadTh.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-	const settings = [
-		{ label: 'Run on system startup', store: runOnSystemStartup },
-		{ label: 'Show tray icon', store: showTrayIcon },
-		{ label: 'Close to minimize', store: closeToMinimize },
-	];
 </script>
 
 <Table>
 	<Tbody>
-		{#each settings as setting}
-			<TbodyTr>
-				<Td bold>{setting.label}:</Td>
-				<Td>
-					<Switch label="debug" checked={false} />
-					<!-- TODO: Fix store binding for settings -->
-				</Td>
-			</TbodyTr>
-		{/each}
+		<TbodyTr>
+			<Td bold>Run on system startup:</Td>
+			<Td>
+				<Switch label="Run on system startup" checked={$runOnSystemStartup} onchange={v => runOnSystemStartup.set(v)} />
+			</Td>
+		</TbodyTr>
+		<TbodyTr>
+			<Td bold>Show tray icon:</Td>
+			<Td>
+				<Switch label="Show tray icon" checked={$showTrayIcon} onchange={v => showTrayIcon.set(v)} />
+			</Td>
+		</TbodyTr>
+		<TbodyTr>
+			<Td bold>Close to minimize:</Td>
+			<Td>
+				<Switch label="Close to minimize" checked={$closeToMinimize} onchange={v => closeToMinimize.set(v)} />
+			</Td>
+		</TbodyTr>
 	</Tbody>
 </Table>
