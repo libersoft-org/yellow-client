@@ -8,7 +8,7 @@
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	interface Props {
-		params?: IPayment;
+		params?: IPayment | undefined;
 		close?: () => void;
 		onYes?: (params: any) => void;
 	}

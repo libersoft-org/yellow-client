@@ -73,6 +73,14 @@ export function initData(_acc) {
 }
 
 // Local sendData that adds online check
+/** @param {import('@/core/scripts/types.ts').IAccount} acc
+ *  @param {any} account
+ *  @param {string} command
+ *  @param {Record<string, any> | null} [params]
+ *  @param {boolean} [sendSessionID]
+ *  @param {((req: any, res: any) => void) | null} [callback]
+ *  @param {boolean} [quiet]
+ */
 function sendData(acc, account, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
 	let wrappedCallback = (req, res) => {
 		if (res.error !== false) {
@@ -212,7 +220,7 @@ export async function initUpload(files, uploadType, recipients) {
 				fileOriginalName: upload.record.fileOriginalName,
 				fileMimeType: upload.record.fileMimeType,
 				fileSize: upload.record.fileSize,
-				fileBlob: new Blob([upload.file], { type: fileMimeType }),
+				fileBlob: new Blob([upload.file ?? new Uint8Array()], { type: fileMimeType }),
 			});
 		}
 		// handle videos
@@ -670,6 +678,11 @@ export function setMessageSeen(message, cb, keep_unseen_bar = true) {
 	});
 }
 
+/** @param {string} text
+ *  @param {string} format
+ *  @param {import('@/core/scripts/types.ts').IAccount | null} [acc]
+ *  @param {any} [conversation]
+ */
 export function sendMessage(text, format, acc = null, conversation = null) {
 	acc = acc ? acc : get(active_account);
 	conversation = conversation ? conversation : get(selectedConversation);
@@ -836,7 +849,9 @@ function updateConversationsArray(acc, msg) {
 
 export function openNewConversation(address) {
 	console.log('openNewConversation', address);
-	selectConversation({ acc: new WeakRef(get(active_account)), address });
+	const acc = get(active_account);
+	if (!acc) return;
+	selectConversation({ acc: new WeakRef(acc), address });
 }
 
 export function jumpToMessage(acc, address, uid) {

@@ -5,11 +5,11 @@ import { get, writable, derived } from 'svelte/store';
 export interface IGalleryFile {
 	id: string | number;
 	loaded: boolean;
-	url?: string;
-	fileName?: string;
-	alt?: string; // fallbacks to fileName
+	url?: string | undefined;
+	fileName?: string | undefined;
+	alt?: string | undefined; // fallbacks to fileName
 	// fileMimeType: string;
-	loadFile?: () => Promise<Omit<IGalleryFile, 'loadFile'>>;
+	loadFile?: (() => Promise<Omit<IGalleryFile, 'loadFile'>>) | undefined;
 }
 
 export interface IGalleryStoreValue {
@@ -50,7 +50,7 @@ export class GalleryStore {
 				return store;
 			}
 			store.files[index] = {
-				...store.files[index],
+				...store.files[index]!,
 				...file,
 			};
 			return store;

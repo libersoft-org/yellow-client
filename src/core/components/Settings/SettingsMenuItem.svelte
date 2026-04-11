@@ -2,10 +2,10 @@
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	interface Props {
-		img?: string;
+		img?: string | undefined;
 		title?: string;
-		onClick?: (e: Event) => void;
-		testId?: string;
+		onClick?: ((e: Event) => void) | undefined;
+		testId?: string | undefined;
 	}
 	let { img, title, onClick, testId }: Props = $props();
 </script>

@@ -53,7 +53,10 @@
 		return remainingNativeBalance !== undefined ? { amount: remainingNativeBalance, currency: $selectedNetwork?.currency?.symbol || '', decimals: 18 } : undefined;
 	});
 	let remainingTokenBalanceObj: IBalance | undefined = $derived.by(() => {
-		return remainingTokenBalance !== undefined && currentBalanceData ? { amount: remainingTokenBalance, currency: currentBalanceData.currency, decimals: currentBalanceData.decimals } : undefined;
+		if (remainingTokenBalance === undefined || !currentBalanceData) return undefined;
+		const result: IBalance = { amount: remainingTokenBalance, currency: currentBalanceData.currency };
+		if (currentBalanceData.decimals !== undefined) result.decimals = currentBalanceData.decimals;
+		return result;
 	});
 
 	let elAddressInput: Input | undefined = $state();
@@ -455,7 +458,7 @@
 			amount: etherAmount,
 			fee: etherFee!,
 			symbol: currency?.symbol,
-			contractAddress: currency?.contract_address,
+			...(currency?.contract_address !== undefined && { contractAddress: currency.contract_address }),
 		};
 		elDialogSend?.open();
 	}

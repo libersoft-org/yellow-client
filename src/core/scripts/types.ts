@@ -18,24 +18,24 @@ export interface IAccount {
 	credentials: IAccountCredentials;
 	enabled: boolean;
 	suspended?: boolean;
-	status?: string;
-	error?: string | null;
-	session_status?: string;
-	sessionID?: string;
-	wsGuid?: string;
-	original_wsGuid?: string;
+	status?: string | undefined;
+	error?: string | null | undefined;
+	session_status?: string | undefined;
+	sessionID?: string | undefined;
+	wsGuid?: string | undefined;
+	original_wsGuid?: string | undefined;
 	lastCommsTs?: number;
 	lastTransmissionTs?: number;
 	bufferedAmount?: number;
 	requests: { [key: string]: any };
 	module_data: { [moduleId: string]: any };
 	available_modules: { [moduleId: string]: any };
-	socket?: WebSocket;
+	socket?: WebSocket | undefined;
 	events?: EventTarget;
-	pingTimer?: ReturnType<typeof setInterval>;
-	reconnectTimer?: ReturnType<typeof setTimeout>;
-	modulesAvailableHandler?: (event: Event) => void;
-	sessionErrorHandler?: (event: Event) => void;
+	pingTimer?: ReturnType<typeof setInterval> | undefined;
+	reconnectTimer?: ReturnType<typeof setTimeout> | undefined;
+	modulesAvailableHandler?: ((event: Event) => void) | undefined;
+	sessionErrorHandler?: ((event: Event) => void) | undefined;
 }
 
 export type AccountStore = Writable<IAccount>;
@@ -72,7 +72,7 @@ export interface IModuleConfig {
 	name: string;
 	type: ModuleType;
 	enabled: boolean;
-	serviceUrl?: string;
+	serviceUrl?: string | undefined;
 	order?: number;
 }
 

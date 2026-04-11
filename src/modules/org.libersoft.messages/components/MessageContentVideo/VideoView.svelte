@@ -14,7 +14,7 @@
 		upload: IFileUpload | null;
 		download: IFileDownload | null;
 		thumbnailSrc: string | null;
-		videoRef?: HTMLElement;
+		videoRef?: HTMLElement | undefined;
 		startVideo: () => Promise<void>;
 		onDownload: () => void;
 		uploadId: string;

@@ -2,10 +2,10 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	interface Props {
 		type?: 'text' | 'number' | 'email' | 'password' | 'search' | 'tel' | 'url' | 'color';
-		placeholder?: string;
-		value?: string | number;
+		placeholder?: string | undefined;
+		value?: string | number | undefined;
 		enabled?: boolean;
-		displayValue?: string | number;
+		displayValue?: string | number | undefined;
 		expand?: boolean;
 		minWidth?: string;
 		maxWidth?: string;
@@ -22,9 +22,9 @@
 			onClick?: (e: Event) => void;
 			colorVariable?: string;
 		};
-		inputRef?: HTMLInputElement; // TODO: is it really prop?
-		'data-testid'?: string;
-		onChange?: (value: string | number) => void;
+		inputRef?: HTMLInputElement | undefined;
+		'data-testid'?: string | undefined;
+		onChange?: ((value: string | number) => void) | undefined;
 	}
 	let { type = 'text', placeholder = '', value = $bindable(), enabled = true, displayValue, expand = true, minWidth, maxWidth, onKeydown, onFocus, onBlur, onClick, min, max, step, icon, inputRef = $bindable(), 'data-testid': testId, onChange }: Props = $props();
 

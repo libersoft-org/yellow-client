@@ -85,7 +85,7 @@
 
 		const reordered = [...network.tokens];
 		const [moved] = reordered.splice(sourceIndex, 1);
-		reordered.splice(targetIndex, 0, moved);
+		reordered.splice(targetIndex, 0, moved!);
 		reorderTokens(network.guid, reordered);
 	}
 

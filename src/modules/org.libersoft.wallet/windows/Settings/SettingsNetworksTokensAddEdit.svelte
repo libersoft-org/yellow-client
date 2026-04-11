@@ -21,11 +21,14 @@
 	let tokenContractAddress: string | undefined = $state();
 	let error: string | null | undefined = $state();
 	let elTokenContractAddress: Input | undefined = $state();
-	let token: ITokenConf = $derived.by(() => ({
-		guid: item?.guid || getGuid(),
-		contract_address: tokenContractAddress || '',
-		iconURL: tokenIcon,
-	}));
+	let token: ITokenConf = $derived.by(() => {
+		const t: ITokenConf = {
+			guid: item?.guid || getGuid(),
+			contract_address: tokenContractAddress || '',
+		};
+		if (tokenIcon !== undefined) t.iconURL = tokenIcon;
+		return t;
+	});
 
 	export function onOpen(): void {
 		error = null;

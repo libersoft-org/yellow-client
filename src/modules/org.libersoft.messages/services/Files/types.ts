@@ -51,7 +51,7 @@ export interface IFileUpload {
 	paused?: boolean;
 	running?: boolean; // TODO: maybe refactor to setTimeout (see upload.pushChunk)
 	uploadedBytes?: number; // only for non senders
-	pushChunk?: () => Promise<void>;
+	pushChunk?: (() => Promise<void>) | undefined;
 	acc: any;
 }
 

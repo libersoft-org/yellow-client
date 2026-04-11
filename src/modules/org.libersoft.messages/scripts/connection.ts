@@ -43,14 +43,14 @@ const getSend = () => {
 /**
  * Send data to the messages module
  */
-export function connectionSendData(acc: IAccount, account: AccountStore | null, command: string, params: Record<string, any> = {}, sendSessionID: boolean = true, callback: ((req: any, res: any) => void) | null = null, quiet: boolean = false): any {
+export function connectionSendData(acc: IAccount, account: AccountStore | null, command: string, params: Record<string, any> | null = {}, sendSessionID: boolean = true, callback: ((req: any, res: any) => void) | null = null, quiet: boolean = false): any {
 	return _send(acc, account, identifier, command, params, sendSessionID, callback, quiet);
 }
 
 /**
  * Internal send function
  */
-export function _send(acc: IAccount, account: AccountStore | null, target: string, command: string, params: Record<string, any>, sendSessionID: boolean, callback: ((req: any, res: any) => void) | null, quiet: boolean): any {
+export function _send(acc: IAccount, account: AccountStore | null, target: string, command: string, params: Record<string, any> | null, sendSessionID: boolean, callback: ((req: any, res: any) => void) | null, quiet: boolean): any {
 	// Direct pass-through to send
 	const sendFn = getSend();
 	return sendFn(acc, account, target, command, params, sendSessionID, callback, quiet);

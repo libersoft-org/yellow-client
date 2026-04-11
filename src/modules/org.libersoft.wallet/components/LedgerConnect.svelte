@@ -19,7 +19,7 @@
 		// Load just the first account for informative display
 		const accounts = await getLedgerEthereumAccounts(0, 1);
 		if (accounts.length > 0) {
-			firstAccount = accounts[0];
+			firstAccount = accounts[0] ?? null;
 			console.log('loadFirstAccount: ', $ledgerDevice);
 		}
 	}

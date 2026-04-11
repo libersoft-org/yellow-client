@@ -67,7 +67,7 @@
 	function handleNetworkReorder(sourceIndex: number, targetIndex: number) {
 		const reordered = [...filteredNetworks];
 		const [moved] = reordered.splice(sourceIndex, 1);
-		reordered.splice(targetIndex, 0, moved);
+		reordered.splice(targetIndex, 0, moved!);
 		reorderNetworks(reordered);
 	}
 </script>

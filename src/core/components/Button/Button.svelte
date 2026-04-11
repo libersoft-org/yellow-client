@@ -12,7 +12,7 @@
 		enabled?: boolean;
 		hiddenOnDesktop?: boolean;
 		width?: string;
-		onClick?: (e: Event) => void;
+		onClick?: ((e: Event) => void) | undefined;
 		padding?: string;
 		bgColor?: string;
 		hoverColor?: string;

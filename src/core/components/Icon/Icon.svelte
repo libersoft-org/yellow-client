@@ -4,17 +4,17 @@
 	import { getColorFromCSSToFilter } from '@/core/scripts/utils/colors.js';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	interface Props {
-		img?: string;
-		alt?: string;
-		size?: string;
-		padding?: string;
+		img?: string | undefined;
+		alt?: string | undefined;
+		size?: string | undefined;
+		padding?: string | undefined;
 		visibleOnMobile?: boolean;
 		visibleOnDesktop?: boolean;
-		colorVariable?: string;
-		onClick?: (e: Event) => void;
+		colorVariable?: string | undefined;
+		onClick?: ((e: Event) => void) | undefined;
 		isButton?: boolean;
 		enabled?: boolean;
-		testId?: string;
+		testId?: string | undefined;
 	}
 	let { img, alt = '', size = '24px', padding = '10px', visibleOnMobile = true, visibleOnDesktop = true, colorVariable, onClick, isButton = false, enabled = true, testId }: Props = $props();
 	let filter = $derived.by(() => {

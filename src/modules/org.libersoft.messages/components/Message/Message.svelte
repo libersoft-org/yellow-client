@@ -13,7 +13,7 @@
 	import MessageContent from '../MessageContent/MessageContent.svelte';
 	// import Reply from './msgReply/Reply.svelte';
 	import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReplyStore.ts';
-	import { forwardMessageStore } from '@/org.libersoft.messages/stores/ForwardMessageStore.ts';
+	import { forwardMessageStore, ForwardedMessageType } from '@/org.libersoft.messages/stores/ForwardMessageStore.ts';
 	import MessageReaction from '@/org.libersoft.messages/components/MessageReaction/MessageReaction.svelte';
 	import RenderMessageReactions from '@/org.libersoft.messages/components/MessageReaction/RenderMessageReactions.svelte';
 	export let message;
@@ -246,7 +246,7 @@
 	function forwardMessage() {
 		console.log('forward');
 		forwardMessageStore.startForwardedMessage({
-			type: ReplyToType.MESSAGE,
+			type: ForwardedMessageType.MESSAGE,
 			data: message,
 		});
 	}

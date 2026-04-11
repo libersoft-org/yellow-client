@@ -49,7 +49,7 @@
 	function handleWalletReorder(sourceIndex: number, targetIndex: number) {
 		const reordered = [...filteredWallets];
 		const [moved] = reordered.splice(sourceIndex, 1);
-		reordered.splice(targetIndex, 0, moved);
+		reordered.splice(targetIndex, 0, moved!);
 		reorderWallets(reordered);
 	}
 

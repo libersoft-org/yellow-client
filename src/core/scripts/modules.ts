@@ -19,7 +19,7 @@ export function initModules() {
 			for (const k in module_decls_v) {
 				const decl = module_decls_v[k];
 				if (value[decl.id] !== undefined) {
-					decl.order = value[decl.id];
+					decl.order = value[decl.id]!;
 				}
 			}
 			module_decls.set(module_decls_v);
@@ -77,7 +77,7 @@ export function registerModule(decl: IModuleDeclaration) {
 		return;
 	}
 	let ordering = get(modules_display_order);
-	if (ordering[decl.id] !== undefined) decl.order = ordering[decl.id];
+	if (ordering[decl.id] !== undefined) decl.order = ordering[decl.id]!;
 	let module_decls_v = get(module_decls);
 	module_decls_v[decl.id] = decl;
 	module_decls.set(module_decls_v);

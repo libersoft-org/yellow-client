@@ -10,14 +10,14 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	interface Props {
 		// base
-		videoRef?: HTMLElement;
-		micIndicatorRef?: HTMLElement;
+		videoRef?: HTMLElement | undefined;
+		micIndicatorRef?: HTMLElement | undefined;
 		sending?: boolean;
 		// devices
 		audioDevices?: InputDeviceInfo[];
 		videoDevices?: InputDeviceInfo[];
-		selectedAudioDeviceId?: string | null;
-		selectedVideoDeviceId?: string | null;
+		selectedAudioDeviceId?: string | null | undefined;
+		selectedVideoDeviceId?: string | null | undefined;
 		enableToggleFacingMode?: boolean;
 		// methods
 		recordStart: () => void;
@@ -32,7 +32,7 @@
 		// player outer state
 		loading?: boolean;
 		error?: boolean;
-		errorMessages?: string[] | null;
+		errorMessages?: string[] | null | undefined;
 		isRecording: boolean;
 		hasData: boolean;
 		isMuted: boolean;

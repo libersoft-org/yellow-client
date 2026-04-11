@@ -44,7 +44,7 @@
 
 		const reordered = [...params.wallet.addresses];
 		const [moved] = reordered.splice(sourceIndex, 1);
-		reordered.splice(targetIndex, 0, moved);
+		reordered.splice(targetIndex, 0, moved!);
 		reorderAddresses(params.wallet, reordered);
 	}
 

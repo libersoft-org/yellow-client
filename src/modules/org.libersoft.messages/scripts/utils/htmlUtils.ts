@@ -55,7 +55,7 @@ export function wrapConsecutiveElements(fragment: DocumentFragment, xName: strin
 
 	function wrapWithY(elements: Element[]): void {
 		const wrapper = document.createElement(yName);
-		elements[0].parentNode!.insertBefore(wrapper, elements[0]);
+		elements[0]!.parentNode!.insertBefore(wrapper, elements[0]!);
 		elements.forEach(el => wrapper.appendChild(el));
 	}
 

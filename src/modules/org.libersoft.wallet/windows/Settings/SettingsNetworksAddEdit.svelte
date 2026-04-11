@@ -105,12 +105,12 @@
 			name: itemName || '',
 			currency: {
 				symbol: itemCurrencySymbol || '',
-				iconURL: itemCurrencyIconURL,
+				...(itemCurrencyIconURL !== undefined && { iconURL: itemCurrencyIconURL }),
 			},
 			chainID: itemChainID || 0,
 			rpcURLs: itemRPCURLs || [],
-			explorerURL: itemExplorerURL,
-			coingecko_asset_platform_id: itemCoingeckoAssetPlatformId,
+			...(itemExplorerURL !== undefined && { explorerURL: itemExplorerURL }),
+			...(itemCoingeckoAssetPlatformId !== undefined && { coingecko_asset_platform_id: itemCoingeckoAssetPlatformId }),
 			tokens: network?.tokens || [],
 		};
 		if (edit && network?.guid) {
@@ -191,7 +191,7 @@
 		if (!itemRPCURLs) return;
 		const reordered = [...itemRPCURLs];
 		const [moved] = reordered.splice(sourceIndex, 1);
-		reordered.splice(targetIndex, 0, moved);
+		reordered.splice(targetIndex, 0, moved!);
 		itemRPCURLs = reordered;
 		updateRPCServers();
 	}
@@ -317,7 +317,7 @@
 										</Td>
 										<Td>
 											<ActionItems>
-												<Icon img="img/reset.svg" alt="Check RPC server" colorVariable="--primary-foreground" padding="10px" enabled={!rpcServers[i]?.checking} onClick={() => checkRPC(rpcServers[i])} />
+												<Icon img="img/reset.svg" alt="Check RPC server" colorVariable="--primary-foreground" padding="10px" enabled={!rpcServers[i]?.checking} onClick={() => checkRPC(rpcServers[i]!)} />
 												<Icon img="img/del.svg" alt="Remove RPC URL" colorVariable="--primary-foreground" padding="10px" onClick={() => removeRPCURL(i)} testId="wallet-settings-network-rpc-url-remove-{i}" />
 											</ActionItems>
 										</Td>

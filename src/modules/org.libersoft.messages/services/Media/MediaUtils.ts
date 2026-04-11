@@ -125,7 +125,7 @@ class MediaUtils {
 		let max = 0;
 
 		for (let i = 0; i < channelData.length; i++) {
-			max = Math.max(max, Math.abs(channelData[i]));
+			max = Math.max(max, Math.abs(channelData[i]!));
 			if (i % samplesPerPeak === 0) {
 				peaks.push(max);
 				max = 0;

@@ -85,7 +85,7 @@
 			case 'Enter':
 				e.preventDefault();
 				e.stopPropagation();
-				if (selectedIndex >= 0 && selectedIndex < filteredOptions.length) clickSelectOption(filteredOptions[selectedIndex]);
+				if (selectedIndex >= 0 && selectedIndex < filteredOptions.length) clickSelectOption(filteredOptions[selectedIndex]!);
 				break;
 			case 'Escape':
 				e.preventDefault();

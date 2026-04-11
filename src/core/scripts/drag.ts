@@ -480,7 +480,7 @@ export class TableDragManager {
 					console.log('Fallback: inserting at beginning');
 					this.state.dragOverIndex = 0;
 					const dropGap = this.createDropGap();
-					tbody.insertBefore(dropGap, allRows[0]);
+					tbody.insertBefore(dropGap, allRows[0]!);
 				} else {
 					// Insert at the end
 					console.log('Fallback: inserting at end');

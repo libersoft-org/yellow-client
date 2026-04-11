@@ -53,7 +53,7 @@
 
 		const reordered = [...network.nfts];
 		const [moved] = reordered.splice(sourceIndex, 1);
-		reordered.splice(targetIndex, 0, moved);
+		reordered.splice(targetIndex, 0, moved!);
 		reorderNFTs(network.guid, reordered);
 	}
 </script>

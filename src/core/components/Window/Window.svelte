@@ -43,23 +43,25 @@
 	}
 
 	interface Props {
-		testId?: string;
+		testId?: string | undefined;
 		children?: Snippet;
-		top?: Snippet;
+		top?: Snippet | undefined;
 		center?: Snippet;
-		bottom?: Snippet;
+		bottom?: Snippet | undefined;
 		params?: any;
 		max?: boolean;
 		resizable?: boolean;
-		optionalIcon?: {
-			img: string;
-			alt?: string;
-			onClick?: (e: Event) => void;
-		};
-		title?: string;
+		optionalIcon?:
+			| {
+					img: string;
+					alt?: string;
+					onClick?: (e: Event) => void;
+			  }
+			| undefined;
+		title?: string | undefined;
 		body?: any;
-		width?: string;
-		height?: string;
+		width?: string | undefined;
+		height?: string | undefined;
 		onShowChange?: (show: boolean) => void;
 	}
 	let show = $state(false);
@@ -80,11 +82,11 @@
 
 	// Store original state before maximizing
 	let originalState: {
-		width?: string;
-		height?: string;
+		width?: string | undefined;
+		height?: string | undefined;
 		left?: string;
 		top?: string;
-		transform?: string;
+		transform?: string | undefined;
 	} | null = $state(null);
 
 	setContext('setTitle', setTitle);

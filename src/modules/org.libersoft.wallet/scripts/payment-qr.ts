@@ -2,12 +2,12 @@ import { formatUnits } from 'ethers';
 import type { ICurrency } from 'libersoft-crypto/network';
 
 export interface ParsedQRData {
-	address?: string;
-	amount?: string;
-	currency?: ICurrency;
-	contractAddress?: string;
-	chainID?: number;
-	error?: string;
+	address?: string | undefined;
+	amount?: string | undefined;
+	currency?: ICurrency | undefined;
+	contractAddress?: string | undefined;
+	chainID?: number | undefined;
+	error?: string | undefined;
 }
 
 export function parseQRData(data: string): ParsedQRData {
@@ -86,8 +86,8 @@ export function parseQRData(data: string): ParsedQRData {
 export interface PaymentURLOptions {
 	address: string;
 	chainID: number;
-	currency?: ICurrency;
-	amount?: bigint;
+	currency?: ICurrency | undefined;
+	amount?: bigint | undefined;
 }
 
 export function generatePaymentURL({ address, chainID, currency, amount }: PaymentURLOptions): string {

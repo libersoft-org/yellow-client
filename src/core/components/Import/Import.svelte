@@ -10,7 +10,7 @@
 	interface Props {
 		onValidate: (text: string) => { valid: boolean; error?: string };
 		onAdd: (text: string) => Promise<void>;
-		onReplace?: (text: string) => Promise<void>;
+		onReplace?: ((text: string) => Promise<void>) | undefined;
 		onSuccess?: (message: string) => void;
 		testId: string;
 		jsonLabel?: string;

@@ -64,7 +64,7 @@ export async function updateExampleNotification() {
 		let v = get(exampleNotifications);
 		log.debug('updateExampleNotification v:', v);
 		if (v.length > 1) {
-			await deleteNotification(v[0]);
+			await deleteNotification(v[0]!);
 			exampleNotifications.update(n => n.slice(1));
 		}
 		if (get(notificationsEnabled)) {
@@ -236,7 +236,7 @@ async function sendTauriNotification(notification: IYellowNotification) {
 
 	sendNotification({
 		title: notification.title,
-		body: notification.body,
+		body: notification.body ?? '',
 		/* "On Android the icon must be placed in the app’s res/drawable folder."*/
 		// icon: 'http://localhost:3000/favicon.png',
 		// icon: icon,
@@ -310,8 +310,8 @@ async function showBrowserNotification(notification: IYellowNotification) {
 		try {
 			log.debug('showBrowserNotification sw:', window.sw);
 			await window.sw.showNotification(notification.title, {
-				body: notification.body,
-				icon: icon,
+				...(notification.body != null && { body: notification.body }),
+				...(icon != null && { icon }),
 				tag: notification.id,
 				//vibrate: [200, 100, 200],
 			});
@@ -332,10 +332,10 @@ async function showBrowserNotification(notification: IYellowNotification) {
 	try {
 		let n = new Notification(notification.title, {
 			tag: notification.id,
-			body: notification.body,
+			...(notification.body != null && { body: notification.body }),
 			//  icon: 'http://localhost:3000/favicon2.png',
 			//  icon: 'data:image/png;base64,R0lGODlhDAAMAKIFAF5LAP/zxAAAANyuAP/gaP///wAAAAAAACH5BAEAAAUALAAAAAAMAAwAAAMlWLPcGjDKFYi9lxKBOaGcF35DhWHamZUW0K4mAbiwWtuf0uxFAgA7', //icon,
-			icon: icon,
+			...(icon != null && { icon }),
 			//silent: false,
 			//vibrate: [200, 100, 200],
 		});

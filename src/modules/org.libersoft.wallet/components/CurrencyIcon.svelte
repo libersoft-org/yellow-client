@@ -3,8 +3,8 @@
 	import Icon from '@/core/components/Icon/Icon.svelte';
 
 	interface Props {
-		iconURL?: string | null;
-		symbol?: string | null;
+		iconURL?: string | null | undefined;
+		symbol?: string | null | undefined;
 		size?: string;
 	}
 

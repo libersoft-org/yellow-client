@@ -26,7 +26,7 @@
 	let elStaticImg;
 	let ContextMenu = getContext('ContextMenu');
 	let ContextMenuOpen = ContextMenu ? ContextMenu.isOpen : readable(undefined);
-	let renderer = 'svg';
+	let renderer = /** @type {'svg'} */ ('svg');
 	let animationData;
 
 	$: update_playing(playing);

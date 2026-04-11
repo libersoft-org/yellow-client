@@ -381,7 +381,7 @@
 				<VideoRecorderContainer />
 			</div>
 		{/if}
-		<input type="file" id="videoInput" style:display="none" accept="video/*" capture="camera" bind:this={videoInputRef} />
+		<input type="file" id="videoInput" style:display="none" accept="video/*" capture="environment" bind:this={videoInputRef} />
 		{#if $isMessageReplyOpen && $replyTo && $replyTo.type === ReplyToType.MESSAGE}
 			<div class="top">
 				<MessageBarReply name={$replyTo?.data?.address_to} replyToMessage={$replyTo?.data?.message} onClose={() => messageBarReplyStore.close()} />

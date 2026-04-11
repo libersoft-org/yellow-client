@@ -5,7 +5,7 @@
 		children?: Snippet;
 		even?: boolean;
 		active?: boolean;
-		onClick?: (e: Event) => void;
+		onClick?: ((e: Event) => void) | undefined;
 		[key: string]: any;
 	}
 	let { children, even = false, active = false, onClick, ...restProps }: Props = $props();

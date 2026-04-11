@@ -5,7 +5,7 @@
 	interface Props {
 		networkGuid: string;
 		token: ITokenConf;
-		tokenInfo?: { name: string; symbol: string } | null;
+		tokenInfo?: { name: string; symbol: string } | null | undefined;
 	}
 	let { networkGuid, token, tokenInfo }: Props = $props();
 	let elDialog;

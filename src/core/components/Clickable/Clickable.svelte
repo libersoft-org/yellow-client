@@ -5,9 +5,9 @@
 		children?: Snippet;
 		expand?: boolean;
 		enabled?: boolean;
-		onClick?: MouseEventHandler<HTMLDivElement>;
-		onRightClick?: MouseEventHandler<HTMLDivElement>;
-		onMousedown?: MouseEventHandler<HTMLDivElement>;
+		onClick?: MouseEventHandler<HTMLDivElement> | undefined;
+		onRightClick?: MouseEventHandler<HTMLDivElement> | undefined;
+		onMousedown?: MouseEventHandler<HTMLDivElement> | undefined;
 		restProps?: HTMLAttributes<HTMLDivElement>;
 	}
 	let { children, expand = false, enabled = true, onClick, onRightClick, onMousedown, ...restProps }: Props = $props();

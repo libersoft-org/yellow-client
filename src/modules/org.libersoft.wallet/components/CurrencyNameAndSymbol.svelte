@@ -3,9 +3,9 @@
 	import BalanceTableSpinner from '@/org.libersoft.wallet/components/BalanceTableSpinner.svelte';
 
 	interface Props {
-		name?: string | null;
-		symbol?: string | null;
-		address?: string | null;
+		name?: string | null | undefined;
+		symbol?: string | null | undefined;
+		address?: string | null | undefined;
 		isLoading?: boolean;
 	}
 

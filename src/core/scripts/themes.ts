@@ -73,7 +73,7 @@ export const browserPrefersDark = writable(false);
 
 // Define the current theme store
 export let current_theme: Readable<ITheme> = derived([selected_theme_index, themes], ([$selected_theme_index, $themes]: [number, ITheme[]]) => {
-	return $themes[$selected_theme_index];
+	return $themes[$selected_theme_index]!;
 });
 
 // Initialize browser theme preference detection
@@ -119,9 +119,9 @@ current_theme.subscribe((v: ITheme) => {
 		const value = v.properties[key];
 		//console.log('Setting CSS variable:', key, 'to', value);
 		if (key === '--background-image') {
-			applyBackgroundImage(key, value);
+			applyBackgroundImage(key, value!);
 		} else {
-			document.documentElement.style.setProperty(key, value);
+			document.documentElement.style.setProperty(key, value!);
 		}
 	});
 });

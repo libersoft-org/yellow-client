@@ -2,7 +2,7 @@
 	import { gif_servers } from '@/org.libersoft.messages/scripts/gifs.js';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
-		server?: string;
+		server?: string | undefined;
 	}
 	let { server }: Props = $props();
 	let elDialog;

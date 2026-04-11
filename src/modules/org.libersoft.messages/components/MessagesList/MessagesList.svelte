@@ -339,7 +339,7 @@
 		}
 		if (activatedCount > 0) {
 			itemsArray = itemsArray;
-			for (let i = 0; i < itemsArray.length; i++) itemsArray[i] = itemsArray[i];
+			for (let i = 0; i < itemsArray.length; i++) itemsArray[i] = itemsArray[i]!;
 		}
 		jumped = true;
 	});
@@ -414,9 +414,9 @@
 		// force_refresh is used when deleting message. Normally, Loaders would, after loadMessages, only issue an event if any new messages are actually added. But if we delete a message, we need to remove the loader. So, the gc event, triggered as soon as the message is removed from messagesArray, lets us know to tell all loaders to force_refresh when they trigger. This is not optimal, as only the exact hole inserted in place of the deleted message should force_refresh, but it will work.
 		let force_refresh = events.some(e => e.type === 'gc');
 		for (let i = 0; i < events.length; i++) {
-			let event = events[i];
+			let event = events[i]!;
 			event.loaders = [];
-			if (uiEvents.length > 0 && uiEvents[uiEvents.length - 1].type === 'resize' && event.type === 'resize') continue;
+			if (uiEvents.length > 0 && uiEvents[uiEvents.length - 1]!.type === 'resize' && event.type === 'resize') continue;
 			uiEvents.push(event);
 			saveScrollPosition(event);
 			/* TODO 1 :
@@ -453,8 +453,8 @@
 			// add lazyloaders where there is discontinuity.
 			let items: (IMessageItem | ILoaderItem | IHoleItem)[] = [];
 			// add a loader at the top if first message is not the first message in the chat
-			if (messages[0].prev !== 'none' && messages[0].id !== undefined) {
-				let l = getLoader({ prev: 10, base: messages[0].id, reason: 'lazyload_prev' });
+			if (messages[0]!.prev !== 'none' && messages[0]!.id !== undefined) {
+				let l = getLoader({ prev: 10, base: messages[0]!.id, reason: 'lazyload_prev' });
 				l.force_refresh = force_refresh;
 				event.loaders.push(l);
 				items.unshift(l);
@@ -484,7 +484,7 @@
 					items.push(getHole(l1, l2));
 				}
 			}
-			let last = messages[messages.length - 1];
+			let last = messages[messages.length - 1]!;
 			if (last.next !== undefined && last.next !== 'none' && last.id !== undefined) {
 				let l = getLoader({ next: 10, base: last.id, reason: 'lazyload_next' });
 				l.force_refresh = force_refresh;

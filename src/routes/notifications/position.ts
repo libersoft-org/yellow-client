@@ -108,7 +108,7 @@ function setActualMonitorName(monitor_name: string | null): void {
 	if (!mons) {
 		monitor_name = null;
 	} else if (mons.find(m => m.name === monitor_name) === undefined) {
-		monitor_name = mons[0]?.name;
+		monitor_name = mons[0]?.name ?? null;
 	}
 	actualMonitorName.set(monitor_name);
 }

@@ -46,7 +46,7 @@ export async function blobToBase64(blob: Blob) {
 	let binaryString = '';
 
 	for (let i = 0; i < bytes.length; i++) {
-		binaryString += String.fromCharCode(bytes[i]); // Convert bytes to binary string
+		binaryString += String.fromCharCode(bytes[i]!); // Convert bytes to binary string
 	}
 
 	return btoa(binaryString); // Convert binary string to Base64
@@ -78,7 +78,7 @@ export function assembleFile(file: string | Blob, fileName?: string) {
 
 export async function transformFilesForServer(files: FileList) {
 	for (let i = 0; i < files.length; i++) {
-		const file = files[i];
+		const file = files[i]!;
 		const mimeType = file.type;
 
 		if (mimeType.startsWith('audio/')) {

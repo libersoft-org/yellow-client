@@ -4,7 +4,7 @@
 	import { writable } from 'svelte/store';
 	import { getGuid } from '@/core/scripts/core.ts';
 	interface Props {
-		target?: HTMLElement | HTMLElement[] | null;
+		target?: HTMLElement | HTMLElement[] | null | undefined;
 		open?: boolean;
 		x?: number;
 		y?: number;
