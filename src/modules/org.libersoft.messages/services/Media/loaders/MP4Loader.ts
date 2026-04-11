@@ -34,7 +34,7 @@ class MP4Loader extends MediaLoader {
 				}
 			};
 
-			info.tracks.forEach((track, i) => {
+			info.tracks.forEach((track, _i) => {
 				//console.log('MP4BOX: track ' + i, track);
 				let mime = '';
 				if (track.type === 'video') {

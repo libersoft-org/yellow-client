@@ -17,7 +17,6 @@
 	let waveRef;
 	let duration = $state('');
 	let time = $state('');
-	let mediaHandler = $state(null);
 	let upload = $state<IFileUpload | null>(null);
 	let download = writable<IFileDownload | null>(null);
 	let isFullDownloading = $state(false);

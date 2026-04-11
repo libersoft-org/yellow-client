@@ -219,7 +219,7 @@
 					altsMenu.close();
 				}}
 				on:click={() => clickEmoji(emoji.base)}
-				on:keydown={e => {}}
+				on:keydown={() => {}}
 				role="button"
 				tabindex="0"
 			>

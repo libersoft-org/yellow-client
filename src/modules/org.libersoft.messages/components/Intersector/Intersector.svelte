@@ -3,7 +3,6 @@
 	let observer: IntersectionObserver | undefined;
 	let itemsEls: HTMLDivElement[] = $state([]);
 	let itemsById = {};
-	let heights = {};
 	let visibility = $state({});
 
 	$effect(() => {

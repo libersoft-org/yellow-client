@@ -16,7 +16,7 @@
 	let activeTabName = $state('server');
 	let view: any = $state(null);
 
-	async function setTab(e, name) {
+	async function setTab(_e, name) {
 		activeTabName = name;
 		await tick();
 		view?.onShow?.();

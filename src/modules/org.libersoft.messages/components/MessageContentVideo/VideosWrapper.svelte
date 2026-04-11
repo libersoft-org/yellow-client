@@ -1,5 +1,5 @@
 <script lang="ts">
-	let { children, node } = $props();
+	let { children, node: _node } = $props();
 	let ref: HTMLDivElement | undefined = $state();
 </script>
 

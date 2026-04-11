@@ -148,7 +148,7 @@ class FileViewStoriesUtils {
 		);
 	}
 
-	static makeP2PReceiverDownload(mergeWithData: DeepPartial<IFileUpload>) {
+	static makeP2PReceiverDownload(_mergeWithData: DeepPartial<IFileUpload>) {
 		return;
 	}
 }

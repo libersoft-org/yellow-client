@@ -4,7 +4,7 @@
 	interface Props {
 		close: () => void;
 	}
-	let { close }: Props = $props();
+	let { close: _close }: Props = $props();
 </script>
 
 <Export data={$networks} filename="networks" testId="networks-export" isSensitive />

@@ -214,7 +214,7 @@
 				async entries => {
 					//console.log(entries);
 					entries.sort((a, b) => a.time - b.time);
-					for (let entry of entries) {
+					for (let _entry of entries) {
 						isVisible = entries[0].isIntersecting;
 						await tick();
 					}

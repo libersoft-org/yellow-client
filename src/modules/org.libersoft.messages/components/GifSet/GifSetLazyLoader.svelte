@@ -8,7 +8,6 @@
 	let _loaderIsVisible: boolean = true;
 	let observer;
 	let timer;
-	let observing: boolean = false;
 	let contentElement = getContext('contentElement') as Element | null;
 
 	onMount(async () => {

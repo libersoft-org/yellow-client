@@ -1,6 +1,5 @@
 import { get, writable } from 'svelte/store';
 import type Window from '@/core/components/Window/Window.svelte';
-import type BaseSettingsWindow from '@/core/components/Settings/BaseSettingsWindow.svelte';
 import type { IBaseSettingsInstance } from '@/core/types/settings.ts';
 import { isHardwareWallet, selectedWallet } from 'libersoft-crypto/wallet';
 import { ensureLedgerState } from '@/org.libersoft.wallet/scripts/ledger-window.ts';

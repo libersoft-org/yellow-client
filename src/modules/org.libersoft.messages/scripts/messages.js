@@ -19,7 +19,7 @@ import { messages_db } from './db.ts';
 import filesDB, { LocalFileStatus } from '@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts';
 import { addNotification, deleteNotification, playAudio } from '@/core/scripts/notifications.ts';
 import { makeMessageReaction } from '@/org.libersoft.messages/factories/messageFactories.ts';
-import { identifier, connectionSendData, _send, moduleEventSubscribe, initializeSubscriptions, deinitializeSubscriptions } from './connection.ts';
+import { identifier, connectionSendData, _send, initializeSubscriptions, deinitializeSubscriptions } from './connection.ts';
 export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
 export const photoRadius = localStorageSharedStore('photoRadius', '50%');
 export const messageListMaxWidth = localStorageSharedStore('messageListMaxWidth', '1620');
@@ -53,8 +53,8 @@ class Message {
 	}
 }
 
-export function initData(acc) {
-	//console.log('initData: ', acc);
+export function initData(_acc) {
+	//console.log('initData: ', _acc);
 	let result = {
 		online: writable(false),
 		selectedConversation: writable(null),
@@ -151,7 +151,7 @@ export function initComms(acc) {
 export function init() {
 	let subs = [];
 	subs.push(
-		active_account_id.subscribe(acc => {
+		active_account_id.subscribe(_acc => {
 			get(md)?.['selectedConversation']?.set(null);
 		})
 	);
@@ -232,7 +232,7 @@ export async function initUpload(files, uploadType, recipients) {
 	}, 100);
 	// send upload
 	const records = uploads.map(upload => upload.record);
-	sendData(acc, null, 'upload_begin', { records, recipients }, true, (req, res) => {
+	sendData(acc, null, 'upload_begin', { records, recipients }, true, (_req, res) => {
 		if (res.error !== false) {
 			return;
 		}
@@ -262,7 +262,7 @@ function uploadChunkAsync({ upload, chunk }) {
 			const to = setTimeout(() => {
 				retry();
 			}, 5000); // TODO: maybe longer
-			sendData(upload.acc, null, 'upload_chunk', { chunk }, true, (req, res) => {
+			sendData(upload.acc, null, 'upload_chunk', { chunk }, true, (_req, res) => {
 				clearTimeout(to);
 				if (res.error !== false) {
 					retry(res);
@@ -275,7 +275,7 @@ function uploadChunkAsync({ upload, chunk }) {
 }
 
 function ask_for_chunk(event) {
-	const { uploadId, offsetBytes, chunkSize } = event.detail.data;
+	const { uploadId } = event.detail.data;
 	const upload = fileUploadManager.uploadsStore.get(uploadId);
 	if (!upload) {
 		return;
@@ -340,7 +340,7 @@ export const makeDownloadChunkAsyncFn =
 	acc =>
 	({ uploadId, offsetBytes, chunkSize }) => {
 		return new Promise((resolve, reject) => {
-			sendData(acc, null, 'download_chunk', { uploadId, offsetBytes, chunkSize }, true, async (req, res) => {
+			sendData(acc, null, 'download_chunk', { uploadId, offsetBytes, chunkSize }, true, async (_req, res) => {
 				if (res.error !== false) {
 					reject(res);
 					return;
@@ -361,7 +361,7 @@ export const makeDownloadChunkAsyncFn =
 
 export function cancelUpload(uploadId) {
 	fileUploadManager.cancelUpload(uploadId);
-	sendData(get(active_account), null, 'upload_cancel', { uploadId }, true, (req, res) => {});
+	sendData(get(active_account), null, 'upload_cancel', { uploadId }, true, () => {});
 }
 
 export function pauseUpload(uploadId) {
@@ -376,7 +376,7 @@ export function pauseUpload(uploadId) {
 				status: FileUploadRecordStatus.PAUSED,
 			},
 			true,
-			(req, res) => {
+			() => {
 				resolve(); // TODO: handle error if needed
 			}
 		);
@@ -395,7 +395,7 @@ export function resumeUpload(uploadId) {
 				status: FileUploadRecordStatus.UPLOADING,
 			},
 			true,
-			(req, res) => {
+			() => {
 				resolve(); // TODO: handle error if needed
 			}
 		);
@@ -437,7 +437,7 @@ export function loadUploadData(uploadId) {
 			maxTimeout: 3000,
 		});
 		op.attempt(() => {
-			sendData(acc, null, 'upload_get', { id: uploadId }, true, (req, res) => {
+			sendData(acc, null, 'upload_get', { id: uploadId }, true, (_req, res) => {
 				if (res.error !== false) {
 					const willRetry = op.retry(res);
 					if (!willRetry) {
@@ -490,7 +490,7 @@ export function listMessages(acc, address) {
 	//console.log('listMessages', acc, address);
 	messagesArray.set([{ type: 'initial_loading_placeholder' }]);
 	messagesIsInitialLoading.set(true);
-	loadMessages(acc, address, 'unseen', 3, 3, 'initial_load', res => {});
+	loadMessages(acc, address, 'unseen', 3, 3, 'initial_load', _res => {});
 }
 
 export function loadMessages(acc, address, base, prev, next, reason, cb, force_refresh = false) {
@@ -567,7 +567,7 @@ function addMessagesToMessagesArray(items, reason, force_refresh) {
 	return result;
 }
 
-export function handleResize(wasScrolledToBottom) {
+export function handleResize(_wasScrolledToBottom) {
 	insertEvent({ type: 'resize', wasScrolledToBottom2: true });
 }
 
@@ -646,7 +646,7 @@ export function setMessageSeen(message, cb, keep_unseen_bar = true) {
 	let acc = get(active_account);
 	log.debug('setMessageSeen', message);
 	deleteNotification(messageNotificationId(message));
-	sendData(acc, active_account, 'message_seen', { uid: message.uid }, true, (req, res) => {
+	sendData(acc, active_account, 'message_seen', { uid: message.uid }, true, (_req, res) => {
 		if (res.error !== false) {
 			console.error('this is bad.');
 			return;
@@ -703,7 +703,7 @@ export async function deleteMessage(message) {
 		id: message.id,
 		uid: message.uid,
 	};
-	sendData(acc, null, 'message_delete', params, true, (req, res) => {
+	sendData(acc, null, 'message_delete', params, true, (_req, res) => {
 		console.log('123 response', res);
 		snipeMessage(message.uid);
 	});
@@ -716,7 +716,7 @@ async function saveAndSendOutgoingMessage(acc, conversation, params, message) {
 }
 
 function sendOutgoingMessage(acc, conversation, params, message, outgoing_message_id) {
-	sendData(acc, null, 'message_send', params, true, (req, res) => {
+	sendData(acc, null, 'message_send', params, true, (_req, res) => {
 		//console.log('sendOutgoingMessage res', res);
 		if (res.error !== false) {
 			return;
@@ -744,7 +744,7 @@ export function modifyMessageReaction(messageUid, operation, reaction, acc) {
 			operation,
 			reaction,
 		};
-		sendData(acc, null, 'message_reaction', params, true, (req, res) => {
+		sendData(acc, null, 'message_reaction', params, true, (_req, res) => {
 			console.log('message_reaction res', res);
 			if (res.error !== false) {
 				reject(res);
@@ -793,7 +793,7 @@ async function sendOutgoingMessages(acc) {
 	for (const message of await messages_db.outgoing.where('account').equals(acc.id).toArray()) {
 		//console.log('sendOutgoingMessages found queued message:', message.data.uid);
 		let res = await new Promise(resolve => {
-			sendData(acc, active_account, 'message_send', message.data, true, (req, res) => {
+			sendData(acc, active_account, 'message_send', message.data, true, (_req, res) => {
 				resolve(res);
 			});
 		});
@@ -840,7 +840,7 @@ export function openNewConversation(address) {
 }
 
 export function jumpToMessage(acc, address, uid) {
-	loadMessages(acc, address, 'uid:' + uid, 10, 10, 'load_referenced_message', res => {
+	loadMessages(acc, address, 'uid:' + uid, 10, 10, 'load_referenced_message', _res => {
 		const message = get(messagesArray).find(m => m.uid === uid);
 		insertEvent({
 			type: 'jump_to_referenced_message',
@@ -1043,32 +1043,6 @@ export function processMessage(message) {
 	};
 }
 
-function group_downloads(html) {
-	// TODO: walk the dom tree, find runs of multiple Download elements, and group them under a single DownloadGroup element
-	return group_downloads_walk(html);
-}
-
-function group_downloads_walk(node) {
-	// TODO: review, autogenerated
-	if (node.nodeType === Node.TEXT_NODE) return node;
-	if (node.nodeType === Node.ELEMENT_NODE) {
-		if (node.tagName === 'DOWNLOAD') {
-			let group = document.createElement('DOWNLOADGROUP');
-			group.appendChild(node);
-			while (node.nextSibling && node.nextSibling.tagName === 'DOWNLOAD') {
-				group.appendChild(node.nextSibling);
-				node = node.nextSibling;
-			}
-			return group;
-		}
-		let clone = node.cloneNode();
-		for (let child of node.childNodes) {
-			clone.appendChild(group_downloads_walk(child));
-		}
-		return clone;
-	}
-}
-
 export function preprocess_incoming_plaintext_message_text(content) {
 	let result0 = content;
 	//console.log('splitAndLinkify input:', result0);
@@ -1084,25 +1058,4 @@ export function preprocess_incoming_plaintext_message_text(content) {
 	});
 	let result3 = result2.join('');
 	return result3;
-}
-
-function emoji_cluster_to_array(cluster) {
-	// Convert the emoji cluster to an array of codepoints
-	const codepoints = [];
-	for (const char of cluster) {
-		codepoints.push(char.codePointAt(0));
-	}
-	return codepoints;
-}
-
-function linkify(text) {
-	//console.log('linkify ', text);
-	// Combine all patterns into one. We use non-capturing groups (?:) to avoid capturing groups we don't need.
-	const combinedPattern = new RegExp(["(https?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)", "(ftps?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+(?:\\.[a-zA-Z]{2,})?(?::\\d+)?(?:\\/[^\\s]*)?)", '(bitcoin:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)', '(ethereum:[a-zA-Z0-9]+(?:\\?[a-zA-Z0-9&=]*)?)', '(mailto:[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,})', '(tel:\\+?[0-9]{1,15})'].join('|'), 'g');
-	let result = text.replace(combinedPattern, match => {
-		// Directly use `match` as the URL/href. This ensures we handle all links in one pass.
-		return `<a href="${match}" target="_blank">${match}</a>`;
-	});
-	//console.log('linkify result:', result);
-	return result;
 }

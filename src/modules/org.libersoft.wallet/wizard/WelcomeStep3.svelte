@@ -1,11 +1,9 @@
 <script lang="ts">
 	import { onMount, getContext } from 'svelte';
 	import { get } from 'svelte/store';
-	import Icon from '@/core/components/Icon/Icon.svelte';
 	import BaseSettingsSubtree from '@/core/components/Settings/BaseSettingsSubtree.svelte';
 	import { wallets } from 'libersoft-crypto/wallet';
 	import { settingsObject } from '@/org.libersoft.wallet/scripts/settings';
-	import { module } from '@/org.libersoft.wallet/scripts/module';
 
 	const wizard = getContext('wizard') as { setNextText: (text: string) => void };
 	let hasWallets = $state(false);

@@ -12,7 +12,7 @@
 
 	$: scrollButtonVisible = scrolled;
 
-	function parseScroll(event) {
+	function parseScroll(_event) {
 		scrolled = elItems?.scrollTop > 0;
 		//console.log('elItems?.scrollTop:', elItems?.scrollTop);
 	}

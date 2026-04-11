@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { wallets, selectAddress } from 'libersoft-crypto/wallet';
+	import { wallets } from 'libersoft-crypto/wallet';
 	import { walletsWindow, settingsWindow } from '@/org.libersoft.wallet/scripts/ui';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
@@ -17,7 +17,7 @@
 	interface Props {
 		close?: () => void;
 	}
-	let { close }: Props = $props();
+	let { close: _close }: Props = $props();
 	let elWindowWallets: Window | undefined;
 	let filter: string | undefined = $state();
 	let filteredWallets = $derived($wallets.filter(wallet => !filter || wallet.name.toLowerCase().includes(filter.toLowerCase())));
@@ -50,7 +50,7 @@
 			</TheadTr>
 		</Thead>
 		<Tbody>
-			{#each filteredWallets as wallet, index}
+			{#each filteredWallets as wallet, _index}
 				<TbodyTr>
 					<Td padding="0 10px" class="ellipsis">
 						<Clickable onClick={async () => await clickSelectWallet(wallet)} data-wallet-name={wallet.name}>

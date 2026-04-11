@@ -93,13 +93,13 @@
 				window.sw = registration;
 				navigator.serviceWorker.addEventListener('message', e => {
 					if (e.data.type === 'GET_FILE_INFO') {
-						const { accId, uploadId } = e.data.payload;
+						const { uploadId } = e.data.payload;
 						loadUploadData(uploadId).then(uploadData => {
 							e.ports[0].postMessage(uploadData.record);
 						});
 					}
 					if (e.data.type === 'GET_CHUNK') {
-						const { accId, uploadId, start, end } = e.data.payload;
+						const { uploadId, start, end } = e.data.payload;
 						const getChunk = getFileChunkFactory(uploadId);
 						getChunk({
 							offsetBytes: start,

@@ -36,7 +36,7 @@ class MessagesBackgroundService {
 				addEventListener: (event: string, handler: Function) => {
 					this.messageHandlers.set(event, handler);
 				},
-				removeEventListener: (event: string, handler: Function) => {
+				removeEventListener: (event: string, _handler: Function) => {
 					this.messageHandlers.delete(event);
 				},
 			},
@@ -152,7 +152,7 @@ class MessagesBackgroundService {
 			command,
 			params,
 			true,
-			(req, res) => {
+			(_req, res) => {
 				if (res.error !== false) {
 					this.log('error', `Error sending ${command}: ${res.message || 'Unknown error'}`);
 				}

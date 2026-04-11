@@ -12,7 +12,7 @@
 	import { get } from 'svelte/store';
 	import { online, messagesArray, events, insertEvent, identifier, messagesIsInitialLoading, messageListMaxWidth, messageListApplyMaxWidth } from '@/org.libersoft.messages/scripts/messages.js';
 	import { getGuid } from '@/core/scripts/core.ts';
-	import { debug, keyboardHeight, isMobile } from '@/core/scripts/stores.ts';
+	import { debug, keyboardHeight } from '@/core/scripts/stores.ts';
 	import { highlightElement } from '@/core/scripts/utils/animationUtils.ts';
 	import { log } from '@/core/scripts/tauri.ts';
 	import { windowForwardMessageStore } from '@/org.libersoft.messages/stores/ForwardMessageStore.js';
@@ -253,7 +253,7 @@
 
 	let scrollStartPos: number = 0;
 
-	function touchStart(e: TouchEvent): void {
+	function touchStart(_e: TouchEvent): void {
 		scrollStartPos = elMessages.scrollTop;
 	}
 
@@ -273,7 +273,7 @@
 		scrolledToBottom = elMessages?.scrollTop + elMessages?.clientHeight >= elMessages?.scrollHeight - 20;
 	}
 
-	function updateWindowSize(width: number, height: number): void {
+	function updateWindowSize(_width: number, _height: number): void {
 		parseScroll();
 	}
 
@@ -509,13 +509,13 @@
 		return items;
 	}
 
-	async function mouseDown(event: MouseEvent): Promise<void> {}
+	async function mouseDown(_event: MouseEvent): Promise<void> {}
 
-	function onFocus(event: FocusEvent): void {
+	function onFocus(_event: FocusEvent): void {
 		window.addEventListener('keydown', onkeydown);
 	}
 
-	function onBlur(event: FocusEvent): void {
+	function onBlur(_event: FocusEvent): void {
 		window.removeEventListener('keydown', onkeydown);
 	}
 
@@ -529,7 +529,7 @@
 		e.preventDefault();
 		if (!e.dataTransfer) return;
 		const draggedItems = e.dataTransfer.items;
-		const types = Array.from(e.dataTransfer.types || []);
+		const _types = Array.from(e.dataTransfer.types || []);
 		let isDraggingFiles = false;
 		// In Chrome/Firefox: you can safely check item.kind
 		if (draggedItems && draggedItems.length > 0) {

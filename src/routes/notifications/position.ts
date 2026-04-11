@@ -38,19 +38,19 @@ export async function heightLogicalChanged(value: number): Promise<void> {
 export async function initPositioning(): Promise<() => void> {
 	let unsubscribers: Unsubscriber[] = [];
 	unsubscribers.push(
-		monitors.subscribe(v => {
+		monitors.subscribe(_v => {
 			//log.debug('/notifications monitors:', v);
 			updateNotificationsMonitor();
 		})
 	);
 	unsubscribers.push(
-		selectedMonitorName.subscribe(v => {
+		selectedMonitorName.subscribe(_v => {
 			//log.debug('/notifications selectedMonitor:', v);
 			updateNotificationsMonitor();
 		})
 	);
 	unsubscribers.push(
-		mainWindowMonitor.subscribe(v => {
+		mainWindowMonitor.subscribe(_v => {
 			//log.debug('/notifications mainWindowMonitor:', v);
 			updateNotificationsMonitor();
 		})

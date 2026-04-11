@@ -25,7 +25,7 @@
 	type FileUploadWindowContext = {
 		fileUploadWindowFiles: Writable<File[]>;
 	};
-	const { params, close }: Props = $props();
+	const { params, close: _close }: Props = $props();
 	let elFileInput;
 	let dropActive = $state(false);
 	let { fileUploadWindowFiles } = getContext<FileUploadWindowContext>('FileUploadWindow');

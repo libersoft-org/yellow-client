@@ -3,7 +3,7 @@
 	import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	import { FileUploadRecordStatus, type IFileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
-	import { writable, get } from 'svelte/store';
+	import { writable } from 'svelte/store';
 	let { node } = $props();
 	let file = $derived(node.attributes.file?.value);
 	const YELLOW_SRC_PROTOCOL = 'yellow:';

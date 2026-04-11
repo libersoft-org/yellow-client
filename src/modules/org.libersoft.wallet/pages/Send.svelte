@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
-	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment, estimatedTransactionTimes, avgBlockTimeStore, confirmationBlocksStore, sendTransaction, logTransaction } from 'libersoft-crypto/transaction';
+	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment, estimatedTransactionTimes, avgBlockTimeStore, confirmationBlocksStore, sendTransaction } from 'libersoft-crypto/transaction';
 	import { sendAddress, sendCurrency } from 'libersoft-crypto/wallet';
 	import { selectedNetwork, selectedNetworkID, networks, type ICurrency } from 'libersoft-crypto/network';
 	import { currencies } from 'libersoft-crypto/currencies';
@@ -11,7 +11,7 @@
 	import { validateForm, type FormValidatorConfig } from '@/core/scripts/utils/form.ts';
 	import { provider } from 'libersoft-crypto/provider';
 	import { getBalance, formatBalance, type IBalance } from 'libersoft-crypto/balance';
-	import { getTokenBalanceByAddress, getBatchTokensInfo } from 'libersoft-crypto/tokens';
+	import { getTokenBalanceByAddress } from 'libersoft-crypto/tokens';
 	import { formatUnits, parseUnits } from 'ethers';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';

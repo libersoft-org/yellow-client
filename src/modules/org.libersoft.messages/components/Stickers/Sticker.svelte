@@ -1,5 +1,5 @@
 <script>
-	import { getContext, onMount, onDestroy } from 'svelte';
+	import { getContext, onDestroy } from 'svelte';
 	import { readable } from 'svelte/store';
 	import lottie from 'lottie-web';
 	import pako from 'pako';
@@ -123,8 +123,6 @@
 	}
 
 	async function construct_lottie() {
-		let start = Date.now();
-
 		anim = lottie.loadAnimation({
 			container: animContainer,
 			renderer,
@@ -176,7 +174,7 @@
 	async function intersection(entries) {
 		//console.log(entries);
 		entries.sort((a, b) => a.time - b.time);
-		for (let entry of entries) {
+		for (let _entry of entries) {
 			isInViewport = entries[0].isIntersecting;
 		}
 	}

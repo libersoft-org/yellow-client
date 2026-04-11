@@ -3,7 +3,6 @@
 	import Sticker from './Sticker.svelte';
 	import { getContext } from 'svelte';
 	import { htmlEscape } from '@/org.libersoft.messages/scripts/messages.js';
-	import StickerSetPart from './StickerSetPart.svelte';
 	export let sticker;
 	export let stickerset;
 	export let intersecting;

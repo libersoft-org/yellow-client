@@ -172,7 +172,6 @@ export class TableDragManager {
 
 		// Preserve the exact computed styles from the original row
 		const originalStyles = window.getComputedStyle(row);
-		const cloneStyles = window.getComputedStyle(clone);
 
 		// Apply default styles
 		clone.style.position = 'fixed'; // Use fixed instead of absolute

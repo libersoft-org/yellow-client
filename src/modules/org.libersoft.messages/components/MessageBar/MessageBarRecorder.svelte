@@ -84,7 +84,7 @@
 				sendMessage(blob as Blob & { name?: string; metadata?: any });
 			}
 		});
-		RecordPlugin.getAvailableAudioDevices().then((devices: MediaDeviceInfo[]) => {
+		RecordPlugin.getAvailableAudioDevices().then((_devices: MediaDeviceInfo[]) => {
 			if (!wavesurferRecord) {
 				console.error('Wavesurfer record plugin not initialized');
 				return;

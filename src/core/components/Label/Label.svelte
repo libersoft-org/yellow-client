@@ -6,7 +6,7 @@
 		id?: string;
 		row?: boolean;
 	}
-	let { children, text = $bindable(''), id, row = false }: Props = $props();
+	let { children, text = $bindable(''), id: _id, row = false }: Props = $props();
 </script>
 
 <style>

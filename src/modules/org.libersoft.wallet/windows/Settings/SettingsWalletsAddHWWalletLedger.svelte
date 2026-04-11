@@ -1,12 +1,10 @@
 <script lang="ts">
-	import { debug } from '@/core/scripts/stores.ts';
 	import { getContext } from 'svelte';
 	import { addAddress, addHardwareWallet } from 'libersoft-crypto/wallet';
-	import { ledgerLoading, ledgerDevice, ledgerError, ledgerConnected, getLedgerDeviceIdentifiers } from 'libersoft-crypto/ledger';
+	import { ledgerLoading, ledgerDevice, ledgerConnected, getLedgerDeviceIdentifiers } from 'libersoft-crypto/ledger';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Label from '@/core/components/Label/Label.svelte';
-	import Alert from '@/core/components/Alert/Alert.svelte';
 	import LedgerConnect from '@/org.libersoft.wallet/components/LedgerConnect.svelte';
 
 	const setSettingsSection = getContext<Function>('setSettingsSection');

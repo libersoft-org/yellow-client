@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { getContext } from 'svelte';
 	import { type INetwork, type ITokenConf, findNetworkByGuid, addToken } from 'libersoft-crypto/network';
 	import { getGuid } from '@/core/scripts/utils/utils.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module';

@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { log } from '@/core/scripts/tauri.ts';
-	import { animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, borderColor, bgColorHover, titleColor, descColor, notificationsSoundEnabled } from '@/core/scripts/notifications_settings.ts';
+	import { animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, borderColor, bgColorHover, titleColor, descColor } from '@/core/scripts/notifications_settings.ts';
 	import { playNotificationSound, stopNotificationSound } from '@/core/scripts/notifications.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
@@ -224,7 +224,7 @@
 			<div class="bottom">
 				<ButtonBar>
 					{#each data.buttons as b}
-						<Button text={b.text} onClick={e => b.onClick(b, b.id)} />
+						<Button text={b.text} onClick={() => b.onClick(b, b.id)} />
 					{/each}
 				</ButtonBar>
 			</div>

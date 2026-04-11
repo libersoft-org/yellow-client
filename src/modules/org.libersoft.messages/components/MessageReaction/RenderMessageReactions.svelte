@@ -37,7 +37,7 @@
 		};
 	};
 
-	const dismissTooltip = e => {
+	const dismissTooltip = _e => {
 		tooltipButton = null;
 	};
 

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { setupConsoleLogging, closeWelcomeWizardWindow } from '@/core/tests/e2e/test-utils.js';
+import { setupConsoleLogging } from '@/core/tests/e2e/test-utils.js';
 
 /**
  * Valid account configurations for testing
@@ -265,7 +265,7 @@ test.describe.parallel('Accounts Import Functionality', () => {
 		await page.waitForTimeout(1000);
 
 		// Check if window is still visible
-		const windowVisible = await page.getByTestId('accounts-import-Window').isVisible();
+		const _windowVisible = await page.getByTestId('accounts-import-Window').isVisible();
 		//console.log('Window still visible after skip:', windowVisible);
 
 		// Should show error that no accounts were imported

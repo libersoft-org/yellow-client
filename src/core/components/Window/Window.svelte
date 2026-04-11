@@ -64,7 +64,7 @@
 	}
 	let show = $state(false);
 	let maximized = $state(false);
-	let { testId = '', children, top, center, bottom, params, max, resizable = false, optionalIcon, title = '', body, width, height, onShowChange }: Props = $props();
+	let { testId = '', children, top, center, bottom, params, max, resizable: _resizable = false, optionalIcon, title = '', body, width, height, onShowChange }: Props = $props();
 	let elWindow: HTMLDivElement | null = $state(null);
 	let showContent = $state(false);
 	let WindowBody = $derived(body);
@@ -113,7 +113,7 @@
 
 		if (elWindow) {
 			let didInit = false;
-			resizeObserver = new ResizeObserver(entries => {
+			resizeObserver = new ResizeObserver(_entries => {
 				if (isDragging) return;
 				if (didInit && showContent) {
 					requestAnimationFrame(handleContentResize);

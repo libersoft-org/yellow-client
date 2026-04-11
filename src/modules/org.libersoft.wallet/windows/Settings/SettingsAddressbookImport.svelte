@@ -5,7 +5,7 @@
 	interface Props {
 		close: () => void;
 	}
-	let { close }: Props = $props();
+	let { close: _close }: Props = $props();
 	let replaceDialog: any = $state(null);
 	let pendingReplaceText = $state('');
 	const hasExistingAddresses = $derived(hasAddressBookItems());

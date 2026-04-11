@@ -81,7 +81,7 @@
 					</TheadTr>
 				</Thead>
 				<Tbody>
-					{#each filteredAddressBook as a, index (a.guid)}
+					{#each filteredAddressBook as a, _index (a.guid)}
 						<TbodyTr>
 							<Td>
 								<DragHandle />

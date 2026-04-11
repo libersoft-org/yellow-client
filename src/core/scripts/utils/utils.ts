@@ -29,7 +29,7 @@ export function getGuid(length = 40): string {
 export function stringifyWithBigInt(obj: any): string {
 	return JSON.stringify(
 		obj,
-		(key, value) => {
+		(_key, value) => {
 			if (typeof value === 'bigint') return value.toString();
 			return value;
 		},

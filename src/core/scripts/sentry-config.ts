@@ -37,7 +37,7 @@ export function getHostname() {
 
 // Common beforeSend hook
 export function createBeforeSendHook(isServer: boolean = false) {
-	return (event: any, hint: any) => {
+	return (event: any, _hint: any) => {
 		const platform = getPlatformInfo();
 		const hostname = getHostname();
 

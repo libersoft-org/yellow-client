@@ -290,7 +290,7 @@
 					<div class="rpc-table" use:tableDrag={{ items: itemRPCURLs, onReorder: handleRPCReorder }}>
 						<Table breakpoint="0">
 							<Tbody>
-								{#each itemRPCURLs as rpc_url, i (i)}
+								{#each itemRPCURLs as _rpc_url, i (i)}
 									<TbodyTr>
 										<Td><DragHandle /></Td>
 										<Td padding="10px 0" expand>

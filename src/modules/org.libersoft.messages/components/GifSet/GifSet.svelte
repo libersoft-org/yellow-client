@@ -14,7 +14,6 @@
 	let query = '';
 	let loading = false;
 	let elSearchText;
-	let next_url;
 	let error;
 	let query_done;
 	let last_query;

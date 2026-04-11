@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { getContext, tick } from 'svelte';
 	import { fromStore, get } from 'svelte/store';
-	import { type INetwork, findNetworkByGuid, reorderNFTs, networks } from 'libersoft-crypto/network';
+	import { type INetwork, findNetworkByGuid, reorderNFTs } from 'libersoft-crypto/network';
 	import type { INftConf } from 'libersoft-crypto/nfts';
 	import { tableDrag } from '@/core/actions/tableDrag.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
@@ -125,7 +125,7 @@
 					</TheadTr>
 				</Thead>
 				<Tbody>
-					{#each network.nfts as nft, i (nft.guid)}
+					{#each network.nfts as nft, _i (nft.guid)}
 						{@const contractAddress = nft.contract_address}
 						{@const displayName = 'NFT Contract'}
 						{@const isLoading = false}

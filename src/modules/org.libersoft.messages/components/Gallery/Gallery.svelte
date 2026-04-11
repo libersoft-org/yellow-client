@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { identifier } from '@/org.libersoft.messages/scripts/messages.js';
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
 	import galleryStore from '@/org.libersoft.messages/stores/GalleryStore.ts';
 	import Button from '@/core/components/Button/Button.svelte';

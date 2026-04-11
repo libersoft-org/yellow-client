@@ -15,7 +15,7 @@
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
-	import Dialog, { type IDialogData, type IDialogButton } from '@/core/components/Dialog/Dialog.svelte';
+	import Dialog, { type IDialogData } from '@/core/components/Dialog/Dialog.svelte';
 	let filter = $state('');
 	let showMainnets = $state(true);
 	let showTestnets = $state(false);
@@ -126,7 +126,7 @@
 		</TheadTr>
 	</Thead>
 	<Tbody>
-		{#each filteredDefaultNetworks as n, index}
+		{#each filteredDefaultNetworks as n, _index}
 			<TbodyTr>
 				<Td class="ellipsis" padding="0" data-testid="wallet-settings-default-network-name@{n.name}">
 					<span class="network">

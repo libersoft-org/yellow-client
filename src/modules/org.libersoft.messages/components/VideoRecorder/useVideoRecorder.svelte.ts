@@ -181,9 +181,6 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
 			audioDevices.set(uniqueAudioInputs);
 			videoDevices.set(uniqueVideoInputs);
 
-			const _audioDevices = get(audioDevices);
-			const _videoDevices = get(videoDevices);
-
 			// Request device first before trying to change inputs
 			console.log('rec: calling getDevice()');
 
@@ -237,7 +234,7 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
 			}
 		});
 
-		_player.on('error', function (element, error) {
+		_player.on('error', function (_element, error) {
 			console.error(error);
 			displayErrors();
 		});

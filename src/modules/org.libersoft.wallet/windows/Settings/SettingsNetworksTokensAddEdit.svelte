@@ -17,8 +17,6 @@
 		contractAddress?: string;
 	}
 	let { close, networkGuid, item, contractAddress }: Props = $props();
-	let tokenGuid: string | undefined = $state();
-	let tokenName: string | undefined = $state();
 	let tokenIcon: string | undefined = $state();
 	let tokenContractAddress: string | undefined = $state();
 	let error: string | null | undefined = $state();
@@ -32,7 +30,6 @@
 	export function onOpen(): void {
 		error = null;
 		if (item) {
-			tokenGuid = item.guid;
 			tokenIcon = item.iconURL;
 			tokenContractAddress = item.contract_address;
 		} else if (contractAddress) {

@@ -26,7 +26,6 @@
 	let elExpressions;
 	let elMessage;
 	let elMessageBar;
-	let elWindowVideoRecorder;
 	let elWindowHTML;
 	let text;
 	let expressions;
@@ -130,14 +129,14 @@
 		else elMessage.style.overflowY = 'hidden';
 	}
 
-	export function dispatchEvent(event) {
-		text = event.key;
+	export function dispatchEvent(_event) {
+		text = _event.key;
 	}
 
 	const isMessageReplyOpen = messageBarReplyStore.isOpen();
 	const replyTo = messageBarReplyStore.getReplyTo();
 
-	function clickSend(event) {
+	function clickSend(_event) {
 		clickSend2(elMessage.value);
 	}
 
@@ -155,7 +154,7 @@
 		messageBarReplyStore.close();
 	}
 
-	function debugClickSendSplit(event) {
+	function debugClickSendSplit(_event) {
 		setTimeout(() => {
 			let messages = elMessage.value.split('\n');
 			for (let message of messages) {
@@ -180,7 +179,7 @@
 		}
 	}
 
-	function onMessageInputFocus(event) {
+	function onMessageInputFocus(_event) {
 		// Close bottom sheet when user wants to type
 		if (expressionsBottomSheetOpen) {
 			expressionsBottomSheetOpen = false;
@@ -191,7 +190,7 @@
 		waitingForKeyboardClose = false;
 	}
 
-	function clickRecord(event) {
+	function clickRecord(_event) {
 		console.log('clicked on record mic / camera - long press to record, short press to switch mic / camera');
 	}
 
@@ -203,7 +202,7 @@
 		console.log('clicked on location');
 	}
 
-	function handleAttachmentMousedown(event) {
+	function handleAttachmentMousedown(_event) {
 		// Check if keyboard is currently open
 		const currentKeyboardHeight = get(keyboardHeight);
 		if (currentKeyboardHeight && currentKeyboardHeight > 50) {
@@ -220,8 +219,8 @@
 		}
 	}
 
-	isMobile.subscribe(value => {
-		expressionsAsContextMenu = !value;
+	isMobile.subscribe(_value => {
+		expressionsAsContextMenu = !_value;
 	});
 
 	documentHeight.subscribe(value => {
@@ -247,7 +246,7 @@
 	});
 
 	$: expressionsAsContextMenuUpdate(expressionsAsContextMenu);
-	function expressionsAsContextMenuUpdate(expressionsAsContextMenu) {
+	function expressionsAsContextMenuUpdate(_expressionsAsContextMenu) {
 		closeExpressions();
 	}
 
@@ -263,7 +262,7 @@
 	}
 
 	$: update2(expressionsAsContextMenu, expressionsBottomSheetOpen);
-	function update2(expressionsAsContextMenu, expressionsBottomSheetOpen) {
+	function update2(_expressionsAsContextMenu, _expressionsBottomSheetOpen) {
 		// Removed auto-blur to prevent interference with delay logic
 		// The blur is now handled manually in handleBottomSheetOpenWithDelay
 	}
@@ -294,7 +293,6 @@
 		}
 
 		const currentKeyboardHeight = get(keyboardHeight);
-		const currentIsMobile = get(isMobile);
 
 		// If keyboard is not open, open bottom sheet immediately
 		if (!currentKeyboardHeight || currentKeyboardHeight < 50) {

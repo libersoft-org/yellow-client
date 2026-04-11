@@ -2,7 +2,7 @@ import { tick } from 'svelte';
 import { derived, get, writable } from 'svelte/store';
 import { listen } from '@tauri-apps/api/event';
 import { log, TAURI_SERVICE } from '@/core/scripts/tauri.ts';
-import { debug, selected_module_id, active_account_id } from '@/core/scripts/stores.ts';
+import { selected_module_id, active_account_id } from '@/core/scripts/stores.ts';
 import { send, handleSocketMessage } from '@/core/scripts/socket.ts';
 import { updateModulesComms } from '@/core/scripts/modules.ts';
 import { accounts_config } from '@/core/scripts/accounts_config.ts';
@@ -387,7 +387,7 @@ function clearPingTimer(acc: IAccount) {
 function sendLoginCommand(account: AccountStore) {
 	//log.debug('Sending login command');
 	let acc = get(account);
-	send(acc, account, 'core', 'user_login', { address: acc.credentials.address, password: acc.credentials.password }, false, (req, res) => {
+	send(acc, account, 'core', 'user_login', { address: acc.credentials.address, password: acc.credentials.password }, false, (_req, res) => {
 		//log.debug('Login response:', res);
 		if (res.error !== false) {
 			acc.error = res.message;
@@ -465,7 +465,7 @@ function setupPing(account: AccountStore) {
 			'ping',
 			{},
 			true,
-			(req, res) => {
+			() => {
 				//console.log('Ping response:', res);
 				acc.lastCommsTs = Date.now();
 				//console.log('lastCommsTs:', acc.lastCommsTs);

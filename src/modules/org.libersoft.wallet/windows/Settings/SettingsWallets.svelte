@@ -2,7 +2,7 @@
 	import { getContext, tick } from 'svelte';
 	import { tableDrag } from '@/core/actions/tableDrag.ts';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
-	import { wallets, type IWallet, reorderWallets, isHardwareWallet, isTrezorWallet } from 'libersoft-crypto/wallet';
+	import { wallets, type IWallet, reorderWallets } from 'libersoft-crypto/wallet';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -95,7 +95,7 @@
 				</TheadTr>
 			</Thead>
 			<Tbody>
-				{#each filteredWallets as wallet, index (wallet.guid)}
+				{#each filteredWallets as wallet, _index (wallet.guid)}
 					<TbodyTr>
 						<Td>
 							<DragHandle />

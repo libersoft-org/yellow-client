@@ -5,7 +5,7 @@
 	interface Props {
 		close: () => void;
 	}
-	let { close }: Props = $props();
+	let { close: _close }: Props = $props();
 	const exportData = get(addressBook);
 </script>
 

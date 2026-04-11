@@ -3,9 +3,8 @@
 	import { getTokenDecimals, getTokenInfo } from 'libersoft-crypto/tokens';
 	import { module } from '@/org.libersoft.wallet/scripts/module';
 	import { selectedNetwork } from 'libersoft-crypto/network';
-	import { type IPayment, sendTransaction } from 'libersoft-crypto/transaction';
+	import { type IPayment } from 'libersoft-crypto/transaction';
 	import { transactionTime, transactionTimeLoading } from 'libersoft-crypto/transaction';
-	import { playAudio } from '@/core/scripts/notifications.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	interface Props {
@@ -13,7 +12,7 @@
 		close?: () => void;
 		onYes?: (params: any) => void;
 	}
-	let { params, close, onYes }: Props = $props();
+	let { params, close: _close, onYes }: Props = $props();
 	let elDialog;
 	let tokenDecimals = $state<number | null>(null);
 	let tokenInfo = $state<{ name: string; symbol: string } | null>(null);

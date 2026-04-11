@@ -41,10 +41,10 @@
 	}
 
 	// Set up context for expressions menu state (Android only)
-	let expressionsMenuOpen = false;
+	let _expressionsMenuOpen = false;
 	setContext('expressionsMenuOpen', {
 		setOpen: open => {
-			expressionsMenuOpen = open;
+			_expressionsMenuOpen = open;
 		},
 	});
 	setContext('FileUploadWindow', { fileUploadWindowFiles, setFileUploadWindow });

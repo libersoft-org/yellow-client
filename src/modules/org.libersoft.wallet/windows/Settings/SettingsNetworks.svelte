@@ -17,7 +17,6 @@
 	import TableActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import DialogDeleteNetwork from '@/org.libersoft.wallet/dialogs/NetworksDel.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
-	let selectedItemID: string | null | undefined;
 	let selectedItem: INetwork | undefined = $state();
 	let elDialogDeleteNetwork: DialogDeleteNetwork | undefined = $state();
 	let filter = $state('');
@@ -45,13 +44,11 @@
 
 	function openTokens(net) {
 		console.log('tokenList', net);
-		selectedItemID = net.guid;
 		setSettingsSection('networks-tokens-' + net.guid, { item: net.guid });
 	}
 
 	function openNFTs(net) {
 		console.log('nftList', net);
-		selectedItemID = net.guid;
 		setSettingsSection('networks-nfts-' + net.guid, { item: net.guid });
 	}
 
@@ -103,7 +100,7 @@
 				</TheadTr>
 			</Thead>
 			<Tbody>
-				{#each filteredNetworks as n, index (n.guid)}
+				{#each filteredNetworks as n, _index (n.guid)}
 					<TbodyTr>
 						<Td>
 							<DragHandle />

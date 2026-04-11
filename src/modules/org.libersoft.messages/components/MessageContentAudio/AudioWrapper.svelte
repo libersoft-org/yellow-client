@@ -3,7 +3,7 @@
 		children?: any[];
 		node?: any;
 	}
-	let { children, node }: Props = $props();
+	let { children, node: _node }: Props = $props();
 	let ref: HTMLDivElement | undefined = $state();
 </script>
 

@@ -1,4 +1,4 @@
-import { writable, get, derived } from 'svelte/store';
+import { writable, get } from 'svelte/store';
 import { stickers_db } from '@/org.libersoft.messages/scripts/db.ts';
 import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
 	import { selectedNetwork } from 'libersoft-crypto/network';
 	import { balance, isLoadingBalance, refreshBalance } from 'libersoft-crypto/balance';

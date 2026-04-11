@@ -7,20 +7,15 @@
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
-	import Thead from '@/core/components/Table/TableThead.svelte';
-	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
-	import Th from '@/core/components/Table/TableTheadTh.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
 	import ActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-
 	let link: string | undefined = $state();
 	let elLink: HTMLDivElement | undefined = $state();
 	let refreshingTxIds = $state(new Set<string>());
-
 	// Get transactions for current network
 	let transactions = $derived.by(() => {
 		if (!$selectedNetwork?.guid) return [];

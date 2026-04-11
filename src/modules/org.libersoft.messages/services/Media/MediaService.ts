@@ -147,7 +147,7 @@ class MediaService {
 			player.on(evt, () => console.log('test evt', evt));
 		});
 
-		this.videoElement.addEventListener('play', evt => {
+		this.videoElement.addEventListener('play', _evt => {
 			// code you want to happen when the video plays
 			console.log('asdasdasdasdadasd');
 		});

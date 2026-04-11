@@ -26,11 +26,10 @@
 	//$: console.log('module-bar active_account.module_data:', $active_account?.module_data);
 
 	//$: console.log('module-bar module_data:', module_data);
-	$: module_data_ordered = order(module_data);
 	//$: console.log('module-bar module_data_ordered:', module_data_ordered);
 	$: selectLastModule(module_data);
 
-	function selectLastModule(module_data) {
+	function selectLastModule(_module_data) {
 		//console.debug('selectLastModule: lastModuleSelected: ', module_data);
 		//console.debug('acc.settings?.last_module_id: ', $active_account?.settings?.last_module_id);
 		if (!lastModuleSelected /* && module_data_ordered && module_data_ordered.length > 0 */) {
@@ -87,7 +86,7 @@
 
 	function onResize(entry) {
 		const { target, contentRect } = entry;
-		const { width, height } = contentRect;
+		const { width } = contentRect;
 		const children = target.children;
 		const childrenTotalWidth = Array.from(children).reduce((total, child) => {
 			return total + child.getBoundingClientRect().width;

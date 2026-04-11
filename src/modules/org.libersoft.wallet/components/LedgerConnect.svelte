@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
-	import { getLedgerEthereumAccounts, connectLedger, initializeLedger, ledgerLoading, ledgerError, ledgerConnected, ledgerDevice, ledgerConnectionMethod, ledgerDeviceId, type LedgerAccount } from 'libersoft-crypto/ledger';
+	import { getLedgerEthereumAccounts, connectLedger, initializeLedger, ledgerLoading, ledgerError, ledgerConnected, ledgerDevice, ledgerConnectionMethod, type LedgerAccount } from 'libersoft-crypto/ledger';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';

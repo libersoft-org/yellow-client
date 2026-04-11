@@ -16,7 +16,7 @@
 		};
 		close?: () => void;
 	}
-	let { params, close }: Props = $props();
+	let { params, close: _close }: Props = $props();
 	let wallet = $derived(params.wallet);
 	let filter = $state('');
 	let filteredAddresses = $derived((wallet.addresses || []).filter(address => address.name.toLowerCase().includes(filter.toLowerCase()) || address.address.toLowerCase().includes(filter.toLowerCase()) || address.index.toString().includes(filter)));

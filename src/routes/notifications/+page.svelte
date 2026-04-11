@@ -4,7 +4,7 @@
 	import Notification from '@/core/components/Notification/Notification.svelte';
 	import { multiwindow_store } from '@/core/scripts/multiwindow_store.ts';
 	import { CUSTOM_NOTIFICATIONS, log } from '@/core/scripts/tauri.ts';
-	import { onMount, onDestroy } from 'svelte';
+	import { onMount } from 'svelte';
 	import { invoke } from '@tauri-apps/api/core';
 	import { heightLogicalChanged, initPositioning } from './position.ts';
 	export let maxNotifications = 3;

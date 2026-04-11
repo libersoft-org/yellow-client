@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
-import { setupConsoleLogging, closeWelcomeWizardWindow } from '@/core/tests/e2e/test-utils.js';
+import { setupConsoleLogging } from '@/core/tests/e2e/test-utils.js';
 
 /**
  * Helper function to setup initial account via wizard

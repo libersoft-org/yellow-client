@@ -1,4 +1,3 @@
-import type { Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import * as Sentry from '@sentry/sveltekit';
 import { handleErrorWithSentry, sentryHandle } from '@sentry/sveltekit';

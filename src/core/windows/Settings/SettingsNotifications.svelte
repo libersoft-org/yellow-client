@@ -10,9 +10,6 @@
 	import SettingsNotificationsBasic from '@/core/windows/Settings/SettingsNotificationsBasic.svelte';
 	import SettingsNotificationsAlert from '@/core/windows/Settings/SettingsNotificationsAlert.svelte';
 	import Table from '@/core/components/Table/Table.svelte';
-	import Thead from '@/core/components/Table/TableThead.svelte';
-	import TheadTr from '@/core/components/Table/TableTheadTr.svelte';
-	import Th from '@/core/components/Table/TableTheadTh.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';

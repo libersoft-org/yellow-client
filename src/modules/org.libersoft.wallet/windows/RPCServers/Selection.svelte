@@ -13,7 +13,6 @@
 	}
 	let { close, network }: Props = $props();
 	let rpcServers: IRPCServer[] = $state([]);
-	let isChecking = $state(false);
 
 	$effect(() => {
 		if (network) rpcServers = getRPCServersFromNetwork(network);
@@ -22,9 +21,7 @@
 
 	async function checkServers() {
 		if (rpcServers.length === 0) return;
-		isChecking = true;
 		await checkAllRPCServers(rpcServers);
-		isChecking = false;
 	}
 
 	function selectServer(url: string) {

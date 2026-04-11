@@ -62,7 +62,7 @@ export function _send(acc: IAccount, account: AccountStore | null, target: strin
  * Subscribe to module events
  */
 export function moduleEventSubscribe(acc: IAccount, event_name: string): void {
-	connectionSendData(acc, null, 'subscribe', { event: event_name }, true, (req, res) => {
+	connectionSendData(acc, null, 'subscribe', { event: event_name }, true, (_req, res) => {
 		if (res.error !== false) {
 			console.error('This is bad.');
 			//console.error('Communication with server Error while subscribing to event: ' + res.message);

@@ -16,7 +16,7 @@ export class FilesService {
 	}
 
 	getOrDownloadAttachment(uploadId: string): Promise<{ localFile: ILocalFile }> {
-		return new Promise(async (resolve, reject) => {
+		return new Promise(async resolve => {
 			const acc = get(active_account);
 
 			// check indexedDB if file is already downloaded (or being downloaded)

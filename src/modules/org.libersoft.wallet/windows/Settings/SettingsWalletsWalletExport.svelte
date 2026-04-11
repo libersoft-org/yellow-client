@@ -5,7 +5,7 @@
 		wallet: IWallet;
 		close: () => void;
 	}
-	let { wallet, close }: Props = $props();
+	let { wallet, close: _close }: Props = $props();
 </script>
 
 <Export data={wallet.phrase} filename="wallet-seed" isSensitive testId="wallet-export" />
