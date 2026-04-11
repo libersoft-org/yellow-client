@@ -1,7 +1,7 @@
 import { expect, test, chromium } from '@playwright/test';
 import { setupConsoleLogging, closeWelcomeWizardWindow, switchModule } from '@/core/tests/e2e/test-utils.js';
 
-const SLEEP_MS = parseInt(process.env.SLEEP || '0');
+const SLEEP_MS = parseInt(process.env['SLEEP'] || '0');
 
 async function sleep() {
 	if (SLEEP_MS > 0) {
@@ -9,34 +9,34 @@ async function sleep() {
 	}
 }
 
-(process.env.RUN_HARDWARE_TESTS ? test.describe : test.describe.skip)('Wallet Send Dialog Navigation', () => {
+(process.env['RUN_HARDWARE_TESTS'] ? test.describe : test.describe.skip)('Wallet Send Dialog Navigation', () => {
 	let browser;
 	let context;
 	let page;
 
 	test.beforeAll(async () => {
-		if (process.env.BROWSER) {
+		if (process.env['BROWSER']) {
 			// Connect to existing browser via CDP
-			browser = await chromium.connectOverCDP(process.env.BROWSER);
+			browser = await chromium.connectOverCDP(process.env['BROWSER']);
 			context = browser.contexts()[0] || (await browser.newContext());
 			page = context.pages()[0] || (await context.newPage());
 		}
 	});
 
 	test.afterAll(async () => {
-		if (process.env.BROWSER && browser) {
+		if (process.env['BROWSER'] && browser) {
 			await browser.close();
 		}
 	});
 
 	test.beforeEach(async ({ page: testPage }) => {
 		// Use CDP page if available, otherwise use test page
-		const currentPage = process.env.BROWSER ? page : testPage;
+		const currentPage = process.env['BROWSER'] ? page : testPage;
 
 		// Setup console logging (controlled by PLAYWRIGHT_CONSOLE_LOG env var)
 		setupConsoleLogging(currentPage);
 
-		await currentPage.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
+		await currentPage.goto(process.env['PLAYWRIGHT_CLIENT_URL'] || 'http://localhost:3000/');
 
 		// Wait for the page to be ready
 		await currentPage.waitForLoadState('networkidle');
@@ -50,7 +50,7 @@ async function sleep() {
 
 	test('should navigate to wallet and open send dialog', async ({ page: testPage }) => {
 		// Use CDP page if available, otherwise use test page
-		const currentPage = process.env.BROWSER ? page : testPage;
+		const currentPage = process.env['BROWSER'] ? page : testPage;
 
 		await test.step('Wait for wallet page to load', async () => {
 			// Verify we're on the wallet page by checking for wallet-specific elements

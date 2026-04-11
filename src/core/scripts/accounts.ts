@@ -7,7 +7,7 @@ import { send, handleSocketMessage } from '@/core/scripts/socket.ts';
 import { updateModulesComms } from '@/core/scripts/modules.ts';
 import { accounts_config } from '@/core/scripts/accounts_config.ts';
 import type { IAccount, AccountStore, IAccountConfig, IAccountCredentials, IAccountSettings } from './types.ts';
-const ping_interval = import.meta.env.VITE_YELLOW_CLIENT_PING_INTERVAL || 10000;
+const ping_interval = import.meta.env['VITE_YELLOW_CLIENT_PING_INTERVAL'] || 10000;
 export let accounts = writable<AccountStore[]>([]);
 /* fire off whenever accounts array or active_account_id changes */
 export let active_account_store = derived([accounts, active_account_id], ([$accounts, $active_account_id]: [AccountStore[], string | null]) => {

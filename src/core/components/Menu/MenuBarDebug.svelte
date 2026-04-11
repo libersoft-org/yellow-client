@@ -32,7 +32,7 @@
 	}
 </script>
 
-{#if import.meta.env.VITE_YELLOW_CLIENT_DEBUG}
+{#if import.meta.env['VITE_YELLOW_CLIENT_DEBUG']}
 	<Switch bind:checked={$debug} label="Debug" />
 	<Button onClick={err} text="/0" />
 	<Button onClick={notification} text="N" />

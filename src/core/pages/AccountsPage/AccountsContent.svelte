@@ -97,7 +97,7 @@
 				<Table>
 					<Thead>
 						<TheadTr>
-							<Th>{account.settings.title}</Th>
+							<Th>{account.settings['title']}</Th>
 							<Th align="right"><AccountStatusIconIconAndText account={findAccount(account.id)} /></Th>
 						</TheadTr>
 					</Thead>

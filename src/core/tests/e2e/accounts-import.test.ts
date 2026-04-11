@@ -29,13 +29,13 @@ const validAccountConfigs = [
 ];
 
 test.describe.parallel('Accounts Import Functionality', () => {
-	const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || 'ws://localhost:8084';
+	const serverUrl = process.env['PLAYWRIGHT_SERVER_URL'] || 'ws://localhost:8084';
 
 	test.beforeEach(async ({ page }) => {
 		// Setup console logging (controlled by PLAYWRIGHT_CONSOLE_LOG env var)
 		setupConsoleLogging(page);
 
-		await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
+		await page.goto(process.env['PLAYWRIGHT_CLIENT_URL'] || 'http://localhost:3000/');
 
 		// Setup initial account via wizard
 		await setupAccountInWizard(page, {

@@ -4,7 +4,7 @@ import * as Sentry from '@sentry/sveltekit';
 import { sentryClientConfig } from '@/core/scripts/sentry-config.ts';
 
 // Only initialize Sentry if enabled
-const sentryEnabled = /^(true|1|yes|on)$/i.test((import.meta.env.VITE_SENTRY_ENABLED || '').trim());
+const sentryEnabled = /^(true|1|yes|on)$/i.test((import.meta.env['VITE_SENTRY_ENABLED'] || '').trim());
 
 if (sentryEnabled) {
 	Sentry.init({

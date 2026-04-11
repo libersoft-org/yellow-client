@@ -11,7 +11,7 @@ export async function closeWelcomeWizardWindow(page: Page): Promise<void> {
  */
 export function setupConsoleLogging(page: Page): void {
 	// Only enable if environment variable is set
-	if (process.env.PLAYWRIGHT_CONSOLE_LOG !== 'true') {
+	if (process.env['PLAYWRIGHT_CONSOLE_LOG'] !== 'true') {
 		return;
 	}
 

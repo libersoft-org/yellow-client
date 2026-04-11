@@ -59,7 +59,7 @@ function updateLastModuleId(id) {
 		accounts.forEach(account => {
 			if (account.id === aa.id) {
 				account.settings = account.settings ? account.settings : {};
-				account.settings.last_module_id = id;
+				account.settings['last_module_id'] = id;
 			}
 		});
 		return accounts;

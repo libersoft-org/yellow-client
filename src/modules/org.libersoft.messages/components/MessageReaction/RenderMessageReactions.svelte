@@ -8,7 +8,7 @@
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Tooltip from '@/core/components/Tooltip/Tooltip.svelte';
 
-	if (import.meta.env.VITE_YELLOW_CLIENT_DEBUG) {
+	if (import.meta.env['VITE_YELLOW_CLIENT_DEBUG']) {
 		console.debug(union, isEqual);
 	}
 

@@ -4,7 +4,7 @@ import type { BrowserOptions, NodeOptions } from '@sentry/sveltekit';
 // Base configuration shared between client and server
 export const sentryBaseConfig = {
 	dsn: 'https://3d18b31f479eb4d197cf54e7ef5c4291@o4509327469772800.ingest.de.sentry.io/4509327534981200',
-	environment: process.env.NODE_ENV || 'development',
+	environment: import.meta.env['MODE'] || 'development',
 	tracesSampleRate: 1.0,
 };
 
@@ -25,7 +25,11 @@ export function getPlatformInfo() {
 export function getHostname() {
 	if (typeof window === 'undefined') {
 		// Server-side: try to get hostname from environment or os
-		return process.env.HOSTNAME || 'server';
+		try {
+			return process.env['HOSTNAME'] || 'server';
+		} catch {
+			return 'server';
+		}
 	}
 	// Client-side
 	return window.location.hostname;
@@ -58,7 +62,7 @@ export function createBeforeSendHook(isServer: boolean = false) {
 				platform,
 				hostname,
 				isServer,
-				buildMode: process.env.NODE_ENV,
+				buildMode: import.meta.env['MODE'],
 				...(!isServer && typeof window !== 'undefined'
 					? {
 							isTauri: TAURI,

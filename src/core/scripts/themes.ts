@@ -128,7 +128,7 @@ current_theme.subscribe((v: ITheme) => {
 
 // avoid console errors when the image is not found
 function applyBackgroundImage(key, value) {
-	const base = import.meta.env.VITE_CLIENT_PATH_BASE || '';
+	const base = import.meta.env['VITE_CLIENT_PATH_BASE'] || '';
 	const val = `${base}/img/background/${value}`;
 
 	const img = new Image();

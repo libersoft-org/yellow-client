@@ -55,8 +55,8 @@
 </script>
 
 {#snippet question()}
-	{#if account?.settings?.title}
-		<div>Would you like to delete the account "<span class="bold">{account.settings.title}</span>" (<span class="bold">{accountIdentifier}</span>)?</div>
+	{#if account?.settings?.['title']}
+		<div>Would you like to delete the account "<span class="bold">{account.settings['title']}</span>" (<span class="bold">{accountIdentifier}</span>)?</div>
 	{:else}
 		<div>Would you like to delete the account "<span class="bold">{accountIdentifier}</span>"?</div>
 	{/if}

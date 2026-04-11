@@ -58,11 +58,11 @@ const complexAccountConfig = [
 ];
 
 test.describe.parallel('Accounts Import/Export', () => {
-	const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || 'ws://localhost:8084';
+	const serverUrl = process.env['PLAYWRIGHT_SERVER_URL'] || 'ws://localhost:8084';
 
 	test.beforeEach(async ({ page }) => {
 		setupConsoleLogging(page);
-		await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
+		await page.goto(process.env['PLAYWRIGHT_CLIENT_URL'] || 'http://localhost:3000/');
 		await setupAccountInWizard(page, {
 			server: serverUrl,
 			address: 'initial@example.com',
@@ -265,7 +265,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 		});
 
 		test('Copy exported JSON to clipboard', async ({ page, browserName }, testInfo) => {
-			test.skip(process.env.CI === 'true', 'Clipboard not available in CI');
+			test.skip(process.env['CI'] === 'true', 'Clipboard not available in CI');
 			test.skip(browserName === 'firefox', 'Clipboard permissions not supported in Firefox');
 			test.skip(testInfo.project.name === 'Mobile Safari', 'Clipboard not available in Mobile Safari');
 			await goToAccountManagement(page);
@@ -391,7 +391,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 		// Note: Camera access denied test is skipped as the fake camera setup bypasses permission checks
 
 		test('QR code scanner interface elements', async ({ page, browserName }, testInfo) => {
-			test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+			test.skip(process.env['CI'] === 'true', 'Camera/video not available in CI');
 			test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
 			test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video permissions not available in Mobile Safari');
 
@@ -408,7 +408,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 		});
 
 		test('QR code scanner interface works with fake camera', async ({ page, browserName }, testInfo) => {
-			test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+			test.skip(process.env['CI'] === 'true', 'Camera/video not available in CI');
 			test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
 			test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video permissions not available in Mobile Safari');
 
@@ -429,7 +429,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 		});
 
 		test('Scan and import QR code with valid account data', async ({ page, browserName }, testInfo) => {
-			test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+			test.skip(process.env['CI'] === 'true', 'Camera/video not available in CI');
 			test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
 			test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video permissions not available in Mobile Safari');
 
@@ -472,7 +472,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 		});
 
 		test('Handle invalid QR code data during scan', async ({ page, browserName }, testInfo) => {
-			test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+			test.skip(process.env['CI'] === 'true', 'Camera/video not available in CI');
 			test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
 			test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video permissions not available in Mobile Safari');
 
@@ -502,7 +502,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 		});
 
 		test('Scan again functionality after successful scan', async ({ page, browserName }, testInfo) => {
-			test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+			test.skip(process.env['CI'] === 'true', 'Camera/video not available in CI');
 			test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
 			test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video permissions not available in Mobile Safari');
 

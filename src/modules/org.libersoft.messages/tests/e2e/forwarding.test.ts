@@ -5,7 +5,7 @@ import { startNewConversation, openConversation, sendMessage, verifyForwardWindo
 
 test('Click around in settings', async ({ page }) => {
 	setupConsoleLogging(page);
-	await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
+	await page.goto(process.env['PLAYWRIGHT_CLIENT_URL'] || 'http://localhost:3000/');
 
 	await closeWelcomeWizardWindow(page);
 	await openGlobalSettings(page);
@@ -13,8 +13,8 @@ test('Click around in settings', async ({ page }) => {
 
 test('Message Forwarding Behavior Tests', async ({ page }) => {
 	setupConsoleLogging(page);
-	await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
-	const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || `ws://localhost:8084`;
+	await page.goto(process.env['PLAYWRIGHT_CLIENT_URL'] || 'http://localhost:3000/');
+	const serverUrl = process.env['PLAYWRIGHT_SERVER_URL'] || `ws://localhost:8084`;
 
 	await test.step('Setup Test Accounts', async () => {
 		// Add account in the wizard

@@ -7,7 +7,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 		// Setup console logging (controlled by PLAYWRIGHT_CONSOLE_LOG env var)
 		setupConsoleLogging(page);
 
-		await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
+		await page.goto(process.env['PLAYWRIGHT_CLIENT_URL'] || 'http://localhost:3000/');
 
 		// Wait for the page to be ready
 		await page.waitForLoadState('networkidle');
@@ -423,7 +423,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 
 	test.describe('QR Code Import Tests', () => {
 		test('QR code scanner interface elements', async ({ page, browserName }, testInfo) => {
-			test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+			test.skip(process.env['CI'] === 'true', 'Camera/video not available in CI');
 			test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
 			test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video not available in Mobile Safari');
 			// Grant camera permissions
@@ -439,7 +439,7 @@ test.describe.parallel('Networks Import/Export Functionality', () => {
 		});
 
 		test('Successfully scan and import QR code with valid network data', async ({ page, browserName }, testInfo) => {
-			test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+			test.skip(process.env['CI'] === 'true', 'Camera/video not available in CI');
 			test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
 			test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video not available in Mobile Safari');
 			// Mock QR code data to be "scanned"

@@ -28,7 +28,7 @@ test.describe.parallel('Settings Window Resize Behavior', () => {
 
 	test.beforeEach(async ({ page }) => {
 		setupConsoleLogging(page);
-		await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
+		await page.goto(process.env['PLAYWRIGHT_CLIENT_URL'] || 'http://localhost:3000/');
 		await closeWelcomeWizardWindow(page);
 	});
 
@@ -75,7 +75,7 @@ test.describe.parallel('Settings Window Resize Behavior', () => {
 		const moveX = newX - initialX;
 		const moveY = newY - initialY;
 
-		test.skip(process.env.CI === 'true', 'Skipping resize test on CI due to inconsistent behavior');
+		test.skip(process.env['CI'] === 'true', 'Skipping resize test on CI due to inconsistent behavior');
 
 		// Assert that settings window moved no more than 10px down
 		expect(moveX).toBeGreaterThanOrEqual(0);

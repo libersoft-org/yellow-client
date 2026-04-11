@@ -5,13 +5,13 @@ import { handleErrorWithSentry, sentryHandle } from '@sentry/sveltekit';
 import { sentryServerConfig } from '@/core/scripts/sentry-config.ts';
 
 // Only initialize Sentry if enabled
-const sentryEnabled = /^(true|1|yes|on)$/i.test((process.env.VITE_SENTRY_ENABLED || '').trim());
+const sentryEnabled = /^(true|1|yes|on)$/i.test((process.env['VITE_SENTRY_ENABLED'] || '').trim());
 
 if (sentryEnabled) {
 	Sentry.init({
 		...sentryServerConfig,
 		// uncomment the line below to enable Spotlight (https://spotlightjs.com)
-		// spotlight: import.meta.env.DEV,
+		// spotlight: import.meta.env['DEV'],
 	});
 }
 

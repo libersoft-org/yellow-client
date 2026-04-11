@@ -23,7 +23,7 @@ test.describe.parallel('Wallet Settings - Networks', () => {
 		// Setup console logging (controlled by PLAYWRIGHT_CONSOLE_LOG env var)
 		setupConsoleLogging(page);
 
-		await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
+		await page.goto(process.env['PLAYWRIGHT_CLIENT_URL'] || 'http://localhost:3000/');
 
 		// Wait for the page to be ready
 		await page.waitForLoadState('networkidle');

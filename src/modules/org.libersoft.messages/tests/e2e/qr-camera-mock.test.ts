@@ -30,13 +30,13 @@ async function setupAccountInWizard(
 }
 
 test.describe.parallel('QR Code Camera Mock Tests', () => {
-	const serverUrl = process.env.PLAYWRIGHT_SERVER_URL || 'ws://localhost:8084';
+	const serverUrl = process.env['PLAYWRIGHT_SERVER_URL'] || 'ws://localhost:8084';
 
 	test.beforeEach(async ({ page }) => {
 		// Setup console logging
 		setupConsoleLogging(page);
 
-		await page.goto(process.env.PLAYWRIGHT_CLIENT_URL || 'http://localhost:3000/');
+		await page.goto(process.env['PLAYWRIGHT_CLIENT_URL'] || 'http://localhost:3000/');
 
 		// Setup initial account via wizard
 		await setupAccountInWizard(page, {
@@ -47,7 +47,7 @@ test.describe.parallel('QR Code Camera Mock Tests', () => {
 	});
 
 	test('QR scanner interface with mock camera displays correctly', async ({ page, browserName }, testInfo) => {
-		test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+		test.skip(process.env['CI'] === 'true', 'Camera/video not available in CI');
 		test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
 		test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video not available in Mobile Safari');
 
@@ -159,7 +159,7 @@ test.describe.parallel('QR Code Camera Mock Tests', () => {
 	});
 */
 	test('Switch between JSON and QR tabs maintains state', async ({ page, browserName }, testInfo) => {
-		test.skip(process.env.CI === 'true', 'Camera/video not available in CI');
+		test.skip(process.env['CI'] === 'true', 'Camera/video not available in CI');
 		test.skip(browserName === 'firefox', 'Camera/video permissions not supported in Firefox');
 		test.skip(testInfo.project.name === 'Mobile Safari', 'Camera/video not available in Mobile Safari');
 

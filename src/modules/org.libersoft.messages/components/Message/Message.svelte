@@ -282,7 +282,7 @@
 
 	async function rightClickContextMenu(e) {
 		// for dev purposes: if you want to use native context menu (right mouse click) instead of app's in message list
-		if (import.meta.env.VITE_FORCE_NATIVE_CONTEXT_MENU && (e.ctrlKey || e.metaKey)) {
+		if (import.meta.env['VITE_FORCE_NATIVE_CONTEXT_MENU'] && (e.ctrlKey || e.metaKey)) {
 			return;
 		}
 		e.preventDefault();

@@ -31,13 +31,13 @@ export default defineConfig(({ mode }) => {
 	dotenv.config({ path: '.env.local' });
 
 	// Check if Sentry is enabled
-	const sentryEnabled = /^(true|1|yes|on)$/i.test((process.env.VITE_SENTRY_ENABLED || '').trim());
+	const sentryEnabled = /^(true|1|yes|on)$/i.test((process.env['VITE_SENTRY_ENABLED'] || '').trim());
 
 	return {
 		resolve: {
-			...(process.env.VITEST ? { conditions: ['browser'] } : {}),
+			...(process.env['VITEST'] ? { conditions: ['browser'] } : {}),
 			alias: {
-				'@/bridge/core-bridge': process.env.TAURI_SERVICE === 'true' ? path.resolve(__dirname, './src/modules/org.libersoft.messages/scripts/core-bridge-mobile.ts') : path.resolve(__dirname, './src/modules/org.libersoft.messages/scripts/core-bridge-builtin.ts'),
+				'@/bridge/core-bridge': process.env['TAURI_SERVICE'] === 'true' ? path.resolve(__dirname, './src/modules/org.libersoft.messages/scripts/core-bridge-mobile.ts') : path.resolve(__dirname, './src/modules/org.libersoft.messages/scripts/core-bridge-builtin.ts'),
 			},
 		},
 		css: {
@@ -89,7 +89,7 @@ export default defineConfig(({ mode }) => {
 		},
 		build: {
 			chunkSizeWarningLimit: 6000,
-			minify: process.env.VITE_BUILD_MINIFY !== 'false',
+			minify: process.env['VITE_BUILD_MINIFY'] !== 'false',
 			//sourcemap: false,
 		},
 		optimizeDeps: {
