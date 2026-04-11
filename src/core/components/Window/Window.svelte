@@ -67,7 +67,7 @@
 	let { testId = '', children, top, center, bottom, params, max, resizable = false, optionalIcon, title = '', body, width, height, onShowChange }: Props = $props();
 	let elWindow: HTMLDivElement | null = $state(null);
 	let showContent = $state(false);
-	let WindowBody = $state<Snippet>(body);
+	let WindowBody = $derived(body);
 	let zIndex = $state(100);
 	let windowId: number;
 	let isDragging = false;
@@ -569,7 +569,7 @@
 {#if show}
 	<Portal>
 		{#if $isMobile}
-			<div class="overlay" onpointerdown={close}></div>
+			<div class="overlay" role="none" onpointerdown={close}></div>
 		{/if}
 		<div class="window {$mobileClass}" class:max={maximized} role="none" tabindex="-1" style:width style:height bind:this={elWindow} use:draggable={draggableConfig} style:z-index={zIndex} onmousedown={raiseZIndex} {onkeydown} data-testid={testId ? testId + '-Window' : undefined} onfocusin={onFocusIn} onfocusout={onFocusOut}>
 			{#if showContent}
@@ -578,7 +578,7 @@
 						<div class="title">
 							{#if optionalIcon}
 								<div class="icons">
-									<div onpointerdown={e => e.stopPropagation()}>
+									<div role="none" onpointerdown={e => e.stopPropagation()}>
 										<Icon img={optionalIcon.img} colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt={optionalIcon.alt} onClick={optionalIcon.onClick} size="20px" padding="10px" />
 									</div>
 								</div>
@@ -587,11 +587,11 @@
 						</div>
 						<div class="icons">
 							{#if max}
-								<div onpointerdown={e => e.stopPropagation()}>
+								<div role="none" onpointerdown={e => e.stopPropagation()}>
 									<Icon testId={testId + '-Window-maximize'} img="img/{maximized ? 'normal' : 'max'}.svg" colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt="⛶" size="20px" padding="10px" onClick={() => (maximized ? restore() : maximize())} />
 								</div>
 							{/if}
-							<div onpointerdown={e => e.stopPropagation()}>
+							<div role="none" onpointerdown={e => e.stopPropagation()}>
 								<Icon testId={testId + '-Window-close'} img="img/cross.svg" colorVariable={focused ? '--primary-foreground' : '--disabled-foreground'} alt="X" size="20px" padding="10px" onClick={close} />
 							</div>
 						</div>

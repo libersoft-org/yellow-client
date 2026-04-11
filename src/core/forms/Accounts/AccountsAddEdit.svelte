@@ -28,7 +28,7 @@
 	let credentials_address = $state('');
 	let credentials_server = $state('');
 	let credentials_password = $state('');
-	let config_enabled = $state(isInWelcomeWizard);
+	let config_enabled = $state(untrack(() => isInWelcomeWizard));
 	let config_title = $state('');
 	let retry_nonce = $state(0);
 	type WizardContext = {

@@ -5,8 +5,8 @@
 	}
 	let { isLike = false, onClick }: Props = $props();
 
-	const content = isLike ? '👍' : '👎';
-	const type = isLike ? 'like' : 'nope';
+	const content = $derived(isLike ? '👍' : '👎');
+	const type = $derived(isLike ? 'like' : 'nope');
 </script>
 
 <style>

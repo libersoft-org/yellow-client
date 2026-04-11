@@ -1,7 +1,7 @@
 <script lang="ts">
 	import Emoji from '../Emoji/Emoji.svelte';
 	let { node, level, num_siblings } = $props();
-	let codepoints_str = $state(node.attributes.codepoints?.value);
+	let codepoints_str = $derived(node.attributes.codepoints?.value);
 	let codepoints = $state(null);
 	let is_single = $derived(num_siblings === 1 && level === 0);
 

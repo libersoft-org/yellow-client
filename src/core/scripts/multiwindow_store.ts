@@ -10,7 +10,7 @@ As opposed to tauri events, this handles situations where the reading window is 
 export async function multiwindow_store(id: string, reset = true, autosave = false): Promise<Store> {
 	if (!stores.has(id)) {
 		//log.debug('store: loading store:', id);
-		let _store = await Store.load(id, { autoSave: autosave });
+		let _store = await Store.load(id, { autoSave: autosave, defaults: {} });
 		//log.debug('_store:', _store, 'reset:', reset);
 		if (reset) {
 			//log.debug('_store entries:', await _store.entri0es());

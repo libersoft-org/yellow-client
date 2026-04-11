@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import { product } from '@/core/scripts/stores.ts';
 	import QRCode from 'qrcode';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';
@@ -15,7 +15,7 @@
 	let qrCodeData = $state('');
 	let dummyQrCodeData = $state('');
 	let qrError = $state<string | null>(null);
-	let isRevealed = $state(!isSensitive);
+	let isRevealed = $state(untrack(() => !isSensitive));
 	let copyText = $state('Copy to clipboard');
 	let timeoutId;
 	let hiddenText = $state('[HIDDEN - Click reveal to show sensitive data][HIDDEN - Click reveal to show sensitive data][HIDDEN - Click reveal to show sensitive data]');
@@ -23,14 +23,9 @@
 	$effect(() => {
 		if (data) {
 			// Pokud je data string, použij ho přímo, jinak JSON.stringify
-			if (typeof data === 'string') {
-				jsonEditorContents = data;
-			} else {
-				jsonEditorContents = JSON.stringify(data, null, 2);
-			}
-			if (enableQrTab) {
-				generateQRCode();
-			}
+			if (typeof data === 'string') jsonEditorContents = data;
+			else jsonEditorContents = JSON.stringify(data, null, 2);
+			if (enableQrTab) generateQRCode();
 		}
 	});
 
@@ -45,9 +40,7 @@
 	});
 
 	onMount(() => {
-		if (enableQrTab) {
-			generateDummyQRCode();
-		}
+		if (enableQrTab) generateDummyQRCode();
 	});
 
 	function generateDummyQRCode() {

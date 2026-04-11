@@ -167,7 +167,7 @@ class MediaService {
 			const { chunk } = await this._getFileChunk({ offsetBytes: offsetToFetch, chunkSize });
 			chunks.push(chunk.data);
 		}
-		return new Blob(chunks, { type: fileMime });
+		return new Blob(chunks as BlobPart[], { type: fileMime });
 	}
 
 	shouldStream() {

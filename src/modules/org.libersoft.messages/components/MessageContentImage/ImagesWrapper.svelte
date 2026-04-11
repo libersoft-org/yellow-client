@@ -1,6 +1,6 @@
 <script lang="ts">
 	let { children, node } = $props();
-	const childrenLength = node?.childNodes.length || 0;
+	const childrenLength = $derived(node?.childNodes.length || 0);
 	let rowSize = 4;
 	let rowLimit = 2;
 	let hiddenImages: any[] = [];

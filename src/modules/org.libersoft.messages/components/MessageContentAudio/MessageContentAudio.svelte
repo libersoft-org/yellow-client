@@ -5,7 +5,7 @@
 	import { FileUploadRecordStatus, type IFileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
 	import { writable, get } from 'svelte/store';
 	let { node } = $props();
-	let file = node.attributes.file?.value;
+	let file = $derived(node.attributes.file?.value);
 	const YELLOW_SRC_PROTOCOL = 'yellow:';
 	// check str if begins with yellow
 	let isYellow = $derived(file && file.startsWith(YELLOW_SRC_PROTOCOL)); // TODO: check deep prop reactivity (in case of message edit)

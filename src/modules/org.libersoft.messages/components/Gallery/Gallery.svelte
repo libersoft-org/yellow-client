@@ -152,7 +152,7 @@
 </style>
 
 {#if $gallery.show}
-	<div class="gallery" onpointerdown={onAnywhereClick}>
+	<div class="gallery" role="dialog" tabindex="-1" onpointerdown={onAnywhereClick}>
 		<div class="top-left">
 			<Button img="img/download.svg" onClick={download} />
 		</div>

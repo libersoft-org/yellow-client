@@ -11,7 +11,7 @@
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
 	let { node, showHiddenImages, hiddenImages, siblings } = $props();
-	let file = node.attributes.file?.value;
+	let file = $derived(node.attributes.file?.value);
 	const YELLOW_SRC_PROTOCOL = 'yellow:';
 	// check str if begins with yellow
 	let isYellow = $derived(file && file.startsWith(YELLOW_SRC_PROTOCOL)); // TODO: check deep prop reactivity (in case of message edit)
