@@ -1,19 +1,7 @@
 import { TableDragManager, type DragConfig } from '@/core/scripts/drag.ts';
 
 export interface TableDragOptions {
-	/** Numbe		update(newOptions: TableDragOptions) {
-			console.log('tableDrag: Update called', {
-				oldLength: currentItemsLength,
-				newLength: newOptions.items?.length,
-			});
-
-			// Always reinitialize to ensure clean state
-			options = newOptions;
-			init();
-			
-			// Update drag handle states after initialization
-			updateDragHandleStates();
-		},s in the table for colspan (auto-detected if not provided) */
+	/** Number of columns in the table for colspan (auto-detected if not provided) */
 	columnCount?: number;
 	/** Callback when reordering is needed */
 	onReorder: (sourceIndex: number, targetIndex: number) => void;
