@@ -12,6 +12,7 @@
 	import { provider } from 'libersoft-crypto/provider';
 	import { getBalance, formatBalance, type IBalance } from 'libersoft-crypto/balance';
 	import { getTokenBalanceByAddress } from 'libersoft-crypto/tokens';
+	import { getTokenDecimals } from 'libersoft-crypto/tokens';
 	import { formatUnits, parseUnits } from 'ethers';
 	import Table from '@/core/components/Table/Table.svelte';
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
@@ -261,7 +262,7 @@
 		}
 	}
 
-	function handleQRScanned(data: string) {
+	async function handleQRScanned(data: string) {
 		const parsed = parseQRData(data);
 
 		if (parsed.error) {
@@ -278,6 +279,17 @@
 
 		if (parsed.amount) {
 			amount = parsed.amount;
+		}
+
+		// Convert raw token amount using actual token decimals
+		if (parsed.rawAmount && parsed.contractAddress) {
+			try {
+				const decimals = await getTokenDecimals(parsed.contractAddress);
+				amount = formatUnits(parsed.rawAmount, decimals);
+			} catch (e) {
+				console.error('Failed to get token decimals, using raw amount:', e);
+				qrError = 'Could not determine token decimals. Amount may be incorrect.';
+			}
 		}
 
 		// Handle currency selection from QR data

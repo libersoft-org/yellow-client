@@ -4,6 +4,7 @@ import type { ICurrency } from 'libersoft-crypto/network';
 export interface ParsedQRData {
 	address?: string | undefined;
 	amount?: string | undefined;
+	rawAmount?: string | undefined;
 	currency?: ICurrency | undefined;
 	contractAddress?: string | undefined;
 	chainID?: number | undefined;
@@ -55,14 +56,9 @@ export function parseQRData(data: string): ParsedQRData {
 
 			if (!address) return { error: 'Missing address in token payment' };
 
-			let amount: string | undefined;
-			if (uint256) {
-				// Convert from wei using token decimals (default 18 if not found)
-				const decimals = 18; // We could look this up, but 18 is common default
-				amount = formatUnits(uint256, decimals);
-			}
-
-			return { address, amount, contractAddress: target, chainID: parsedChainID };
+			// Don't convert token amount - decimals are unknown here (could be 6, 8, 18, etc.)
+			// Return rawAmount and let the caller convert using actual token decimals
+			return { address, rawAmount: uint256 || undefined, contractAddress: target, chainID: parsedChainID };
 		} else if (remaining.startsWith('?')) {
 			// Native currency format
 			const params = new URLSearchParams(remaining);
