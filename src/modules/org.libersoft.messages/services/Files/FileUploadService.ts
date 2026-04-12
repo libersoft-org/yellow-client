@@ -88,6 +88,7 @@ export class FileUploadService extends EventEmitter {
 				if (upload.record.status === FileUploadRecordStatus.CANCELED || upload.record.status === FileUploadRecordStatus.ERROR) {
 					setRunning(false);
 					upload.pushChunk = undefined;
+					this.p2pThrottleMemory.delete(record.id);
 					return;
 				}
 				if (upload.record.status === FileUploadRecordStatus.PAUSED) {
@@ -97,6 +98,7 @@ export class FileUploadService extends EventEmitter {
 				if (chunksSent.length === Math.ceil(record.fileSize / chunkSize)) {
 					upload.record.status = FileUploadRecordStatus.FINISHED;
 					this.uploadsStore.set(record.id, upload);
+					this.p2pThrottleMemory.delete(record.id);
 					setRunning(false);
 					setTimeout(() => this.startNextUpload(upload));
 					return;
