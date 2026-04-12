@@ -70,10 +70,9 @@ export class FileDownloadService extends EventEmitter {
 					if (totalReceived * chunkSize >= record.fileSize) {
 						setRunning(false);
 						finishCallback && finishCallback(download);
+						download.chunksReceived = [];
 						setTimeout(() => this.startNextDownload(download));
 						this.downloadStore.delete(record.id);
-						// Clean up memory
-						// download.chunksReceived = [];
 					} else {
 						download.pullChunk && (await download.pullChunk());
 					}
