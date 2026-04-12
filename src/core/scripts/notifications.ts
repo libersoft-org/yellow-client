@@ -51,12 +51,16 @@ export let exampleNotifications: Writable<Array<string>> = writable([]);
 
 const updateExampleNotificationMutex = new Mutex();
 
-export async function deleteExampleNotifications() {
+async function deleteExampleNotificationsInternal(): Promise<void> {
 	let v = get(exampleNotifications);
 	for (let i of v) {
 		await deleteNotification(i);
 	}
 	exampleNotifications.set([]);
+}
+
+export async function deleteExampleNotifications(): Promise<void> {
+	return updateExampleNotificationMutex.runExclusive(() => deleteExampleNotificationsInternal());
 }
 
 export async function updateExampleNotification() {
@@ -80,7 +84,7 @@ export async function updateExampleNotification() {
 				exampleNotifications.update(n => [...n, x]);
 			}
 		} else {
-			await deleteExampleNotifications();
+			await deleteExampleNotificationsInternal();
 		}
 	});
 }
