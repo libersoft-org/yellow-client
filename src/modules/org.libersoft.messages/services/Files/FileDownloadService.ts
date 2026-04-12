@@ -20,12 +20,10 @@ export class FileDownloadService extends EventEmitter {
 	) {
 		for (const record of records) {
 			let download: IFileDownload | undefined = this.downloadStore.get(record.id);
-
 			if (!download) {
 				download = makeFileDownload({ record });
 				this.downloadStore.set(record.id, download);
 			}
-
 			download.pullChunk = async () => {
 				const retry = () => {
 					setTimeout(() => {
@@ -36,7 +34,6 @@ export class FileDownloadService extends EventEmitter {
 					download.running = running;
 					this.downloadStore.set(record.id, download);
 				};
-
 				if (download.canceledLocally) {
 					this.downloadStore.delete(record.id);
 					return;
@@ -56,22 +53,21 @@ export class FileDownloadService extends EventEmitter {
 					// TODO: clear memory
 					return;
 				}
-
 				try {
 					setRunning(true);
 					const chunkSize = record.chunkSize;
+					const receivedCount = download.chunksReceived.filter(c => c !== undefined).length;
 					const { chunk } = await pullChunkFn({
 						uploadId: record.id,
-						offsetBytes: download.chunksReceived.length * chunkSize,
+						offsetBytes: receivedCount * chunkSize,
 						chunkSize: record.chunkSize,
 					});
-
 					// Decode Base64 chunk back to binary
 					download.chunksReceived[chunk.chunkId] = chunk.data; // Store chunk in the correct order
 					this.downloadStore.set(record.id, download);
-
+					const totalReceived = download.chunksReceived.filter(c => c !== undefined).length;
 					// Check if all chunks have been received
-					if (download.chunksReceived.length * chunkSize >= record.fileSize) {
+					if (totalReceived * chunkSize >= record.fileSize) {
 						setRunning(false);
 						finishCallback && finishCallback(download);
 						setTimeout(() => this.startNextDownload(download));
