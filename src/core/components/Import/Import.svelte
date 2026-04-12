@@ -53,6 +53,9 @@
 			reader.onload = e => {
 				text = (e.target?.result as string) || '';
 			};
+			reader.onerror = () => {
+				handleError('Failed to read file');
+			};
 			reader.readAsText(file);
 		}
 	}
