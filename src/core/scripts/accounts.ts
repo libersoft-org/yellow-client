@@ -323,7 +323,7 @@ function reconnectAccount(account: AccountStore) {
 			}
 			log.debug('WebSocket ' + socket_id + ' error:', event);
 			retry(account, 'Connection error');
-			acc.error = 'Network error: ' + (event as any).message;
+			acc.error = event instanceof ErrorEvent && event.message ? 'Network error: ' + event.message : 'Network error';
 			acc.session_status = undefined;
 			account.update(v => v);
 		};
