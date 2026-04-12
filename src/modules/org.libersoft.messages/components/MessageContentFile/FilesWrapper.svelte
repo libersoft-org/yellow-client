@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
-	import { downloadAttachmentsSerial } from '@/org.libersoft.messages/scripts/messages.js';
+	import { downloadAttachmentsSerial } from '@/org.libersoft.messages/scripts/messages.ts';
 	import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole, type IFileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';

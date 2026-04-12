@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { get } from 'svelte/store';
 	import { active_account } from '@/core/scripts/core.ts';
-	import { jumpToMessage } from '@/org.libersoft.messages/scripts/messages.js';
+	import { jumpToMessage } from '@/org.libersoft.messages/scripts/messages.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	interface Props {
 		address?: string;
@@ -10,9 +10,9 @@
 	}
 	let { address, text, uid }: Props = $props();
 
-	function clickReply() {
+	function clickReply(): void {
 		let acc = get(active_account);
-		jumpToMessage(acc, address, uid);
+		if (address && uid) jumpToMessage(acc, address, uid);
 	}
 </script>
 

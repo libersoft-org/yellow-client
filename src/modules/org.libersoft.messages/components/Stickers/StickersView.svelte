@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { liveQuery } from 'dexie';
 	import { isMobile } from '@/core/scripts/stores.ts';
-	import { sticker_server, updateStickerLibrary } from '@/org.libersoft.messages/scripts/stickers.js';
+	import { sticker_server, updateStickerLibrary } from '@/org.libersoft.messages/scripts/stickers.ts';
 	import { stickers_db } from '@/org.libersoft.messages/scripts/db.ts';
 	import FuzzySearch from 'fuzzy-search';
 	import { get } from 'svelte/store';

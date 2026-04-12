@@ -1,4 +1,9 @@
-export function splitAndLinkify(text) {
+interface SplitResult {
+	type: 'plain' | 'processed';
+	value: string;
+}
+
+export function splitAndLinkify(text: string): SplitResult[] {
 	let pattern = [
 		"(https?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+" + "(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?" + '(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+' + '(?:\\.[a-zA-Z]{2,})?' + '(?::\\d+)?' + '(?:\\/[^"\\s]*)?)', // <-- exclude " from URL path
 		"(ftps?:\\/\\/(?:[a-zA-Z0-9-._~%!$&'()*+,;=]+" + "(?::[a-zA-Z0-9-._~%!$&'()*+,;=]*)?@)?" + '(?:[a-zA-Z0-9-]+\\.)*[a-zA-Z0-9-]+' + '(?:\\.[a-zA-Z]{2,})?' + '(?::\\d+)?' + '(?:\\/[^"\\s]*)?)', // <-- exclude " from URL path
@@ -9,7 +14,7 @@ export function splitAndLinkify(text) {
 	].join('|');
 	//console.log('splitAndLinkify pattern:', pattern);
 	const combinedPattern = new RegExp(pattern, 'g');
-	const result = [];
+	const result: SplitResult[] = [];
 	let lastIndex = 0;
 	// matchAll returns an iterator of match objects
 	for (const match of text.matchAll(combinedPattern)) {

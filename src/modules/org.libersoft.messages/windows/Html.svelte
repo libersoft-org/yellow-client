@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { getContext } from 'svelte';
-	import { identifier } from '@/org.libersoft.messages/scripts/messages.js';
+	import { identifier } from '@/org.libersoft.messages/scripts/messages.ts';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import HtmlSideBySide from '@/org.libersoft.messages/components/HtmlEditor/HtmlSideBySide.svelte';

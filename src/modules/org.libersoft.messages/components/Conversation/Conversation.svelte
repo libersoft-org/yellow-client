@@ -1,7 +1,7 @@
 <script>
 	import { setContext, tick } from 'svelte';
 	import { get, writable } from 'svelte/store';
-	import { selectedConversation, closeConversation } from '@/org.libersoft.messages/scripts/messages.js';
+	import { selectedConversation, closeConversation } from '@/org.libersoft.messages/scripts/messages.ts';
 	import Content from '@/core/components/Content/Content.svelte';
 	import ProfileBar from '@/org.libersoft.messages/components/ProfileBar/ProfileBar.svelte';
 	import MessagesList from '@/org.libersoft.messages/components/MessagesList/MessagesList.svelte';

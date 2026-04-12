@@ -4,7 +4,7 @@
 	import lottie from 'lottie-web';
 	import pako from 'pako';
 	import { debug } from '@/core/scripts/stores.ts';
-	import { identifier } from '@/org.libersoft.messages/scripts/messages.js';
+	import { identifier } from '@/org.libersoft.messages/scripts/messages.ts';
 	import { expressions_renderer, animate_all_expressions } from '@/org.libersoft.messages/scripts/expressions.svelte.ts';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	export let file = '';

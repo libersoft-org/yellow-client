@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { get } from 'svelte/store';
-	import { identifier, initUpload, selectedConversation } from '@/org.libersoft.messages/scripts/messages.js';
+	import { identifier, initUpload, selectedConversation } from '@/org.libersoft.messages/scripts/messages.ts';
 	import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 	import resize from '@/core/actions/resizeObserver.ts';
 	import audioRecorderStore from '@/org.libersoft.messages/stores/AudioRecorderStore.ts';

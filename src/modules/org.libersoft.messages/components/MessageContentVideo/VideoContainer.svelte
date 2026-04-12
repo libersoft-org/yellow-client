@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { get } from 'svelte/store';
-	import { loadUploadData, makeDownloadChunkAsyncFn, downloadAttachmentsSerial } from '@/org.libersoft.messages/scripts/messages.js';
+	import { loadUploadData, makeDownloadChunkAsyncFn, downloadAttachmentsSerial } from '@/org.libersoft.messages/scripts/messages.ts';
 	import { active_account } from '@/core/scripts/core.ts';
 	import { assembleFile, base64ToUint8Array } from '@/org.libersoft.messages/services/Files/utils.ts';
 	import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';

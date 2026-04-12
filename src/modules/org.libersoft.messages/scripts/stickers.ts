@@ -2,24 +2,21 @@ import { writable, get } from 'svelte/store';
 import { stickers_db } from '@/org.libersoft.messages/scripts/db.ts';
 import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
 
-/** @type {any} */
-const _window = window;
+const _window = window as any;
 
 // TODO: this is an extra state that safeguards against triggering the update after a HMR
 _window.stickerLibraryUpdaterState = { updating: false };
 import.meta.hot?.dispose(() => (_window.stickerLibraryUpdaterState.canceled = true));
 
-export let stickerLibraryUpdaterState = writable(
-	/** @type {{ updating: boolean, status: string, progress: number, error: boolean | null, updated_once: boolean, canceled: boolean }} */ ({
-		updating: false,
-		status: '',
-		progress: 0,
-		error: null,
-		updated_once: false,
-		canceled: false,
-	})
-);
-export let stickerset_favorites = localStorageSharedStore('stickerset_favorites', /** @type {any[]} */ ([]));
+export let stickerLibraryUpdaterState = writable<{ updating: boolean; status: string; progress: number; error: boolean | null; updated_once: boolean; canceled: boolean }>({
+	updating: false,
+	status: '',
+	progress: 0,
+	error: null,
+	updated_once: false,
+	canceled: false,
+});
+export let stickerset_favorites = localStorageSharedStore<any[]>('stickerset_favorites', []);
 
 stickerLibraryUpdaterState.subscribe(state => {
 	//console.log('stickerLibraryUpdaterState:', state);
@@ -28,9 +25,9 @@ stickerLibraryUpdaterState.subscribe(state => {
 export const defaultStickerServers = ['https://stickers.libersoft.org'];
 export let sticker_servers = localStorageSharedStore('sticker_servers', defaultStickerServers);
 export let sticker_server_index = localStorageSharedStore('sticker_server_index', 0);
-export let sticker_server = localStorageSharedStore('sticker_server', /** @type {string|undefined} */ (undefined));
+export let sticker_server = localStorageSharedStore<string | undefined>('sticker_server', undefined);
 
-function update_sticker_server() {
+function update_sticker_server(): void {
 	let servers = get(sticker_servers);
 	let index = get(sticker_server_index);
 	if (get(sticker_server) !== servers[index]) sticker_server.set(servers[index]);
@@ -43,11 +40,11 @@ sticker_server.subscribe(() => {
 	//stickerLibraryUpdaterState.update(state => ({ ...state, updated_once: false }));
 });
 
-function sanitizeStickerServerUrl(url) {
+function sanitizeStickerServerUrl(url: string): string {
 	return url.endsWith('/') ? url.slice(0, -1) : url;
 }
 
-export async function fetchStickerset(stickerServer, id = 0) {
+export async function fetchStickerset(stickerServer: string, id: number | string = 0): Promise<any> {
 	// This is a simple fetch of a single sticker set. There is some overlap with updateStickerLibrary, but it's not worth refactoring now
 	id = Number(id);
 	let response = await fetch(sanitizeStickerServerUrl(stickerServer) + '/api/sets?id=' + id);
@@ -59,11 +56,11 @@ export async function fetchStickerset(stickerServer, id = 0) {
 	return stickerset;
 }
 
-function setUpdatingFalse() {
+function setUpdatingFalse(): void {
 	stickerLibraryUpdaterState.update(state => ({ ...state, updating: false }));
 }
 
-function check_sticker_server_url(stickerServer) {
+function check_sticker_server_url(stickerServer: string | undefined): boolean {
 	if (!stickerServer || stickerServer === '') {
 		stickerLibraryUpdaterState.update(state => ({ ...state, status: 'No sticker server URL set', error: true }));
 		return false;
@@ -79,7 +76,7 @@ function check_sticker_server_url(stickerServer) {
 	return true;
 }
 
-export async function updateStickerLibrary() {
+export async function updateStickerLibrary(): Promise<void> {
 	console.log('updateStickerLibrary	called');
 	if (_window.stickerLibraryUpdaterState?.updating) {
 		console.log('Sticker library update already in progress');
@@ -103,7 +100,7 @@ export async function updateStickerLibrary() {
 		setUpdatingFalse();
 		return;
 	}
-	let stickerServer2 = sanitizeStickerServerUrl(stickerServer);
+	let stickerServer2 = sanitizeStickerServerUrl(stickerServer as string);
 	stickerLibraryUpdaterState.update(state => ({
 		...state,
 		status: 'Downloading sticker sets from ' + stickerServer + ' ...',
@@ -138,7 +135,7 @@ export async function updateStickerLibrary() {
 		}));
 		await stickers_db.stickersets
 			.where('server')
-			.equals(/** @type {string} */ (stickerServer))
+			.equals(stickerServer as string)
 			.delete();
 		console.log('Delete old stickers...');
 		stickerLibraryUpdaterState.update(state => ({
@@ -148,14 +145,14 @@ export async function updateStickerLibrary() {
 		}));
 		await stickers_db.stickers
 			.where('server')
-			.equals(/** @type {string} */ (stickerServer))
+			.equals(stickerServer as string)
 			.delete();
 	});
 	console.log('Done clearing old stickers from database.');
 	console.log('Removed db.stickersets:', await stickers_db.stickersets.toArray());
 	console.log('Removed db.stickers:', await stickers_db.stickers.toArray());
-	let stickersets_batch = [];
-	let stickers_batch = [];
+	let stickersets_batch: any[] = [];
+	let stickers_batch: any[] = [];
 	for (let i = 0; i < sets.length; i++) {
 		let stickerset = sets[i];
 		let stickers = stickerset.items;
@@ -204,7 +201,7 @@ export async function updateStickerLibrary() {
 	}));
 }
 
-export function add_stickerset_to_favorites(stickerset) {
+export function add_stickerset_to_favorites(stickerset: any): void {
 	console.log('Add to favorites:', stickerset);
 	let key = stickerset.url;
 	let favorites = get(stickerset_favorites);
@@ -214,7 +211,7 @@ export function add_stickerset_to_favorites(stickerset) {
 	}
 }
 
-export function remove_stickerset_from_favorites(stickerset) {
+export function remove_stickerset_from_favorites(stickerset: any): void {
 	console.log('Remove from favorites:', stickerset);
 	let key = stickerset.url;
 	let favorites = get(stickerset_favorites);
@@ -225,7 +222,7 @@ export function remove_stickerset_from_favorites(stickerset) {
 	}
 }
 
-export function stickerset_in_favorites(stickerset) {
+export function stickerset_in_favorites(stickerset: any): boolean {
 	let key = stickerset.url;
 	let favorites = get(stickerset_favorites);
 	return favorites.indexOf(key) !== -1;

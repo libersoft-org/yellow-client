@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { sticker_servers, defaultStickerServers } from '@/org.libersoft.messages/scripts/stickers.js';
+	import { sticker_servers, defaultStickerServers } from '@/org.libersoft.messages/scripts/stickers.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	let elDialog;
 	let dialogData = $derived({

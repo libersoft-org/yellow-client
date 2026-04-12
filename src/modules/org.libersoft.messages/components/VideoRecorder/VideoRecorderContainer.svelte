@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onDestroy, onMount } from 'svelte';
 	import { get } from 'svelte/store';
-	import { initUpload, selectedConversation } from '@/org.libersoft.messages/scripts/messages.js';
+	import { initUpload, selectedConversation } from '@/org.libersoft.messages/scripts/messages.ts';
 	import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
 	import 'videojs-record/dist/css/videojs.record.css';

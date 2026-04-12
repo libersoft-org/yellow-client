@@ -1,15 +1,15 @@
 <script lang="ts">
 	import { debug } from '@/core/scripts/stores.ts';
 	import { onMount } from 'svelte';
-	import { fetchStickerset } from '@/org.libersoft.messages/scripts/stickers.js';
+	import { fetchStickerset } from '@/org.libersoft.messages/scripts/stickers.ts';
 	import StickerSet from '@/org.libersoft.messages/components/Stickers/StickerSet.svelte';
 	interface Props {
 		params: any;
 	}
 	let { params }: Props = $props();
-	let stickerSetData = $state();
-	let stickerServer = $state();
-	let id = $state();
+	let stickerSetData = $state<any>();
+	let stickerServer: string = $state('');
+	let id: string | null = $state(null);
 
 	onMount(async () => {
 		const parsedUrl = new URL(params.stickersetDetailsWindowStickerset);

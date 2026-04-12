@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { sticker_servers } from '@/org.libersoft.messages/scripts/stickers.js';
+	import { sticker_servers } from '@/org.libersoft.messages/scripts/stickers.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		server?: string | undefined;

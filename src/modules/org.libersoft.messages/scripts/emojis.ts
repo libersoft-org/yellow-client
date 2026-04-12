@@ -1,49 +1,47 @@
 import { get } from 'svelte/store';
-import { cp } from '@/org.libersoft.messages/scripts/emojis_parse_data.js';
+import { cp } from '@/org.libersoft.messages/scripts/emojis_parse_data.ts';
 import { identifier } from '@/org.libersoft.messages/scripts/connection.ts';
 
-export function start_emojisets_fetch(acc, emojisLoading, emojiGroups, emojisByCodepointsRgi) {
+export function start_emojisets_fetch(acc: any, emojisLoading: any, emojiGroups: any, emojisByCodepointsRgi: any): void {
 	//console.log('start_emojisets_fetch');
 	if (get(emojisLoading)) {
 		console.log('emojis are already loading');
 		return;
 	}
 	emojisLoading.set(true);
-	/** @type {Promise<void>} */ (
-		new Promise(async (resolve, reject) => {
-			const res = await fetch('modules/' + identifier + '/json/emoji_16_0_ordering.min.json');
-			if (!res.ok) {
-				console.error('Failed to fetch emoji groups:', res);
-				acc.error('Failed to fetch emoji groups');
-				return reject(new Error('Failed to fetch emoji groups'));
+	new Promise<void>(async (resolve, reject) => {
+		const res = await fetch('modules/' + identifier + '/json/emoji_16_0_ordering.min.json');
+		if (!res.ok) {
+			console.error('Failed to fetch emoji groups:', res);
+			acc.error('Failed to fetch emoji groups');
+			return reject(new Error('Failed to fetch emoji groups'));
+		}
+
+		let groups;
+		try {
+			groups = await res.json();
+		} catch (error) {
+			console.error('Failed to parse emoji groups:', error);
+			acc.error('Failed to parse emoji groups');
+			return reject(error);
+		}
+
+		let by_codepoints = {};
+		for (let group of groups) {
+			for (let emoji of group.emoji) {
+				const codepoints_rgi = rgi(emoji.base);
+				emoji.codepoints_rgi = codepoints_rgi;
+				by_codepoints[codepoints_rgi] = emoji;
 			}
+		}
 
-			let groups;
-			try {
-				groups = await res.json();
-			} catch (error) {
-				console.error('Failed to parse emoji groups:', error);
-				acc.error('Failed to parse emoji groups');
-				return reject(error);
-			}
+		//console.log('emojis by codepoints:', by_codepoints);
+		emojisByCodepointsRgi.set(by_codepoints);
+		//console.log('emoji groups:', groups);
+		emojiGroups.set(groups);
 
-			let by_codepoints = {};
-			for (let group of groups) {
-				for (let emoji of group.emoji) {
-					const codepoints_rgi = rgi(emoji.base);
-					emoji.codepoints_rgi = codepoints_rgi;
-					by_codepoints[codepoints_rgi] = emoji;
-				}
-			}
-
-			//console.log('emojis by codepoints:', by_codepoints);
-			emojisByCodepointsRgi.set(by_codepoints);
-			//console.log('emoji groups:', groups);
-			emojiGroups.set(groups);
-
-			resolve();
-		})
-	)
+		resolve();
+	})
 		.then(() => {
 			emojisLoading.set(false);
 			//console.log('emojis loaded');
@@ -54,15 +52,15 @@ export function start_emojisets_fetch(acc, emojisLoading, emojiGroups, emojisByC
 		});
 }
 
-export function emoji_render(codepoints) {
+export function emoji_render(codepoints: number[]): string {
 	return codepoints.map(codepoint => String.fromCodePoint(codepoint)).join('');
 }
 
-export function rgi(codepoints) {
+export function rgi(codepoints: number[]): string {
 	return codepoints.map(codepoint => codepoint.toString(16).padStart(4, '0')).join('_');
 }
 
-export function rgi_to_codepoints(rgi) {
+export function rgi_to_codepoints(rgi: string): number[] {
 	return rgi.split('_').map(codepoint => parseInt(codepoint, 16));
 }
 
@@ -90,7 +88,7 @@ function emoji_cluster_to_array(cluster) {
 }
 */
 
-export async function init_emojis() {
+export async function init_emojis(): Promise<void> {
 	/*
  await new Promise(resolve => setTimeout(resolve, 10000));
  cpp = [];

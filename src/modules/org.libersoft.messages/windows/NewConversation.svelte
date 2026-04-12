@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { tick } from 'svelte';
-	import { openNewConversation, identifier } from '@/org.libersoft.messages/scripts/messages.js';
+	import { openNewConversation, identifier } from '@/org.libersoft.messages/scripts/messages.ts';
 	import Window from '@/core/components/Window/Window.svelte';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Input from '@/core/components/Input/Input.svelte';

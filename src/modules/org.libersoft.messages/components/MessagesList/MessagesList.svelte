@@ -10,7 +10,7 @@
 	 */
 	import { afterUpdate, beforeUpdate, getContext, onMount, setContext, tick } from 'svelte';
 	import { get } from 'svelte/store';
-	import { online, messagesArray, events, insertEvent, identifier, messagesIsInitialLoading, messageListMaxWidth, messageListApplyMaxWidth } from '@/org.libersoft.messages/scripts/messages.js';
+	import { online, messagesArray, events, insertEvent, identifier, messagesIsInitialLoading, messageListMaxWidth, messageListApplyMaxWidth } from '@/org.libersoft.messages/scripts/messages.ts';
 	import { getGuid } from '@/core/scripts/core.ts';
 	import { debug, keyboardHeight } from '@/core/scripts/stores.ts';
 	import { highlightElement } from '@/core/scripts/utils/animationUtils.ts';

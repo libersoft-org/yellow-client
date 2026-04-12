@@ -1,8 +1,8 @@
 <script>
 	import { debug } from '@/core/scripts/stores.ts';
-	import { rgi, emoji_render } from '@/org.libersoft.messages/scripts/emojis.js';
+	import { rgi, emoji_render } from '@/org.libersoft.messages/scripts/emojis.ts';
 	import { expressions_renderer, animate_all_expressions } from '@/org.libersoft.messages/scripts/expressions.svelte.ts';
-	import { emojisByCodepointsRgi } from '@/org.libersoft.messages/scripts/messages.js';
+	import { emojisByCodepointsRgi } from '@/org.libersoft.messages/scripts/messages.ts';
 	import Sticker from '@/org.libersoft.messages/components/Stickers/Sticker.svelte';
 	export let codepoints;
 	export let size = 40;

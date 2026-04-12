@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { gif_servers } from '@/org.libersoft.messages/scripts/gifs.js';
+	import { gif_servers } from '@/org.libersoft.messages/scripts/gifs.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	interface Props {
 		server?: string | undefined;

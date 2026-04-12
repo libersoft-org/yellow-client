@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { identifier } from '@/org.libersoft.messages/scripts/messages.js';
+	import { identifier } from '@/org.libersoft.messages/scripts/messages.ts';
 	import Emojis from '@/org.libersoft.messages/components/Emoji/Emojis.svelte';
 	import Stickers from '@/org.libersoft.messages/components/Stickers/Stickers.svelte';
 	import GifSet from '@/org.libersoft.messages/components/GifSet/GifSet.svelte';

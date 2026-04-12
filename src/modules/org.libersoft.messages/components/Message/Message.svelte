@@ -1,5 +1,5 @@
 <script>
-	import { deleteMessage, identifier, processMessage, setMessageSeen, toggleMessageReaction } from '@/org.libersoft.messages/scripts/messages.js';
+	import { deleteMessage, identifier, processMessage, setMessageSeen, toggleMessageReaction } from '@/org.libersoft.messages/scripts/messages.ts';
 	import { onDestroy, onMount, tick } from 'svelte';
 	import { isClientFocused, debug } from '@/core/scripts/stores.ts';
 	import { stripHtml } from '@/org.libersoft.messages/scripts/utils/htmlUtils.ts';

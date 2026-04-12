@@ -1,5 +1,5 @@
 <script>
-	import { identifier, conversationsArray, selectConversation, elWindowNewConversation } from '@/org.libersoft.messages/scripts/messages.js';
+	import { identifier, conversationsArray, selectConversation, elWindowNewConversation } from '@/org.libersoft.messages/scripts/messages.ts';
 	import ScrollButton from '@/org.libersoft.messages/components/ScrollButton/ScrollButton.svelte';
 	import ConversationListItem from '@/org.libersoft.messages/components/Conversation/ConversationListItem.svelte';
 	import WindowNewConversation from '@/org.libersoft.messages/windows/NewConversation.svelte';

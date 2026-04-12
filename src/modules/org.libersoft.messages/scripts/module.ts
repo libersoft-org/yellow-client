@@ -1,5 +1,5 @@
 import { registerModule } from '@/core/scripts/core.ts';
-import { identifier, init, initData, initComms, deinitComms, deinitData, onModuleSelected } from '@/org.libersoft.messages/scripts/messages.js';
+import { identifier, init, initData, initComms, deinitComms, deinitData, onModuleSelected } from '@/org.libersoft.messages/scripts/messages.ts';
 import Sidebar from '@/org.libersoft.messages/pages/Main/Sidebar.svelte';
 import Content from '@/org.libersoft.messages/pages/Main/Content.svelte';
 export const module = {

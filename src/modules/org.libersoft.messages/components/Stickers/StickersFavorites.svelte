@@ -1,6 +1,6 @@
 <script lang="ts">
 	import StickersView from './StickersView.svelte';
-	import { stickerset_favorites } from '@/org.libersoft.messages/scripts/stickers.js';
+	import { stickerset_favorites } from '@/org.libersoft.messages/scripts/stickers.ts';
 	let view;
 
 	export function onShow() {

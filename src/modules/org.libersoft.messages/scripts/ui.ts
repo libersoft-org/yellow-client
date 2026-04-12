@@ -1,12 +1,12 @@
-export function longpress(node, threshold = 300) {
-	const handle_mousedown = e => {
+export function longpress(node: HTMLElement, threshold: number = 300): { destroy(): void } {
+	const handle_mousedown = (e: MouseEvent): void => {
 		node.dispatchEvent(new CustomEvent('mymousedown', { detail: e }));
 
 		const timeout = setTimeout(() => {
 			node.dispatchEvent(new CustomEvent('longpress', { detail: e }));
 		}, threshold);
 
-		const cancel = e => {
+		const cancel = (e: Event): void => {
 			clearTimeout(timeout);
 			node.removeEventListener('mousemove', cancel);
 			node.removeEventListener('mouseup', cancel);

@@ -1,4 +1,4 @@
-import { replaceEmojisWithTags } from '@/org.libersoft.messages/scripts/emojis.js';
+import { replaceEmojisWithTags } from '@/org.libersoft.messages/scripts/emojis.ts';
 import { get, writable } from 'svelte/store';
 import DOMPurify from 'dompurify';
 import { log } from '@/core/scripts/tauri.ts';
@@ -8,9 +8,10 @@ import fileDownloadManager from '@/org.libersoft.messages/services/Files/FileDow
 import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
 import { wrapConsecutiveElements, stripHtml } from '@/org.libersoft.messages/scripts/utils/htmlUtils.ts';
-import { splitAndLinkify } from './splitAndLinkify';
+import { splitAndLinkify } from './splitAndLinkify.ts';
 import { base64ToUint8Array, makeFileUpload, transformFilesForServer } from '@/org.libersoft.messages/services/Files/utils.ts';
 import { active_account, active_account_module_data, getGuid, relay, selectAccount, setModule } from '@/core/scripts/core.ts';
+import type { IAccount } from '@/core/scripts/types.ts';
 import { active_account_id, hideSidebarMobile, isClientFocused } from '@/core/scripts/stores.ts';
 import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
 import retry from 'retry';
@@ -25,48 +26,48 @@ export const photoRadius = localStorageSharedStore('photoRadius', '50%');
 export const messageListMaxWidth = localStorageSharedStore('messageListMaxWidth', '1620');
 export const messageListApplyMaxWidth = localStorageSharedStore('messageListApplyMaxWidth', true);
 export const hideMessageTextInNotifications = localStorageSharedStore('hideMessageTextInNotifications', false);
-export const defaultFileDownloadFolder = localStorageSharedStore('defaultFileDownloadFolder', /** @type {string | null} */ (null));
+export const defaultFileDownloadFolder = localStorageSharedStore<string | null>('defaultFileDownloadFolder', null);
 export { identifier } from './connection.ts';
 export let md = active_account_module_data(identifier);
-export let online = relay(md, 'online');
-export let conversationsArray = relay(md, 'conversationsArray');
-export let events = relay(md, 'events');
-export let messagesArray = relay(md, 'messagesArray');
-export let messagesIsInitialLoading = relay(md, 'messagesIsInitialLoading');
-export let selectedConversation = relay(md, 'selectedConversation');
-export let emojiGroups = relay(md, 'emojiGroups');
-export let emojisByCodepointsRgi = relay(md, 'emojisByCodepointsRgi');
-export let emojisLoading = relay(md, 'emojisLoading');
-export let showGallery = relay(md, 'showGallery');
-export let galleryFile = relay(md, 'galleryFile');
-export let elWindowNewConversation = writable();
+export let online = relay<any>(md, 'online');
+export let conversationsArray = relay<any>(md, 'conversationsArray');
+export let events = relay<any>(md, 'events');
+export let messagesArray = relay<any>(md, 'messagesArray');
+export let messagesIsInitialLoading = relay<any>(md, 'messagesIsInitialLoading');
+export let selectedConversation = relay<any>(md, 'selectedConversation');
+export let emojiGroups = relay<any>(md, 'emojiGroups');
+export let emojisByCodepointsRgi = relay<any>(md, 'emojisByCodepointsRgi');
+export let emojisLoading = relay<any>(md, 'emojisLoading');
+export let showGallery = relay<any>(md, 'showGallery');
+export let galleryFile = relay<any>(md, 'galleryFile');
+export let elWindowNewConversation = writable<any>();
 
 class Message {
-	/** @type {string} */ uid = '';
-	/** @type {string} */ message = '';
-	/** @type {string} */ address_from = '';
-	/** @type {string} */ address_to = '';
-	/** @type {string} */ format = '';
-	/** @type {any} */ created = undefined;
-	/** @type {boolean} */ just_sent = false;
-	/** @type {boolean} */ just_received = false;
-	/** @type {boolean} */ seen = false;
-	/** @type {number|undefined} */ id = undefined;
-	/** @type {number|undefined} */ prev = undefined;
-	/** @type {number|string|undefined} */ next = undefined;
-	/** @type {any[]} */ reactions = [];
-	/** @type {WeakRef|undefined} */ acc = undefined;
-	/** @type {string} */ stripped_text = '';
-	/** @type {boolean} */ is_outgoing = false;
-	/** @type {string} */ remote_address = '';
-	/** @type {boolean} */ received_by_my_homeserver = false;
-	/** @type {boolean} */ is_lazyloaded = false;
-	/** @type {boolean} */ keep_unseen_bar = false;
-	/** @type {string} */ type = '';
-	/** @type {string} */ author = '';
-	/** @type {boolean} */ hide_author = false;
+	uid: string = '';
+	message: string = '';
+	address_from: string = '';
+	address_to: string = '';
+	format: string = '';
+	created: any = undefined;
+	just_sent: boolean = false;
+	just_received: boolean = false;
+	seen: boolean = false;
+	id: number | undefined = undefined;
+	prev: number | undefined = undefined;
+	next: number | string | undefined = undefined;
+	reactions: any[] = [];
+	acc: WeakRef<any> | undefined = undefined;
+	stripped_text: string = '';
+	is_outgoing: boolean = false;
+	remote_address: string = '';
+	received_by_my_homeserver: boolean = false;
+	is_lazyloaded: boolean = false;
+	keep_unseen_bar: boolean = false;
+	type: string = '';
+	author: string = '';
+	hide_author: boolean = false;
 
-	constructor(acc, data) {
+	constructor(acc: any, data: any) {
 		Object.assign(this, data);
 		this.acc = new WeakRef(acc);
 		this.stripped_text = stripHtml(this.message);
@@ -77,7 +78,7 @@ class Message {
 	}
 }
 
-export function initData(_acc) {
+export function initData(_acc: any): Record<string, any> {
 	//console.log('initData: ', _acc);
 	let result = {
 		online: writable(false),
@@ -105,8 +106,8 @@ export function initData(_acc) {
  *  @param {((req: any, res: any) => void) | null} [callback]
  *  @param {boolean} [quiet]
  */
-function sendData(acc, account, command, params = {}, sendSessionID = true, callback = null, quiet = false) {
-	let wrappedCallback = (req, res) => {
+function sendData(acc: any, account: any, command: string, params: Record<string, any> | null = {}, sendSessionID: boolean = true, callback: ((req: any, res: any) => void) | null = null, quiet: boolean = false): void {
+	let wrappedCallback = (req: any, res: any): void => {
 		if (res.error !== false) {
 			if (get(acc.module_data[identifier].online) === false) {
 				return;
@@ -117,12 +118,12 @@ function sendData(acc, account, command, params = {}, sendSessionID = true, call
 	return connectionSendData(acc, account, command, params, sendSessionID, wrappedCallback, quiet);
 }
 
-export function onModuleSelected(selected) {
+export function onModuleSelected(selected: boolean): void {
 	//console.log(identifier + ' onModuleSelected', selected);
 	if (!selected) get(md)?.['selectedConversation']?.set(null);
 }
 
-export function selectConversation(conversation) {
+export function selectConversation(conversation: any): void {
 	//console.log('SELECTcONVERSATION conversation:', conversation, 'conversation.acc:', conversation.acc, 'conversation.acc?.deref:', conversation.acc?.deref);
 	selectedConversation.set(conversation);
 	events.set([]);
@@ -132,7 +133,7 @@ export function selectConversation(conversation) {
 	listMessages(conversation.acc.deref ? conversation.acc.deref() : conversation.acc, conversation.address);
 }
 
-export function listConversations(acc) {
+export function listConversations(acc: any): void {
 	sendData(acc, null, 'conversations_list', null, true, (_req, res) => {
 		if (res.error !== false) {
 			console.error('this is bad.');
@@ -147,12 +148,12 @@ export function listConversations(acc) {
 	});
 }
 
-export function closeConversation() {
+export function closeConversation(): void {
 	selectedConversation.set(null);
 	hideSidebarMobile.set(false);
 }
 
-function sanitizeConversation(acc, c) {
+function sanitizeConversation(acc: any, c: any): any {
 	c.acc = new WeakRef(acc);
 	c.last_message_text = stripHtml(c.last_message_text);
 	return c;
@@ -160,7 +161,7 @@ function sanitizeConversation(acc, c) {
 
 // moduleEventSubscribe is now imported from connection.js
 
-export function initComms(acc) {
+export function initComms(acc: any): void {
 	// console.warn('init comms', acc);
 	// Initialize subscriptions based on platform
 	initializeSubscriptions(acc, false);
@@ -180,8 +181,8 @@ export function initComms(acc) {
 	refresh(acc);
 }
 
-export function init() {
-	let subs = [];
+export function init(): () => void {
+	let subs: (() => void)[] = [];
 	subs.push(
 		active_account_id.subscribe(_acc => {
 			get(md)?.['selectedConversation']?.set(null);
@@ -193,18 +194,18 @@ export function init() {
 	};
 }
 
-async function refresh(acc) {
+async function refresh(acc: any): Promise<void> {
 	//console.log('refresh sendQueuedMessages...', acc);
 	await sendOutgoingMessages(acc);
 	if (get(acc.module_data[identifier].selectedConversation)) {
 		//console.log('refresh listMessages...', acc);
-		listMessages(acc, get(acc.module_data[identifier].selectedConversation).address);
+		listMessages(acc, (get(acc.module_data[identifier].selectedConversation) as any).address);
 	}
 	//console.log('refresh listConversations...', acc);
 	listConversations(acc);
 }
 
-export async function initUpload(files, uploadType, recipients) {
+export async function initUpload(files: any, uploadType: any, recipients: any[]): Promise<void> {
 	console.log('2222', files, uploadType, recipients);
 	const acc = get(active_account);
 	try {
@@ -263,7 +264,7 @@ export async function initUpload(files, uploadType, recipients) {
 	}, 100);
 	// send upload
 	const records = uploads.map(upload => upload.record);
-	sendData(/** @type {import('@/core/scripts/types.ts').IAccount} */ (acc), null, 'upload_begin', { records, recipients }, true, (_req, res) => {
+	sendData(acc as IAccount, null, 'upload_begin', { records, recipients }, true, (_req, res) => {
 		if (res.error !== false) {
 			return;
 		}
@@ -275,60 +276,54 @@ export async function initUpload(files, uploadType, recipients) {
 	});
 }
 
-function uploadChunkAsync({ upload, chunk }) {
-	return /** @type {Promise<void>} */ (
-		new Promise((resolve, reject) => {
-			let settled = false;
-			const op = retry.operation({
-				retries: 3,
-				factor: 1.5,
-				minTimeout: 1000,
-				maxTimeout: 3000,
-			});
-			op.attempt(() => {
-				const doRetry = res => {
-					if (settled) return;
-					const willRetry = op.retry(new Error());
-					if (!willRetry) {
-						settled = true;
-						reject(res);
-					}
-				};
-				const to = setTimeout(() => {
-					doRetry();
-				}, 5000); // TODO: maybe longer
-				sendData(upload.acc, null, 'upload_chunk', { chunk }, true, (_req, res) => {
-					clearTimeout(to);
-					if (settled) return;
-					if (res.error !== false) {
-						doRetry(res);
-						return;
-					}
+function uploadChunkAsync({ upload, chunk }: { upload: any; chunk: any }): Promise<void> {
+	return new Promise<void>((resolve, reject) => {
+		let settled = false;
+		const op = retry.operation({
+			retries: 3,
+			factor: 1.5,
+			minTimeout: 1000,
+			maxTimeout: 3000,
+		});
+		op.attempt(() => {
+			const doRetry = (res?: any): void => {
+				if (settled) return;
+				const willRetry = op.retry(new Error());
+				if (!willRetry) {
 					settled = true;
-					op.stop();
-					resolve();
-				});
+					reject(res);
+				}
+			};
+			const to = setTimeout(() => {
+				doRetry();
+			}, 5000); // TODO: maybe longer
+			sendData(upload.acc, null, 'upload_chunk', { chunk }, true, (_req, res) => {
+				clearTimeout(to);
+				if (settled) return;
+				if (res.error !== false) {
+					doRetry(res);
+					return;
+				}
+				settled = true;
+				op.stop();
+				resolve();
 			});
-		})
-	);
+		});
+	});
 }
 
-function ask_for_chunk(event) {
+function ask_for_chunk(event: any): void {
 	const { uploadId } = event.detail.data;
 	const upload = fileUploadManager.uploadsStore.get(uploadId);
-	if (!upload) {
-		return;
-	}
+	if (!upload) return;
 	if (upload.record.status === FileUploadRecordStatus.BEGUN) {
 		upload.record.status = FileUploadRecordStatus.UPLOADING;
 		fileUploadStore.set(uploadId, upload);
 		fileUploadManager.startUploadSerial([upload.record], uploadChunkAsync);
-	} else {
-		fileUploadManager.continueP2PUpload(uploadId);
-	}
+	} else fileUploadManager.continueP2PUpload(uploadId);
 }
 
-function message_update(event) {
+function message_update(event: any): void {
 	const { type, message } = event.detail.data;
 	console.log('message_update', event.detail.data);
 	if (type === 'reaction') {
@@ -350,7 +345,7 @@ function message_update(event) {
 	}
 }
 
-function upload_update(event) {
+function upload_update(event: any): void {
 	const { record, uploadData } = event.detail.data;
 	const currentUpload = fileUploadStore.get(record.id);
 	if (currentUpload) {
@@ -359,25 +354,21 @@ function upload_update(event) {
 			// this is simple approach how to ignore status updates that are produced by sender because server does not know
 			// from which tab the upload is being issued we detect sender tab by existence of currentUpload.file
 			// in future if we want more sophisticated approach we can use session storage to store sender tab id
-		} else {
-			fileUploadStore.patch(record.id, { record, ...uploadData });
-		}
+		} else fileUploadStore.patch(record.id, { record, ...uploadData });
 	}
 	const currentDownload = fileDownloadStore.get(record.id);
-	if (currentDownload) {
-		fileDownloadStore.patch(record.id, { record });
-	}
+	if (currentDownload) fileDownloadStore.patch(record.id, { record });
 }
 
-export function downloadAttachmentsSerial(records, finishCallback) {
+export function downloadAttachmentsSerial(records: any[], finishCallback: (download: any) => void): any {
 	const acc = get(active_account);
 	// const records = recordIds.map(id => fileDownloadStore.get(id).record);
 	return fileDownloadManager.startDownloadSerial(records, makeDownloadChunkAsyncFn(acc), finishCallback);
 }
 
 export const makeDownloadChunkAsyncFn =
-	acc =>
-	({ uploadId, offsetBytes, chunkSize }) => {
+	(acc: any) =>
+	({ uploadId, offsetBytes, chunkSize }: { uploadId: string; offsetBytes: number; chunkSize: number }): Promise<any> => {
 		return new Promise((resolve, reject) => {
 			sendData(acc, null, 'download_chunk', { uploadId, offsetBytes, chunkSize }, true, async (_req, res) => {
 				if (res.error !== false) {
@@ -398,62 +389,58 @@ export const makeDownloadChunkAsyncFn =
 		});
 	};
 
-export function cancelUpload(uploadId) {
+export function cancelUpload(uploadId: string): void {
 	fileUploadManager.cancelUpload(uploadId);
-	sendData(/** @type {import('@/core/scripts/types.ts').IAccount} */ (get(active_account)), null, 'upload_cancel', { uploadId }, true, () => {});
+	sendData(get(active_account) as IAccount, null, 'upload_cancel', { uploadId }, true, () => {});
 }
 
-export function pauseUpload(uploadId) {
-	return /** @type {Promise<void>} */ (
-		new Promise(resolve => {
-			fileUploadManager.pauseUpload(uploadId);
-			sendData(
-				/** @type {import('@/core/scripts/types.ts').IAccount} */ (get(active_account)),
-				null,
-				'upload_update_status',
-				{
-					uploadId,
-					status: FileUploadRecordStatus.PAUSED,
-				},
-				true,
-				() => {
-					resolve(); // TODO: handle error if needed
-				}
-			);
-		})
-	);
+export function pauseUpload(uploadId: string): Promise<void> {
+	return new Promise<void>(resolve => {
+		fileUploadManager.pauseUpload(uploadId);
+		sendData(
+			get(active_account) as IAccount,
+			null,
+			'upload_update_status',
+			{
+				uploadId,
+				status: FileUploadRecordStatus.PAUSED,
+			},
+			true,
+			() => {
+				resolve(); // TODO: handle error if needed
+			}
+		);
+	});
 }
 
-export function resumeUpload(uploadId) {
-	return /** @type {Promise<void>} */ (
-		new Promise(resolve => {
-			fileUploadManager.resumeUpload(uploadId);
-			sendData(
-				/** @type {import('@/core/scripts/types.ts').IAccount} */ (get(active_account)),
-				null,
-				'upload_update_status',
-				{
-					uploadId,
-					status: FileUploadRecordStatus.UPLOADING,
-				},
-				true,
-				() => {
-					resolve(); // TODO: handle error if needed
-				}
-			);
-		})
-	);
+export function resumeUpload(uploadId: string): Promise<void> {
+	return new Promise<void>(resolve => {
+		fileUploadManager.resumeUpload(uploadId);
+		sendData(
+			get(active_account) as IAccount,
+			null,
+			'upload_update_status',
+			{
+				uploadId,
+				status: FileUploadRecordStatus.UPLOADING,
+			},
+			true,
+			() => {
+				resolve(); // TODO: handle error if needed
+			}
+		);
+	});
 }
 
-export function pauseDownload(uploadId) {
+export function pauseDownload(uploadId: string): void {
 	fileDownloadManager.pauseDownload(uploadId);
 }
 
-export function resumeDownload(uploadId) {
+export function resumeDownload(uploadId: string): void {
 	fileDownloadManager.resumeDownload(uploadId);
 }
 
-export function cancelDownload(uploadId) {
+export function cancelDownload(uploadId: string): void {
 	const download = fileDownloadStore.get(uploadId);
 	if (!download) return;
 	if (download.record.type === FileUploadRecordType.P2P) {
@@ -465,14 +452,14 @@ export function cancelDownload(uploadId) {
 	}
 }
 
-export function loadUploadData(uploadId) {
+export function loadUploadData(uploadId: string): Promise<any> {
 	return new Promise((resolve, reject) => {
 		const existingUpload = fileUploadStore.get(uploadId);
 		if (existingUpload) {
 			resolve(existingUpload);
 			return;
 		}
-		let acc = /** @type {import('@/core/scripts/types.ts').IAccount} */ (get(active_account));
+		let acc = get(active_account) as IAccount;
 		const op = retry.operation({
 			retries: 3,
 			factor: 1.5,
@@ -504,12 +491,12 @@ export function loadUploadData(uploadId) {
 	});
 }
 
-export function deinitComms(acc) {
+export function deinitComms(acc: any): void {
 	// Deinitialize subscriptions based on platform
 	deinitializeSubscriptions(acc, false);
 }
 
-export function deinitData(acc) {
+export function deinitData(acc: any): void {
 	console.log('DEINIT DATA');
 	let data = acc.module_data[identifier];
 	if (!data) return;
@@ -529,14 +516,14 @@ export function deinitData(acc) {
 	acc.module_data[identifier] = null;
 }
 
-export function listMessages(acc, address) {
+export function listMessages(acc: any, address: string): void {
 	//console.log('listMessages', acc, address);
 	messagesArray.set([{ type: 'initial_loading_placeholder' }]);
 	messagesIsInitialLoading.set(true);
 	loadMessages(acc, address, 'unseen', 3, 3, 'initial_load', _res => {});
 }
 
-export function loadMessages(acc, address, base, prev, next, reason, cb, force_refresh = false) {
+export function loadMessages(acc: any, address: string, base: string | number, prev: number, next: number, reason: string, cb: (res: any) => void, force_refresh: boolean = false): void {
 	/*
 	acc: account object
  address: contact address (identifies conversation)
@@ -561,7 +548,7 @@ export function loadMessages(acc, address, base, prev, next, reason, cb, force_r
 	});
 }
 
-export function findMessages(acc, address, base, prev, next) {
+export function findMessages(acc: any, address: string, base: string | number, prev: number, next: number): Promise<any[]> {
 	return new Promise((resolve, reject) => {
 		sendData(acc, null, 'messages_list', { address, base, prev, next }, true, (_req, res) => {
 			if (res.error !== false || !res.data?.messages) {
@@ -575,7 +562,7 @@ export function findMessages(acc, address, base, prev, next) {
 	});
 }
 
-export function getMessageByUid(uid) {
+export function getMessageByUid(uid: string): Promise<any> {
 	return new Promise((resolve, reject) => {
 		const found = get(messagesArray).find(m => m.uid === uid);
 		if (found) {
@@ -593,10 +580,10 @@ export function getMessageByUid(uid) {
 	});
 }
 
-function addMessagesToMessagesArray(items, reason, force_refresh) {
+function addMessagesToMessagesArray(items: any[], reason: string, force_refresh: boolean = false): any[] {
 	let arr = get(messagesArray);
 	arr = arr.filter(m => m.type !== 'initial_loading_placeholder');
-	let result = [];
+	let result: any[] = [];
 	let state = { countAdded: 0 };
 	for (let m of items) result.push(addMessage(arr, m, state));
 	sortMessages(arr);
@@ -608,18 +595,18 @@ function addMessagesToMessagesArray(items, reason, force_refresh) {
 	return result;
 }
 
-export function handleResize(_wasScrolledToBottom) {
+export function handleResize(_wasScrolledToBottom: boolean): void {
 	insertEvent({ type: 'resize', wasScrolledToBottom2: true });
 }
 
-export function snipeMessage(messageUid) {
+export function snipeMessage(messageUid: string): void {
 	messagesArray.update(v => {
 		return v.filter(m => m.uid !== messageUid);
 	});
 	insertEvent({ type: 'gc', array: get(messagesArray) });
 }
 
-function addMessage(arr, msg, state) {
+function addMessage(arr: any[], msg: any, state: { countAdded: number }): any {
 	//TODO: this should only update the message if the data is actually more up-to-date
 	let m = arr.find(m => m.uid === msg.uid);
 	if (m) {
@@ -632,7 +619,7 @@ function addMessage(arr, msg, state) {
 	}
 }
 
-function constructLoadedMessages(acc, data) {
+function constructLoadedMessages(acc: any, data: any[]): any[] {
 	let items = data.map(msg => {
 		let message = new Message(acc, msg);
 		message.received_by_my_homeserver = true;
@@ -642,7 +629,7 @@ function constructLoadedMessages(acc, data) {
 	return items;
 }
 
-function sortMessages(messages) {
+function sortMessages(messages: any[]): void {
 	messages.sort((a, b) => {
 		//TODO: take care of just-sent messages, they don't have id yet
 		//console.log(a.created, b.created);
@@ -659,7 +646,7 @@ function sortMessages(messages) {
 	});
 }
 
-function addMissingPrevNext(messages) {
+function addMissingPrevNext(messages: any[]): void {
 	for (let i = 0; i < messages.length; i++) {
 		let m = messages[i];
 		if (m.prev === undefined) m.prev = findPrev(messages, m);
@@ -671,20 +658,22 @@ function addMissingPrevNext(messages) {
 	}
 }
 
-function findPrev(messages, i) {
+function findPrev(messages: any[], i: any): number | undefined {
 	for (const m of messages) {
 		if (m.next === i.id) return m.id;
 	}
+	return undefined;
 }
 
-function findNext(messages, i) {
+function findNext(messages: any[], i: any): number | undefined {
 	for (const m of messages) {
 		if (m.prev === i.id) return m.id;
 	}
+	return undefined;
 }
 
-export async function setMessageSeen(message, cb, keep_unseen_bar = true) {
-	let acc = /** @type {import('@/core/scripts/types.ts').IAccount} */ (get(active_account));
+export async function setMessageSeen(message: any, cb?: () => void, keep_unseen_bar: boolean = true): Promise<void> {
+	let acc = get(active_account) as IAccount;
 	log.debug('setMessageSeen', message);
 	deleteNotification(messageNotificationId(message));
 	sendData(acc, active_account, 'message_seen', { uid: message.uid }, true, (_req, res) => {
@@ -715,8 +704,8 @@ export async function setMessageSeen(message, cb, keep_unseen_bar = true) {
  *  @param {import('@/core/scripts/types.ts').IAccount | null} [acc]
  *  @param {any} [conversation]
  */
-export function sendMessage(text, format, acc = null, conversation = null) {
-	acc = acc ? acc : /** @type {import('@/core/scripts/types.ts').IAccount} */ (get(active_account));
+export function sendMessage(text: string, format: string, acc: any = null, conversation: any = null): string {
+	acc = acc ? acc : (get(active_account) as IAccount);
 	conversation = conversation ? conversation : get(selectedConversation);
 	let message = new Message(acc, {
 		uid: getGuid(),
@@ -741,9 +730,9 @@ export function sendMessage(text, format, acc = null, conversation = null) {
 	return message.uid;
 }
 
-export async function deleteMessage(message) {
+export async function deleteMessage(message: any): Promise<void> {
 	console.log('123 deleteMessage', message);
-	const acc = /** @type {import('@/core/scripts/types.ts').IAccount} */ (get(active_account));
+	const acc = get(active_account) as IAccount;
 	const params = {
 		id: message.id,
 		uid: message.uid,
@@ -754,13 +743,13 @@ export async function deleteMessage(message) {
 	});
 }
 
-async function saveAndSendOutgoingMessage(acc, conversation, params, message) {
+async function saveAndSendOutgoingMessage(acc: any, conversation: any, params: any, message: any): Promise<void> {
 	let outgoing_message_id = await messages_db.outgoing.add({ account: acc.id, data: params });
 	//console.log('saveAndSendOutgoingMessage saved message:', message.uid);
 	sendOutgoingMessage(acc, conversation, params, message, outgoing_message_id);
 }
 
-function sendOutgoingMessage(acc, conversation, params, message, outgoing_message_id) {
+function sendOutgoingMessage(acc: any, conversation: any, params: any, message: any, outgoing_message_id: number): void {
 	sendData(acc, null, 'message_send', params, true, (_req, res) => {
 		//console.log('sendOutgoingMessage res', res);
 		if (res.error !== false) {
@@ -782,8 +771,8 @@ function sendOutgoingMessage(acc, conversation, params, message, outgoing_messag
  * @param {import('@/core/scripts/types.ts').IAccount} [acc]
  * @returns {Promise<unknown>}
  */
-export function modifyMessageReaction(messageUid, operation, reaction, acc) {
-	acc = acc || /** @type {import('@/core/scripts/types.ts').IAccount} */ (get(active_account));
+export function modifyMessageReaction(messageUid: string, operation: 'set' | 'unset', reaction: any, acc?: any): Promise<any> {
+	acc = acc || (get(active_account) as IAccount);
 	return new Promise((resolve, reject) => {
 		const params = {
 			messageUid,
@@ -801,16 +790,16 @@ export function modifyMessageReaction(messageUid, operation, reaction, acc) {
 	});
 }
 
-export function setMessageReaction(message, reaction) {
+export function setMessageReaction(message: any, reaction: any): Promise<any> {
 	return modifyMessageReaction(message.uid, 'set', reaction);
 }
 
-export function unsetMessageReaction(message, reaction) {
+export function unsetMessageReaction(message: any, reaction: any): Promise<any> {
 	return modifyMessageReaction(message.uid, 'unset', reaction);
 }
 
-export function toggleMessageReaction(message, reaction) {
-	const userAddress = /** @type {import('@/core/scripts/types.ts').IAccount} */ (get(active_account)).credentials.address;
+export function toggleMessageReaction(message: any, reaction: any): Promise<any> {
+	const userAddress = (get(active_account) as IAccount).credentials.address;
 	const didUserReact = message.reactions.some(existingReaction => {
 		if (existingReaction.user_address === userAddress && existingReaction.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi) {
 			return true;
@@ -834,12 +823,12 @@ export function toggleMessageReaction(message, reaction) {
 	}
 }
 
-async function sendOutgoingMessages(acc) {
+async function sendOutgoingMessages(acc: any): Promise<void> {
 	/* try to send outgoing messages. Ensure they are sent in creation order. Break on error */
 	//console.log('sendOutgoingMessages for acc', acc.id);
 	for (const message of await messages_db.outgoing.where('account').equals(acc.id).toArray()) {
 		//console.log('sendOutgoingMessages found queued message:', message.data.uid);
-		let res = await new Promise(resolve => {
+		let res = await new Promise<any>(resolve => {
 			sendData(acc, active_account, 'message_send', message.data, true, (_req, res) => {
 				resolve(res);
 			});
@@ -853,9 +842,9 @@ async function sendOutgoingMessages(acc) {
 	}
 }
 
-function updateConversationsArray(acc, msg) {
+function updateConversationsArray(acc: any, msg: any): void {
 	let acc_ca = acc.module_data[identifier].conversationsArray;
-	let ca = get(acc_ca);
+	let ca: any[] = get(acc_ca);
 	const conversation = ca.find(c => c.address === msg.remote_address);
 	//console.log('updateConversationsArray', conversation, msg);
 	let is_unread = !msg.seen && !msg.just_sent && msg.address_from !== acc.credentials.address;
@@ -881,14 +870,14 @@ function updateConversationsArray(acc, msg) {
 	acc_ca.set(ca);
 }
 
-export function openNewConversation(address) {
+export function openNewConversation(address: string): void {
 	console.log('openNewConversation', address);
 	const acc = get(active_account);
 	if (!acc) return;
 	selectConversation({ acc: new WeakRef(acc), address });
 }
 
-export function jumpToMessage(acc, address, uid) {
+export function jumpToMessage(acc: any, address: string, uid: string): void {
 	loadMessages(acc, address, 'uid:' + uid, 10, 10, 'load_referenced_message', _res => {
 		const message = get(messagesArray).find(m => m.uid === uid);
 		insertEvent({
@@ -899,14 +888,14 @@ export function jumpToMessage(acc, address, uid) {
 	});
 }
 
-export function insertEvent(event) {
+export function insertEvent(event: any): void {
 	events?.update(v => {
 		console.log('insertEvent: ', v, event);
 		return [...v, event];
 	});
 }
 
-async function eventNewMessage(acc, event) {
+async function eventNewMessage(acc: any, event: any): Promise<void> {
 	const res = event.detail;
 	//console.log('eventNewMessage', acc, res);
 	if (!res.data) return;
@@ -927,7 +916,7 @@ async function eventNewMessage(acc, event) {
 	}
 }
 
-function eventSeenMessage(acc, event) {
+function eventSeenMessage(acc: any, event: any): void {
 	console.log(event);
 	const res = event.detail;
 	log.debug('eventSeenMessage', res);
@@ -951,7 +940,7 @@ function eventSeenMessage(acc, event) {
 	} else console.log('eventSeenMessage: message not found by uid:', res);
 }
 
-function eventSeenInboxMessage(acc, event) {
+function eventSeenInboxMessage(acc: any, event: any): void {
 	// mark, as seen, a message sent to us. This can be triggered by another client.
 	if (acc !== get(active_account)) return;
 	//console.log(event);
@@ -966,11 +955,11 @@ function eventSeenInboxMessage(acc, event) {
 	} else console.log('eventSeenInboxMessage: conversation not found by address:', res);
 }
 
-function messageNotificationId(msg) {
+function messageNotificationId(msg: any): string {
 	return identifier + '\\' + 'message\\' + msg.uid;
 }
 
-async function showNotification(acc, msg) {
+async function showNotification(acc: any, msg: any): Promise<void> {
 	if (!acc) console.error('showNotification: no account');
 	console.log('showNotification conversationsArray:', get(conversationsArray));
 	const conversation = get(conversationsArray)?.find(c => c.address === msg.address_from);
@@ -1003,14 +992,14 @@ async function showNotification(acc, msg) {
 	addNotification(notification);
 }
 
-export function ensureConversationDetails(conversation) {
+export function ensureConversationDetails(conversation: any): void {
 	//console.log('ensureConversationDetails', conversation);
 	if (conversation.visible_name) return;
-	let acc = /** @type {import('@/core/scripts/types.ts').IAccount} */ (get(active_account));
+	let acc = get(active_account) as IAccount;
 	//console.log('ensureConversationDetails acc:', acc);
 	_send(
 		acc,
-		/** @type {any} */ (active_account),
+		active_account as any,
 		'core',
 		'user_userinfo_get',
 		{ address: conversation.address },
@@ -1069,7 +1058,7 @@ DOMPurify.addHook('uponSanitizeAttribute', (node, data) => {
 	}
 });
 
-export function saneHtml(content) {
+export function saneHtml(content: string): DocumentFragment {
 	//console.log('saneHtml:');
 	let sane = DOMPurify.sanitize(content, {
 		ADD_TAGS: CUSTOM_TAGS,
@@ -1086,12 +1075,12 @@ export function saneHtml(content) {
 	return sane;
 }
 
-export function htmlEscape(str) {
+export function htmlEscape(str: string): string {
 	//console.log('htmlEscape:', str);
 	return str.replaceAll(/&/g, '&amp;').replaceAll(/</g, '&lt;').replaceAll(/>/g, '&gt;').replaceAll(/"/g, '&quot;').replaceAll(/'/g, '&#039;');
 }
 
-export function processMessage(message) {
+export function processMessage(message: { format: string; message: string }): { format: string; body: DocumentFragment } {
 	let html;
 	if (message.format === 'html') {
 		html = saneHtml(message.message);
@@ -1113,18 +1102,19 @@ export function processMessage(message) {
 	};
 }
 
-export function preprocess_incoming_plaintext_message_text(content) {
+export function preprocess_incoming_plaintext_message_text(content: string): string {
 	let result0 = content;
 	//console.log('splitAndLinkify input:', result0);
 	let result1 = splitAndLinkify(result0);
 	//console.log('splitAndLinkify output:', result1);
-	let result2 = result1.map(part => {
+	let result2 = result1.map((part): string => {
 		if (part.type === 'plain') {
 			let r = htmlEscape(part.value);
 			r = r.replaceAll('\n', '<br />');
 			r = replaceEmojisWithTags(r);
 			return r;
 		} else if (part.type === 'processed') return part.value;
+		return '';
 	});
 	let result3 = result2.join('');
 	return result3;

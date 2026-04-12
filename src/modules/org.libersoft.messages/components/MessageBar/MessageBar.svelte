@@ -1,7 +1,7 @@
 <script>
 	import { onMount, setContext, tick, getContext } from 'svelte';
 	import { documentHeight, keyboardHeight, isMobile, debug } from '@/core/scripts/stores.ts';
-	import { handleResize, identifier, initUpload, sendMessage, selectedConversation } from '@/org.libersoft.messages/scripts/messages.js';
+	import { handleResize, identifier, initUpload, sendMessage, selectedConversation } from '@/org.libersoft.messages/scripts/messages.ts';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
@@ -11,7 +11,7 @@
 	import WindowFileUpload from '../../windows/FileUpload.svelte';
 	import WindowHtml from '../../windows/Html.svelte';
 	import Expressions from '../Expressions/Expressions.svelte';
-	import { init_emojis } from '@/org.libersoft.messages/scripts/emojis.js';
+	import { init_emojis } from '@/org.libersoft.messages/scripts/emojis.ts';
 	import { get } from 'svelte/store';
 	import MessageBarRecorder from './MessageBarRecorder.svelte';
 	import audioRecorderStore from '@/org.libersoft.messages/stores/AudioRecorderStore.ts';

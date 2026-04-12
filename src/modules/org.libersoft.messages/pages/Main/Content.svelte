@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { onMount, onDestroy } from 'svelte';
 	import { setModule } from '@/core/scripts/core.ts';
-	import { selectedConversation, closeConversation } from '@/org.libersoft.messages/scripts/messages.js';
+	import { selectedConversation, closeConversation } from '@/org.libersoft.messages/scripts/messages.ts';
 	import Welcome from '@/org.libersoft.messages/pages/Welcome/Welcome.svelte';
 	import Conversation from '@/org.libersoft.messages/components/Conversation/Conversation.svelte';
 	import Gallery from '@/org.libersoft.messages/components/Gallery/Gallery.svelte';

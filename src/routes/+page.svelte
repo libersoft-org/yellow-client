@@ -26,7 +26,7 @@
 	import '@/org.libersoft.wallet/scripts/module';
 	import '@/org.libersoft.dating/scripts/module.ts';
 	import '@/org.libersoft.iframes/scripts/module.ts';
-	import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/scripts/messages.js';
+	import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/scripts/messages.ts';
 	import { setDefaultWindowSize, initWindow } from '../core/scripts/tauri-app.ts';
 	import { initZoom } from '@/core/scripts/zoom.ts';
 	const wizardData = {

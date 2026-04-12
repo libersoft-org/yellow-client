@@ -1,7 +1,7 @@
 <script lang="ts">
-	import { identifier } from '@/org.libersoft.messages/scripts/messages.js';
+	import { identifier } from '@/org.libersoft.messages/scripts/messages.ts';
 	import { onMount, tick } from 'svelte';
-	import { updateStickerLibrary, stickerLibraryUpdaterState } from '@/org.libersoft.messages/scripts/stickers.js';
+	import { updateStickerLibrary, stickerLibraryUpdaterState } from '@/org.libersoft.messages/scripts/stickers.ts';
 	import { debug } from '@/core/scripts/stores.ts';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';

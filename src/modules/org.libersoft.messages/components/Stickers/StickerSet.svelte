@@ -1,6 +1,6 @@
 <script>
 	import { onDestroy, onMount } from 'svelte';
-	import { add_stickerset_to_favorites, remove_stickerset_from_favorites, stickerset_in_favorites, stickerset_favorites } from '@/org.libersoft.messages/scripts/stickers.js';
+	import { add_stickerset_to_favorites, remove_stickerset_from_favorites, stickerset_in_favorites, stickerset_favorites } from '@/org.libersoft.messages/scripts/stickers.ts';
 	import { debug } from '@/core/scripts/stores.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Button from '@/core/components/Button/Button.svelte';

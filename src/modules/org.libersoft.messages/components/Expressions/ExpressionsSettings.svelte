@@ -6,8 +6,8 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
 	import Window from '@/core/components/Window/Window.svelte';
-	import { sticker_server_index, sticker_servers } from '@/org.libersoft.messages/scripts/stickers.js';
-	import { gif_server_index, gif_servers } from '@/org.libersoft.messages/scripts/gifs.js';
+	import { sticker_server_index, sticker_servers } from '@/org.libersoft.messages/scripts/stickers.ts';
+	import { gif_server_index, gif_servers } from '@/org.libersoft.messages/scripts/gifs.ts';
 	import { expressions_renderer, animate_all_expressions } from '@/org.libersoft.messages/scripts/expressions.svelte.ts';
 	import DialogDeleteStickers from '@/org.libersoft.messages/dialogs/DeleteStickers.svelte';
 	import WindowStickerServers from '@/org.libersoft.messages/windows/StickerServers.svelte';

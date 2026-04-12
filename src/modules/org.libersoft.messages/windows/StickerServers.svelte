@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { sticker_servers } from '@/org.libersoft.messages/scripts/stickers.js';
+	import { sticker_servers } from '@/org.libersoft.messages/scripts/stickers.ts';
 	import DialogDefaultStickerServers from '@/org.libersoft.messages/dialogs/DefaultStickerServers.svelte';
 	import DialogDeleteStickerServer from '@/org.libersoft.messages/dialogs/DeleteStickerServer.svelte';
 	import Input from '@/core/components/Input/Input.svelte';

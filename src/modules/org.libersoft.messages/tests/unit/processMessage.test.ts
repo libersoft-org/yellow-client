@@ -1,5 +1,5 @@
 import { describe, expect, test } from 'vitest';
-import { processMessage } from '@/org.libersoft.messages/scripts/messages';
+import { processMessage } from '@/org.libersoft.messages/scripts/messages.ts';
 //import util from 'util';
 
 /*function printDOMTree(node, indent = 0) {

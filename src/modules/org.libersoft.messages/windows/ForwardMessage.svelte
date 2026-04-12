@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { get } from 'svelte/store';
-	import { photoRadius } from '@/org.libersoft.messages/scripts/messages.js';
-	import { conversationsArray, sendMessage, processMessage, identifier } from '@/org.libersoft.messages/scripts/messages.js';
+	import { photoRadius } from '@/org.libersoft.messages/scripts/messages.ts';
+	import { conversationsArray, sendMessage, processMessage, identifier } from '@/org.libersoft.messages/scripts/messages.ts';
 	import type { Conversation } from '@/org.libersoft.messages/scripts/types.js';
 	import { forwardMessageStore } from '@/org.libersoft.messages/stores/ForwardMessageStore.js';
 	import Input from '@/core/components/Input/Input.svelte';
