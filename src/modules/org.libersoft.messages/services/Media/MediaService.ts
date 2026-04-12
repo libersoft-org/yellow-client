@@ -15,6 +15,7 @@ class MediaService {
 	fileInfo: IMediaFileInfo;
 	fetchQueue: number[] = [];
 	fetchQueueInterval: any | null = null;
+	private _cleanupListeners: Array<() => void> = [];
 
 	constructor(videoElement: HTMLVideoElement, getFileChunk: MediaService['_getFileChunk'], fileInfo: IMediaFileInfo) {
 		this.videoElement = videoElement;
@@ -115,14 +116,21 @@ class MediaService {
 		};
 		playEl?.addEventListener('click', prep);
 		playEl?.addEventListener('pointerdown', prep);
+		if (playEl) {
+			this._cleanupListeners.push(
+				() => playEl.removeEventListener('click', prep),
+				() => playEl.removeEventListener('pointerdown', prep)
+			);
+		}
 		const EVENTS = ['loadstart', 'progress', 'suspend', 'abort', 'error', 'emptied', 'stalled', 'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough', 'playing', 'waiting', 'seeking', 'seeked', 'ended', 'durationchange', 'timeupdate', 'play', 'pause', 'ratechange', 'resize', 'volumechange'];
 		EVENTS.forEach(evt => {
 			player.on(evt, () => console.log('test evt', evt));
 		});
-		this.videoElement.addEventListener('play', _evt => {
-			// code you want to happen when the video plays
-			console.log('Video	element play event');
-		});
+		const onPlay = (_evt: Event) => {
+			console.log('Video\telement play event');
+		};
+		this.videoElement.addEventListener('play', onPlay);
+		this._cleanupListeners.push(() => this.videoElement.removeEventListener('play', onPlay));
 		const _seeking = _debounce(() => {
 			this.seekTo(player.currentTime() as number);
 		}, 1000);
@@ -211,6 +219,8 @@ class MediaService {
 			this.fetchQueueInterval = null;
 		}
 		this.fetchQueue = [];
+		for (const cleanup of this._cleanupListeners) cleanup();
+		this._cleanupListeners = [];
 		if (this.player) {
 			this.player.dispose();
 			this.player = null;

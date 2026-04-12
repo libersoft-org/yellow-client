@@ -81,7 +81,14 @@ export function send(acc: IAccount, _account: AccountStore | null, target: strin
 	//console.log(req);
 	/*console.log('------------------');
  }*/
-	acc.socket.send(JSON.stringify(req));
+	try {
+		acc.socket.send(JSON.stringify(req));
+	} catch (e) {
+		console.error('WebSocket send failed:', e);
+		delete acc.requests[requestID];
+		if (callback) callback(req, { error: true, message: 'WebSocket send failed' });
+		return;
+	}
 	acc.lastTransmissionTs = Date.now();
 	acc.bufferedAmount = acc.socket.bufferedAmount;
 	//console.log('bufferedAmount:', acc.bufferedAmount);
