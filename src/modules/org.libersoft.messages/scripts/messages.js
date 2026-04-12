@@ -278,6 +278,7 @@ export async function initUpload(files, uploadType, recipients) {
 function uploadChunkAsync({ upload, chunk }) {
 	return /** @type {Promise<void>} */ (
 		new Promise((resolve, reject) => {
+			let settled = false;
 			const op = retry.operation({
 				retries: 3,
 				factor: 1.5,
@@ -285,21 +286,26 @@ function uploadChunkAsync({ upload, chunk }) {
 				maxTimeout: 3000,
 			});
 			op.attempt(() => {
-				const retry = res => {
+				const doRetry = res => {
+					if (settled) return;
 					const willRetry = op.retry(new Error());
 					if (!willRetry) {
+						settled = true;
 						reject(res);
 					}
 				};
 				const to = setTimeout(() => {
-					retry();
+					doRetry();
 				}, 5000); // TODO: maybe longer
 				sendData(upload.acc, null, 'upload_chunk', { chunk }, true, (_req, res) => {
 					clearTimeout(to);
+					if (settled) return;
 					if (res.error !== false) {
-						retry(res);
+						doRetry(res);
 						return;
 					}
+					settled = true;
+					op.stop();
 					resolve();
 				});
 			});
