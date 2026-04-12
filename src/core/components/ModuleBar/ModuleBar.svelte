@@ -15,16 +15,13 @@
 	let expanded = false;
 	let module_decls_ordered = [];
 	let expandEnabled = false;
+	let pendingTidy = null;
 
 	$: module_decls_ordered = order($module_decls);
-
 	//$: console.log('module-bar module_decls_ordered:', module_decls_ordered);
-
 	$: module_data = $active_account?.module_data || {};
-
 	//$: console.log('module-bar active_account:', $active_account);
 	//$: console.log('module-bar active_account.module_data:', $active_account?.module_data);
-
 	//$: console.log('module-bar module_data:', module_data);
 	//$: console.log('module-bar module_data_ordered:', module_data_ordered);
 	$: selectLastModule(module_data);
@@ -55,25 +52,31 @@
 
 	function clickExpand() {
 		const el = itemsEl;
+		if (pendingTidy) {
+			el.removeEventListener('transitionend', pendingTidy);
+			pendingTidy = null;
+		}
 		const full = el.scrollHeight + 'px';
 		if (expanded) {
 			el.style.maxHeight = full;
 			void el.offsetHeight;
 			el.style.maxHeight = '50px';
 			const tidy = () => {
+				pendingTidy = null;
 				scrollToSelected();
-				el.removeEventListener('transitionend', tidy);
 			};
-			el.addEventListener('transitionend', tidy);
+			pendingTidy = tidy;
+			el.addEventListener('transitionend', tidy, { once: true });
 		} else {
 			el.style.maxHeight = '50px';
 			void el.offsetHeight;
 			el.style.maxHeight = full;
 			const tidy = () => {
+				pendingTidy = null;
 				el.style.maxHeight = '';
-				el.removeEventListener('transitionend', tidy);
 			};
-			el.addEventListener('transitionend', tidy);
+			pendingTidy = tidy;
+			el.addEventListener('transitionend', tidy, { once: true });
 		}
 		expanded = !expanded;
 	}
