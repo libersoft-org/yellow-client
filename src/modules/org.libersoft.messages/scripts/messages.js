@@ -593,9 +593,7 @@ function addMessagesToMessagesArray(items, reason, force_refresh) {
 	arr = arr.filter(m => m.type !== 'initial_loading_placeholder');
 	let result = [];
 	let state = { countAdded: 0 };
-	for (let m of items) {
-		result.push(addMessage(arr, m, state));
-	}
+	for (let m of items) result.push(addMessage(arr, m, state));
 	sortMessages(arr);
 	addMissingPrevNext(arr);
 	//console.log('messagesArray.set:', arr);
@@ -659,10 +657,10 @@ function sortMessages(messages) {
 function addMissingPrevNext(messages) {
 	for (let i = 0; i < messages.length; i++) {
 		let m = messages[i];
-		if (m.prev === undefined) m.prev = findPrev(messages, i);
-		if (m.next === undefined) m.next = findNext(messages, i);
+		if (m.prev === undefined) m.prev = findPrev(messages, m);
+		if (m.next === undefined) m.next = findNext(messages, m);
 		else if (m.next === 'none') {
-			let next = findNext(messages, i);
+			let next = findNext(messages, m);
 			if (next !== undefined) m.next = next;
 		}
 	}
