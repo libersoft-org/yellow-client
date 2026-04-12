@@ -6,7 +6,7 @@
 		stickerset: any;
 		intersecting?: boolean;
 	}
-	let { items, stickerset, intersecting }: Props = $props();
+	let { items, stickerset, intersecting = false }: Props = $props();
 	let size = 67;
 </script>
 

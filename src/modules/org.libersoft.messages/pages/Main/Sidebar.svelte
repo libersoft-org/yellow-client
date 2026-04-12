@@ -1,19 +1,17 @@
-<script>
+<script lang="ts">
 	import { identifier, conversationsArray, selectConversation, elWindowNewConversation } from '@/org.libersoft.messages/scripts/messages.ts';
 	import ScrollButton from '@/org.libersoft.messages/components/ScrollButton/ScrollButton.svelte';
 	import ConversationListItem from '@/org.libersoft.messages/components/Conversation/ConversationListItem.svelte';
 	import WindowNewConversation from '@/org.libersoft.messages/windows/NewConversation.svelte';
 	import Settings from '@/org.libersoft.messages/windows/Settings/Settings.svelte';
 	import SidebarButton from '@/core/components/Sidebar/SidebarButton.svelte';
-	let elSettings;
-	let scrollButtonVisible;
-	let elItems;
-	let scrolled = false;
+	let elSettings = $state<any>();
+	let elItems = $state<HTMLDivElement | undefined>(undefined);
+	let scrolled = $state(false);
+	let scrollButtonVisible = $derived(scrolled);
 
-	$: scrollButtonVisible = scrolled;
-
-	function parseScroll(_event) {
-		scrolled = elItems?.scrollTop > 0;
+	function parseScroll(_event: any): void {
+		scrolled = (elItems?.scrollTop ?? 0) > 0;
 		//console.log('elItems?.scrollTop:', elItems?.scrollTop);
 	}
 
@@ -31,7 +29,7 @@
 
 	function scrollToTop() {
 		//TODO: does not work
-		elItems.scrollTop = 0;
+		if (elItems) elItems.scrollTop = 0;
 	}
 </script>
 
@@ -67,7 +65,7 @@
 			<SidebarButton data-testid="new-conversation-button" img="modules/{identifier}/img/conversation-new.svg" text="New conversation" expand onClick={clickNewConversation} />
 			<SidebarButton data-testid="messages-settings-button" img="img/settings.svg" onClick={clickMessagesSettings} />
 		</div>
-		<div class="items" bind:this={elItems} on:scroll={parseScroll}>
+		<div class="items" bind:this={elItems} onscroll={parseScroll}>
 			{#each $conversationsArray as c (c.address)}
 				{#key c.address}
 					<ConversationListItem {c} {clickItem} />

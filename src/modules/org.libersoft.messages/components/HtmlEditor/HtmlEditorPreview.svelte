@@ -1,9 +1,12 @@
-<script>
+<script lang="ts">
 	import MessageContent from '@/org.libersoft.messages/components/MessageContent/MessageContent.svelte';
 	import { processMessage } from '@/org.libersoft.messages/scripts/messages.ts';
-	export let text;
+	interface Props {
+		text: string;
+	}
+	let { text }: Props = $props();
 
-	$: messageContent = processMessage({ format: 'html', message: text });
+	let messageContent = $derived(processMessage({ format: 'html', message: text }));
 </script>
 
 <style>

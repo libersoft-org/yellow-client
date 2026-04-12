@@ -1,13 +1,20 @@
-<script>
+<script lang="ts">
 	import SidebarItem from '@/core/components/Sidebar/SidebarItem.svelte';
 	import Photo from '@/core/components/Photo/Photo.svelte';
 	import { selectedConversation, ensureConversationDetails, photoRadius } from '@/org.libersoft.messages/scripts/messages.ts';
-	export let c;
-	export let clickItem;
 
-	$: ensureConversationDetails(c);
-	let testid;
-	$: testid = 'conversation ' + c.address;
+	interface Props {
+		c: any;
+		clickItem: (c: any) => void;
+	}
+
+	let { c, clickItem }: Props = $props();
+
+	let _ensureDetails = $derived.by((): boolean => {
+		ensureConversationDetails(c);
+		return true;
+	});
+	let testid = $derived('conversation ' + c.address);
 </script>
 
 <style>
@@ -67,7 +74,7 @@
 	}
 </style>
 
-<SidebarItem data-testid={testid} active={c.address === $selectedConversation?.address} onClick={() => clickItem(c)}>
+<SidebarItem data-testid={testid} data-details-ensured={_ensureDetails || undefined} active={c.address === $selectedConversation?.address} onClick={() => clickItem(c)}>
 	<div class="item">
 		<div class="item-row">
 			<Photo size="50px" radius={$photoRadius} />

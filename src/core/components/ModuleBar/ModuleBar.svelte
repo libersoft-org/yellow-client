@@ -4,6 +4,7 @@
 	import { module_decls, selected_module_id } from '@/core/scripts/stores.ts';
 	import resize from '@/core/actions/resizeObserver.ts';
 	import { order } from '@/core/scripts/utils/utils.ts';
+	import { onDestroy } from 'svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import ModuleBarItem from '@/core/components/ModuleBar/ModuleBarItem.svelte';
@@ -15,16 +16,13 @@
 
 	let { onSelectModule, onCloseModule }: Props = $props();
 	let itemsEl: HTMLElement;
-	let lastModuleSelected = false;
+	let lastModuleSelected = $state(false);
 	let expanded = $state(false);
 	let expandEnabled = $state(false);
 	let pendingTidy: (() => void) | null = null;
-
 	let module_decls_ordered = $derived(order($module_decls));
-	let module_data = $derived($active_account?.module_data || {});
-	let _selectLastModule = $derived.by((): boolean => {
-		// read module_data to track reactivity
-		void module_data;
+
+	const unsubSelectLastModule = active_account.subscribe(_acc => {
 		if (!lastModuleSelected) {
 			let acc = get(active_account);
 			let id = acc?.settings?.['last_module_id'];
@@ -33,8 +31,8 @@
 				onSelectModule(id);
 			}
 		}
-		return lastModuleSelected;
 	});
+	onDestroy(unsubSelectLastModule);
 
 	function clickSetModule(id: string): void {
 		//console.log('clickSetModule: ' + id);
@@ -151,7 +149,7 @@
 	}
 </style>
 
-<div class="module-bar" class:expand-enabled={expandEnabled} class:expanded data-last-module-selected={_selectLastModule || undefined}>
+<div class="module-bar" class:expand-enabled={expandEnabled} class:expanded>
 	<div class="items" use:resize={onResize} bind:this={itemsEl}>
 		{#each module_decls_ordered as decl (decl.id)}
 			<ModuleBarItem online={$active_account?.module_data[decl.id]?.online} selected={$selected_module_id === decl.id} {decl} {clickSetModule} />

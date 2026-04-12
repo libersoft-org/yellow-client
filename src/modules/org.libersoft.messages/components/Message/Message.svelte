@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { deleteMessage, identifier, processMessage, setMessageSeen, toggleMessageReaction } from '@/org.libersoft.messages/scripts/messages.ts';
 	import { onDestroy, onMount, tick } from 'svelte';
 	import { isClientFocused, debug } from '@/core/scripts/stores.ts';
@@ -16,18 +16,19 @@
 	import { forwardMessageStore, ForwardedMessageType } from '@/org.libersoft.messages/stores/ForwardMessageStore.ts';
 	import MessageReaction from '@/org.libersoft.messages/components/MessageReaction/MessageReaction.svelte';
 	import RenderMessageReactions from '@/org.libersoft.messages/components/MessageReaction/RenderMessageReactions.svelte';
-	export let message;
-	export let elContainer;
-	export let enableScroll;
-	export let disableScroll;
-	let seenTxt;
-	let checkmarks;
-	let observer;
-	let elIntersectionObserver;
-	let isVisible;
-	let elCaret;
-	let menu;
-	let elMessage;
+	interface Props {
+		message: any;
+		elContainer: HTMLElement;
+		enableScroll: () => void;
+		disableScroll: () => void;
+	}
+	let { message, elContainer, enableScroll, disableScroll }: Props = $props();
+	let observer: IntersectionObserver;
+	let elIntersectionObserver: HTMLDivElement;
+	let isVisible: boolean;
+	let elCaret: any;
+	let menu: any;
+	let elMessage: HTMLDivElement;
 	let touchStartX = 0;
 	let touchStartY = 0;
 	let touchCurrentX = 0;
@@ -35,23 +36,30 @@
 	let touchCurrentTranslation = 0;
 	let touchThreshold = 50;
 	let touchMaxTranslation = 80;
-	let moving;
-	let longPressTimer;
-	let thisWasALongPress;
-	let thisWasASwipe;
-	let thisWasAScroll;
-	let touchX;
-	let touchY;
-	let messageContent;
-	let renderedTs;
+	let moving: boolean;
+	let longPressTimer: ReturnType<typeof setTimeout> | null;
+	let thisWasALongPress: boolean;
+	let thisWasASwipe: boolean;
+	let thisWasAScroll: boolean;
+	let touchX: number;
+	let touchY: number;
+	let messageContent = $state<any>(undefined);
+	let renderedTs: number;
 
-	$: update(message);
+	let _updateMessage = $derived.by((): boolean => {
+		const msg = message;
+		queueMicrotask(() => update(msg));
+		return true;
+	});
 	//$: console.log('messageContent:', messageContent);
-	$: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
-	$: seenTxt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
-	$: checkmarks_img = 'modules/' + identifier + '/img/seen' + checkmarks + '.svg';
+	let _checkmarks = $derived(message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0');
+	let _seenTxt = $derived(message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending');
+	let checkmarks_img = $derived('modules/' + identifier + '/img/seen' + _checkmarks + '.svg');
 	//$: console.log('Core.isClientFocused:', $isClientFocused);
-	$: maybeSetSeen(isVisible, $isClientFocused);
+	let _maybeSetSeen = $derived.by((): boolean => {
+		maybeSetSeen(isVisible, $isClientFocused);
+		return true;
+	});
 
 	export function getRef() {
 		return elMessage;
@@ -215,7 +223,7 @@
 					//console.log(entries);
 					entries.sort((a, b) => a.time - b.time);
 					for (let _entry of entries) {
-						isVisible = /** @type {IntersectionObserverEntry} */ (entries[0]).isIntersecting;
+						isVisible = entries[0]!.isIntersecting;
 						await tick();
 					}
 				},
@@ -396,7 +404,7 @@
 	}
 </style>
 
-<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} role="button" tabindex="0" data-testid="message-item" data-uid={message.uid} on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove} on:contextmenu={rightClickContextMenu}>
+<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} role="button" tabindex="0" data-testid="message-item" data-uid={message.uid} data-msg-updated={_updateMessage || undefined} data-seen-sync={_maybeSetSeen || undefined} ontouchstart={handleTouchStart} ontouchend={handleTouchEnd} ontouchmove={handleTouchMove} oncontextmenu={rightClickContextMenu}>
 	<div bind:this={elIntersectionObserver}></div>
 	<!--<Reply name="Someone" text="Some text" />-->
 	<!--<Image file="https://cdn.britannica.com/87/196687-138-2D734164/facts-parrots.jpg" />-->
@@ -429,7 +437,7 @@
 		<div class="bottomline-info">
 			<div class="time">{new Date(message.created /*.replace(' ', 'T') + 'Z'*/).toLocaleString()}</div>
 			{#if message.is_outgoing}
-				<div class="checkmark"><img src={checkmarks_img} alt={seenTxt} /></div>
+				<div class="checkmark"><img src={checkmarks_img} alt={_seenTxt} /></div>
 			{/if}
 		</div>
 	</div>

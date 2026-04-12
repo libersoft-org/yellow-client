@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import Label from '@/core/components/Label/Label.svelte';
 	import Select from '@/core/components/Select/Select.svelte';
 	import Option from '@/core/components/Select/SelectOption.svelte';
@@ -12,13 +12,21 @@
 	import DialogDeleteStickers from '@/org.libersoft.messages/dialogs/DeleteStickers.svelte';
 	import WindowStickerServers from '@/org.libersoft.messages/windows/StickerServers.svelte';
 	import WindowGifServers from '@/org.libersoft.messages/windows/GifServers.svelte';
-	let elWindowStickerServers;
-	let elWindowGifServers;
-	let elDialogDeleteStickers;
-	let showAsVector = $expressions_renderer === 'svg';
-	let animateAll = $animate_all_expressions;
-	$: showAsVector !== undefined && expressions_renderer.set(showAsVector ? 'svg' : 'canvas');
-	$: animateAll !== undefined && animate_all_expressions.set(animateAll);
+	let elWindowStickerServers: any;
+	let elWindowGifServers: any;
+	let elDialogDeleteStickers: any;
+	let showAsVector = $state($expressions_renderer === 'svg');
+	let animateAll = $state($animate_all_expressions);
+	let _syncVector = $derived.by((): boolean => {
+		const v = showAsVector;
+		if (v !== undefined) queueMicrotask(() => expressions_renderer.set(v ? 'svg' : 'canvas'));
+		return true;
+	});
+	let _syncAnimate = $derived.by((): boolean => {
+		const v = animateAll;
+		if (v !== undefined) queueMicrotask(() => animate_all_expressions.set(v));
+		return true;
+	});
 
 	function clickManageStickerServers() {
 		elWindowStickerServers?.open();
@@ -42,7 +50,7 @@
 	}
 </style>
 
-<div class="settings">
+<div class="settings" data-sync-vector={_syncVector || undefined} data-sync-animate={_syncAnimate || undefined}>
 	<Switch label="Show expressions as vector (slower, nicer)" bind:checked={showAsVector} showLabel row />
 	<Switch label="Animate all expressions" bind:checked={animateAll} showLabel row />
 	<Label text="Sticker server">

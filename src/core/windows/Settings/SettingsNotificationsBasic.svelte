@@ -38,7 +38,7 @@
 
 	let _notificationsEnabledSync = $derived.by((): boolean => {
 		const val = _notificationsEnabled;
-		updateNotificationsEnabled(val);
+		queueMicrotask(() => updateNotificationsEnabled(val));
 		return val;
 	});
 

@@ -1,14 +1,5 @@
 <script lang="ts">
-	/**
-	 * WARNING: This component has been partially converted to TypeScript.
-	 * Some type errors remain that need to be addressed:
-	 * - event.referenced_message null check needed (line ~271)
-	 * - getLoader return type mismatch with Partial<LoaderItem>
-	 * - getHole type literal needs explicit type assertion
-	 * - itemsArray initialization with type 'initial_loading_placeholder' needs uid
-	 * - Other type incompatibilities that need proper type definitions
-	 */
-	import { afterUpdate, beforeUpdate, getContext, onMount, setContext, tick } from 'svelte';
+	import { getContext, onDestroy, onMount, setContext, tick } from 'svelte';
 	import { get } from 'svelte/store';
 	import { online, messagesArray, events, insertEvent, identifier, messagesIsInitialLoading, messageListMaxWidth, messageListApplyMaxWidth } from '@/org.libersoft.messages/scripts/messages.ts';
 	import { getGuid } from '@/core/scripts/core.ts';
@@ -27,7 +18,6 @@
 	import ScrollButton from '@/org.libersoft.messages/components/ScrollButton/ScrollButton.svelte';
 	import WindowStickersetDetails from '@/org.libersoft.messages/windows/WindowStickersetDetails.svelte';
 	import WindowForwardMessage from '@/org.libersoft.messages/windows/ForwardMessage.svelte';
-
 	interface IMessageItem {
 		uid: string;
 		type: 'message' | 'loader' | 'hole' | 'unseen_marker' | 'no_messages' | 'initial_loading_placeholder';
@@ -44,7 +34,6 @@
 		acc?: any;
 		is_lazyloaded?: boolean;
 	}
-
 	interface ILoaderItem extends IMessageItem {
 		type: 'loader';
 		base: number;
@@ -55,13 +44,11 @@
 		loaderElement?: HTMLElement;
 		conversation: any;
 	}
-
 	interface IHoleItem extends IMessageItem {
 		type: 'hole';
 		top: ILoaderItem;
 		bottom: ILoaderItem;
 	}
-
 	interface IUIEvent {
 		type: string;
 		array?: IMessageItem[];
@@ -72,13 +59,14 @@
 		wasScrolledToBottom2?: boolean;
 		referenced_message?: IMessageItem;
 	}
-
-	export let conversation: any;
-	export let setBarFocus: () => Promise<void>;
-
+	interface Props {
+		conversation: any;
+		setBarFocus: () => Promise<void>;
+	}
+	let { conversation, setBarFocus }: Props = $props();
 	// Android detection and mobile keyboard handling
-	let isAndroid = false;
-	let shouldShowSpacer = true;
+	let isAndroid = $state(false);
+	let shouldShowSpacer = $state(true);
 
 	onMount(() => {
 		// Detect Android specifically
@@ -87,12 +75,12 @@
 	});
 
 	// Reactive bottom position for ScrollButton
-	$: scrollButtonBottom = isAndroid ? '62px' : '5px';
+	let scrollButtonBottom = $derived(isAndroid ? '62px' : '5px');
 
 	/// todo solve this with a store or something?
 
 	// Get expressions menu state from context
-	let expressionsMenuOpen = false;
+	let expressionsMenuOpen = $state(false);
 
 	// Get the context and set up reactive updates
 	let expressionsMenuContext;
@@ -113,33 +101,36 @@
 	/// End of expressions menu context handling
 
 	// Reactive spacer visibility for Android keyboard adjustment
-	$: showAndroidSpacer = isAndroid && ($keyboardHeight > 0 || $keyboardHeight === 0) && shouldShowSpacer;
-	$: androidSpacerHeight = expressionsMenuOpen ? '10px' : '72px';
+	let showAndroidSpacer = $derived(isAndroid && ($keyboardHeight > 0 || $keyboardHeight === 0) && shouldShowSpacer);
+	let androidSpacerHeight = $derived(expressionsMenuOpen ? '10px' : '72px');
 
-	let scrollButtonVisible: boolean = true;
-	let elMessages: HTMLDivElement;
-	let elMessagesContainer: HTMLDivElement;
-	let elUnseenMarker: HTMLDivElement;
-	let elWindowStickersetDetails: any;
-	let itemsCount: number = 0;
-	let itemsArray: (IMessageItem | ILoaderItem | IHoleItem)[] = [];
+	let elMessages = $state<HTMLDivElement>();
+	let elMessagesContainer = $state<HTMLDivElement>();
+	let elUnseenMarker = $state<HTMLDivElement>();
+	let elWindowStickersetDetails = $state<any>();
+	let itemsCount = $state(0);
+	let itemsArray = $state<(IMessageItem | ILoaderItem | IHoleItem)[]>([]);
 	let loaders: ILoaderItem[] = [];
 	let holes: IHoleItem[] = [];
 	let uiEvents: IUIEvent[] = [];
-	let stickersetDetailsWindowStickerset: any;
-	let scrolledToBottom: boolean = true;
-	let windowInnerWidth: number;
-	let windowInnerHeight: number;
-	let showFileDndOverlay: boolean = false;
+	let stickersetDetailsWindowStickerset = $state<any>();
+	let scrolledToBottom = $state(true);
+	let windowInnerWidth = $state(0);
+	let windowInnerHeight = $state(0);
+	let showFileDndOverlay = $state(false);
 	let doBlockScroll: boolean = false;
-	let fileDndRef: HTMLDivElement;
+	let fileDndRef = $state<HTMLDivElement>();
 	let jumped: boolean = false;
-	let messagesHeight: number = -1;
+	let messagesHeight = $state(-1);
 	let scrolledToBottom0: boolean = false;
 	let scrolledToBottom1: boolean = false;
-	let wrapperWidth: number | null = null;
-	let elWindowForwardMessage: any;
-	$: windowForwardMessageStore.set(elWindowForwardMessage);
+	let wrapperWidth = $state<number | null>(null);
+	let elWindowForwardMessage = $state<any>();
+	let _syncForwardStore = $derived.by((): boolean => {
+		const el = elWindowForwardMessage;
+		queueMicrotask(() => windowForwardMessageStore.set(el));
+		return true;
+	});
 
 	let {
 		setFileUploadWindow,
@@ -149,11 +140,13 @@
 		fileUploadWindowFiles: any;
 	} = getContext('FileUploadWindow');
 
-	$: scrollButtonVisible = !scrolledToBottom;
-	$: updateWindowSize(windowInnerWidth, windowInnerHeight);
-	$: if (elMessagesContainer) {
-		elMessagesContainer.style.setProperty('--message-list-max-width', $messageListApplyMaxWidth ? `${$messageListMaxWidth}px` : 'none');
-	}
+	let _scrollBtnVisible = $derived(!scrolledToBottom);
+	let _syncMaxWidth = $derived.by((): boolean => {
+		if (elMessagesContainer) {
+			elMessagesContainer.style.setProperty('--message-list-max-width', $messageListApplyMaxWidth ? `${$messageListMaxWidth}px` : 'none');
+		}
+		return true;
+	});
 
 	onMount(() => {
 		setInterval(() => {
@@ -205,12 +198,25 @@
 
 	setContext('openStickersetDetailsWindow', openStickersetDetailsWindow);
 
-	events.subscribe(e => {
+	const unsubEvents = events.subscribe(async e => {
 		if (e?.length) {
+			console.log(
+				'events.subscribe: processing',
+				e.length,
+				'events, types:',
+				e.map((ev: any) => ev.type)
+			);
 			handleEvents(e);
+			console.log('events.subscribe: after handleEvents, itemsArray.length:', itemsArray.length);
 			itemsCount = itemsArray.length;
 			events.set([]);
+			await processAfterDOMUpdate();
+			console.log('events.subscribe: after processAfterDOMUpdate');
 		}
+	});
+
+	onDestroy(() => {
+		unsubEvents();
 	});
 
 	function saveScrollPosition(event: IUIEvent): void {
@@ -220,6 +226,7 @@
 	}
 
 	function restoreScrollPosition(event: IUIEvent): void {
+		if (!elMessages) return;
 		//console.log('restoreScrollPosition elMessages.scrollTop:', elMessages.scrollTop, 'elMessages.scrollHeight:', elMessages.scrollHeight);
 		if (event.savedScrollHeight !== undefined && event.savedScrollTop !== undefined) {
 			const scrollDifference = elMessages.scrollHeight - event.savedScrollHeight;
@@ -254,14 +261,14 @@
 	let scrollStartPos: number = 0;
 
 	function touchStart(_e: TouchEvent): void {
-		scrollStartPos = elMessages.scrollTop;
+		scrollStartPos = elMessages?.scrollTop ?? 0;
 	}
 
 	function touchMove(e: TouchEvent): void {
 		if (doBlockScroll) {
 			e.preventDefault();
 			e.stopPropagation();
-			elMessages.scrollTop = scrollStartPos;
+			if (elMessages) elMessages.scrollTop = scrollStartPos;
 		}
 	}
 
@@ -270,20 +277,13 @@
 			e.preventDefault();
 			e.stopPropagation();
 		}
-		scrolledToBottom = elMessages?.scrollTop + elMessages?.clientHeight >= elMessages?.scrollHeight - 20;
+		if (!elMessages) return;
+		scrolledToBottom = elMessages.scrollTop + elMessages.clientHeight >= elMessages.scrollHeight - 20;
 	}
 
-	function updateWindowSize(_width: number, _height: number): void {
-		parseScroll();
-	}
-
-	beforeUpdate(() => {
-		if (!elMessages) return;
-	});
-
-	afterUpdate(async () => {
-		if (!elMessages) return;
+	async function processAfterDOMUpdate(): Promise<void> {
 		await tick();
+		if (!elMessages) return;
 
 		// Check if content fills the container to determine if spacer should be shown
 		if (elMessagesContainer && elMessages) {
@@ -333,16 +333,32 @@
 		let activatedCount = 0;
 		for (let event of events) {
 			for (let loader of event.loaders) {
-				loader.active = true;
-				activatedCount++;
+				// Find the loader in itemsArray by uid and activate via proxy
+				for (let i = 0; i < itemsArray.length; i++) {
+					const item = itemsArray[i]!;
+					if (item.uid === loader.uid) {
+						(itemsArray[i] as ILoaderItem).active = true;
+						activatedCount++;
+						break;
+					} else if (item.type === 'hole') {
+						const hole = item as IHoleItem;
+						if (hole.top.uid === loader.uid) {
+							(itemsArray[i] as IHoleItem).top.active = true;
+							activatedCount++;
+						}
+						if (hole.bottom.uid === loader.uid) {
+							(itemsArray[i] as IHoleItem).bottom.active = true;
+							activatedCount++;
+						}
+					}
+				}
 			}
 		}
 		if (activatedCount > 0) {
-			itemsArray = itemsArray;
-			for (let i = 0; i < itemsArray.length; i++) itemsArray[i] = itemsArray[i]!;
+			itemsArray = [...itemsArray];
 		}
 		jumped = true;
-	});
+	}
 
 	function getLoader(l: Partial<ILoaderItem> & { base: number }): ILoaderItem {
 		loaders = loaders.filter(i => !i.delete_me);
@@ -386,7 +402,10 @@
 		insertEvent({ type: 'gc', array: get(messagesArray) });
 	}
 
-	$: log.debug('itemsArray:', itemsArray);
+	let _logItemsArray = $derived.by((): boolean => {
+		log.debug('itemsArray:', itemsArray);
+		return true;
+	});
 
 	async function jumpToLazyLoaderFromTop(event: IUIEvent): Promise<void> {
 		//console.log('jumpToLazyLoaderFromTop:', event);
@@ -398,7 +417,7 @@
 			}
 		}
 		if (el) {
-			elMessages.scrollTop = 0;
+			if (elMessages) elMessages.scrollTop = 0;
 			scrolledToBottom0 = false;
 			scrolledToBottom1 = false;
 			await tick();
@@ -408,7 +427,7 @@
 	async function handleEvents(events: IUIEvent[]): Promise<void> {
 		console.log('handleEvents:', events);
 		if (events.length === 1 && events[0]!.type === 'properties_update') {
-			itemsArray = itemsArray;
+			itemsArray = [...itemsArray];
 			return;
 		}
 		// force_refresh is used when deleting message. Normally, Loaders would, after loadMessages, only issue an event if any new messages are actually added. But if we delete a message, we need to remove the loader. So, the gc event, triggered as soon as the message is removed from messagesArray, lets us know to tell all loaders to force_refresh when they trigger. This is not optimal, as only the exact hole inserted in place of the deleted message should force_refresh, but it will work.
@@ -492,6 +511,12 @@
 				items.push(l);
 			}
 			itemsArray = items;
+			console.log(
+				'handleEvents: itemsArray set to',
+				items.length,
+				'items, types:',
+				items.map(i => i.type)
+			);
 		}
 	}
 
@@ -555,7 +580,7 @@
 	function onDragLeave(e: DragEvent): void {
 		e.preventDefault();
 		// handle premature dragleave events
-		if (!e.relatedTarget || !fileDndRef.contains(e.relatedTarget as Node)) showFileDndOverlay = false;
+		if (!e.relatedTarget || !fileDndRef?.contains(e.relatedTarget as Node)) showFileDndOverlay = false;
 	}
 
 	function onDrop(e: DragEvent): void {
@@ -570,7 +595,10 @@
 	const onResize = (entry: ResizeObserverEntry): void => {
 		wrapperWidth = entry.contentRect.width;
 	};
-	$: document.documentElement.style.setProperty('--messages-list-width', wrapperWidth + 'px');
+	let _syncWrapperWidth = $derived.by((): boolean => {
+		document.documentElement.style.setProperty('--messages-list-width', wrapperWidth + 'px');
+		return true;
+	});
 
 	// Debug button handlers
 	const handleSaveScrollPosition = () => {
@@ -744,17 +772,15 @@
 		<div>expressionsMenuOpen: {expressionsMenuOpen}</div>
 	</div>
 {/if}
-
-<svelte:window bind:innerWidth={windowInnerWidth} bind:innerHeight={windowInnerHeight} />
-
-<div class="messages-fixed" bind:this={fileDndRef} on:dragover={onDragOver} on:drop={onDrop} on:dragleave={onDragLeave} role="region" aria-label="File drop zone" use:resize={onResize}>
+<svelte:window bind:innerWidth={windowInnerWidth} bind:innerHeight={windowInnerHeight} onresize={() => parseScroll()} />
+<div class="messages-fixed" bind:this={fileDndRef} ondragover={onDragOver} ondrop={onDrop} ondragleave={onDragLeave} role="region" aria-label="File drop zone" use:resize={onResize} data-sync-forward={_syncForwardStore || undefined} data-sync-max-width={_syncMaxWidth || undefined} data-log-items={_logItemsArray || undefined} data-sync-width={_syncWrapperWidth || undefined}>
 	<div class="dnd-overlay {showFileDndOverlay ? 'drop-active' : ''}">
 		<div class="dnd-overlay-inner">
 			<Icon img="modules/{identifier}/img/file.svg" colorVariable="--primary-foreground" alt="Drop files icon" size="75px" padding="0px" />
 			<div class="dnd-overlay-text">Drop files here to send them</div>
 		</div>
 	</div>
-	{#if itemsArray.length === 0 || (itemsArray.length === 1 && itemsArray[0]?.type === 'no_messages')}
+	{#if itemsArray.length === 0 || (itemsArray.length === 1 && (itemsArray[0]?.type === 'no_messages' || itemsArray[0]?.type === 'initial_loading_placeholder'))}
 		<div class="spacer"></div>
 		<div class="no-messages">
 			{#if $online}
@@ -769,13 +795,13 @@
 		</div>
 		<div class="spacer"></div>
 	{:else}
-		<div class="messages" role="none" tabindex="-1" bind:this={elMessages} on:mousedown={mouseDown} on:focus={onFocus} on:blur={onBlur} on:scroll={parseScroll} on:touchmove={touchMove} on:touchend={blockScroll} on:touchstart={touchStart}>
+		<div class="messages" role="none" tabindex="-1" bind:this={elMessages} onmousedown={mouseDown} onfocus={onFocus} onblur={onBlur} onscroll={parseScroll} ontouchmove={touchMove} ontouchend={blockScroll} ontouchstart={touchStart}>
 			<div class="messages-container" bind:this={elMessagesContainer}>
 				{#each itemsArray as m (m.uid)}
 					{#if m.type === 'no_messages' || m.type === 'initial_loading_placeholder'}{:else if m.type === 'hole' && 'top' in m && 'bottom' in m}
-						<MessageLoader loader={m.top} />
+						<MessageLoader bind:loader={m.top} />
 						<div class="hole">{m.uid}</div>
-						<MessageLoader loader={m.bottom} />
+						<MessageLoader bind:loader={m.bottom} />
 					{:else if m.type === 'loader'}
 						<MessageLoader loader={m} />
 					{:else if m.type === 'unseen_marker'}
@@ -791,9 +817,8 @@
 				{/if}
 			</div>
 		</div>
-		<ScrollButton visible={scrollButtonVisible} right="15px" bottom={scrollButtonBottom} onClick={scrollToBottom} />
+		<ScrollButton visible={_scrollBtnVisible} right="15px" bottom={scrollButtonBottom} onClick={scrollToBottom} />
 	{/if}
 </div>
-
 <Window bind:this={elWindowStickersetDetails} title="Sticker set" body={WindowStickersetDetails} params={{ stickersetDetailsWindowStickerset }} width="448px" height="390px" />
 <Window bind:this={elWindowForwardMessage} testId="forward-message" title="Forward message" body={WindowForwardMessage} width="448px" height="390px" />

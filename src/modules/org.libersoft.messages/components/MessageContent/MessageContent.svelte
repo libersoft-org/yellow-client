@@ -24,6 +24,8 @@
 	}
 </style>
 
-<div class="text">
-	<MessageContentRenderer rootNode={messageContent.body} />
-</div>
+{#if messageContent}
+	<div class="text">
+		<MessageContentRenderer rootNode={messageContent.body} />
+	</div>
+{/if}

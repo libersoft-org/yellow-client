@@ -1,13 +1,16 @@
 <script lang="ts">
 	import { onMount, onDestroy, tick, getContext } from 'svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	export let onVisible;
+	interface Props {
+		onVisible: () => Promise<void>;
+	}
+	let { onVisible }: Props = $props();
 	const threshold = 0.1;
-	let loading: boolean = false;
-	let loaderElement;
+	let loading: boolean = $state(false);
+	let loaderElement: HTMLDivElement;
 	let _loaderIsVisible: boolean = true;
-	let observer;
-	let timer;
+	let observer: IntersectionObserver;
+	let timer: ReturnType<typeof setTimeout> | undefined;
 	let contentElement = getContext('contentElement') as Element | null;
 
 	onMount(async () => {

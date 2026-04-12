@@ -1,16 +1,19 @@
-<script>
+<script lang="ts">
 	import ProgressBar from '@/core/components/ProgressBar/ProgressBar.svelte';
 	import { humanSize } from '@/core/scripts/utils/fileUtils.ts';
 	import { onDestroy } from 'svelte';
-	export let file = '';
-	export let total = 0;
-	export let uploaded = 0;
-	export let status = '';
-	export let hideSpeed = false;
-	let lastUploaded = uploaded;
-	let speed = 0;
+	interface Props {
+		file?: string;
+		total?: number;
+		uploaded?: number;
+		status?: string;
+		hideSpeed?: boolean;
+	}
+	let { file = '', total = 0, uploaded = 0, status = '', hideSpeed = false }: Props = $props();
+	let lastUploaded = $state(0);
+	let speed = $state(0);
 
-	function updateSpeed() {
+	function updateSpeed(): void {
 		const elapsed = 1; // Always 1 second interval
 		const delta = uploaded - lastUploaded;
 		speed = delta > 0 ? delta / elapsed : 0; // Set to 0 if no progress
@@ -19,7 +22,7 @@
 
 	const interval = setInterval(updateSpeed, 1000);
 
-	$: percent = total > 0 ? Math.round((uploaded / total) * 100) : 0;
+	let percent = $derived(total > 0 ? Math.round((uploaded / total) * 100) : 0);
 
 	onDestroy(() => {
 		clearInterval(interval);

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 </script>
 

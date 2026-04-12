@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { onMount, setContext, tick, getContext } from 'svelte';
 	import { documentHeight, keyboardHeight, isMobile, debug } from '@/core/scripts/stores.ts';
 	import { handleResize, identifier, initUpload, sendMessage, selectedConversation } from '@/org.libersoft.messages/scripts/messages.ts';
@@ -20,31 +20,33 @@
 	import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 	import VideoRecorderContainer from '../VideoRecorder/VideoRecorderContainer.svelte';
 	import { windowFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
-	let expressionsMenu;
-	let elBottomSheet;
-	let elAttachment;
-	let elExpressions;
-	let elMessage;
-	let elMessageBar;
-	let elWindowHTML;
-	let text;
-	let expressions;
-	let expressionsHeight = '500px';
-	let expressionsBottomSheetOpen = false;
-	let expressionsAsContextMenu = true;
+	let expressionsMenu = $state<any>();
+	let elBottomSheet = $state<any>();
+	let elAttachment = $state<any>();
+	let elExpressions = $state<any>();
+	let elMessage = $state<any>();
+	let elMessageBar = $state<any>();
+	let elWindowHTML = $state<any>();
+	let text = $state<string>('');
+	let expressions = $state<any>();
+	let expressionsHeight = $state('500px');
+	let expressionsBottomSheetOpen = $state(false);
+	let expressionsAsContextMenu = $state(true);
 	let lastDocumentHeight = 0;
-	let videoInputRef;
-	let showVideoRecorder = false;
-	let pendingBottomSheetOpen = false;
-	let waitingForKeyboardClose = false;
+	let videoInputRef = $state<any>();
+	let showVideoRecorder = $state(false);
+	let pendingBottomSheetOpen = $state(false);
+	let waitingForKeyboardClose = $state(false);
 
-	isMobile.subscribe(value => {
+	isMobile.subscribe((value: boolean) => {
+		let changed = expressionsAsContextMenu !== !value;
 		expressionsAsContextMenu = !value;
 		expressionsHeight = value ? '250px' : '500px';
+		if (changed) closeExpressions();
 	});
 
-	let { setFileUploadWindow } = getContext('FileUploadWindow');
-	let expressionsMenuOpen = getContext('expressionsMenuOpen');
+	let { setFileUploadWindow }: { setFileUploadWindow: (show: boolean) => void } = getContext('FileUploadWindow');
+	let expressionsMenuOpen: any = getContext('expressionsMenuOpen');
 
 	documentHeight.subscribe(value => {
 		if (value != lastDocumentHeight) {
@@ -102,9 +104,9 @@
 		setBarFocus();
 	}
 
-	let lastSentMessageUid = null;
+	let lastSentMessageUid: string | null = $state(null);
 
-	export async function doSendMessage(message, html) {
+	export async function doSendMessage(message: string, html: boolean): Promise<void> {
 		//console.log('doSendMessage', message);
 		const uid = await sendMessage(message, html ? 'html' : 'plaintext');
 		lastSentMessageUid = uid;
@@ -241,11 +243,6 @@
 		}
 	});
 
-	$: expressionsAsContextMenuUpdate(expressionsAsContextMenu);
-	function expressionsAsContextMenuUpdate(_expressionsAsContextMenu) {
-		closeExpressions();
-	}
-
 	function closeExpressions() {
 		//if (expressionsBottomSheetOpen) handleResize(true); // TODO: save wasScrolledToBottom2 before showing bottom sheet
 		expressionsBottomSheetOpen = false;
@@ -255,12 +252,6 @@
 		waitingForKeyboardClose = false;
 		// Notify MessagesList that expressions menu is closed
 		expressionsMenuOpen?.setOpen(false);
-	}
-
-	$: update2(expressionsAsContextMenu, expressionsBottomSheetOpen);
-	function update2(_expressionsAsContextMenu, _expressionsBottomSheetOpen) {
-		// Removed auto-blur to prevent interference with delay logic
-		// The blur is now handled manually in handleBottomSheetOpenWithDelay
 	}
 
 	function elMessageBlur(event) {
@@ -389,7 +380,7 @@
 		{/if}
 		<div class="main">
 			<MessageBarRecorder />
-			<div bind:this={elAttachment} data-testid="attachment-button" on:mousedown={handleAttachmentMousedown} role="button" tabindex="0">
+			<div bind:this={elAttachment} data-testid="attachment-button" onmousedown={handleAttachmentMousedown} role="button" tabindex="0">
 				<Icon img="modules/{identifier}/img/attachment.svg" colorVariable="--primary-background" alt="Attachment" size="32px" padding="0px" />
 			</div>
 			{#if expressionsAsContextMenu}
@@ -417,7 +408,7 @@
 					/>
 				</div>
 			{/if}
-			<textarea data-testid="message-input" id="message-input" class="message-textarea" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." on:input={resizeMessage} on:keydown={onKeyDown} on:blur={elMessageBlur} on:focus={onMessageInputFocus}></textarea>
+			<textarea data-testid="message-input" id="message-input" class="message-textarea" bind:value={text} bind:this={elMessage} rows="1" placeholder="Enter your message ..." oninput={resizeMessage} onkeydown={onKeyDown} onblur={elMessageBlur} onfocus={onMessageInputFocus}></textarea>
 			<!--<Icon img="modules/{identifier}/img/video_message.svg" alt="Record video message" size="32px" padding="0px" onClick={onVideoRecordClick} />-->
 			{#if !elMessage?.value}
 				<Icon img="modules/{identifier}/img/video-message.svg" colorVariable="--primary-background" alt="Record video message" size="32px" padding="0px" onClick={() => (showVideoRecorder = !showVideoRecorder)} />

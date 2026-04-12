@@ -6,7 +6,7 @@
 	interface Props {
 		text?: string;
 	}
-	let { text = $bindable() }: Props = $props();
+	let { text = $bindable('') }: Props = $props();
 	let activeTab = $state('editor');
 
 	function setTab(_e, name) {

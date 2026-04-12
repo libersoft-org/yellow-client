@@ -10,8 +10,7 @@ export function longpress(node: HTMLElement, threshold: number = 300): { destroy
 			clearTimeout(timeout);
 			node.removeEventListener('mousemove', cancel);
 			node.removeEventListener('mouseup', cancel);
-			e.preventDefault();
-			e.stopPropagation();
+			node.removeEventListener('click', cancel);
 		};
 
 		node.addEventListener('mousemove', cancel);

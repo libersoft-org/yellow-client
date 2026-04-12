@@ -73,7 +73,7 @@
 		autoPlacementCleanup && autoPlacementCleanup();
 	});
 
-	const onEmojiClick = (codepoints: number[]) => {
+	const onEmojiClick = (codepoints: any): void => {
 		const codepoints_rgi = rgi(codepoints);
 		toggleMessageReaction(message, { emoji_codepoints_rgi: codepoints_rgi });
 		show = false;

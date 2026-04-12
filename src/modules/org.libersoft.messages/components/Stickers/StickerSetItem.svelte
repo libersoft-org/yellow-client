@@ -1,17 +1,20 @@
-<script>
+<script lang="ts">
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Sticker from './Sticker.svelte';
 	import { getContext } from 'svelte';
 	import { htmlEscape } from '@/org.libersoft.messages/scripts/messages.ts';
-	export let sticker;
-	export let stickerset;
-	export let intersecting;
-	export let size;
-	const MessagesContext = getContext('MessagesContext');
-	const popup = getContext('Popup');
-	let file;
 
-	$: file = sticker.url;
+	interface Props {
+		sticker: any;
+		stickerset: any;
+		intersecting: boolean;
+		size: number;
+	}
+
+	let { sticker, stickerset, intersecting, size }: Props = $props();
+	const MessagesContext: any = getContext('MessagesContext');
+	const popup: any = getContext('Popup');
+	let file = $derived(sticker.url);
 
 	async function handleClick() {
 		console.log('stickerset-item handleClick file:', file, 'sticker:', sticker);

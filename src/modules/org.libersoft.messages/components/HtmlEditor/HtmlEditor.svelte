@@ -1,15 +1,15 @@
-<script>
+<script lang="ts">
 	import { tick } from 'svelte';
-	export let text;
-	let elText;
-
-	$: update1(elText);
-
-	async function update1(elText) {
-		if (!elText) return;
-		await tick();
-		elText.focus();
+	interface Props {
+		text: string;
 	}
+	let { text = $bindable() }: Props = $props();
+	let elText: HTMLTextAreaElement;
+
+	let _focusOnMount = $derived.by((): boolean => {
+		if (elText) tick().then(() => elText.focus());
+		return true;
+	});
 </script>
 
 <style>
@@ -26,4 +26,4 @@
 	}
 </style>
 
-<textarea class="text" bind:this={elText} bind:value={text}></textarea>
+<textarea class="text" bind:this={elText} bind:value={text} data-focused={_focusOnMount || undefined}></textarea>

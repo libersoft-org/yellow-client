@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { get } from 'svelte/store';
 	import { open } from '@tauri-apps/plugin-dialog';
 	import { TAURI } from '@/core/scripts/tauri.ts';
@@ -11,14 +11,18 @@
 	import Select from '@/core/components/Select/Select.svelte';
 	import Range from '@/core/components/Range/Range.svelte';
 	import Option from '@/core/components/Select/SelectOption.svelte';
-	let chunkSize = $uploadChunkSize;
+	let chunkSize = $state($uploadChunkSize);
 
-	function onSetChunkSize(chunkSize) {
+	function onSetChunkSize(chunkSize: number): void {
 		if (get(uploadChunkSize) === chunkSize) return;
 		uploadChunkSize.set(chunkSize);
 	}
 
-	$: onSetChunkSize(chunkSize);
+	let _syncChunkSize = $derived.by((): boolean => {
+		const v = chunkSize;
+		queueMicrotask(() => onSetChunkSize(v));
+		return true;
+	});
 
 	async function defaultFileDownloadFolderButtonClick() {
 		const file = await open({
@@ -31,6 +35,7 @@
 </script>
 
 <Label text="File upload chunk size">
+	<span hidden aria-hidden="true">{_syncChunkSize}</span>
 	<div>{humanSize(chunkSize)}</div>
 	<Range data-testid="chunk-size" class="zoom" min="131072" max="31457280" step="131072" bind:value={chunkSize} />
 </Label>

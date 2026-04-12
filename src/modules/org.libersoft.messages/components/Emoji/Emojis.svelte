@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { active_account } from '@/core/scripts/core.ts';
 	import { isMobile, debug } from '@/core/scripts/stores.ts';
 	import { getContext } from 'svelte';
@@ -13,18 +13,20 @@
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import { longpress } from '@/org.libersoft.messages/scripts/ui.ts';
 	import IntersectionObserver from 'svelte-intersection-observer';
-	export let onEmojiClick;
-	const MessageBar = getContext('MessageBar');
-	let alts = [];
-	let altsMenu;
+	interface Props {
+		onEmojiClick?: (codepoints: any) => void;
+	}
+	let { onEmojiClick }: Props = $props();
+	const MessageBar: any = getContext('MessageBar');
+	let alts: any[] = $state([]);
+	let altsMenu: any;
 	// @ts-expect-error TS6133 - used in template bind:this
-	let _elContainer;
-	let elSearchInput;
-	let search = '';
-	let results;
-	let intersectedElements = {};
+	let _elContainer: HTMLDivElement;
+	let elSearchInput: any;
+	let search = $state('');
+	let intersectedElements: Record<string, HTMLElement | null> = $state({});
 
-	$: results = find($emojiGroups, search);
+	let results = $derived(find($emojiGroups, search));
 
 	function find(groups, search) {
 		console.log('find:', search);
@@ -195,11 +197,7 @@
 <ContextMenu bind:this={altsMenu} scrollable={false}>
 	<div class="emojis">
 		{#each alts as e (e)}
-			<Clickable
-				onClick={() => {
-					() => clickEmojiAndClose(e);
-				}}
-			>
+			<Clickable onClick={() => clickEmojiAndClose(e)}>
 				<div class="emoji hover">
 					<Emoji codepoints={e} context={'menu'} is_single />
 				</div>
@@ -209,18 +207,20 @@
 </ContextMenu>
 
 {#snippet clickable_emoji(emoji)}
-	<IntersectionObserver once element={intersectedElements[emoji.codepoints_rgi]} let:intersecting>
+	<IntersectionObserver once element={intersectedElements[emoji.codepoints_rgi] ?? null} let:intersecting>
 		<Clickable onRightClick={e => showAlts(e, emoji)}>
 			<div
 				bind:this={intersectedElements[emoji.codepoints_rgi]}
 				class="emoji hover"
 				use:longpress
-				on:longpress={e => showAlts(e, emoji)}
-				on:mymousedown={() => {
-					altsMenu.close();
+				{...{
+					onlongpress: (e: any) => showAlts(e, emoji),
+					onmymousedown: () => {
+						altsMenu.close();
+					},
 				}}
-				on:click={() => clickEmoji(emoji.base)}
-				on:keydown={() => {}}
+				onclick={() => clickEmoji(emoji.base)}
+				onkeydown={() => {}}
 				role="button"
 				tabindex="0"
 			>

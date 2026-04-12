@@ -1,16 +1,19 @@
-<script>
+<script lang="ts">
 	import { componentMap } from '@/org.libersoft.messages/scripts/message-content.ts';
 	import { onMount } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
-
-	export let rootNode;
+	import MessageContentRenderer from './MessageContentRenderer.svelte';
+	interface Props {
+		rootNode: any;
+	}
+	let { rootNode }: Props = $props();
 
 	onMount(() => {
 		//console.log('rootNode:', rootNode);
 	});
 
 	// Recursive function to render nodes
-	function renderNode(node, parentNode = /** @type {any} */ (null), level = 0) {
+	function renderNode(node: any, parentNode: any = null, level = 0) {
 		const positionBetweenSiblings = parentNode && parentNode.childNodes ? Array.from(parentNode.childNodes).indexOf(node) : 0;
 		const tagUniqueId = `tag-unique-id-${node.tagName || node.nodeType}-${level}-${positionBetweenSiblings}`;
 
@@ -91,7 +94,7 @@
 	}
 
 	// Reactive rendering of the processed fragment
-	$: renderedContent = processFragment(rootNode);
+	let renderedContent = $derived(processFragment(rootNode));
 </script>
 
 {#each renderedContent as item (item.tagUniqueId)}
@@ -101,7 +104,8 @@
 		<!-- Render dynamic (HTML super-set) components -->
 	{:else if item.component}
 		{#key item.tagUniqueId}
-			<svelte:component this={item.component} {...item.props} children={item.children} />
+			{@const Component = item.component}
+			<Component {...item.props} children={item.children} />
 			<!-- INFO: custom components should take care of rendering its children themselves (see example below) -->
 			<!-- EXAMPLE:
     {#each item.children as child (child.tagUniqueId)}
@@ -116,7 +120,7 @@
 			<svelte:element this={item.tag} {...item.attrs}>
 				{#each item.children as child (child.tagUniqueId)}
 					{#if $debug}xxx{JSON.stringify(child)}xxx{/if}
-					<svelte:self rootNode={item.props.node} />
+					<MessageContentRenderer rootNode={item.props.node} />
 				{/each}
 			</svelte:element>
 		{/key}
