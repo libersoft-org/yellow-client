@@ -1051,12 +1051,24 @@ DOMPurify.addHook('uponSanitizeElement', (node, data) => {
 
 const CUSTOM_TAGS = ['sticker', 'gif', 'emoji', 'attachment', 'attachmentswrapper', 'imageswrapper', 'imaged', 'yellowvideo', 'yellowaudio', 'reply'];
 
+// Attributes that are only allowed on custom tags, not on standard HTML elements
+const CUSTOM_ONLY_ATTRS = new Set(['file', 'set', 'codepoints']);
+
+DOMPurify.addHook('uponSanitizeAttribute', (node, data) => {
+	if (CUSTOM_ONLY_ATTRS.has(data.attrName)) {
+		const tag = node.tagName.toLowerCase();
+		if (!CUSTOM_TAGS.includes(tag)) {
+			data.keepAttr = false;
+		}
+	}
+});
+
 export function saneHtml(content) {
 	//console.log('saneHtml:');
 	let sane = DOMPurify.sanitize(content, {
 		ADD_TAGS: CUSTOM_TAGS,
 		//FORBID_CONTENTS: ['sticker'],
-		ADD_ATTR: ['file', 'set', 'alt', 'codepoints', 'id'], // TODO: fixme, security issue, should only be allowed on the relevant elements
+		ADD_ATTR: ['file', 'set', 'alt', 'codepoints', 'id'],
 		RETURN_DOM_FRAGMENT: true,
 	});
 	/*
