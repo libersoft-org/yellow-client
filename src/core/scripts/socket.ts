@@ -100,6 +100,10 @@ export function handleSocketMessage(acc: IAccount, res: any) {
 		// it is response to command:
 		//console.log('GOT RESPONSE');
 		const reqData = acc.requests[res.requestID];
+		if (!reqData) {
+			console.warn('Received response for unknown request ID:', res.requestID);
+			return;
+		}
 
 		// Check for session-related errors
 		if (res.error === 994 || res.error === 998 || res.error === 996) {
