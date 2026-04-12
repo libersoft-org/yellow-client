@@ -132,16 +132,24 @@
 	});
 
 	let mounted = $state(false);
+	// Track previous target to detect changes
+	let prevTarget: HTMLElement | HTMLElement[] | null | undefined = null;
 
 	onMount(async () => {
 		await tick();
+		subscribeToTarget(target);
+		prevTarget = target;
 		mounted = true;
 	});
 
-	// Reactively re-subscribe when target changes (after mount)
+	// Reactively detect target changes and re-subscribe
 	let _targetTracker = $derived.by(() => {
-		if (mounted) subscribeToTarget(target);
-		return target;
+		const currentTarget = target;
+		if (mounted && currentTarget !== prevTarget) {
+			subscribeToTarget(currentTarget ?? null);
+			prevTarget = currentTarget;
+		}
+		return currentTarget;
 	});
 
 	function handleWindowMousedown(e: MouseEvent): void {

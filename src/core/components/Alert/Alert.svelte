@@ -12,7 +12,7 @@
 		warning: { label: 'Warning', color: '#440', border: '#880', background: '#ff0' },
 		error: { label: 'Error', color: '#400', border: '#800', background: '#fbb' },
 	} as const;
-	let colors = $derived(() => types[type] || types.error);
+	let colors = $derived(types[type] || types.error);
 </script>
 
 <style>
@@ -24,12 +24,12 @@
 	}
 </style>
 
-<div class="alert" style:color={colors().color} style:background-color={colors().background} style:border="1px solid {colors().border}" data-testid={testId}>
+<div class="alert" style:color={colors.color} style:background-color={colors.background} style:border="1px solid {colors.border}" data-testid={testId}>
 	{#if children}
 		{@render children?.()}
 	{/if}
 	{#if message}
-		<div class="bold">{colors().label}:</div>
+		<div class="bold">{colors.label}:</div>
 		<div>{message}</div>
 	{/if}
 </div>
