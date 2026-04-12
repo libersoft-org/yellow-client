@@ -33,7 +33,13 @@ export async function ensureLedgerState(): Promise<any> {
 	console.log('Opening Ledger window...');
 	await ledgerWin.open();
 	console.log('Ledger window opened, waiting for it to close...');
+	const timeout = Date.now() + 60000;
 	while (ledgerWin.isOpen()) {
+		if (Date.now() > timeout) {
+			console.error('Ledger window timed out after 60s');
+			await ledgerWin.close();
+			break;
+		}
 		await new Promise(resolve => setTimeout(resolve, 100));
 	}
 	console.log('Ledger window closed, ledgerConnected:', get(ledgerConnected));

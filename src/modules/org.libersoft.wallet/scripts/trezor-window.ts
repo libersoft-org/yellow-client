@@ -43,7 +43,13 @@ export async function ensureTrezorState(): Promise<any> {
 		return;
 	}
 	console.log('Trezor window opened, waiting for it to close...');
+	const timeout = Date.now() + 60000;
 	while (trezorWin.isOpen()) {
+		if (Date.now() > timeout) {
+			console.error('Trezor window timed out after 60s');
+			await trezorWin.close();
+			break;
+		}
 		await new Promise(resolve => setTimeout(resolve, 100));
 	}
 	console.log('Trezor window closed, trezorState:', get(trezorState));
