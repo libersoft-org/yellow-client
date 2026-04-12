@@ -143,13 +143,13 @@
 	});
 
 	// Reactively detect target changes and re-subscribe
-	let _targetTracker = $derived.by(() => {
+	let targetBound = $derived.by(() => {
 		const currentTarget = target;
 		if (mounted && currentTarget !== prevTarget) {
 			subscribeToTarget(currentTarget ?? null);
 			prevTarget = currentTarget;
 		}
-		return currentTarget;
+		return currentTarget != null;
 	});
 
 	function handleWindowMousedown(e: MouseEvent): void {
@@ -196,7 +196,7 @@
 
 <!-- svelte-ignore a11y_no_noninteractive_element_to_interactive_role -->
 
-<div bind:this={ref} role="none" tabindex="-1" class:context-menu={true} class:context-menu-open={open} style:left="{x}px" style:top="{y}px" style:min-height={height} style:max-height={height} style:min-width={width} style:max-width={width} style:overflow={scrollable ? 'auto' : 'hidden'} {...restProps} onkeydown={handleKeydown}>
+<div bind:this={ref} role="none" tabindex="-1" class:context-menu={true} class:context-menu-open={open} style:left="{x}px" style:top="{y}px" style:min-height={height} style:max-height={height} style:min-width={width} style:max-width={width} style:overflow={scrollable ? 'auto' : 'hidden'} data-target-bound={targetBound || undefined} {...restProps} onkeydown={handleKeydown}>
 	{#if children}
 		{@render children()}
 	{/if}

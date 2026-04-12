@@ -4,7 +4,7 @@
 	import { active_account } from '@/core/scripts/core.ts';
 	import { downloadAttachmentsSerial, identifier, loadUploadData } from '@/org.libersoft.messages/scripts/messages.js';
 	import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
-	import { humanSize } from '@/core/scripts/utils/fileUtils.js';
+	import { humanSize } from '@/core/scripts/utils/fileUtils.ts';
 	import MessageContentAttachment from '../MessageContentFile/MessageContentAttachment.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';

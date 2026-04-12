@@ -1,4 +1,4 @@
-//import {} from './client_debug';
+//import {} from './client_debug.ts';
 import { derived, get, type Readable } from 'svelte/store';
 import { selected_module_id, selected_corepage_id, hideSidebarMobile } from './stores.ts';
 

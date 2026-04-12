@@ -2,7 +2,7 @@
 	import { get } from 'svelte/store';
 	import { open } from '@tauri-apps/plugin-dialog';
 	import { TAURI } from '@/core/scripts/tauri.ts';
-	import { humanSize } from '@/core/scripts/utils/fileUtils.js';
+	import { humanSize } from '@/core/scripts/utils/fileUtils.ts';
 	import { uploadChunkSize, hideMessageTextInNotifications, defaultFileDownloadFolder, messageListMaxWidth, messageListApplyMaxWidth, photoRadius } from '@/org.libersoft.messages/scripts/messages.js';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Input from '@/core/components/Input/Input.svelte';

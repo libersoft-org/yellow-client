@@ -1,4 +1,4 @@
-export function humanSize(bytes, decimals = 2, forceDecimals = false) {
+export function humanSize(bytes: number, decimals: number = 2, forceDecimals: boolean = false): string {
 	if (bytes === 0) return forceDecimals ? '0.00 B' : '0 B';
 	const k = 1024;
 	const dm = decimals < 0 ? 0 : decimals;

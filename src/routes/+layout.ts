@@ -1,5 +1,5 @@
 export const ssr = false;
-let p;
+let p: boolean;
 try {
 	p = !!import.meta.env['TAURI'];
 } catch (e) {
@@ -9,7 +9,7 @@ export const prerender = p;
 
 import { log } from '@/core/scripts/tauri.ts';
 
-function handle(event) {
+function handle(event: Event & { error?: Error }): void {
 	// event.error is the Error object
 	console.warn('UNCAUGHT ERROR:', event);
 	console.error(JSON.stringify(event, null, 2));

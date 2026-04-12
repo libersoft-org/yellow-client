@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { isMobile } from '@/core/scripts/stores.ts';
 	import { current_theme } from '@/core/scripts/themes.ts';
-	import { getColorFromCSSToFilter } from '@/core/scripts/utils/colors.js';
+	import { getColorFromCSSToFilter } from '@/core/scripts/utils/colors.ts';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	interface Props {
 		img?: string | undefined;

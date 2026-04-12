@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { convertFromShortHex } from '@/core/scripts/utils/colors.js';
+	import { convertFromShortHex } from '@/core/scripts/utils/colors.ts';
 	import { type Writable, get } from 'svelte/store';
 	import { onDestroy } from 'svelte';
 	import { user_themes, default_themes, themes, selected_theme_index, type ITheme } from '@/core/scripts/themes.ts';
@@ -125,7 +125,7 @@
 					{#if theme_property_name === '--background-image'}
 						<Input type="text" bind:value={$theme.properties[theme_property_name]} enabled={!is_builtin_theme} data-testid={`theme-text-${theme_property_name}`} />
 					{:else}
-						<Input type="color" bind:value={$theme.properties[theme_property_name]} displayValue={convertFromShortHex($theme.properties[theme_property_name])} enabled={!is_builtin_theme} data-testid={`theme-color-${theme_property_name}`} />
+						<Input type="color" bind:value={$theme.properties[theme_property_name]} displayValue={convertFromShortHex($theme.properties[theme_property_name] ?? '')} enabled={!is_builtin_theme} data-testid={`theme-color-${theme_property_name}`} />
 						{$theme.properties[theme_property_name]}
 					{/if}
 				</Td>
