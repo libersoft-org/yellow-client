@@ -163,9 +163,12 @@ export async function initCustomNotifications() {
 	startMainWindowMonitorTimer();
 }
 
-function startMainWindowMonitorTimer() {
+let mainWindowMonitorTimerId: ReturnType<typeof setInterval> | null = null;
+
+function startMainWindowMonitorTimer(): void {
+	if (mainWindowMonitorTimerId !== null) return;
 	log.debug('startMainWindowMonitorTimer');
-	setInterval(async () => {
+	mainWindowMonitorTimerId = setInterval(async () => {
 		let m = await currentMonitor();
 		//log.debug('currentMonitor:', m);
 		mainWindowMonitor.set(m?.name || null);
