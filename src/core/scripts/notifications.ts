@@ -34,7 +34,7 @@ export interface IYellowNotification {
 	icon?: string;
 	sound?: string;
 	callback?: CallableFunction;
-	_audio?: HTMLAudioElement;
+	_audio?: HTMLAudioElement | undefined;
 }
 
 // Check if Notification API is available
@@ -388,7 +388,9 @@ export function playNotificationSound(notification: IYellowNotification): void {
 export function stopNotificationSound(notification: IYellowNotification): void {
 	if (notification._audio) {
 		notification._audio.pause();
-		//notification._audio.currentTime = 0;
+		notification._audio.removeAttribute('src');
+		notification._audio.load();
+		notification._audio = undefined;
 	}
 }
 

@@ -125,7 +125,7 @@ export function tableDrag(node: HTMLElement, options: TableDragOptions) {
 
 		dragManager = new TableDragManager(config);
 		dragManager.init(tbody);
-		currentItemsLength = options.items.length;
+		currentItemsLength = options.items?.length ?? 0;
 
 		// Update drag handle states based on item count
 		updateDragHandleStates();
@@ -134,7 +134,8 @@ export function tableDrag(node: HTMLElement, options: TableDragOptions) {
 	}
 
 	function updateDragHandleStates() {
-		const isDisabled = options.items.length <= 1;
+		const itemCount = options.items?.length ?? 0;
+		const isDisabled = itemCount <= 1;
 
 		// Update all registered drag handles
 		dragHandleRegistry.forEach(handle => {
@@ -147,7 +148,7 @@ export function tableDrag(node: HTMLElement, options: TableDragOptions) {
 			}
 		});
 
-		console.log('tableDrag: Drag handles', isDisabled ? 'disabled' : 'enabled', 'for', options.items.length, 'items');
+		console.log('tableDrag: Drag handles', isDisabled ? 'disabled' : 'enabled', 'for', itemCount, 'items');
 	}
 
 	function cleanup() {
