@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { type Snippet, tick } from 'svelte';
+	import DOMPurify from 'dompurify';
 	import Window from '@/core/components/Window/Window.svelte';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -25,6 +26,7 @@
 	let { data, width }: Props = $props();
 	let elWindow: Window;
 	let buttonElements = $state<(Button | undefined)[]>([]);
+	let sanitizedBody = $derived(typeof data?.body === 'string' ? DOMPurify.sanitize(data.body) : undefined);
 
 	export async function open() {
 		elWindow?.open();
@@ -61,7 +63,7 @@
 			{#if data?.body}
 				<div>
 					{#if typeof data.body === 'string'}
-						{@html data.body}
+						{@html sanitizedBody}
 					{:else}
 						{@render data.body()}
 					{/if}
