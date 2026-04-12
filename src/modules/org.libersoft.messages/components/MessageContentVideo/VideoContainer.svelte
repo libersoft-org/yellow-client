@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { get } from 'svelte/store';
 	import { loadUploadData, makeDownloadChunkAsyncFn, downloadAttachmentsSerial } from '@/org.libersoft.messages/scripts/messages.js';
 	import { active_account } from '@/core/scripts/core.ts';
@@ -15,7 +15,7 @@
 	let videoRef = $state<HTMLVideoElement>();
 	let upload = $state<IFileUpload | null>(null);
 	let download = $state<IFileDownload | null>(null);
-	fileDownloadStore.store.subscribe(() => (download = fileDownloadStore.get(uploadId) || null));
+	const unsubDownloadStore = fileDownloadStore.store.subscribe(() => (download = fileDownloadStore.get(uploadId) || null));
 	let thumbnailSrc = $state<string | null>(null);
 	//let videoUrl = $state<string | null>(null)
 	let posterError = $state(false);
@@ -187,6 +187,14 @@
 			.finally(() => {
 				loadingData = false;
 			});
+	});
+
+	onDestroy(() => {
+		if (videoJsInstance) {
+			videoJsInstance.dispose();
+			videoJsInstance = null;
+		}
+		unsubDownloadStore();
 	});
 </script>
 

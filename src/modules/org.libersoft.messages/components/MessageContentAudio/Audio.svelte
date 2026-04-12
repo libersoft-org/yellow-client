@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { get, writable } from 'svelte/store';
 	import { active_account } from '@/core/scripts/core.ts';
 	import { downloadAttachmentsSerial, identifier, loadUploadData } from '@/org.libersoft.messages/scripts/messages.js';
@@ -21,7 +21,7 @@
 	let download = writable<IFileDownload | null>(null);
 	const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-background');
 	const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--disabled-background');
-	fileDownloadStore.store.subscribe(() => download.set(fileDownloadStore.get(uploadId) || null));
+	const unsubDownloadStore = fileDownloadStore.store.subscribe(() => download.set(fileDownloadStore.get(uploadId) || null));
 
 	const fullDownloadAudio = () => {
 		if (!upload) return;
@@ -98,6 +98,11 @@
 			upload = uploadData;
 			setupWavesurfer('');
 		});
+	});
+
+	onDestroy(() => {
+		if (wavesurfer) wavesurfer.destroy();
+		unsubDownloadStore();
 	});
 
 	async function clickPlay() {

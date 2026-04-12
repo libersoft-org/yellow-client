@@ -70,7 +70,7 @@
 		return params => fn({ uploadId, ...params });
 	}
 
-	let initCleanup: (() => void) | null = null;
+	let initCleanup = null;
 
 	onMount(
 		/** @type {any} */ (
