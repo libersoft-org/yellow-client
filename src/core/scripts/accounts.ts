@@ -65,8 +65,8 @@ import.meta.hot?.dispose(() => {
 	});
 });
 
-export function accounts_init() {
-	const sub = accounts_config.subscribe(value => {
+export async function accounts_init(): Promise<() => void> {
+	let sub: () => void = accounts_config.subscribe(value => {
 		//log.debug('ACCOUNTS CONFIG:', value);
 		// TODO: implement configuration of accounts order
 		let accounts_list = get(accounts);
@@ -87,7 +87,14 @@ export function accounts_init() {
 
 	// Set up native message listener for service-based connections
 	if (TAURI_SERVICE) {
-		setupNativeMessageListener();
+		const nativeUnsub = await setupNativeMessageListener();
+		if (nativeUnsub) {
+			const originalUnsub = sub;
+			sub = () => {
+				originalUnsub();
+				nativeUnsub();
+			};
+		}
 	}
 
 	return sub;
@@ -515,12 +522,12 @@ function clearAccount(acc: IAccount) {
 }
 
 // Mobile native message handling
-async function setupNativeMessageListener() {
+async function setupNativeMessageListener(): Promise<(() => void) | null> {
 	log.debug('Setting up native message listener');
 
 	try {
 		// Listen for messages from native
-		await listen('native-message', (event: any) => {
+		const unsubMessage = await listen('native-message', (event: any) => {
 			const { accountId, message } = event.payload;
 			log.debug('Received message from native:', accountId, message);
 
@@ -538,7 +545,7 @@ async function setupNativeMessageListener() {
 		});
 
 		// Listen for connection status updates
-		await listen('native-connection-status', (event: any) => {
+		const unsubStatus = await listen('native-connection-status', (event: any) => {
 			const { accountId, status, error } = event.payload;
 			log.debug('Native connection status update:', accountId, status);
 
@@ -558,7 +565,13 @@ async function setupNativeMessageListener() {
 		});
 
 		log.debug('Native message listener setup complete');
+
+		return () => {
+			unsubMessage();
+			unsubStatus();
+		};
 	} catch (error) {
 		log.error('Failed to setup native message listener:', error);
+		return null;
 	}
 }

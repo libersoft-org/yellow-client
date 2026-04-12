@@ -70,6 +70,8 @@
 		return params => fn({ uploadId, ...params });
 	}
 
+	let initCleanup: (() => void) | null = null;
+
 	onMount(
 		/** @type {any} */ (
 			async () => {
@@ -88,18 +90,16 @@
 					navigator.serviceWorker.register(`service-worker.js?v=${SW_VERSION}`);
 					navigator.serviceWorker.ready.then(registration => {
 						/*console.log('+page service worker ready');
-				console.log('Service worker registration:', registration);
-				console.log('Service worker active:', registration.active);
-				console.log('Service worker script URL:', registration.active.scriptURL);
-				console.log('Service worker state:', registration.active.state);
-				console.log('Service worker scope:', registration.scope);**/
+								console.log('Service worker registration:', registration);
+								console.log('Service worker active:', registration.active);
+								console.log('Service worker script URL:', registration.active.scriptURL);
+								console.log('Service worker state:', registration.active.state);
+								console.log('Service worker scope:', registration.scope);**/
 						/** @type {any} */ (window).sw = registration;
 						navigator.serviceWorker.addEventListener('message', e => {
 							if (e.data.type === 'GET_FILE_INFO') {
 								const { uploadId } = e.data.payload;
-								loadUploadData(uploadId).then(uploadData => {
-									e.ports[0]?.postMessage(uploadData.record);
-								});
+								loadUploadData(uploadId).then(uploadData => e.ports[0]?.postMessage(uploadData.record));
 							}
 							if (e.data.type === 'GET_CHUNK') {
 								const { uploadId, start, end } = e.data.payload;
@@ -113,10 +113,7 @@
 							}
 						});
 					});
-				} else {
-					console.log('+page This browser does not support service workers.');
-				}
-
+				} else console.log('+page This browser does not support service workers.');
 				initZoom();
 				setDefaultWindowSize();
 				createTrayIcon();
@@ -141,14 +138,14 @@
 					visualViewport.addEventListener('scroll', updateAppHeight); // is this necessary?
 				} else window.addEventListener('resize', updateAppHeight);
 				updateAppHeight();
-				const cleanup = init();
-				return cleanup;
+				initCleanup = await init();
 			}
 		)
 	);
 
 	onDestroy(async () => {
 		console.log('+page onDestroy');
+		initCleanup?.();
 		await destroyTrayIcon();
 	});
 

@@ -23,9 +23,9 @@ export { registerModule };
 import { send, sendAsync } from './socket.ts';
 export { send, sendAsync };
 
-export function init(): () => void {
+export async function init(): Promise<() => void> {
 	let subs = initModules();
-	subs.push(accounts_init());
+	subs.push(await accounts_init());
 	subs.push(accounts_config_init());
 
 	// return an unsubscriber
