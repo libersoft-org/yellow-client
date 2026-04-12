@@ -265,6 +265,9 @@ function reconnectAccount(account: AccountStore) {
 		log.debug('Account status not "Enabled." or "Retrying...", not reconnecting:', acc.status);
 		return;
 	}
+	// Prevent duplicate connections by immediately marking as connecting
+	acc.status = 'Connecting...';
+	account.update(v => v);
 	//clearPingTimer(acc);
 	clearReconnectTimer(account);
 
