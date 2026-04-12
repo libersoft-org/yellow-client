@@ -297,7 +297,11 @@ function reconnectAccount(account: AccountStore) {
 				log.debug('Socket ID changed, ignoring message:', event);
 				return;
 			}
-			handleSocketMessage(acc, JSON.parse(event.data));
+			try {
+				handleSocketMessage(acc, JSON.parse(event.data));
+			} catch (e) {
+				log.error('Failed to parse socket message:', e);
+			}
 		};
 
 		acc.socket.onopen = event => {
