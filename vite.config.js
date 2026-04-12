@@ -97,6 +97,11 @@ export default defineConfig(({ mode }) => {
 					eval: false,
 					pluginTimings: false,
 				},
+				transform: {
+					inject: {
+						Buffer: ['buffer', 'Buffer'],
+					},
+				},
 			},
 		},
 		optimizeDeps: {
