@@ -37,12 +37,11 @@
         "hex-to-css-filter": "^6.0.0",
         "jsqr": "^1.4.0",
         "leaflet": "^1.9.4",
-        "libersoft-crypto": "https://github.com/libersoft-org/crypto-utils#59067b4",
+        "libersoft-crypto": "https://github.com/libersoft-org/crypto-utils#7fbc148",
         "lodash": "^4.17.21",
         "lodash-es": "^4.17.21",
         "lottie-web": "^5.12.2",
         "mediainfo.js": "^0.3.4",
-        "node-localstorage": "^3.0.5",
         "pako": "^2.1.0",
         "prismjs": "^1.30.0",
         "qrcode": "^1.5.4",
@@ -1704,7 +1703,7 @@
 
     "levn": ["levn@0.4.1", "", { "dependencies": { "prelude-ls": "^1.2.1", "type-check": "~0.4.0" } }, "sha512-+bT2uH4E5LGE7h/n3evcS/sQlJXCpIp6ym8OWJ5eV6+67Dsql/LaaT7qJBAt2rzfoa/5QBGBhxDix1dMt2kQKQ=="],
 
-    "libersoft-crypto": ["libersoft-crypto@github:libersoft-org/crypto-utils#59067b4", { "dependencies": { "@ledgerhq/hw-app-eth": "^7.6.2", "@ledgerhq/hw-transport-webhid": "^6.34.0", "@ledgerhq/hw-transport-webusb": "^6.33.0", "@trezor/connect": "^9.7.2", "@trezor/connect-web": "^9.7.2", "ethers": "^6.16.0", "node-localstorage": "^3.0.5", "prettier": "^3.8.2", "prettier-plugin-svelte": "^3.5.1" }, "peerDependencies": { "svelte": "5.55.3" } }, "libersoft-org-crypto-utils-59067b4", "sha512-aF924ZUv6O7JoJbV0enyu2Aaea2d+gNYtdztt/i22O8vNA3MFmLgd/yMkCbFGDc5ryFLwIxxdmejiBbSspXb4Q=="],
+    "libersoft-crypto": ["libersoft-crypto@github:libersoft-org/crypto-utils#7fbc148", { "dependencies": { "@ledgerhq/hw-app-eth": "^7.6.2", "@ledgerhq/hw-transport-webhid": "^6.34.0", "@ledgerhq/hw-transport-webusb": "^6.33.0", "@trezor/connect": "^9.7.2", "@trezor/connect-web": "^9.7.2", "ethers": "^6.16.0", "prettier": "^3.8.2", "prettier-plugin-svelte": "^3.5.1" }, "peerDependencies": { "svelte": "5.55.3" } }, "libersoft-org-crypto-utils-7fbc148", "sha512-h1fRpOZ0/x/81Eg9neQluU+39t6cm2hji41F3OjSrireBhKPfW3nUWZTxBaMKVMtcNlz7MJc1DrqJ5cndYouQA=="],
 
     "lightningcss": ["lightningcss@1.32.0", "", { "dependencies": { "detect-libc": "^2.0.3" }, "optionalDependencies": { "lightningcss-android-arm64": "1.32.0", "lightningcss-darwin-arm64": "1.32.0", "lightningcss-darwin-x64": "1.32.0", "lightningcss-freebsd-x64": "1.32.0", "lightningcss-linux-arm-gnueabihf": "1.32.0", "lightningcss-linux-arm64-gnu": "1.32.0", "lightningcss-linux-arm64-musl": "1.32.0", "lightningcss-linux-x64-gnu": "1.32.0", "lightningcss-linux-x64-musl": "1.32.0", "lightningcss-win32-arm64-msvc": "1.32.0", "lightningcss-win32-x64-msvc": "1.32.0" } }, "sha512-NXYBzinNrblfraPGyrbPoD19C1h9lfI/1mzgWYvXUTe414Gz/X1FD2XBZSZM7rRTrMA8JL3OtAaGifrIKhQ5yQ=="],
 
@@ -1839,8 +1838,6 @@
     "node-gyp-build": ["node-gyp-build@4.8.4", "", { "bin": { "node-gyp-build": "bin.js", "node-gyp-build-optional": "optional.js", "node-gyp-build-test": "build-test.js" } }, "sha512-LA4ZjwlnUblHVgq0oBF3Jl/6h/Nvs5fzBLwdEF4nuxnFdsfajde4WfxtJr3CaiH+F6ewcIB/q4jQ4UzPyid+CQ=="],
 
     "node-int64": ["node-int64@0.4.0", "", {}, "sha512-O5lz91xSOeoXP6DulyHfllpq+Eg00MWitZIbtPfoSEvqIHdl5gfcY6hYzDWnj0qD5tz52PI08u9qUvSVeUBeHw=="],
-
-    "node-localstorage": ["node-localstorage@3.0.5", "", { "dependencies": { "write-file-atomic": "^5.0.1" } }, "sha512-GCwtK33iwVXboZWYcqQHu3aRvXEBwmPkAMRBLeaX86ufhqslyUkLGsi4aW3INEfdQYpUB5M9qtYf3eHvAk2VBg=="],
 
     "node-preload": ["node-preload@0.2.1", "", { "dependencies": { "process-on-spawn": "^1.0.0" } }, "sha512-RM5oyBy45cLEoHqCeh+MNuFAxO0vTFBLskvQbOKnEE7YTTSN4tbN8QWDIPQ6L+WvKsB/qLEGpYe2ZZ9d4W9OIQ=="],
 

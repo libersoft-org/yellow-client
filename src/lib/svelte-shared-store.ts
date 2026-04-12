@@ -1,13 +1,32 @@
 import { writable, get, type Writable } from 'svelte/store';
 
-// Storage abstraction - use localStorage in browser, node-localstorage in Node.js
+// Storage abstraction - use localStorage in browser, in-memory fallback for SSR
 let storage: Storage;
 if (typeof window !== 'undefined' && window.localStorage) {
 	storage = window.localStorage;
 } else {
-	// Node.js fallback
-	const { LocalStorage } = require('node-localstorage');
-	storage = new LocalStorage('./crypto-utils-storage');
+	// SSR fallback - in-memory storage (no persistence needed during SSR)
+	const map = new Map<string, string>();
+	storage = {
+		get length(): number {
+			return map.size;
+		},
+		clear(): void {
+			map.clear();
+		},
+		getItem(key: string): string | null {
+			return map.get(key) ?? null;
+		},
+		key(index: number): string | null {
+			return [...map.keys()][index] ?? null;
+		},
+		removeItem(key: string): void {
+			map.delete(key);
+		},
+		setItem(key: string, value: string): void {
+			map.set(key, value);
+		},
+	};
 }
 
 export function localStorageSharedStore<T>(name: string, default_: T): Writable<T> {
