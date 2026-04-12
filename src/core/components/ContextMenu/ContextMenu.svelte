@@ -131,10 +131,17 @@
 		close,
 	});
 
-	// Subscribe to target after mount (wait for parent bind:this to resolve)
+	let mounted = $state(false);
+
 	onMount(async () => {
 		await tick();
-		subscribeToTarget(target);
+		mounted = true;
+	});
+
+	// Reactively re-subscribe when target changes (after mount)
+	let _targetTracker = $derived.by(() => {
+		if (mounted) subscribeToTarget(target);
+		return target;
 	});
 
 	function handleWindowMousedown(e: MouseEvent): void {
