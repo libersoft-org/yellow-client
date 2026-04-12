@@ -212,7 +212,6 @@ export async function initUpload(files, uploadType, recipients) {
 	} catch (error) {
 		console.error('Error transforming files for server:', error);
 	}
-	console.log('3333');
 	const { uploads } = fileUploadManager.beginUpload(files, uploadType, acc, {
 		chunkSize: get(uploadChunkSize),
 	});
@@ -678,7 +677,7 @@ function findNext(messages, i) {
 	}
 }
 
-export function setMessageSeen(message, cb, keep_unseen_bar = true) {
+export async function setMessageSeen(message, cb, keep_unseen_bar = true) {
 	let acc = /** @type {import('@/core/scripts/types.ts').IAccount} */ (get(active_account));
 	log.debug('setMessageSeen', message);
 	deleteNotification(messageNotificationId(message));
@@ -698,12 +697,11 @@ export function setMessageSeen(message, cb, keep_unseen_bar = true) {
 		}
 		*/
 	});
-	setTimeout(() => {
-		message.seen = true;
-		message.keep_unseen_bar = keep_unseen_bar;
-		messagesArray.update(v => v);
-		insertEvent({ type: 'message_seen', array: get(messagesArray) });
-	});
+	await tick();
+	message.seen = true;
+	message.keep_unseen_bar = keep_unseen_bar;
+	messagesArray.update(v => v);
+	insertEvent({ type: 'message_seen', array: get(messagesArray) });
 }
 
 /** @param {string} text
