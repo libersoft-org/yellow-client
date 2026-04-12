@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Unsubscriber } from 'svelte/store';
+	import { onMount } from 'svelte';
 	import { log, CUSTOM_NOTIFICATIONS } from '@/core/scripts/tauri.ts';
 	import { customNotificationsOn, animationDuration, animationName, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor } from '@/core/scripts/notifications_settings.ts';
 	import { skipFirst } from '$lib/skipfirst_store.ts';
@@ -13,20 +14,18 @@
 	import Tbody from '@/core/components/Table/TableTbody.svelte';
 	import TbodyTr from '@/core/components/Table/TableTbodyTr.svelte';
 	import Td from '@/core/components/Table/TableTbodyTd.svelte';
-	const unsubscribers: Unsubscriber[] = []; // Store all subscription unsubscribe functions
 
-	// Helper to add subscriptions and track unsubscribers
-	function addSubscription<T>(store: { subscribe: (callback: (value: T) => void) => Unsubscriber }, callback: (value: T) => void): void {
-		unsubscribers.push(store.subscribe(callback));
-	}
-
-	$effect(() => {
-		for (let store of [animationName, animationDuration, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor]) {
-			addSubscription(skipFirst(store as any), value => {
-				log.debug(`Store ${store} updated:`, value);
+	onMount(() => {
+		const stores = [animationName, animationDuration, titleMaxLines, bodyMaxLines, bgColor, bgColorHover, borderColor, titleColor, descColor];
+		const unsubscribers: Unsubscriber[] = stores.map(store =>
+			skipFirst(store as any).subscribe(value => {
+				log.debug(`Store updated:`, value);
 				updateExampleNotification();
-			});
-		}
+			})
+		);
+		return () => {
+			for (const unsub of unsubscribers) unsub();
+		};
 	});
 </script>
 
