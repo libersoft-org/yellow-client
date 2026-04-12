@@ -15,7 +15,7 @@ export function start_emojisets_fetch(acc, emojisLoading, emojiGroups, emojisByC
 			if (!res.ok) {
 				console.error('Failed to fetch emoji groups:', res);
 				acc.error('Failed to fetch emoji groups');
-				reject();
+				return reject(new Error('Failed to fetch emoji groups'));
 			}
 
 			let groups;
@@ -24,7 +24,7 @@ export function start_emojisets_fetch(acc, emojisLoading, emojiGroups, emojisByC
 			} catch (error) {
 				console.error('Failed to parse emoji groups:', error);
 				acc.error('Failed to parse emoji groups');
-				reject();
+				return reject(error);
 			}
 
 			let by_codepoints = {};
