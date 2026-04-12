@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, untrack } from 'svelte';
+	import { onMount, onDestroy, untrack } from 'svelte';
 	import { product } from '@/core/scripts/stores.ts';
 	import QRCode from 'qrcode';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';
@@ -19,6 +19,8 @@
 	let copyText = $state('Copy to clipboard');
 	let timeoutId;
 	let hiddenText = $state('[HIDDEN - Click reveal to show sensitive data][HIDDEN - Click reveal to show sensitive data][HIDDEN - Click reveal to show sensitive data]');
+	let lastBlobUrl: string | null = null;
+	let lastAnchor: HTMLAnchorElement | null = null;
 
 	$effect(() => {
 		if (data) {
@@ -76,18 +78,28 @@
 		}, 2000);
 	}
 
-	function clickDownload() {
-		let blob = new Blob([jsonEditorContents], { type: 'application/json' });
-		let url = URL.createObjectURL(blob);
-		let a = document.createElement('a');
-		a.href = url;
-		a.download = product + '_' + filename + '_' + new Date().toISOString().replace('T', '_').replace('Z', '').replace(/\.\d+/, '') + '.json';
-		a.click();
-		setTimeout(() => {
-			URL?.revokeObjectURL(url);
-			a?.remove();
-		}, 100000);
+	function cleanupDownload(): void {
+		if (lastBlobUrl) {
+			URL.revokeObjectURL(lastBlobUrl);
+			lastBlobUrl = null;
+		}
+		if (lastAnchor) {
+			lastAnchor.remove();
+			lastAnchor = null;
+		}
 	}
+
+	function clickDownload() {
+		cleanupDownload();
+		let blob = new Blob([jsonEditorContents], { type: 'application/json' });
+		lastBlobUrl = URL.createObjectURL(blob);
+		lastAnchor = document.createElement('a');
+		lastAnchor.href = lastBlobUrl;
+		lastAnchor.download = product + '_' + filename + '_' + new Date().toISOString().replace('T', '_').replace('Z', '').replace(/\.\d+/, '') + '.json';
+		lastAnchor.click();
+	}
+
+	onDestroy(cleanupDownload);
 </script>
 
 <style>
