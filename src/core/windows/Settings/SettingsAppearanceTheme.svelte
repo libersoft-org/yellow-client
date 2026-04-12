@@ -103,11 +103,9 @@
 	});
 
 	// Determine if the current theme is a built-in theme
-	let is_builtin_theme: boolean;
-	$: is_builtin_theme = $selected_theme_index < default_themes.length;
+	let is_builtin_theme = $derived($selected_theme_index < default_themes.length);
 
-	let theme_properties;
-	$: theme_properties = Object.keys($theme.properties);
+	let theme_properties = $derived(Object.keys($theme.properties));
 </script>
 
 <Table>

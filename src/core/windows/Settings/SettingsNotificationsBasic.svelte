@@ -21,7 +21,7 @@
 	let monitorInterval: ReturnType<typeof setInterval> | undefined;
 	let permissionInterval: ReturnType<typeof setInterval> | undefined;
 	let monitorOptions = writable<any[]>([]);
-	let _notificationsEnabled = get(notificationsEnabled);
+	let _notificationsEnabled = $state(get(notificationsEnabled));
 	// Store all subscription unsubscribe functions
 	const unsubscribers: Unsubscriber[] = [];
 
@@ -36,9 +36,13 @@
 		unsubscribers.push(unsubscribe);
 	}
 
-	$: updateNotificationsEnabled(_notificationsEnabled);
+	let _notificationsEnabledSync = $derived.by((): boolean => {
+		const val = _notificationsEnabled;
+		updateNotificationsEnabled(val);
+		return val;
+	});
 
-	async function updateNotificationsEnabled(value) {
+	async function updateNotificationsEnabled(value: boolean): Promise<void> {
 		console.log('updateNotificationsEnabled value:', value);
 		if (get(notificationsEnabled) === value) return;
 		setNotificationsEnabled(value);
@@ -143,7 +147,7 @@
 	}
 </script>
 
-<Table>
+<Table data-notifications-synced={_notificationsEnabledSync || undefined}>
 	<Tbody>
 		<TbodyTr>
 			<Td bold>Notifications:</Td>

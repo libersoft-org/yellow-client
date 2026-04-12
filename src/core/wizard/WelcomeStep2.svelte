@@ -1,15 +1,18 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import FormAddEdit from '@/core/forms/Accounts/AccountsAddEdit.svelte';
-	export let params;
-	let snippet_top: Snippet;
-	let snippet_bottom: Snippet;
+	interface Props {
+		params: any;
+	}
+	let { params }: Props = $props();
+	let snippet_top: Snippet | undefined = $state(undefined);
+	let snippet_bottom: Snippet | undefined = $state(undefined);
 
-	function close() {
+	function close(): void {
 		console.log('close');
 	}
 
-	function save_id(id) {
+	function save_id(id: any): void {
 		console.log('save_id: ', id);
 		params.account_id = id;
 	}

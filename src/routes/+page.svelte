@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import '@/app.css';
 	import { onMount, onDestroy, setContext } from 'svelte';
 	import { get } from 'svelte/store';
@@ -37,111 +37,99 @@
 			{ title: 'All set!', component: WizardWelcomeStep4 },
 		],
 	};
-	const corePages = {
+	const corePages: Record<string, any> = {
 		accounts: {
 			id: 'accounts',
 			sidebar: WelcomeSidebar,
 			content: AccountsContent,
 		},
 	};
-	let menus = [];
-	let sidebarSize = localStorageSharedStore('sidebarSize', undefined);
-	let elWindowWelcome;
-	// @ts-expect-error TS6133 - used in template bind:this
-	let _content;
-	let isMenuOpen = false;
-	let sideBar;
-	let resizer;
+	let menus: any[] = [];
+	let sidebarSize = localStorageSharedStore<number | undefined>('sidebarSize', undefined);
+	let elWindowWelcome: any;
+	let isMenuOpen = $state(false);
+	let sideBar: HTMLElement;
+	let resizer: HTMLElement;
 	let isResizingSideBar = false;
-	let selectedCorePage;
-	let selectedModuleDecl;
-	let contentElement;
+	let selectedCorePage = $derived($selected_corepage_id ? corePages[$selected_corepage_id] : undefined);
+	let selectedModuleDecl = $derived($selected_module_id !== null ? $module_decls[$selected_module_id] : undefined);
+	let contentElement: HTMLElement = undefined as any;
+	let initCleanup: (() => void) | null = null;
 
 	setContext('menus', menus);
 	setContext('contentElement', contentElement);
-
-	$: selectedCorePage = corePages[$selected_corepage_id];
-	//$: console.log('selectedCorePage: ', selectedCorePage);
-	$: selectedModuleDecl = $selected_module_id !== null ? $module_decls[$selected_module_id] : undefined;
-	//$: console.log('selectedModuleDecl: ', selectedModuleDecl);
 
 	function getFileChunkFactory(uploadId) {
 		const fn = makeDownloadChunkAsyncFn(get(active_account));
 		return params => fn({ uploadId, ...params });
 	}
 
-	let initCleanup = null;
-
-	onMount(
-		/** @type {any} */ (
-			async () => {
-				//console.log('+page onMount');
-				if ('serviceWorker' in window.navigator) {
-					//console.log('+page registering service worker');
-					const SW_VERSION = '_version_v1_'; // change this to force update the service worker
-					// TODO: rm after testing and dev
-					const existing = await navigator.serviceWorker.getRegistrations();
-					for (const reg of existing) {
-						if (reg.active && !reg.active.scriptURL.includes(SW_VERSION)) {
-							await reg.unregister();
-							console.log('Unregistered old SW:', reg.active.scriptURL);
-						}
-					}
-					navigator.serviceWorker.register(`service-worker.js?v=${SW_VERSION}`);
-					navigator.serviceWorker.ready.then(registration => {
-						/*console.log('+page service worker ready');
+	onMount((async () => {
+		//console.log('+page onMount');
+		if ('serviceWorker' in window.navigator) {
+			//console.log('+page registering service worker');
+			const SW_VERSION = '_version_v1_'; // change this to force update the service worker
+			// TODO: rm after testing and dev
+			const existing = await navigator.serviceWorker.getRegistrations();
+			for (const reg of existing) {
+				if (reg.active && !reg.active.scriptURL.includes(SW_VERSION)) {
+					await reg.unregister();
+					console.log('Unregistered old SW:', reg.active.scriptURL);
+				}
+			}
+			navigator.serviceWorker.register(`service-worker.js?v=${SW_VERSION}`);
+			navigator.serviceWorker.ready.then(registration => {
+				/*console.log('+page service worker ready');
 								console.log('Service worker registration:', registration);
 								console.log('Service worker active:', registration.active);
 								console.log('Service worker script URL:', registration.active.scriptURL);
 								console.log('Service worker state:', registration.active.state);
 								console.log('Service worker scope:', registration.scope);**/
-						/** @type {any} */ (window).sw = registration;
-						navigator.serviceWorker.addEventListener('message', e => {
-							if (e.data.type === 'GET_FILE_INFO') {
-								const { uploadId } = e.data.payload;
-								loadUploadData(uploadId).then(uploadData => e.ports[0]?.postMessage(uploadData.record));
-							}
-							if (e.data.type === 'GET_CHUNK') {
-								const { uploadId, start, end } = e.data.payload;
-								const getChunk = getFileChunkFactory(uploadId);
-								getChunk({
-									offsetBytes: start,
-									chunkSize: end + 1 - start,
-								}).then(data => {
-									e.ports[0]?.postMessage(data);
-								});
-							}
+				(window as any).sw = registration;
+				navigator.serviceWorker.addEventListener('message', e => {
+					if (e.data.type === 'GET_FILE_INFO') {
+						const { uploadId } = e.data.payload;
+						loadUploadData(uploadId).then(uploadData => e.ports[0]?.postMessage(uploadData.record));
+					}
+					if (e.data.type === 'GET_CHUNK') {
+						const { uploadId, start, end } = e.data.payload;
+						const getChunk = getFileChunkFactory(uploadId);
+						getChunk({
+							offsetBytes: start,
+							chunkSize: end + 1 - start,
+						}).then(data => {
+							e.ports[0]?.postMessage(data);
 						});
-					});
-				} else console.log('+page This browser does not support service workers.');
-				initZoom();
-				setDefaultWindowSize();
-				createTrayIcon();
-				initBrowserNotifications();
-				initCustomNotifications();
-				initWindow();
-				initBrowserThemeDetection();
-				if ($sidebarSize) setSidebarSize($sidebarSize);
-				window.addEventListener('focus', () => isClientFocused.set(true));
-				window.addEventListener('blur', () => isClientFocused.set(false));
-				//window.addEventListener('keydown', onkeydown);
-				/** @type {any} */ (window)?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
-				if ($accounts_config.length === 0) elWindowWelcome?.open();
-				welcomeWizardWindow.set(elWindowWelcome);
-				setupIframeListener();
-				// TODO: I don't know what this is, test out
-				//document.body.style.touchAction = 'none';
-				//document.documentElement.style.touchAction = 'none';
-				const visualViewport = window.visualViewport;
-				if (visualViewport) {
-					visualViewport.addEventListener('resize', updateAppHeight);
-					visualViewport.addEventListener('scroll', updateAppHeight); // is this necessary?
-				} else window.addEventListener('resize', updateAppHeight);
-				updateAppHeight();
-				initCleanup = await init();
-			}
-		)
-	);
+					}
+				});
+			});
+		} else console.log('+page This browser does not support service workers.');
+		initZoom();
+		setDefaultWindowSize();
+		createTrayIcon();
+		initBrowserNotifications();
+		initCustomNotifications();
+		initWindow();
+		initBrowserThemeDetection();
+		if ($sidebarSize) setSidebarSize($sidebarSize);
+		window.addEventListener('focus', () => isClientFocused.set(true));
+		window.addEventListener('blur', () => isClientFocused.set(false));
+		//window.addEventListener('keydown', onkeydown);
+		(window as any)?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
+		if ($accounts_config.length === 0) elWindowWelcome?.open();
+		welcomeWizardWindow.set(elWindowWelcome);
+		setupIframeListener();
+		// TODO: I don't know what this is, test out
+		//document.body.style.touchAction = 'none';
+		//document.documentElement.style.touchAction = 'none';
+		const visualViewport = window.visualViewport;
+		if (visualViewport) {
+			visualViewport.addEventListener('resize', updateAppHeight);
+			visualViewport.addEventListener('scroll', updateAppHeight); // is this necessary?
+		} else window.addEventListener('resize', updateAppHeight);
+		updateAppHeight();
+		initCleanup = await init();
+	}) as any);
 
 	onDestroy(async () => {
 		console.log('+page onDestroy');
@@ -237,7 +225,7 @@
 		}
 	}
 
-	let sidebarWidth;
+	let sidebarWidth = $state<string | undefined>();
 
 	function setSidebarSize(width) {
 		const max = 500;
@@ -325,19 +313,23 @@
 		<AccountBar />
 		<ModuleBar {onSelectModule} {onCloseModule} />
 		{#if selectedCorePage}
-			<svelte:component this={selectedCorePage.sidebar} />
-		{:else if selectedModuleDecl}
-			<svelte:component this={selectedModuleDecl.panels?.sidebar} />
+			{@const Sidebar = selectedCorePage.sidebar}
+			<Sidebar />
+		{:else if selectedModuleDecl?.panels?.sidebar}
+			{@const Sidebar = selectedModuleDecl.panels.sidebar}
+			<Sidebar />
 		{:else}
 			<WelcomeSidebar />
 		{/if}
 	</div>
-	<div class="resizer" style:left={sidebarWidth} role="none" bind:this={resizer} on:mousedown={startResizeSideBar}></div>
+	<div class="resizer" style:left={sidebarWidth} role="none" bind:this={resizer} onmousedown={startResizeSideBar}></div>
 	<div class="content" bind:this={contentElement}>
 		{#if selectedCorePage}
-			<svelte:component this={selectedCorePage.content} />
-		{:else if selectedModuleDecl}
-			<svelte:component this={selectedModuleDecl.panels?.content} bind:this={_content} />
+			{@const Content = selectedCorePage.content}
+			<Content />
+		{:else if selectedModuleDecl?.panels?.content}
+			{@const Content = selectedModuleDecl.panels.content}
+			<Content />
 		{:else}
 			<WelcomeContent />
 		{/if}

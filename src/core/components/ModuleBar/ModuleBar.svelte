@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import { get } from 'svelte/store';
 	import { active_account } from '@/core/scripts/core.ts';
 	import { module_decls, selected_module_id } from '@/core/scripts/stores.ts';
@@ -7,50 +7,43 @@
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import ModuleBarItem from '@/core/components/ModuleBar/ModuleBarItem.svelte';
-	export let onSelectModule;
-	export let onCloseModule;
-	let itemsEl;
-	let module_data;
+
+	interface Props {
+		onSelectModule: (id: string) => void;
+		onCloseModule: () => void;
+	}
+
+	let { onSelectModule, onCloseModule }: Props = $props();
+	let itemsEl: HTMLElement;
 	let lastModuleSelected = false;
-	let expanded = false;
-	let module_decls_ordered = [];
-	let expandEnabled = false;
-	let pendingTidy = null;
+	let expanded = $state(false);
+	let expandEnabled = $state(false);
+	let pendingTidy: (() => void) | null = null;
 
-	$: module_decls_ordered = order($module_decls);
-	//$: console.log('module-bar module_decls_ordered:', module_decls_ordered);
-	$: module_data = $active_account?.module_data || {};
-	//$: console.log('module-bar active_account:', $active_account);
-	//$: console.log('module-bar active_account.module_data:', $active_account?.module_data);
-	//$: console.log('module-bar module_data:', module_data);
-	//$: console.log('module-bar module_data_ordered:', module_data_ordered);
-	$: selectLastModule(module_data);
-
-	function selectLastModule(_module_data) {
-		//console.debug('selectLastModule: lastModuleSelected: ', module_data);
-		//console.debug('acc.settings?.last_module_id: ', $active_account?.settings?.last_module_id);
-		if (!lastModuleSelected /* && module_data_ordered && module_data_ordered.length > 0 */) {
-			//console.log('selectLastModule: lastModuleSelected: ', lastModuleSelected);
+	let module_decls_ordered = $derived(order($module_decls));
+	let module_data = $derived($active_account?.module_data || {});
+	let _selectLastModule = $derived.by((): boolean => {
+		// read module_data to track reactivity
+		void module_data;
+		if (!lastModuleSelected) {
 			let acc = get(active_account);
-			//console.log('selectLastModule: acc: ', acc);
 			let id = acc?.settings?.['last_module_id'];
-			//console.log('selectLastModule: ', module_data);
-			//console.log('selectLastModule: id: ', id);
-			if (id /* && module_data[id]*/) {
+			if (id) {
 				lastModuleSelected = true;
 				onSelectModule(id);
 			}
 		}
-	}
+		return lastModuleSelected;
+	});
 
-	function clickSetModule(id) {
+	function clickSetModule(id: string): void {
 		//console.log('clickSetModule: ' + id);
 		if ($selected_module_id === id) onCloseModule();
 		else onSelectModule(id);
 		lastModuleSelected = true;
 	}
 
-	function clickExpand() {
+	function clickExpand(): void {
 		const el = itemsEl;
 		if (pendingTidy) {
 			el.removeEventListener('transitionend', pendingTidy);
@@ -61,7 +54,7 @@
 			el.style.maxHeight = full;
 			void el.offsetHeight;
 			el.style.maxHeight = '50px';
-			const tidy = () => {
+			const tidy = (): void => {
 				pendingTidy = null;
 				scrollToSelected();
 			};
@@ -71,7 +64,7 @@
 			el.style.maxHeight = '50px';
 			void el.offsetHeight;
 			el.style.maxHeight = full;
-			const tidy = () => {
+			const tidy = (): void => {
 				pendingTidy = null;
 				el.style.maxHeight = '';
 			};
@@ -81,17 +74,17 @@
 		expanded = !expanded;
 	}
 
-	function scrollToSelected() {
+	function scrollToSelected(): void {
 		if (!$selected_module_id || !itemsEl) return;
 		const selectedElement = itemsEl.querySelector(`[data-module-id="${$selected_module_id}"]`);
 		if (selectedElement) selectedElement.scrollIntoView({ block: 'center' });
 	}
 
-	function onResize(entry) {
+	function onResize(entry: ResizeObserverEntry): void {
 		const { target, contentRect } = entry;
 		const { width } = contentRect;
 		const children = target.children;
-		const childrenTotalWidth = Array.from(children).reduce((total, child) => {
+		const childrenTotalWidth = Array.from(children).reduce((total: number, child: Element) => {
 			return total + child.getBoundingClientRect().width;
 		}, 0);
 		expandEnabled = childrenTotalWidth > width;
@@ -158,7 +151,7 @@
 	}
 </style>
 
-<div class="module-bar" class:expand-enabled={expandEnabled} class:expanded>
+<div class="module-bar" class:expand-enabled={expandEnabled} class:expanded data-last-module-selected={_selectLastModule || undefined}>
 	<div class="items" use:resize={onResize} bind:this={itemsEl}>
 		{#each module_decls_ordered as decl (decl.id)}
 			<ModuleBarItem online={$active_account?.module_data[decl.id]?.online} selected={$selected_module_id === decl.id} {decl} {clickSetModule} />
