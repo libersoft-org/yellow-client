@@ -16,7 +16,7 @@
 	let { showMenu = $bindable(false) }: Props = $props();
 	let elSettings: Settings;
 	let elDialogExit: InstanceType<typeof DialogExit>;
-	let darkModeLocal = $state(false);
+	let darkModeLocal = $derived($isDarkMode);
 
 	onMount(() => {
 		window.addEventListener('keydown', onKeydown);
@@ -35,15 +35,9 @@
 		}
 	}
 
-	// Sync darkModeLocal with isDarkMode store
-	$effect(() => {
-		darkModeLocal = $isDarkMode;
-	});
-
-	// Update theme when darkModeLocal changes
-	$effect(() => {
-		toggleDarkMode(darkModeLocal);
-	});
+	function onDarkModeToggle(value: boolean): void {
+		toggleDarkMode(value);
+	}
 
 	const menuItems = [
 		{
@@ -204,7 +198,7 @@
 	</div>
 	<div class="footer">
 		<div class="section">
-			<Switch showLabel label="Dark mode" bind:checked={darkModeLocal} />
+			<Switch showLabel label="Dark mode" checked={darkModeLocal} onchange={onDarkModeToggle} />
 		</div>
 		<div class="section">
 			<Switch showLabel label="Debug mode" bind:checked={$debug} />
