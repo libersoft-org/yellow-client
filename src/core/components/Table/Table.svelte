@@ -1,5 +1,6 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
+	import { onMount } from 'svelte';
 	interface Props {
 		children?: Snippet;
 		breakpoint?: string | null;
@@ -9,11 +10,15 @@
 	const { breakpoint = null, children, hideBorder = false, ...restProps }: Props = $props();
 	let isWide = $state(false);
 
-	$effect(() => {
+	onMount(() => {
 		if (!breakpoint) return;
 		const mql = matchMedia(`(min-width: ${breakpoint})`);
 		isWide = mql.matches;
-		mql.addEventListener('change', e => (isWide = e.matches));
+		const handler = (e: MediaQueryListEvent): void => {
+			isWide = e.matches;
+		};
+		mql.addEventListener('change', handler);
+		return () => mql.removeEventListener('change', handler);
 	});
 </script>
 
