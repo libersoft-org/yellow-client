@@ -25,7 +25,7 @@
 		// Deduplicate by guid (legacy data may contain duplicates)
 		const seen = new Set<string>();
 		return filtered.filter(n => {
-			if (seen.has(n.guid)) return false;
+			if (!n.guid || seen.has(n.guid)) return false;
 			seen.add(n.guid);
 			return true;
 		});

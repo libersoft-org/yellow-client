@@ -6,7 +6,7 @@ export function longpress(node: HTMLElement, threshold: number = 300): { destroy
 			node.dispatchEvent(new CustomEvent('longpress', { detail: e }));
 		}, threshold);
 
-		const cancel = (e: Event): void => {
+		const cancel = (_e: Event): void => {
 			clearTimeout(timeout);
 			node.removeEventListener('mousemove', cancel);
 			node.removeEventListener('mouseup', cancel);
