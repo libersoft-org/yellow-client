@@ -20,7 +20,16 @@
 	let selectedItem: INetwork | undefined = $state();
 	let elDialogDeleteNetwork: DialogDeleteNetwork | undefined = $state();
 	let filter = $state('');
-	let filteredNetworks = $derived($networks.filter(network => network.name.toLowerCase().includes(filter.toLowerCase())));
+	let filteredNetworks = $derived.by((): INetwork[] => {
+		const filtered = $networks.filter(network => network.name.toLowerCase().includes(filter.toLowerCase()));
+		// Deduplicate by guid (legacy data may contain duplicates)
+		const seen = new Set<string>();
+		return filtered.filter(n => {
+			if (seen.has(n.guid)) return false;
+			seen.add(n.guid);
+			return true;
+		});
+	});
 	let elFilter: Input | undefined = $state();
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 

@@ -63,7 +63,7 @@
 	function handleAddNetwork() {
 		console.log('SettingsNetworksAdd: Adding network: ', selectedNetwork);
 		if (selectedNetwork) {
-			addSingleNetwork(selectedNetwork);
+			addSingleNetwork({ ...selectedNetwork, guid: undefined });
 			addNetworkDialog?.close();
 		}
 		setSettingsSection('networks');
