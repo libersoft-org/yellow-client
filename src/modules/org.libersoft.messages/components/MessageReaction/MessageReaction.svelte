@@ -18,21 +18,29 @@
 	let show = $state(false);
 	let showFull = $state(false);
 	let autoPlacementCleanup: ReturnType<typeof handleFloatingUI>;
+
+	function setShow(value: boolean): void {
+		show = value;
+		if (value) autoPlacementCleanup = handleFloatingUI();
+		else {
+			autoPlacementCleanup?.();
+			showFull = false;
+		}
+	}
+
 	const onClick = () => {
-		show = !show;
+		setShow(!show);
 	};
 
 	const handleOutsideClick = (e: MouseEvent) => {
 		if (floatingRef && !floatingRef.contains(e.target as Node) && !buttonRef.contains(e.target as Node)) {
-			show = false;
+			setShow(false);
 			document.removeEventListener('click', handleOutsideClick);
 		}
 	};
 
 	const handleFloatingUI = () => {
-		if (!buttonRef || !floatingRef) {
-			return;
-		}
+		if (!buttonRef || !floatingRef) return;
 		const autoUpdateCleanUp = autoUpdate(buttonRef, floatingRef, () => {
 			// @ts-ignore
 			computePosition(buttonRef, floatingRef, {
@@ -59,14 +67,6 @@
 		};
 	};
 
-	$effect(() => {
-		if (show) autoPlacementCleanup = handleFloatingUI();
-		else {
-			autoPlacementCleanup && autoPlacementCleanup();
-			showFull = false;
-		}
-	});
-
 	onMount(() => {});
 
 	onDestroy(() => {
@@ -76,7 +76,7 @@
 	const onEmojiClick = (codepoints: any): void => {
 		const codepoints_rgi = rgi(codepoints);
 		toggleMessageReaction(message, { emoji_codepoints_rgi: codepoints_rgi });
-		show = false;
+		setShow(false);
 		playAudio('modules/' + identifier + '/audio/reaction.mp3');
 	};
 </script>

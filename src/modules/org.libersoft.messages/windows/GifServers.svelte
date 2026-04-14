@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { gif_servers } from '@/org.libersoft.messages/scripts/gifs.ts';
+	import { onMount } from 'svelte';
 	import DialogDefaultGifServers from '@/org.libersoft.messages/dialogs/DefaultGifServers.svelte';
 	import DialogDeleteGifServer from '@/org.libersoft.messages/dialogs/DeleteGifServer.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
@@ -20,8 +21,8 @@
 	let error: string | null | undefined = $state();
 	let serverUrl: string | undefined = $state();
 
-	$effect(() => {
-		if (inputElement) inputElement.focus();
+	onMount(() => {
+		inputElement?.focus();
 	});
 
 	function onKeydownAdd(e: KeyboardEvent) {

@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { wallets, type IWallet } from 'libersoft-crypto/wallet';
+	import { onMount, onDestroy } from 'svelte';
 	import { walletsWindow } from '@/org.libersoft.wallet/scripts/ui';
 	import { attachParents } from '@/core/scripts/base_settings.ts';
 	import BaseSettingsWindow from '@/core/components/Settings/BaseSettingsWindow.svelte';
@@ -34,8 +35,12 @@
 		});
 	});
 
-	$effect(() => {
+	onMount(() => {
 		walletsWindow.set(elBaseSettings ?? null);
+	});
+
+	onDestroy(() => {
+		walletsWindow.set(null);
 	});
 </script>
 

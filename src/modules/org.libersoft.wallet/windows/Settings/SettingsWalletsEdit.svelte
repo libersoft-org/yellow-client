@@ -7,18 +7,14 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Form from '@/core/components/Form/Form.svelte';
-	let name: string | undefined = $state();
-	let error: string | null | undefined = $state();
-	let elName: Input | undefined;
 	interface Props {
 		wallet: IWallet;
 		close: () => void;
 	}
 	let { wallet, close }: Props = $props();
-
-	$effect(() => {
-		name = wallet?.name;
-	});
+	let name: string | undefined = $state(wallet?.name);
+	let error: string | null | undefined = $state();
+	let elName: Input | undefined;
 
 	function handleSubmit(): void {
 		error = null;
