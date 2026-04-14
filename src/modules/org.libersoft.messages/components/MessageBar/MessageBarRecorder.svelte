@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { get } from 'svelte/store';
+	import { onDestroy } from 'svelte';
 	import { identifier, initUpload, selectedConversation } from '@/org.libersoft.messages/scripts/messages.ts';
 	import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 	import resize from '@/core/actions/resizeObserver.ts';
@@ -123,9 +124,11 @@
 		wavesurferRecord?.stopRecording();
 	}
 
-	$effect(() => {
-		if ($isOpen) startRecording();
+	const unsubIsOpen = isOpen.subscribe(open => {
+		if (open) startRecording();
 	});
+
+	onDestroy(unsubIsOpen);
 </script>
 
 <style>

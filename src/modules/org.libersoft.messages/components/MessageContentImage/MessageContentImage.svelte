@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onMount, onDestroy } from 'svelte';
 	import { writable } from 'svelte/store';
 	import filesService from '@/org.libersoft.messages/services/Files/FilesService.ts';
 	import ImageAspectRatio from '@/core/components/ImageAspectRatio/ImageAspectRatio.svelte';
@@ -93,11 +93,13 @@
 			});
 	}
 
-	$effect(() => {
-		if (isYellow && $upload && $upload.record.status === FileUploadRecordStatus.FINISHED) {
+	const unsubUpload = upload.subscribe(u => {
+		if (isYellow && u && u.record.status === FileUploadRecordStatus.FINISHED) {
 			downloadImage();
 		}
 	});
+
+	onDestroy(unsubUpload);
 
 	onMount(() => {
 		if (isYellow && !$upload) {
