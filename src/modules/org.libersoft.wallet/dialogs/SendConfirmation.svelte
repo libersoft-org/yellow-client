@@ -19,27 +19,25 @@
 	let loadingDecimals = $state(false);
 
 	// Load decimals when params change
-	$effect(() => {
-		async function loadDecimals() {
-			if (params?.contractAddress) {
-				// Token transaction - get decimals and info from contract
-				loadingDecimals = true;
-				try {
-					const [decimals, info] = await Promise.all([getTokenDecimals(params.contractAddress), getTokenInfo(params.contractAddress)]);
-					tokenDecimals = decimals;
-					tokenInfo = info;
-				} finally {
-					loadingDecimals = false;
-				}
-			} else {
-				// Native currency transaction - always 18 decimals
-				tokenDecimals = 18;
-				tokenInfo = null;
+	async function loadDecimals(): Promise<void> {
+		if (params?.contractAddress) {
+			// Token transaction - get decimals and info from contract
+			loadingDecimals = true;
+			try {
+				const [decimals, info] = await Promise.all([getTokenDecimals(params.contractAddress), getTokenInfo(params.contractAddress)]);
+				tokenDecimals = decimals;
+				tokenInfo = info;
+			} finally {
 				loadingDecimals = false;
 			}
+		} else {
+			// Native currency transaction - always 18 decimals
+			tokenDecimals = 18;
+			tokenInfo = null;
+			loadingDecimals = false;
 		}
-		loadDecimals();
-	});
+	}
+
 	let dialogData = {
 		title: 'Transaction confirmation',
 		body: body as any,
@@ -51,6 +49,7 @@
 	};
 
 	export function open() {
+		loadDecimals();
 		elDialog?.open();
 	}
 
