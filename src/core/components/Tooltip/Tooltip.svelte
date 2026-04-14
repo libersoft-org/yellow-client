@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { computePosition, shift, offset } from '@floating-ui/dom';
+	import { onMount } from 'svelte';
 	import Portal from '@/core/components/Portal/Portal.svelte';
 	import type { Snippet } from 'svelte';
 	interface Props {
@@ -27,10 +28,8 @@
 		});
 	};
 
-	$effect(() => {
-		if (targetRef) {
-			setupFloatingUI();
-		}
+	onMount(() => {
+		if (targetRef) setupFloatingUI();
 	});
 </script>
 
