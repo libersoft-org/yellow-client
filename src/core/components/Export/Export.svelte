@@ -11,7 +11,11 @@
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	let { data, filename = 'export', enableJsonTab = true, enableQrTab = true, testId = 'export', isSensitive = false } = $props();
 	let activeTab = $state('json');
-	let jsonEditorContents = $state('');
+	// If data is string use it directly, otherwise JSON.stringify
+	let jsonEditorContents = $derived.by(() => {
+		if (!data) return '';
+		return typeof data === 'string' ? data : JSON.stringify(data, null, 2);
+	});
 	let qrCodeData = $state('');
 	let dummyQrCodeData = $state('');
 	let qrError = $state<string | null>(null);
@@ -22,28 +26,30 @@
 	let lastBlobUrl: string | null = null;
 	let lastAnchor: HTMLAnchorElement | null = null;
 
-	$effect(() => {
-		if (data) {
-			// Pokud je data string, použij ho přímo, jinak JSON.stringify
-			if (typeof data === 'string') jsonEditorContents = data;
-			else jsonEditorContents = JSON.stringify(data, null, 2);
-			if (enableQrTab) generateQRCode();
+	onMount(() => {
+		if (enableQrTab) {
+			generateDummyQRCode();
+			if (data) generateQRCode();
 		}
 	});
 
-	$effect(() => {
-		// React to activeTab changes
-		activeTab;
+	function switchTab(tab: string): void {
+		activeTab = tab;
 		// Reset isRevealed to false when switching tabs if sensitive
 		if (isSensitive) {
 			console.log('Switching tabs, resetting isRevealed to false');
 			isRevealed = false;
 		}
-	});
+		if (tab === 'qr' && enableQrTab && data) generateQRCode();
+	}
 
-	onMount(() => {
-		if (enableQrTab) generateDummyQRCode();
-	});
+	function clickJsonTab(): void {
+		switchTab('json');
+	}
+
+	function clickQrTab(): void {
+		switchTab('qr');
+	}
 
 	function generateDummyQRCode() {
 		QRCode.toDataURL('DECODE ME', { width: 300, height: 300, margin: 0 })
@@ -169,8 +175,8 @@
 <div class="export" data-testid={testId}>
 	{#if enableJsonTab && enableQrTab}
 		<Tabs>
-			<TabsItem img="img/json.svg" label="JSON" active={activeTab === 'json'} onClick={() => (activeTab = 'json')} testId="{testId}-json-tab" />
-			<TabsItem img="img/qr.svg" label="QR Code" active={activeTab === 'qr'} onClick={() => (activeTab = 'qr')} testId="{testId}-qr-tab" />
+			<TabsItem img="img/json.svg" label="JSON" active={activeTab === 'json'} onClick={clickJsonTab} testId="{testId}-json-tab" />
+			<TabsItem img="img/qr.svg" label="QR Code" active={activeTab === 'qr'} onClick={clickQrTab} testId="{testId}-qr-tab" />
 		</Tabs>
 	{/if}
 	{#if activeTab === 'json' && enableJsonTab}
@@ -184,15 +190,15 @@
 				{@render actionButtons(true)}
 			</ButtonBar>
 			{#if isRevealed}
-				<Code bind:code={jsonEditorContents} testId="{testId}-code-editor" />
+				<Code code={jsonEditorContents} testId="{testId}-code-editor" />
 			{:else}
-				<Code bind:code={hiddenText} blur={true} testId="{testId}-code-editor-hidden" />
+				<Code code={hiddenText} blur={true} testId="{testId}-code-editor-hidden" />
 			{/if}
 		{:else}
 			<ButtonBar expand>
 				{@render actionButtons()}
 			</ButtonBar>
-			<Code bind:code={jsonEditorContents} testId="{testId}-code-editor" />
+			<Code code={jsonEditorContents} testId="{testId}-code-editor" />
 		{/if}
 	{:else if activeTab === 'qr' && enableQrTab}
 		<div class="qr-page" data-testid="{testId}-qr-content">
