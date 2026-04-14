@@ -16,6 +16,9 @@
 	}
 	let { reactions, onReactionClick }: Props = $props();
 	let tooltipButton = $state<{ ref: HTMLElement; reactions: any[] } | null>(null);
+	let prevReactions: any | null = null;
+	let buttonRefs = $state({});
+
 	const groupedReactions = $derived.by(() => {
 		if (!reactions || !reactions.length) return {};
 		const grouped = {};
@@ -24,6 +27,22 @@
 			if (!grouped[codepoints_rgi]) grouped[codepoints_rgi] = [];
 			grouped[codepoints_rgi].push(reaction);
 		}
+
+		// Animations handler by detecting changes in reactions
+		if (prevReactions !== null && !isEqual(prevReactions, grouped)) {
+			const prevKeys = Object.keys(prevReactions);
+			const newKeys = Object.keys(grouped);
+			const added = newKeys.filter(key => !prevKeys.includes(key));
+			const removed = prevKeys.filter(key => !newKeys.includes(key));
+			const modified = newKeys.filter(key => {
+				if (prevReactions[key] && grouped[key]) return prevReactions[key].length !== grouped[key].length;
+				return false;
+			});
+			const toHighlight = union(added, removed, modified);
+			queueMicrotask(() => toHighlight.forEach(a => highlightElement(buttonRefs[a])));
+		}
+		prevReactions = grouped;
+
 		return grouped;
 	});
 
@@ -56,30 +75,6 @@
 		else if (otherReactionAddresses.length === 1) return otherReactionAddresses.join('') + ' has reacted with ' + emoji;
 		else return '';
 	};
-
-	let prevReactions: any | null = null;
-	let buttonRefs = $state({});
-	/**
-	 * Animations handler by detecting changes in reactions
-	 */
-	$effect(() => {
-		if (prevReactions === null) {
-			prevReactions = groupedReactions;
-			return;
-		}
-		if (isEqual(prevReactions, groupedReactions)) return;
-		// find difference by comparing groups lengths
-		const prevKeys = Object.keys(prevReactions);
-		const newKeys = Object.keys(groupedReactions);
-		const added = newKeys.filter(key => !prevKeys.includes(key));
-		const removed = prevKeys.filter(key => !newKeys.includes(key));
-		const modified = newKeys.filter(key => {
-			if (prevReactions[key] && groupedReactions[key]) return prevReactions[key].length !== groupedReactions[key].length;
-			return false;
-		});
-		union(added, removed, modified).forEach(a => highlightElement(buttonRefs[a]));
-		prevReactions = groupedReactions;
-	});
 </script>
 
 <style>
