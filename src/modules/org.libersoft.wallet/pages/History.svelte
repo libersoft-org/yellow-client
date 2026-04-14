@@ -13,7 +13,12 @@
 	import ActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	let link: string | undefined = $state();
+	let link: string | undefined = $derived.by(() => {
+		if ($selectedNetwork && $selectedAddress) {
+			if ($selectedNetwork.explorerURL) return $selectedNetwork.explorerURL + '/address/' + $selectedAddress.address;
+		}
+		return undefined;
+	});
 	let elLink: HTMLDivElement | undefined = $state();
 	let refreshingTxIds = $state(new Set<string>());
 	// Get transactions for current network
@@ -25,26 +30,6 @@
 		const networkTransactions = allLogs[$selectedNetwork.guid] || [];
 		console.log('📋 Network transactions:', networkTransactions.length, networkTransactions);
 		return networkTransactions;
-	});
-
-	$effect(() => {
-		if ($selectedNetwork && $selectedAddress) {
-			if ($selectedNetwork.explorerURL) link = $selectedNetwork.explorerURL + '/address/' + $selectedAddress.address;
-			else link = undefined;
-		}
-	});
-
-	// Debug effect to track store changes
-	$effect(() => {
-		const logKeys = Object.keys($transactionLog);
-		console.log('🔄 TransactionLog store changed. Networks with transactions:', logKeys);
-		if ($selectedNetwork?.guid) {
-			const currentNetworkTxs = $transactionLog[$selectedNetwork.guid] || [];
-			console.log('📊 Current network transactions count:', currentNetworkTxs.length);
-			currentNetworkTxs.forEach(tx => {
-				console.log(`  - TX ${tx.id}: ${tx.status} (${tx.hash?.slice(0, 10)}...)`);
-			});
-		}
 	});
 
 	function copyLink(): void {
