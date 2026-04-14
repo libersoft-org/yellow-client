@@ -13,10 +13,9 @@
 		close: () => void;
 	}
 	let { wallet, index, close }: Props = $props();
-	let name: string | undefined = $state();
+	let name: string = $state(wallet?.addresses?.find(a => a.index === index)?.name || '');
 	let error: string | null | undefined = $state();
 	let elName: Input | undefined;
-	let initialized = $state(false);
 
 	export function onOpen(): void {
 		error = null;
@@ -24,18 +23,8 @@
 		console.log('Current wallet addresses:', wallet?.addresses);
 		name = wallet?.addresses?.find(a => a.index === index)?.name || '';
 		console.log('Found name for edit:', name);
-		initialized = true;
 		elName?.focus();
 	}
-
-	// Fallback initialization if onOpen is not called
-	$effect(() => {
-		if (!initialized) {
-			console.log('Fallback initialization - Settings address edit');
-			name = wallet?.addresses?.find(a => a.index === index)?.name || '';
-			initialized = true;
-		}
-	});
 
 	function clickEdit(): void {
 		console.log('Click edit:', name, index);

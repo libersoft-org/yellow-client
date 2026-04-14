@@ -12,11 +12,10 @@
 		network?: INetwork;
 	}
 	let { close, network }: Props = $props();
-	let rpcServers: IRPCServer[] = $state([]);
-
-	$effect(() => {
-		if (network) rpcServers = getRPCServersFromNetwork(network);
-		else if ($selectedNetwork) rpcServers = getRPCServersFromNetwork($selectedNetwork);
+	let rpcServers: IRPCServer[] = $derived.by(() => {
+		if (network) return getRPCServersFromNetwork(network);
+		if ($selectedNetwork) return getRPCServersFromNetwork($selectedNetwork);
+		return [];
 	});
 
 	async function checkServers() {
