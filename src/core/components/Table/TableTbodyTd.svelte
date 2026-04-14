@@ -1,6 +1,7 @@
 <script lang="ts">
 	import type { Snippet } from 'svelte';
 	import type { Action } from 'svelte/action';
+	import { onMount, onDestroy } from 'svelte';
 
 	interface Props {
 		children?: Snippet;
@@ -18,16 +19,19 @@
 	}
 	let { children, title, 'data-testid': dataTestId, padding = '10px', colspan, style, align = 'left', expand = false, bold = false, class: className, use: action, useParams }: Props = $props();
 
-	// Handle action invocation
-	$effect(() => {
+	let tdElement: HTMLTableCellElement;
+	let actionCleanup: (() => void) | undefined;
+
+	onMount(() => {
 		if (action && tdElement) {
 			const result = action(tdElement, useParams);
-			return typeof result === 'function' ? result : result?.destroy;
+			actionCleanup = typeof result === 'function' ? result : result?.destroy;
 		}
-		return undefined;
 	});
 
-	let tdElement: HTMLTableCellElement;
+	onDestroy(() => {
+		actionCleanup?.();
+	});
 </script>
 
 <style>
