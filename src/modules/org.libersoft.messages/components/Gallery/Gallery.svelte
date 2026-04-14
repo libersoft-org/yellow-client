@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { onDestroy } from 'svelte';
+	import { get } from 'svelte/store';
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
 	import galleryStore from '@/org.libersoft.messages/stores/GalleryStore.ts';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -37,22 +39,25 @@
 		else if (event.key === 'ArrowRight' && $canNext) next();
 	}
 
-	$effect(() => {
-		if ($currentFile && !$currentFile.loaded && $currentFile.loadFile) {
+	// Load file data when currentFile changes and isn't loaded yet
+	const unsubCurrentFile = currentFile.subscribe(file => {
+		if (file && !file.loaded && file.loadFile) {
 			loading = true;
-			$currentFile
+			file
 				.loadFile()
 				.then(loadedFile => {
-					if ($currentFile) {
-						galleryStore.updateFile($currentFile.id, {
+					const current = get(currentFile);
+					if (current) {
+						galleryStore.updateFile(current.id, {
 							...loadedFile,
 							loaded: true,
 						});
 					}
 				})
 				.catch(err => {
-					if ($currentFile) {
-						console.error('error fetching image data for yellow id:', $currentFile.id, err);
+					const current = get(currentFile);
+					if (current) {
+						console.error('error fetching image data for yellow id:', current.id, err);
 					}
 				})
 				.finally(() => {
@@ -61,10 +66,17 @@
 		}
 	});
 
-	$effect(() => {
-		const opts = { capture: true };
-		if ($gallery.show) document.addEventListener('keydown', handleKeyboard, opts);
-		else document.removeEventListener('keydown', handleKeyboard, opts);
+	// Add/remove keyboard listener based on gallery visibility
+	const keyboardOpts = { capture: true } as const;
+	const unsubGallery = gallery.subscribe(g => {
+		if (g.show) document.addEventListener('keydown', handleKeyboard, keyboardOpts);
+		else document.removeEventListener('keydown', handleKeyboard, keyboardOpts);
+	});
+
+	onDestroy(() => {
+		unsubCurrentFile();
+		unsubGallery();
+		document.removeEventListener('keydown', handleKeyboard, keyboardOpts);
 	});
 
 	function onAnywhereClick(event) {

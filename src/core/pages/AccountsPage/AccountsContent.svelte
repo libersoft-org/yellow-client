@@ -37,10 +37,6 @@
 		if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
 	});
 
-	$effect(() => {
-		console.log('[AccountsContent] idItem:', idItem);
-	});
-
 	function onKeydown(event) {
 		if (event.key === 'Escape') setCorePage(null);
 	}
