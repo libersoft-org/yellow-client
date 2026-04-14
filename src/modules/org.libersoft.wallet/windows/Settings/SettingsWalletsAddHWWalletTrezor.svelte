@@ -1,6 +1,6 @@
 <script lang="ts">
 	import { debug } from '@/core/scripts/stores.ts';
-	import { getContext } from 'svelte';
+	import { getContext, tick } from 'svelte';
 	import { trezorState, staticSessionId } from 'libersoft-crypto/trezor';
 	import { addHardwareWallet, type IWallet } from 'libersoft-crypto/wallet';
 	import TrezorConnect from '@/org.libersoft.wallet/components/TrezorConnect.svelte';
@@ -9,27 +9,23 @@
 	import Input from '@/core/components/Input/Input.svelte';
 	import Label from '@/core/components/Label/Label.svelte';
 	import TrezorDebug from '@/org.libersoft.wallet/components/TrezorDebug.svelte';
-
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 	let walletName = $state('');
 	let createdWallet = $state<IWallet | null>(null);
 	let step: 'select-wallet' | 'configure' | 'add-address' | 'finish' = $state('select-wallet');
 	let formAddressAdd = $state<FormAddressAdd>();
-
 	let buttonNextTitle = $derived(step === 'select-wallet' ? 'Next' : step === 'configure' ? 'Add Wallet' : step === 'add-address' ? 'Add First Address' : 'Finish');
 	let buttonNextEnabled = $derived(step === 'select-wallet' ? !!$trezorState : step === 'configure' ? !!walletName.trim() : true);
 
 	async function buttonNextClick() {
-		if (step === 'select-wallet') {
-			step = 'configure';
-		} else if (step === 'configure') {
+		if (step === 'select-wallet') step = 'configure';
+		else if (step === 'configure') {
 			await addWallet();
 			step = 'add-address';
-		} else if (step === 'add-address') {
-			await addFirstAddress();
-		} else if (step === 'finish') {
-			setSettingsSection('wallets');
-		}
+			await tick();
+			formAddressAdd?.onOpen();
+		} else if (step === 'add-address') await addFirstAddress();
+		else if (step === 'finish') setSettingsSection('wallets');
 	}
 
 	async function addWallet() {
@@ -38,32 +34,18 @@
 	}
 
 	async function addFirstAddress() {
-		if (formAddressAdd) {
-			await formAddressAdd.clickAdd();
-		}
+		if (formAddressAdd) await formAddressAdd.clickAdd();
 	}
 
 	function onAddressSuccess() {
 		step = 'finish';
 	}
 
-	// Initialize the form when entering the add-address step
-	$effect(() => {
-		if (step === 'add-address' && formAddressAdd) {
-			formAddressAdd.onOpen();
-		}
-	});
-
 	function goBack() {
-		if (step === 'finish') {
-			step = 'add-address';
-		} else if (step === 'add-address') {
-			step = 'configure';
-		} else if (step === 'configure') {
-			step = 'select-wallet';
-		} else {
-			setSettingsSection('wallets-add');
-		}
+		if (step === 'finish') step = 'add-address';
+		else if (step === 'add-address') step = 'configure';
+		else if (step === 'configure') step = 'select-wallet';
+		else setSettingsSection('wallets-add');
 	}
 
 	function onConnected() {
@@ -103,7 +85,6 @@
 	{:else if step === 'configure'}
 		<h3>Configure Wallet</h3>
 		<p>Give your Trezor wallet a name:</p>
-
 		<div class="form-section">
 			<Label text="Wallet Name">
 				<Input bind:value={walletName} placeholder="Enter wallet name" />
@@ -112,7 +93,6 @@
 	{:else if step === 'add-address'}
 		<h3>Add First Address</h3>
 		<p>Create your first address for this wallet:</p>
-
 		{#if createdWallet}
 			<FormAddressAdd bind:this={formAddressAdd} wallet={createdWallet} onSuccess={onAddressSuccess} />
 		{/if}
