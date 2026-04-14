@@ -8,11 +8,6 @@
 	}
 	let { id }: Props = $props();
 	let elDialog: Dialog;
-	let accountIdentifier: string | undefined = $state();
-
-	$effect(() => {
-		accountIdentifier = account?.credentials?.address || account?.id;
-	});
 
 	let account = $derived.by(() => {
 		const accountStore = $accounts.find(acc => get(acc).id === id);
@@ -23,6 +18,8 @@
 		let account = get(accountStore);
 		return account;
 	});
+
+	let accountIdentifier = $derived(account?.credentials?.address || account?.id);
 
 	let dialogData: IDialogData = $derived.by(() => {
 		return {
