@@ -24,19 +24,22 @@
 
 	setContext('wizard', { setNextText });
 
-	$effect(() => {
-		if (steps[currentStep]!.title) {
-			setTitle(steps[currentStep]!.title);
-		}
-	});
+	function updateTitle(): void {
+		const title = steps[currentStep]!.title;
+		if (title) setTitle(title);
+	}
+
+	updateTitle();
 
 	async function nextStep() {
 		if (currentStep < steps.length - 1) currentStep += 1;
+		updateTitle();
 		if (pageChanged) await pageChanged();
 	}
 
 	async function prevStep() {
 		if (currentStep > 0) currentStep -= 1;
+		updateTitle();
 		if (pageChanged) await pageChanged();
 	}
 </script>
