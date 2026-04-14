@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import Label from '@/core/components/Label/Label.svelte';
 	interface Props {
 		checked?: boolean;
@@ -20,7 +21,7 @@
 		}
 	}
 
-	$effect(() => {
+	onMount(() => {
 		requestAnimationFrame(() => {
 			mounted = true;
 		});
