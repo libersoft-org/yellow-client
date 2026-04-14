@@ -69,11 +69,10 @@ export async function accounts_init(): Promise<() => void> {
 	let sub: () => void = accounts_config.subscribe(value => {
 		//log.debug('ACCOUNTS CONFIG:', value);
 		// TODO: implement configuration of accounts order
-		let accounts_list = get(accounts);
-		//log.debug('EXISTING ACCOUNTS (stores):', accounts_list);
+		//log.debug('EXISTING ACCOUNTS (stores):', get(accounts));
 		for (let config of value) {
 			//log.debug('CONFIG', config);
-			let account = accounts_list.find(acc => get(acc).id === config.id);
+			let account = get(accounts).find(acc => get(acc).id === config.id);
 			if (account) {
 				//log.debug('UPDATE ACCOUNT', JSON.stringify(get(account), null, 2));
 				updateLiveAccount(account, config);
@@ -82,7 +81,7 @@ export async function accounts_init(): Promise<() => void> {
 				createLiveAccount(config);
 			}
 		}
-		removeLiveAccountsNotInConfig(accounts_list, value);
+		removeLiveAccountsNotInConfig(get(accounts), value);
 	});
 
 	// Set up native message listener for service-based connections
