@@ -18,17 +18,11 @@
 	import ActionItems from '@/core/components/Table/TableActionItems.svelte';
 	import DragHandle from '@/core/components/Drag/DragHandle.svelte';
 	import DialogNFTDel from '@/org.libersoft.wallet/dialogs/NetworksNFTsDel.svelte';
-
 	interface Props {
 		item: string;
 	}
-
 	let { item }: Props = $props();
-	let network: INetwork | undefined = $state();
-	$effect(() => {
-		network = findNetworkByGuid(item);
-	});
-
+	let network: INetwork | undefined = $derived(findNetworkByGuid(item));
 	let nftToDelete: INftConf | undefined = $state();
 	let elDialogDel: DialogNFTDel | undefined = $state();
 	const setSettingsSection = getContext<Function>('setSettingsSection');
@@ -49,7 +43,6 @@
 
 	function handleNFTReorder(sourceIndex: number, targetIndex: number): void {
 		if (!network?.nfts || !network.guid) return;
-
 		const reordered = [...network.nfts];
 		const [moved] = reordered.splice(sourceIndex, 1);
 		reordered.splice(targetIndex, 0, moved!);

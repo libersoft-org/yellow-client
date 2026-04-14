@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { getContext, tick } from 'svelte';
+	import { getContext, tick, onMount } from 'svelte';
 	import { type INetwork, findNetworkByGuid, reorderTokens } from 'libersoft-crypto/network';
 	import type { ITokenConf } from 'libersoft-crypto/tokens';
 	import { getTokenInfo } from 'libersoft-crypto/tokens';
@@ -51,13 +51,10 @@
 		}
 	}
 
-	// Load token info for all tokens when network changes
-	$effect(() => {
+	onMount(() => {
 		if (network?.tokens) {
 			network.tokens.forEach(token => {
-				if (token.contract_address) {
-					loadTokenInfo(token.contract_address);
-				}
+				if (token.contract_address) loadTokenInfo(token.contract_address);
 			});
 		}
 	});
