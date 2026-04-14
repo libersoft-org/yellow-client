@@ -28,9 +28,6 @@
 	onMount(() => {
 		if (equalize) applyEqualSize();
 	});
-	$effect(() => {
-		if (equalize) applyEqualSize();
-	});
 </script>
 
 <style>

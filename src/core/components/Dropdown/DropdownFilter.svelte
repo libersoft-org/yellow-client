@@ -29,37 +29,35 @@
 	);
 	let showOptions = $state(false);
 	let inputRef: Input | undefined = $state();
-	let inputValue = $state('');
+	let filterText = $state('');
 	let selectedIndex = $state(-1);
 
-	// Sync inputValue with selected object
-	$effect(() => {
-		if (selected) {
-			// Find the corresponding option for the selected object
-			const correspondingOption = options.find(option => $state.snapshot(option).value === $state.snapshot(selected));
-			if (correspondingOption) inputValue = correspondingOption.label;
-		} else inputValue = '';
+	let selectedLabel = $derived.by(() => {
+		if (!selected) return '';
+		const correspondingOption = options.find(option => $state.snapshot(option).value === $state.snapshot(selected));
+		return correspondingOption?.label ?? '';
 	});
+	let inputValue = $derived(showOptions ? filterText : selectedLabel);
 
 	export function focus() {
 		inputRef?.focus();
 	}
 
-	function handleInputChange() {
+	function handleInputChange(value: string | number) {
+		filterText = String(value);
 		showOptions = true;
 		selectedIndex = -1;
 	}
 
 	function clickSelectOption(option: DropdownOption) {
 		selected = option.value || option.label; // Return the value object or fallback to label
-		inputValue = option.label;
 		showOptions = false;
 		if (onChange) onChange(selected);
 	}
 
 	function clickClearSelection() {
 		selected = undefined;
-		inputValue = '';
+		filterText = '';
 		inputRef?.focus();
 		if (onChange) onChange(undefined);
 	}
@@ -101,6 +99,7 @@
 
 	function openOptionsIfClosed() {
 		if (!showOptions) {
+			filterText = selectedLabel;
 			showOptions = true;
 			selectedIndex = -1;
 			return true;
@@ -172,7 +171,7 @@
 
 <div {...restProps} class="dropdown-filter">
 	<div class="input-container">
-		<Input {placeholder} bind:value={inputValue} bind:this={inputRef} {enabled} onChange={handleInputChange} onBlur={handleInputBlur} onFocus={toggleOptions} onKeydown={handleKeydown} onClick={toggleOptions} />
+		<Input {placeholder} value={inputValue} bind:this={inputRef} {enabled} onChange={handleInputChange} onBlur={handleInputBlur} onFocus={toggleOptions} onKeydown={handleKeydown} onClick={toggleOptions} />
 		{#if selected}
 			<div class="clear-button">
 				<Icon img="img/cross.svg" alt="X" colorVariable="--primary-foreground" size="14px" onClick={clickClearSelection} />
