@@ -7,12 +7,8 @@
 		colspan?: number | string;
 		expand?: boolean;
 	}
-	let cs: number | undefined = $state();
 	const { children, align = 'left', colspan, padding = '10px', expand = false }: Props = $props();
-
-	$effect(() => {
-		if (colspan) cs = Number(colspan);
-	});
+	let cs = $derived(colspan ? Number(colspan) : undefined);
 </script>
 
 <style>
