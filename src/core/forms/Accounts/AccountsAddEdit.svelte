@@ -1,6 +1,6 @@
 <script lang="ts">
-	import { onMount, getContext, untrack, type Snippet } from 'svelte';
-	import { get, writable, derived } from 'svelte/store';
+	import { onMount, onDestroy, getContext, untrack, type Snippet } from 'svelte';
+	import { get } from 'svelte/store';
 	import { accounts, accountConfigExistsByCredentials } from '@/core/scripts/core.ts';
 	import { addAccount, findAccountConfig, saveAccount } from '@/core/scripts/accounts_config.ts';
 	import ButtonBar from '@/core/components/Button/ButtonBar.svelte';
@@ -35,46 +35,53 @@
 		setNextText: (text: string) => void;
 	};
 	let wizard = getContext<WizardContext>('wizard');
-	let account_id_store = writable<string | null>(null);
 
 	onMount(() => {
 		_top = snippet_top as any;
 		_bottom = snippet_bottom as any;
 	});
 
-	$effect(() => {
-		console.log('[EFFECT] Updating account_id_store from params.id =', params.id);
-		account_id_store.set(params.id);
-	});
-
-	// Watch account_id_store changes to reset form for new accounts
-	$effect(() => {
-		const id = $account_id_store;
-		console.log('[EFFECT] account_id_store changed to:', id);
-		if (id === null) {
-			console.log('[EFFECT] Resetting form for new account');
+	// Watch params.id changes to reset form for new accounts
+	function loadForm(): void {
+		console.log('[loadForm] params.id =', params.id);
+		if (params.id !== null) {
+			let found = findAccountConfig(params.id);
+			console.log('[loadForm] Loaded existing config:', found);
+			if (found?.credentials) {
+				credentials_address = found.credentials.address;
+				credentials_server = found.credentials.server;
+				credentials_password = found.credentials.password;
+			}
+			config_enabled = found?.enabled ?? true;
+			config_title = found?.settings?.['title'] ?? 'My account';
+		} else {
+			console.log('[loadForm] Resetting form for new account');
 			credentials_address = '';
 			credentials_server = (location.protocol === 'https:' ? 'wss://' : 'ws://') + location.host + '/';
 			credentials_password = '';
 			config_enabled = isInWelcomeWizard || true;
 			config_title = 'My account';
+			if (isInWelcomeWizard) {
+				console.log('[loadForm] In welcome wizard, setting skip');
+				wizard?.setNextText('Skip');
+			}
 		}
-	});
+	}
 	/*
 	// Observe full accounts store for debug
 	accounts.subscribe(value => {
 		console.log('[STORE] Full accounts store updated:', value.map(get));
 	});
 */
-	let account = derived([accounts, account_id_store], ([$accounts, $account_id_store]) => {
-		const id = $account_id_store;
+	let account = $derived.by(() => {
+		const id = params.id;
 		if (!id) {
 			//console.log('[DERIVED] No account ID set, returning null');
 			return null;
 		}
 		//console.log('[DERIVED] Finding account with ID:', id);
 		const found = $accounts.find(acc => get(acc).id === id);
-		//console.log('[DERIVED] $account_id_store =', id, '→ found account:', found ? get(found) : null);
+		//console.log('[DERIVED] params.id =', id, '→ found account:', found ? get(found) : null);
 		return found ?? null;
 	});
 	/*
@@ -84,35 +91,13 @@
 	});
 	*/
 	export function onOpen() {
-		console.log('OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO');
+		loadForm();
 		protocolElem?.focus();
 	}
 
-	$effect(() => {
-		console.log('[EFFECT] Checking if params.id exists:', params.id);
-		if (params.id !== null) {
-			let found = findAccountConfig(params.id);
-			console.log('[EFFECT] Loaded existing config:', found);
-			if (found?.credentials) {
-				credentials_address = found.credentials.address;
-				credentials_server = found.credentials.server;
-				credentials_password = found.credentials.password;
-			}
-			config_enabled = found?.enabled ?? true;
-			config_title = found?.settings?.['title'] ?? 'My account';
-		} else {
-			console.log('[EFFECT] New account setup - form will be reset by account_id_store watcher');
-			if (isInWelcomeWizard) {
-				untrack(() => {
-					console.log('[EFFECT] In welcome wizard, setting skip');
-					wizard?.setNextText('Skip');
-				});
-			}
-		}
-		return () => {
-			console.log('[EFFECT] Cleanup on unmount');
-			wizard?.setNextText('Next');
-		};
+	onDestroy(() => {
+		console.log('[onDestroy] Cleanup on unmount');
+		wizard?.setNextText('Next');
 	});
 
 	function verify() {
@@ -249,10 +234,10 @@
 				<Button img="img/cancel.svg" text="Cancel" onClick={close} />
 			{/if}
 		</ButtonBar>
-		{#if $account}
+		{#if account}
 			<div class="status">
 				<strong>Status:</strong>
-				<AccountStatusIconIconAndText account={$account} />
+				<AccountStatusIconIconAndText {account} />
 			</div>
 		{/if}
 	</div>
