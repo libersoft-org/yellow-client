@@ -8,9 +8,7 @@
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Tooltip from '@/core/components/Tooltip/Tooltip.svelte';
 
-	if (import.meta.env['VITE_YELLOW_CLIENT_DEBUG']) {
-		console.debug(union, isEqual);
-	}
+	if (import.meta.env['VITE_YELLOW_CLIENT_DEBUG']) console.debug(union, isEqual);
 
 	interface Props {
 		reactions: any[];
@@ -52,17 +50,11 @@
 		const didIReact = reactions.some(r => r.user_address === myUserAddress);
 		const otherReactionAddresses = reactions.filter(r => r.user_address !== myUserAddress).map(r => r.user_address);
 		const emoji = emoji_render(rgi_to_codepoints(reactions[0].emoji_codepoints_rgi));
-		if (didIReact && otherReactionAddresses.length) {
-			return 'You and ' + otherReactionAddresses.join(', ') + ' have reacted with ' + emoji;
-		} else if (didIReact) {
-			return 'You have reacted with ' + emoji;
-		} else if (otherReactionAddresses.length > 1) {
-			return otherReactionAddresses.join(', ') + ' have reacted with ' + emoji;
-		} else if (otherReactionAddresses.length === 1) {
-			return otherReactionAddresses.join('') + ' has reacted with ' + emoji;
-		} else {
-			return '';
-		}
+		if (didIReact && otherReactionAddresses.length) return 'You and ' + otherReactionAddresses.join(', ') + ' have reacted with ' + emoji;
+		else if (didIReact) return 'You have reacted with ' + emoji;
+		else if (otherReactionAddresses.length > 1) return otherReactionAddresses.join(', ') + ' have reacted with ' + emoji;
+		else if (otherReactionAddresses.length === 1) return otherReactionAddresses.join('') + ' has reacted with ' + emoji;
+		else return '';
 	};
 
 	let prevReactions: any | null = null;
@@ -82,9 +74,7 @@
 		const added = newKeys.filter(key => !prevKeys.includes(key));
 		const removed = prevKeys.filter(key => !newKeys.includes(key));
 		const modified = newKeys.filter(key => {
-			if (prevReactions[key] && groupedReactions[key]) {
-				return prevReactions[key].length !== groupedReactions[key].length;
-			}
+			if (prevReactions[key] && groupedReactions[key]) return prevReactions[key].length !== groupedReactions[key].length;
 			return false;
 		});
 		union(added, removed, modified).forEach(a => highlightElement(buttonRefs[a]));
