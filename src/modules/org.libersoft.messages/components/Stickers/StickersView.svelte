@@ -10,12 +10,11 @@
 	import Input from '@/core/components/Input/Input.svelte';
 	import StickersSearchResults from './StickersSearchResults.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	import { onMount, untrack } from 'svelte';
+	import { onMount, onDestroy, untrack } from 'svelte';
 	let { stickerset_favorites } = $props();
 	let fulltext_search_element;
 	let fulltext_search_filter = $state('');
 	let animated_filter_dropdown_value = $state('all');
-	$effect(() => console.log('animated_filter_dropdown_value:', animated_filter_dropdown_value));
 	let animated_filter = $derived(animated_filter_dropdown_value === 'all' ? [1, 0] : animated_filter_dropdown_value === 'animated' ? [1] : [0]);
 	let items = $state([]);
 	let loading = $state(true);
@@ -31,12 +30,23 @@
 
 	let query_store_unsubscribe;
 
-	$effect(() => {
-		console.log('stickerset_favorites:', stickerset_favorites, '$sticker_server:', $sticker_server, 'fulltext_search_filter:', fulltext_search_filter, 'animated_filter:', animated_filter);
-	});
+	function triggerQuery(): void {
+		live_query(get(sticker_server), fulltext_search_filter, animated_filter);
+	}
 
-	$effect(() => {
-		live_query($sticker_server, fulltext_search_filter, animated_filter);
+	function handleFilterChange(): void {
+		triggerQuery();
+	}
+
+	function handleAnimatedFilterChange(): void {
+		triggerQuery();
+	}
+
+	const unsubSticker = sticker_server.subscribe(() => triggerQuery());
+
+	onDestroy(() => {
+		unsubSticker();
+		if (query_store_unsubscribe) query_store_unsubscribe.unsubscribe();
 	});
 
 	async function live_query(server, fulltext_search_filter, animated_filter) {
@@ -73,8 +83,6 @@
 		return query_store;
 	}
 
-	//$effect(() => console.log('Stickers.svelte items $effect:', $items));
-
 	async function maybe_trigger_auto_update(count) {
 		if (count === 0) {
 			console.log('No items found');
@@ -100,8 +108,8 @@
 </style>
 
 <div class="filter">
-	<Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:this={fulltext_search_element} bind:value={fulltext_search_filter} placeholder="Search ..." />
-	<Select bind:value={animated_filter_dropdown_value}>
+	<Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:this={fulltext_search_element} bind:value={fulltext_search_filter} onChange={handleFilterChange} placeholder="Search ..." />
+	<Select bind:value={animated_filter_dropdown_value} onchange={handleAnimatedFilterChange}>
 		<Option text="All" value="all" />
 		<Option text="Animated only" value="animated" />
 		<Option text="Static only" value="static" />
