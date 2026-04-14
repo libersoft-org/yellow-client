@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { setContext, tick, type Snippet } from 'svelte';
+	import { setContext, tick, onMount, onDestroy, type Snippet } from 'svelte';
 	import { mobileClass, isMobile, debug } from '@/core/scripts/stores.ts';
 	import { draggable } from '@neodrag/svelte';
 	import { bringToFront, registerWindow, unregisterWindow } from '@/lib/window-index-manager.js';
@@ -10,20 +10,14 @@
 	if (typeof window !== 'undefined' && !(window as any).__resizeObserverErrorHandled) {
 		// Mark as handled to prevent multiple setups
 		(window as any).__resizeObserverErrorHandled = true;
-
 		// Override the global error handler to suppress ResizeObserver errors
 		const originalOnError = window.onerror;
 		window.onerror = function (message, source, lineno, colno, error) {
-			if (typeof message === 'string' && message.includes('ResizeObserver loop completed with undelivered notifications')) {
-				return true; // Suppress this error
-			}
+			if (typeof message === 'string' && message.includes('ResizeObserver loop completed with undelivered notifications')) return true; // Suppress this error
 			// Call original handler for all other errors
-			if (originalOnError) {
-				return originalOnError.call(this, message, source, lineno, colno, error);
-			}
+			if (originalOnError) return originalOnError.call(this, message, source, lineno, colno, error);
 			return false;
 		};
-
 		// Also handle unhandled promise rejections that might contain ResizeObserver errors
 		const originalOnUnhandledRejection = window.onunhandledrejection;
 		window.onunhandledrejection = function (event) {
@@ -32,9 +26,7 @@
 				return;
 			}
 			// Call original handler for all other rejections
-			if (originalOnUnhandledRejection) {
-				originalOnUnhandledRejection.call(this, event);
-			}
+			if (originalOnUnhandledRejection) originalOnUnhandledRejection.call(this, event);
 		};
 	}
 
@@ -93,46 +85,33 @@
 	setContext('Popup', { close });
 	setContext('elWindow', { open, close, maximize, restore });
 
-	$effect(() => {
-		if (!$isMobile) return;
+	const unsubMobile = isMobile.subscribe(mobile => {
+		if (!mobile) return;
 		if (elWindow && showContent && !isDragging) {
 			centerWindow();
 			requestAnimationFrame(snapTransformIntoBounds);
 		}
 	});
 
-	$effect(() => {
-		showUpdated(show);
+	onDestroy(unsubMobile);
+
+	function handleResize(): void {
+		if ($isMobile) {
+			if (!isDragging) requestAnimationFrame(snapTransformIntoBounds);
+		} else {
+			if (!isDragging && elWindow && showContent) requestAnimationFrame(handleWindowResize);
+		}
+	}
+
+	onMount(() => {
 		windowId = registerWindow(z => (zIndex = z));
-
-		function handleResize() {
-			if ($isMobile) {
-				if (!isDragging) requestAnimationFrame(snapTransformIntoBounds);
-			} else {
-				if (!isDragging && elWindow && showContent) requestAnimationFrame(handleWindowResize);
-			}
-		}
-
-		if (elWindow) {
-			let didInit = false;
-			resizeObserver = new ResizeObserver(_entries => {
-				if (isDragging) return;
-				if (didInit && showContent) {
-					requestAnimationFrame(handleContentResize);
-				} else {
-					didInit = true;
-				}
-			});
-			resizeObserver.observe(elWindow);
-		}
-
 		window.addEventListener('resize', handleResize);
+	});
 
-		return () => {
-			unregisterWindow(windowId);
-			window.removeEventListener('resize', handleResize);
-			resizeObserver?.disconnect();
-		};
+	onDestroy(() => {
+		unregisterWindow(windowId);
+		window.removeEventListener('resize', handleResize);
+		resizeObserver?.disconnect();
 	});
 
 	export function isOpen() {
@@ -164,6 +143,7 @@
 	}
 
 	async function showUpdated(showing: boolean) {
+		resizeObserver?.disconnect();
 		if (showing) {
 			await tick();
 			elWindow?.focus();
@@ -174,33 +154,35 @@
 				centerWindow();
 				requestAnimationFrame(snapTransformIntoBounds);
 			});
-		} else {
-			showContent = false;
-		}
+			// Setup ResizeObserver for the window element
+			if (elWindow) {
+				let didInit = false;
+				resizeObserver = new ResizeObserver(_entries => {
+					if (isDragging) return;
+					if (didInit && showContent) requestAnimationFrame(handleContentResize);
+					else didInit = true;
+				});
+				resizeObserver.observe(elWindow);
+			}
+		} else showContent = false;
 	}
 
 	function centerWindow() {
 		if (!elWindow || isDragging) return;
-
 		// Get the center position
 		const browserWidth = window.innerWidth;
 		const browserHeight = window.innerHeight;
 		const windowWidth = elWindow.offsetWidth;
 		const windowHeight = elWindow.offsetHeight;
-
 		const centerX = (browserWidth - windowWidth) / 2;
 		const centerY = (browserHeight - windowHeight) / 2;
-
 		//console.log('[Window] centerWindow for:', title, 'before - left:', elWindow.style.left, 'top:', elWindow.style.top, 'transform:', elWindow.style.transform);
 		//console.log('[Window] centerWindow calculated - centerX:', centerX, 'centerY:', centerY, 'browserWidth:', browserWidth, 'browserHeight:', browserHeight, 'windowWidth:', windowWidth, 'windowHeight:', windowHeight);
-
 		// Apply absolute positioning instead of transform
 		elWindow.style.left = `${centerX}px`;
 		elWindow.style.top = `${centerY}px`;
 		elWindow.style.transform = 'none';
-
 		//console.log('[Window] centerWindow for:', title, 'after - left:', elWindow.style.left, 'top:', elWindow.style.top, 'transform:', elWindow.style.transform);
-
 		// Update last browser dimensions
 		lastBrowserWidth = browserWidth;
 		lastBrowserHeight = browserHeight;
@@ -212,16 +194,13 @@
 		const currentHeight = window.innerHeight;
 		const widthDiff = currentWidth - lastBrowserWidth;
 		const heightDiff = currentHeight - lastBrowserHeight;
-
 		//console.log('[Window] handleWindowResize for:', title, 'hasBeenUserPositioned:', hasBeenUserPositioned, 'widthDiff:', widthDiff, 'heightDiff:', heightDiff);
-
 		// If window hasn't been user-positioned, just re-center it
 		if (!hasBeenUserPositioned) {
 			//console.log('[Window] Re-centering window:', title);
 			centerWindow();
 			return;
 		}
-
 		// Get current position
 		const rect = elWindow.getBoundingClientRect();
 		const transform = window.getComputedStyle(elWindow).transform;
@@ -350,11 +329,9 @@
 
 	export function maximize() {
 		if (!elWindow || maximized) return;
-
 		// Store current state before maximizing
 		const computedStyle = window.getComputedStyle(elWindow);
 		const currentTransform = computedStyle.transform;
-
 		originalState = {
 			width: elWindow.style.width || width,
 			height: elWindow.style.height || height,
@@ -362,25 +339,17 @@
 			top: elWindow.style.top,
 			transform: currentTransform !== 'none' ? currentTransform : undefined,
 		};
-
 		maximized = true;
 	}
 
 	export function restore() {
 		if (!maximized || !elWindow) return;
-
 		maximized = false;
-
 		// Restore original state if it exists
 		if (originalState) {
 			// Restore size
-			if (originalState.width) {
-				elWindow.style.width = originalState.width;
-			}
-			if (originalState.height) {
-				elWindow.style.height = originalState.height;
-			}
-
+			if (originalState.width) elWindow.style.width = originalState.width;
+			if (originalState.height) elWindow.style.height = originalState.height;
 			// Restore position - prioritize transform over left/top
 			if (originalState.transform) {
 				elWindow.style.transform = originalState.transform;
@@ -391,16 +360,11 @@
 				elWindow.style.top = originalState.top;
 				elWindow.style.transform = 'none';
 			}
-
 			// Ensure restored position is within bounds
 			requestAnimationFrame(() => {
-				if ($isMobile) {
-					snapTransformIntoBounds();
-				} else {
-					handleContentResize();
-				}
+				if ($isMobile) snapTransformIntoBounds();
+				else handleContentResize();
 			});
-
 			// Clear the stored state
 			originalState = null;
 		}
@@ -426,10 +390,9 @@
 	function setShow(value: boolean) {
 		show = value;
 		maximized = false;
-		if (!value) {
-			hasBeenUserPositioned = false;
-		}
+		if (!value) hasBeenUserPositioned = false;
 		onShowChange?.(value);
+		showUpdated(value);
 	}
 
 	function onkeydown(event: KeyboardEvent) {
