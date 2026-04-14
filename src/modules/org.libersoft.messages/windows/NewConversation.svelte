@@ -10,11 +10,6 @@
 	let addressInputRef = $state<HTMLInputElement>();
 	let value = $state('');
 
-	$effect(() => {
-		if (!elWindow.isOpen() || !addressInputRef) return;
-		tick().then(() => addressInputRef?.focus());
-	});
-
 	function onKeydown(e: KeyboardEvent) {
 		if (e.key === 'Enter') clickOpen();
 	}

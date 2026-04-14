@@ -75,7 +75,6 @@
 			prevReactions = groupedReactions;
 			return;
 		}
-
 		if (isEqual(prevReactions, groupedReactions)) return;
 		// find difference by comparing groups lengths
 		const prevKeys = Object.keys(prevReactions);

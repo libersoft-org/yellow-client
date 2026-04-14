@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { sticker_servers } from '@/org.libersoft.messages/scripts/stickers.ts';
+	import { onMount } from 'svelte';
 	import DialogDefaultStickerServers from '@/org.libersoft.messages/dialogs/DefaultStickerServers.svelte';
 	import DialogDeleteStickerServer from '@/org.libersoft.messages/dialogs/DeleteStickerServer.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
@@ -20,8 +21,8 @@
 	let error: string | null | undefined = $state();
 	let serverUrl: string | undefined = $state();
 
-	$effect(() => {
-		if (inputElement) inputElement.focus();
+	onMount(() => {
+		inputElement?.focus();
 	});
 
 	function onKeydownAdd(e: KeyboardEvent) {
