@@ -3,8 +3,13 @@
 		code: string;
 		testId?: string;
 		blur?: boolean;
+		onChange?: () => void;
 	}
-	let { code = $bindable(), testId = 'import-textarea', blur = false }: Props = $props();
+	let { code = $bindable(), testId = 'import-textarea', blur = false, onChange }: Props = $props();
+
+	function handleInput(): void {
+		onChange?.();
+	}
 </script>
 
 <style>
@@ -27,4 +32,4 @@
 	}
 </style>
 
-<textarea bind:value={code} data-testid={testId} class:blurred={blur}></textarea>
+<textarea bind:value={code} data-testid={testId} class:blurred={blur} oninput={handleInput}></textarea>

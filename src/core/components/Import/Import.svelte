@@ -52,6 +52,7 @@
 			const reader = new FileReader();
 			reader.onload = e => {
 				text = (e.target?.result as string) || '';
+				alertText = '';
 			};
 			reader.onerror = () => {
 				handleError('Failed to read file');
@@ -114,6 +115,7 @@
 
 	function handleQRScanned(data: string) {
 		scannedText = data;
+		alertText = '';
 	}
 
 	function handleQRError(error: string) {
@@ -123,16 +125,13 @@
 	async function handleTabChange(tab: string) {
 		alertText = '';
 		activeTab = tab;
-		if (tab === 'qr' && !scannedText) {
-			qrScanner?.start();
-		} else if (tab === 'json') {
-			qrScanner?.stop();
-		}
+		if (tab === 'qr' && !scannedText) qrScanner?.start();
+		else if (tab === 'json') qrScanner?.stop();
 	}
 
-	$effect(() => {
-		if (text || scannedText) alertText = '';
-	});
+	function handleCodeChange(): void {
+		alertText = '';
+	}
 
 	const hasContent = $derived((activeTab === 'json' && text) || (activeTab === 'qr' && scannedText));
 	const showReplaceButton = $derived(hasContent && onReplace);
@@ -163,7 +162,7 @@
 		<ButtonBar expand>
 			<Button img="img/open.svg" onclick={loadFile} text={browseButtonText} />
 		</ButtonBar>
-		<Code bind:code={text} testId={`${testId}-textarea`} />
+		<Code bind:code={text} onChange={handleCodeChange} testId={`${testId}-textarea`} />
 		<input bind:this={fileInput} type="file" accept={fileAccept} style="display: none;" onchange={handleFileSelect} />
 		{@render import_buttons()}
 	{:else if activeTab === 'qr'}
