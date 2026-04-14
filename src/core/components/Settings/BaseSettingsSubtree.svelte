@@ -5,22 +5,22 @@
 	import { log } from '@/core/scripts/tauri.ts';
 	import { setContext, tick } from 'svelte';
 	import type { ISettingsNode, ISettingsNodeState, SetSettingsSectionFn, ISettingsComponent } from '@/core/types/settings.ts';
-
 	interface IProps {
 		testId: string;
 		settingsObject: ISettingsNode;
 		activeName: string;
 	}
-
 	let { testId = '', settingsObject, activeName = $bindable(settingsObject.name) }: IProps = $props();
-
 	let id = Math.random().toString(36).substring(2, 15);
-
+	let currentNodeInstance: ISettingsComponent | undefined = $state();
+	let breadcrumb = $derived(makeBreadcrumb(activeName));
 	let currentNode = $derived.by((): ISettingsNode => {
 		let n = findNode(settingsObject, activeName);
 		//console.debug('[BaseSettingsWindow] activeName:', activeName, 'settingsObject:', settingsObject, 'found node:', n);
 		return n || settingsObject;
 	});
+
+	setContext<SetSettingsSectionFn>('setSettingsSection', setSettingsSection);
 
 	function getNodeState(node: ISettingsNode, componentId: string) {
 		if (!node.states) node.states = new Map();
@@ -33,33 +33,19 @@
 		node.states.set(componentId, { ...currentState, ...updates });
 	}
 
-	let currentNodeInstance: ISettingsComponent | undefined = $state();
-	$effect(() => {
-		//$inspect('[BaseSettingsWindow] currentNodeInstance updated:', currentNodeInstance);
-		//$inspect('[BaseSettingsWindow] currentNode:', currentNode);
-		setNodeState(currentNode, id, { instance: currentNodeInstance });
-	});
-
-	let breadcrumb = $derived(makeBreadcrumb(activeName));
-
-	setContext<SetSettingsSectionFn>('setSettingsSection', setSettingsSection);
-
 	export async function setSettingsSection(name: string, props: Record<string, any> = {}) {
 		//console.log('[BaseSettingsWindow] setSettingsSection:', name, 'props:', props);
 		activeName = name;
 		await tick();
 		await tick();
 		const node = findNode(settingsObject, name);
-		if (node && Object.keys(props).length > 0) {
-			setNodeState(node, id, { props });
-		}
+		if (node && Object.keys(props).length > 0) setNodeState(node, id, { props });
 		await tick();
-		const nodeState = getNodeState(currentNode, id);
-		if (!nodeState.instance && currentNode?.body) {
+		if (!currentNodeInstance && currentNode?.body) {
 			log.error('[BaseSettingsWindow] No instance found for node:', node, 'expected instance of body:', currentNode.body);
 			return;
 		}
-		await nodeState.instance?.onOpen?.();
+		await currentNodeInstance?.onOpen?.();
 	}
 
 	export async function goBack() {
@@ -151,14 +137,12 @@
 	{#if activeName !== settingsObject.name}
 		<Breadcrumb items={breadcrumb} />
 	{/if}
-
 	<div class="content" data-testid={testId + '-content-' + activeName}>
 		{#if currentNode.menu}
 			{#each currentNode.menu as item (item.name ?? item.title)}
 				<SettingsMenuItem img={item.img} title={item.title} onClick={item.name ? async () => await setSettingsSection(item.name!) : item.onClick} testId={item.name ? `settings-${item.name}` : undefined} />
 			{/each}
 		{/if}
-
 		{#if currentNode.body}
 			{@const nodeState = getNodeState(currentNode, id)}
 			{@const mergedProps = { ...(currentNode as any).props, ...nodeState.props }}
@@ -166,7 +150,6 @@
 		{/if}
 	</div>
 </div>
-
 {#if $debug}
 	<div class="debug">
 		BaseSettings Debug: currentNode:
