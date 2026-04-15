@@ -27,7 +27,7 @@
 	let photos: IPhotoCard[] = $state(generateMockCards());
 	let isLoading = $state(false);
 
-	function removeTopCard() {
+	function removeTopCard(): void {
 		if (photos.length > 0) {
 			photos = photos.slice(1);
 			// If cards run out, load new ones
@@ -35,7 +35,7 @@
 		}
 	}
 
-	async function reloadCards() {
+	async function reloadCards(): Promise<void> {
 		isLoading = true;
 		// Simulation of data loading (in real app this would be an API call)
 		await new Promise(resolve => setTimeout(resolve, 1000));

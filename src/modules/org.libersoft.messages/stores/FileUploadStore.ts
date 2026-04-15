@@ -6,15 +6,15 @@ export let windowFileUploadStore = writable<any>(null);
 export class FileUploadStore implements FileUploadStoreType {
 	store = writable<FileUploadStoreValue>([]);
 
-	getAll() {
+	getAll(): FileUploadStoreValue {
 		return get(this.store);
 	}
 
-	get(id: string) {
+	get(id: string): IFileUpload | undefined {
 		return get(this.store).find(upload => upload.record.id === id);
 	}
 
-	set(id: string, upload: IFileUpload) {
+	set(id: string, upload: IFileUpload): void {
 		this.store.update(store => {
 			const index = store.findIndex(d => d.record.id === id);
 			if (index !== -1) {
@@ -26,7 +26,7 @@ export class FileUploadStore implements FileUploadStoreType {
 		});
 	}
 
-	patch(id: string, data: Partial<IFileUpload>) {
+	patch(id: string, data: Partial<IFileUpload>): void {
 		// patch but dont change ref
 		this.store.update(store => {
 			const oldUpload = store.find(upload => upload.record.id === id);
@@ -42,15 +42,15 @@ export class FileUploadStore implements FileUploadStoreType {
 		});
 	}
 
-	delete(id: string) {
+	delete(id: string): void {
 		this.store.update(store => store.filter(upload => upload.record.id !== id));
 	}
 
-	updateUploadRecord(id: string, record: IFileUploadRecord) {
+	updateUploadRecord(id: string, record: IFileUploadRecord): void {
 		this.patch(id, { record });
 	}
 
-	isAnyUploadRunning() {
+	isAnyUploadRunning(): boolean {
 		return this.getAll().some(upload => upload && [FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.BEGUN].includes(upload.record.status) && upload.file && upload.running);
 	}
 }

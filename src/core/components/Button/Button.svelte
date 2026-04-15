@@ -29,11 +29,11 @@
 	let { children, img = '', text = '', enabled = true, hiddenOnDesktop = false, width, onClick, padding = '10px', bgColor = 'var(--primary-background)', hoverColor = 'var(--primary-hard-background)', borderColor = 'var(--primary-harder-background)', textColor = 'var(--primary-foreground)', expand = false, colorVariable = '--primary-foreground', iconSize = '20px', iconPadding = '0px', loading = false, radius = 10, right = false, ...restProps }: Props = $props();
 	let elClickable: Clickable;
 
-	function handleClick(e: Event) {
+	function handleClick(e: Event): void {
 		if (enabled && onClick) onClick(e);
 	}
 
-	export function focus() {
+	export function focus(): void {
 		elClickable?.focus();
 	}
 </script>

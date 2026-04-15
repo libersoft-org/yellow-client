@@ -1,4 +1,4 @@
-import { derived, writable } from 'svelte/store';
+import { derived, writable, type Readable } from 'svelte/store';
 
 export interface IAudioRecorderStoreValue {
 	open: boolean;
@@ -9,11 +9,11 @@ export class AudioRecorderStore {
 		open: false,
 	});
 
-	isOpen() {
+	isOpen(): Readable<boolean> {
 		return derived(this.store, $store => $store.open);
 	}
 
-	setOpen(open: boolean) {
+	setOpen(open: boolean): void {
 		this.store.update(store => {
 			store.open = open;
 			return store;

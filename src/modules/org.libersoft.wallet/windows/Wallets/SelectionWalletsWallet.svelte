@@ -26,7 +26,7 @@
 		elFilter?.focus();
 	}
 
-	function clickSelectAddress(address) {
+	function clickSelectAddress(address): void {
 		console.log('SELECTING ADDRESS', wallet, address);
 		selectAddress(wallet, address);
 		get(walletsWindow)?.close();

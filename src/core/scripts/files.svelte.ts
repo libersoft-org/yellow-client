@@ -74,7 +74,7 @@ export async function offerNativeDownload(fileName: string): Promise<NativeDownl
 	}
 }
 
-export async function saveNativeDownloadChunk(download: NativeDownload, chunk: Blob) {
+export async function saveNativeDownloadChunk(download: NativeDownload, chunk: Blob): Promise<any> {
 	if (download.finished) {
 		throw new Error('Download already finished');
 	}
@@ -86,7 +86,7 @@ export async function saveNativeDownloadChunk(download: NativeDownload, chunk: B
 	}
 }
 
-export async function finishNativeDownload(download: NativeDownload) {
+export async function finishNativeDownload(download: NativeDownload): Promise<any> {
 	if (download.finished) {
 		return 'Download already finished';
 	}
@@ -213,7 +213,7 @@ async function deleteFileDesktop(fileName: string): Promise<void> {
 	});
 }
 
-async function findFreeFileName(folder: string, download: NativeDownload) {
+async function findFreeFileName(folder: string, download: NativeDownload): Promise<void> {
 	log.debug('Starting findFreeFileName (desktop):', {
 		folder,
 		original_file_name: download.original_file_name,
@@ -279,7 +279,7 @@ async function findFreeFileName(folder: string, download: NativeDownload) {
 	}
 }
 
-function partFileName(file_path: string) {
+function partFileName(file_path: string): string {
 	return file_path + '.part';
 }
 

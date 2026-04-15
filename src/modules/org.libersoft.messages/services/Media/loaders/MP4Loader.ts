@@ -4,7 +4,7 @@ import { MediaLoader } from './types.ts';
 class MP4Loader extends MediaLoader {
 	mp4boxFile: IMP4File | null = null;
 
-	async setup() {
+	async setup(): Promise<void> {
 		const mp4boxFile = mp4box.createFile();
 		this.mp4boxFile = mp4boxFile;
 
@@ -77,7 +77,7 @@ class MP4Loader extends MediaLoader {
 		return nextOffset;
 	};
 
-	override seek = (time: number) => {
+	override seek = (time: number): number => {
 		const mp4boxFile = this.mp4boxFile as IMP4File;
 		const specialTime = Math.max(Math.floor(time - 2), 0);
 		// console.log('MP4BOX: seek specialTime:', specialTime);

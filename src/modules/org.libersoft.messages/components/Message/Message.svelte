@@ -61,18 +61,18 @@
 		return true;
 	});
 
-	export function getRef() {
+	export function getRef(): HTMLDivElement {
 		return elMessage;
 	}
 
 	// console.log('updated message:', message);
-	function update(message) {
+	function update(message: any): void {
 		if (messageContent) return;
 		//  console.log('update message:', message);
 		messageContent = processMessage(message);
 	}
 
-	function maybeSetSeen(isVisible, isClientFocused) {
+	function maybeSetSeen(isVisible: boolean, isClientFocused: boolean): void {
 		//console.log('isVisible:', isVisible, 'isClientFocused:', isClientFocused);
 		if (!isVisible || !isClientFocused) {
 			//console.log('not setting seen because not visible or not focused');
@@ -98,11 +98,13 @@
 		}
 	}
 
-	function handleTouchStart(e) {
+	function handleTouchStart(e: TouchEvent): void {
 		//console.log('handle touch start', e);
+		const touch = e.changedTouches[0];
+		if (!touch) return;
 		moving = false;
-		touchX = e.changedTouches[0].clientX;
-		touchY = e.changedTouches[0].clientY;
+		touchX = touch.clientX;
+		touchY = touch.clientY;
 		thisWasALongPress = false;
 		thisWasASwipe = false;
 		thisWasAScroll = false;
@@ -112,19 +114,21 @@
 				console.log('Long press');
 			}
 		}, 500);
-		touchStartX = e.changedTouches[0].clientX;
-		touchStartY = e.changedTouches[0].clientY;
+		touchStartX = touch.clientX;
+		touchStartY = touch.clientY;
 		touchCurrentX = touchStartX;
 		touchCurrentY = touchStartY;
 		touchCurrentTranslation = 0;
 		elMessage.style.transition = 'none';
 	}
 
-	function handleTouchMove(e) {
+	function handleTouchMove(e: TouchEvent): void {
 		//console.log('handle touch move', e);
+		const touch = e.changedTouches[0];
+		if (!touch) return;
 		moving = true;
-		touchCurrentX = e.changedTouches[0].clientX;
-		touchCurrentY = e.changedTouches[0].clientY;
+		touchCurrentX = touch.clientX;
+		touchCurrentY = touch.clientY;
 		let diffX = touchCurrentX - touchStartX;
 		let diffY = touchCurrentY - touchStartY;
 
@@ -154,7 +158,7 @@
 		}
 	}
 
-	function handleTouchEnd(e) {
+	function handleTouchEnd(e: TouchEvent): void {
 		//console.log('handle touch end', e);
 		enableScroll();
 		if (longPressTimer) {
@@ -162,9 +166,9 @@
 			longPressTimer = null;
 		}
 		if (!moving && !thisWasALongPress) {
-			console.log('Short press:', e, e.x, e.y);
-			e.x = touchX;
-			e.y = touchY;
+			console.log('Short press:', e, touchX, touchY);
+			(e as any).x = touchX;
+			(e as any).y = touchY;
 			menu.openMenu(e);
 		}
 		let diff = touchCurrentTranslation;
@@ -241,7 +245,7 @@
 		if (observer) observer.disconnect();
 	});
 
-	function replyMessage() {
+	function replyMessage(): void {
 		console.log('reply', message);
 		// startReply(message);
 		messageBarReplyStore.startReplyTo({
@@ -251,7 +255,7 @@
 		document.getElementById('message-input')?.focus();
 	}
 
-	function forwardMessage() {
+	function forwardMessage(): void {
 		console.log('forward');
 		forwardMessageStore.startForwardedMessage({
 			type: ForwardedMessageType.MESSAGE,
@@ -259,23 +263,23 @@
 		});
 	}
 
-	function onMessageDelete() {
+	function onMessageDelete(): void {
 		console.log('delete');
 		deleteMessage(message);
 	}
 
-	function copyTextOnly() {
+	function copyTextOnly(): void {
 		console.log('copy stripHtml');
 		navigator.clipboard.writeText(stripHtml(message.message));
 	}
 
-	function copyOriginal() {
+	function copyOriginal(): void {
 		console.log('copy original');
 		console.log(message.message);
 		navigator.clipboard.writeText(message.message);
 	}
 
-	function copyMessageHTML() {
+	function copyMessageHTML(): void {
 		console.log('copyMessagePseudoHtml');
 		console.log(messageContent);
 
@@ -288,7 +292,7 @@
 		navigator.clipboard.writeText(serialized);
 	}
 
-	async function rightClickContextMenu(e) {
+	async function rightClickContextMenu(e: MouseEvent): Promise<void> {
 		// for dev purposes: if you want to use native context menu (right mouse click) instead of app's in message list
 		if (import.meta.env['VITE_FORCE_NATIVE_CONTEXT_MENU'] && (e.ctrlKey || e.metaKey)) {
 			return;
@@ -300,7 +304,7 @@
 		await menu.openMenu(e);
 	}
 
-	const onReactionClick = codepoints_rgi => {
+	const onReactionClick = (codepoints_rgi: string): void => {
 		toggleMessageReaction(message, { emoji_codepoints_rgi: codepoints_rgi });
 	};
 </script>

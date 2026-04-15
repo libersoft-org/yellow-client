@@ -15,7 +15,7 @@ export class FileUploadService extends EventEmitter {
 		this.uploadsStore = uploadsStore;
 	}
 
-	beginUpload(files: FileList, type: FileUploadRecordType, acc, options: IFileUploadBeginOptions) {
+	beginUpload(files: FileList, type: FileUploadRecordType, acc, options: IFileUploadBeginOptions): { uploads: IFileUpload[] } {
 		const uploads: IFileUpload[] = [];
 		for (let i = 0; i < files.length; i++) {
 			const file = files[i] as ICustomFile;
@@ -41,7 +41,7 @@ export class FileUploadService extends EventEmitter {
 		return { uploads };
 	}
 
-	async getChunk(uploadId: string, chunkId: number, chunkSize: number) {
+	async getChunk(uploadId: string, chunkId: number, chunkSize: number): Promise<{ chunk: { chunkId: number; uploadId: string; checksum: string; data: string }; upload: IFileUpload; blob: Blob }> {
 		const upload = this.uploadsStore.get(uploadId);
 		if (!upload) throw new Error('Upload not found');
 		if (!upload.file) throw new Error('File is not set in file transfer');
@@ -55,7 +55,7 @@ export class FileUploadService extends EventEmitter {
 		return { chunk, upload, blob };
 	}
 
-	async startUploadSerial(records: IFileUploadRecord[], pushFn: (data: { chunk: any; upload: IFileUpload }) => Promise<void>) {
+	async startUploadSerial(records: IFileUploadRecord[], pushFn: (data: { chunk: any; upload: IFileUpload }) => Promise<void>): Promise<void> {
 		for (let i = 0; i < records.length; i++) {
 			const record = records[i]!;
 			const upload = this.uploadsStore.get(record.id);
@@ -108,13 +108,13 @@ export class FileUploadService extends EventEmitter {
 		}
 	}
 
-	async startUpload(upload: IFileUpload) {
+	async startUpload(upload: IFileUpload): Promise<void> {
 		console.log('this.uploadsStore.isAnyUploadRunning()', this.uploadsStore.isAnyUploadRunning());
 		if (this.uploadsStore.isAnyUploadRunning()) return;
 		upload.pushChunk && (await upload.pushChunk());
 	}
 
-	async startNextUpload(lastUpload: IFileUpload) {
+	async startNextUpload(lastUpload: IFileUpload): Promise<void> {
 		const uploads = this.uploadsStore.getAll();
 		const lastUploadIndex = uploads.findIndex(upload => upload.record.id === lastUpload.record.id);
 		let nextUpload: IFileUpload | undefined;
@@ -129,7 +129,7 @@ export class FileUploadService extends EventEmitter {
 		if (nextUpload) await this.startUpload(nextUpload);
 	}
 
-	async continueP2PUpload(uploadId: string) {
+	async continueP2PUpload(uploadId: string): Promise<void> {
 		// proceed to next batch
 		const upload = this.uploadsStore.get(uploadId);
 		if (!upload) return;
@@ -139,14 +139,14 @@ export class FileUploadService extends EventEmitter {
 		upload.pushChunk && !upload.running && (await upload.pushChunk());
 	}
 
-	pauseUpload(uploadId: string) {
+	pauseUpload(uploadId: string): void {
 		const upload = this.uploadsStore.get(uploadId);
 		if (!upload) return;
 		upload.record.status = FileUploadRecordStatus.PAUSED;
 		this.uploadsStore.set(uploadId, upload);
 	}
 
-	resumeUpload(uploadId: string) {
+	resumeUpload(uploadId: string): void {
 		const upload = this.uploadsStore.get(uploadId);
 		if (!upload) return;
 		upload.record.status = FileUploadRecordStatus.UPLOADING;
@@ -154,7 +154,7 @@ export class FileUploadService extends EventEmitter {
 		upload.pushChunk && upload.pushChunk();
 	}
 
-	cancelUpload(uploadId: string) {
+	cancelUpload(uploadId: string): void {
 		const upload = this.uploadsStore.get(uploadId);
 		if (!upload) return;
 		upload.record.status = FileUploadRecordStatus.CANCELED;

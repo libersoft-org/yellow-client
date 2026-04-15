@@ -18,12 +18,12 @@
 	import CurrencyNameAndSymbol from '@/org.libersoft.wallet/components/CurrencyNameAndSymbol.svelte';
 
 	// Event handlers
-	function openExternalNftUrl(url: string) {
+	function openExternalNftUrl(url: string): void {
 		console.log('SELECTED NFT url:', url);
 		//window.open(url, '_blank');
 	}
 
-	function refreshSingleNft(guid: string) {
+	function refreshSingleNft(guid: string): void {
 		refreshNftBalance(guid);
 	}
 </script>

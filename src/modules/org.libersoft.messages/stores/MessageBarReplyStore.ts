@@ -1,4 +1,4 @@
-import { derived, writable } from 'svelte/store';
+import { derived, writable, type Readable } from 'svelte/store';
 import type { Message } from '@/org.libersoft.messages/scripts/types.ts';
 
 export enum ReplyToType {
@@ -21,34 +21,34 @@ export class MessageBarReplyStore {
 		replyTo: null,
 	});
 
-	isOpen() {
+	isOpen(): Readable<boolean> {
 		return derived(this.store, $store => $store.open);
 	}
 
-	setReplyTo(replyTo: IReplyTo | null) {
+	setReplyTo(replyTo: IReplyTo | null): void {
 		this.store.update(store => {
 			store.replyTo = replyTo;
 			return store;
 		});
 	}
 
-	setOpen(open: boolean) {
+	setOpen(open: boolean): void {
 		this.store.update(store => {
 			store.open = open;
 			return store;
 		});
 	}
 
-	getReplyTo() {
+	getReplyTo(): Readable<IReplyTo | null> {
 		return derived(this.store, $store => $store.replyTo);
 	}
 
-	startReplyTo(replyTo: IReplyTo) {
+	startReplyTo(replyTo: IReplyTo): void {
 		this.setReplyTo(replyTo);
 		this.setOpen(true);
 	}
 
-	close() {
+	close(): void {
 		this.setReplyTo(null);
 		this.setOpen(false);
 	}

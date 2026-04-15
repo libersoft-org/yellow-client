@@ -9,11 +9,11 @@
 	let elWindowFiles1;
 	let elWindowFiles2;
 
-	async function err() {
+	async function err(): Promise<void> {
 		throw new Error('Test exception!');
 	}
 
-	async function notification() {
+	async function notification(): Promise<void> {
 		//log.debug('addNotification...');
 		await addNotification({
 			body: 'Notification body',
@@ -23,11 +23,11 @@
 		});
 	}
 
-	function openFiles1() {
+	function openFiles1(): void {
 		elWindowFiles1?.open();
 	}
 
-	function openFiles2() {
+	function openFiles2(): void {
 		elWindowFiles2?.open();
 	}
 </script>

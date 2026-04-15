@@ -28,7 +28,7 @@
 	let buttonElements = $state<(Button | undefined)[]>([]);
 	let sanitizedBody = $derived(typeof data?.body === 'string' ? DOMPurify.sanitize(data.body) : undefined);
 
-	export async function open() {
+	export async function open(): Promise<void> {
 		elWindow?.open();
 		await tick();
 		await tick();
@@ -41,7 +41,7 @@
 		}
 	}
 
-	export function close() {
+	export function close(): void {
 		elWindow?.close();
 	}
 </script>

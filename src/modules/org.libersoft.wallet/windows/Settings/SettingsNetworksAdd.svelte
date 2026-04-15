@@ -46,11 +46,11 @@
 		elFilter?.focus();
 	}
 
-	function openRPCServers(network: INetwork) {
+	function openRPCServers(network: INetwork): void {
 		setSettingsSection('networks-rpc-' + network.guid);
 	}
 
-	async function clickAddNetwork(net: INetwork | null = null) {
+	async function clickAddNetwork(net: INetwork | null = null): Promise<void> {
 		if (net) {
 			selectedNetwork = net;
 			addNetworkDialog?.open();
@@ -60,7 +60,7 @@
 		}
 	}
 
-	function handleAddNetwork() {
+	function handleAddNetwork(): void {
 		console.log('SettingsNetworksAdd: Adding network: ', selectedNetwork);
 		if (selectedNetwork) {
 			addSingleNetwork({ ...selectedNetwork, guid: undefined });
@@ -69,14 +69,14 @@
 		setSettingsSection('networks');
 	}
 
-	async function handleAddModifiedNetwork() {
+	async function handleAddModifiedNetwork(): Promise<void> {
 		if (selectedNetwork) {
 			addNetworkDialog?.close();
 			await setSettingsSection('networks-add-sw', { network: selectedNetwork });
 		}
 	}
 
-	function handleCancelAdd() {
+	function handleCancelAdd(): void {
 		addNetworkDialog?.close();
 		selectedNetwork = null;
 	}

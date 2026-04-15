@@ -10,7 +10,7 @@
 	}
 	let { children, even = false, active = false, onClick, ...restProps }: Props = $props();
 
-	function handleClick(e) {
+	function handleClick(e: Event): void {
 		console.log('SidebarItem clicked');
 		if (onClick) onClick(e);
 	}

@@ -9,7 +9,7 @@
 	}
 	let { closeConversation }: Props = $props();
 
-	function clickClose() {
+	function clickClose(): void {
 		console.log('clickClose');
 		closeConversation();
 		console.log('after closeConversation');

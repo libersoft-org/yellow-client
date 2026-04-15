@@ -28,11 +28,11 @@
 		elFilter?.focus();
 	}
 
-	function clickManageWallets() {
+	function clickManageWallets(): void {
 		$settingsWindow?.open('wallets');
 	}
 
-	async function clickSelectWallet(wallet) {
+	async function clickSelectWallet(wallet): Promise<void> {
 		console.log('SELECTING WALLET', wallet);
 		await $walletsWindow?.setSettingsSection('wallets-' + wallet.guid);
 	}

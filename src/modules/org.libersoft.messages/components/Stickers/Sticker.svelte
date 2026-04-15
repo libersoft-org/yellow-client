@@ -49,7 +49,7 @@
 		return true;
 	});
 
-	async function on_update_should_be_playing(ContextMenuOpen, isInViewport, expressions_renderer, animate_all_stickers, force_animate, mouseOver, animContainer, _anim) {
+	async function on_update_should_be_playing(ContextMenuOpen: boolean | undefined, isInViewport: boolean, expressions_renderer: string, animate_all_stickers: boolean, force_animate: boolean, mouseOver: boolean, animContainer: HTMLDivElement | undefined, _anim: any): Promise<void> {
 		if (!animContainer) return;
 
 		let should_be_loaded = (ContextMenuOpen === undefined || ContextMenuOpen) && isInViewport;
@@ -74,7 +74,7 @@
 		}
 	}
 
-	function unload_lottie() {
+	function unload_lottie(): void {
 		//console.log('unload lottie, anim:', anim);
 		if (anim) {
 			anim.stop();
@@ -83,7 +83,7 @@
 		}
 	}
 
-	function update_playing(playing) {
+	function update_playing(playing: boolean): void {
 		if (!anim) return;
 		if (playing) anim.play();
 		else anim.pause();
@@ -94,7 +94,7 @@
 		return true;
 	});
 
-	function setup_observer(animContainer) {
+	function setup_observer(animContainer: HTMLDivElement | undefined): void {
 		if (!animContainer) return;
 		//console.log('create sticker observer');
 		observer = new IntersectionObserver(
@@ -110,7 +110,7 @@
 		observer.observe(animContainer);
 	}
 
-	async function load_lottie() {
+	async function load_lottie(): Promise<void> {
 		//console.log('load lottie, isLoading:', isLoading);
 		if (isLoading) return;
 		isLoading = true;
@@ -129,7 +129,7 @@
 		isLoading = false;
 	}
 
-	async function construct_lottie() {
+	async function construct_lottie(): Promise<void> {
 		anim = lottie.loadAnimation({
 			container: animContainer!,
 			renderer,
@@ -178,7 +178,7 @@
 		//console.log('constructed lottie in ' + (Date.now() - start) + 'ms');
 	}
 
-	async function loadTgs(file) {
+	async function loadTgs(file: string): Promise<any> {
 		try {
 			//let start = Date.now();
 			/*
@@ -209,7 +209,7 @@
 		}
 	}
 
-	async function loadJson(file) {
+	async function loadJson(file: string): Promise<any> {
 		try {
 			//let start = Date.now();
 			const response = await fetch(file);
@@ -225,8 +225,8 @@
 		}
 	}
 
-	function static_img_load_error(event) {
-		error = 'Error loading IMG: ' + event.detail;
+	function static_img_load_error(event: Event): void {
+		error = 'Error loading IMG: ' + (event as CustomEvent).detail;
 	}
 </script>
 

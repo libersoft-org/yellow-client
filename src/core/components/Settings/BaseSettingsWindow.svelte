@@ -15,7 +15,7 @@
 	let { testId = '', settingsObject }: IProps = $props();
 	let backIcon = $derived(activeName !== settingsObject.name ? { img: 'img/back.svg', alt: 'Back', onClick: elBaseSettingsSubtree?.goBack } : undefined);
 
-	export async function open(name?: string) {
+	export async function open(name?: string): Promise<void> {
 		console.log('[BaseSettingsWindow] open:', name, 'activeName:', activeName, 'settingsObject:', settingsObject);
 		elWindow?.open();
 		console.log('[BaseSettingsWindow] open after elWindow.open():', elBaseSettingsSubtree);
@@ -26,7 +26,7 @@
 		console.log('[BaseSettingsWindow] open after setSettingsSection():', elBaseSettingsSubtree);
 	}
 
-	export function close() {
+	export function close(): void {
 		elWindow?.close();
 	}
 

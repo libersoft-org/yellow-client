@@ -20,7 +20,7 @@
 		ledgerWindow.set(null);
 	});
 
-	export async function open() {
+	export async function open(): Promise<void> {
 		await initializeLedger();
 	}
 </script>

@@ -22,18 +22,18 @@
 
 	setContext<SetSettingsSectionFn>('setSettingsSection', setSettingsSection);
 
-	function getNodeState(node: ISettingsNode, componentId: string) {
+	function getNodeState(node: ISettingsNode, componentId: string): ISettingsNodeState {
 		if (!node.states) node.states = new Map();
 		return node.states.get(componentId) || {};
 	}
 
-	function setNodeState(node: ISettingsNode, componentId: string, updates: Partial<ISettingsNodeState>) {
+	function setNodeState(node: ISettingsNode, componentId: string, updates: Partial<ISettingsNodeState>): void {
 		if (!node.states) node.states = new Map();
 		const currentState = node.states.get(componentId) || {};
 		node.states.set(componentId, { ...currentState, ...updates });
 	}
 
-	export async function setSettingsSection(name: string, props: Record<string, any> = {}) {
+	export async function setSettingsSection(name: string, props: Record<string, any> = {}): Promise<void> {
 		//console.log('[BaseSettingsWindow] setSettingsSection:', name, 'props:', props);
 		activeName = name;
 		await tick();
@@ -48,7 +48,7 @@
 		await currentNodeInstance?.onOpen?.();
 	}
 
-	export async function goBack() {
+	export async function goBack(): Promise<void> {
 		//console.log('[BaseSettingsWindow] goBack: ', activeName);
 		const found = findNode(settingsObject, activeName);
 		console.log('[BaseSettingsWindow] goBack found:', found);
@@ -91,7 +91,7 @@
 		return undefined;
 	}
 
-	function makeBreadcrumb(targetName: string) {
+	function makeBreadcrumb(targetName: string): Array<{ title: string; onClick: () => Promise<void> }> {
 		const stack: Array<{ node: any; path: any[] }> = [{ node: settingsObject, path: [] }];
 		while (stack.length) {
 			const item = stack.pop();

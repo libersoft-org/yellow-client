@@ -14,12 +14,12 @@
 	let elClickable: HTMLDivElement;
 	let focused = $state(false);
 
-	export function focus() {
+	export function focus(): void {
 		elClickable?.focus();
 		focused = true;
 	}
 
-	function handleClick(e: MouseEvent) {
+	function handleClick(e: MouseEvent): void {
 		if (!enabled) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -29,7 +29,7 @@
 		if (onClick) onClick(e as MouseEvent & { currentTarget: EventTarget & HTMLDivElement });
 	}
 
-	function handleRightClick(e: MouseEvent) {
+	function handleRightClick(e: MouseEvent): void {
 		if (!enabled) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -38,7 +38,7 @@
 		if (onRightClick) onRightClick(e as MouseEvent & { currentTarget: EventTarget & HTMLDivElement });
 	}
 
-	function handleMousedown(e: MouseEvent) {
+	function handleMousedown(e: MouseEvent): void {
 		if (!enabled) {
 			e.preventDefault();
 			e.stopPropagation();
@@ -47,7 +47,7 @@
 		if (onMousedown) onMousedown(e as MouseEvent & { currentTarget: EventTarget & HTMLDivElement });
 	}
 
-	function handleKeyDown(e: KeyboardEvent) {
+	function handleKeyDown(e: KeyboardEvent): void {
 		if (!enabled) return;
 		if (e.key === 'Enter') {
 			focused = false;
@@ -56,7 +56,7 @@
 		if (e.key === ' ') e.preventDefault();
 	}
 
-	function handleKeyUp(e: KeyboardEvent) {
+	function handleKeyUp(e: KeyboardEvent): void {
 		if (!enabled) return;
 		if (e.key === ' ') {
 			focused = false;
@@ -64,7 +64,7 @@
 		}
 	}
 
-	function handleBlur() {
+	function handleBlur(): void {
 		focused = false;
 	}
 </script>

@@ -4,7 +4,7 @@ import { log, TAURI } from '@/core/scripts/tauri.ts';
 import { getCurrentWebview } from '@tauri-apps/api/webview';
 // import { type Event } from '@tauri-apps/api/event';
 
-export async function setZoom() {
+export async function setZoom(): Promise<void> {
 	if (TAURI) {
 		const z = get(zoom);
 		log.debug('setZoom:', z);
@@ -12,7 +12,7 @@ export async function setZoom() {
 	}
 }
 
-export async function initZoom() {
+export async function initZoom(): Promise<void> {
 	if (TAURI) {
 		let z = get(zoom);
 		if (z) {

@@ -16,16 +16,16 @@
 		],
 	};
 
-	function clickYes() {
+	function clickYes(): void {
 		deleteWallet(wallet);
 		elDialog?.close();
 	}
 
-	function clickNo() {
+	function clickNo(): void {
 		elDialog?.close();
 	}
 
-	export function open() {
+	export function open(): void {
 		elDialog?.open();
 	}
 </script>

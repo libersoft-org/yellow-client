@@ -7,12 +7,13 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Form from '@/core/components/Form/Form.svelte';
+	import { untrack } from 'svelte';
 	interface Props {
 		wallet: IWallet;
 		close: () => void;
 	}
 	let { wallet, close }: Props = $props();
-	let name: string | undefined = $state(wallet?.name);
+	let name: string | undefined = $state(untrack(() => wallet?.name));
 	let error: string | null | undefined = $state();
 	let elName: Input | undefined;
 

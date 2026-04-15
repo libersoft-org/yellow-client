@@ -30,17 +30,12 @@
 			async () => {
 				log.debug('notifications onMount: CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
 				let deinit;
-
 				if (window.__TAURI__) {
 					deinit = initPositioning();
 					invoke('show', {});
 				}
-				if (CUSTOM_NOTIFICATIONS) {
-					await initNotificationsPage();
-				} else {
-					log.debug('CUSTOM_NOTIFICATIONS is not defined');
-				}
-
+				if (CUSTOM_NOTIFICATIONS) await initNotificationsPage();
+				else log.debug('CUSTOM_NOTIFICATIONS is not defined');
 				return deinit;
 			}
 		)
@@ -50,16 +45,14 @@
 		await heightLogicalChanged(v);
 	});
 
+	/** @returns {Promise<void>} */
 	async function initNotificationsPage() {
 		let s = await multiwindow_store('notifications', false);
 		log.debug('initNotifications: store:', s);
 		s.onChange((k, v) => {
 			log.debug('store.onChange', k, !!v);
-			if (!v) {
-				onNotificationRemoved(k);
-			} else {
-				addNotificationData(v);
-			}
+			if (!v) onNotificationRemoved(k);
+			else addNotificationData(v);
 		});
 		/** @type {any} */ (s).onKeyChange((k, v) => {
 			log.debug('store.onKeyChange', k, v);
@@ -74,6 +67,7 @@
 		}
 	}
 
+	/** @returns {void} */
 	function addNotificationData(data) {
 		log.debug('addNotificationData data:', data);
 		data.onClose = onClose.bind(data);
@@ -82,14 +76,14 @@
 		//log.debug('notification added');
 	}
 
-	/** @this {any} */
+	/** @this {any} @returns {Promise<void>} */
 	async function onClose(e) {
 		log.debug('onClose notification');
 		this.onClick(e, 'close');
 		onNotificationRemoved(this.id);
 	}
 
-	/** @this {any} */
+	/** @this {any} @returns {Promise<void>} */
 	async function onClick(e, data) {
 		e.stopPropagation();
 		log.debug('onClick notification');
@@ -97,6 +91,7 @@
 		log.debug('notification event set');
 	}
 
+	/** @returns {Promise<void>} */
 	async function onNotificationRemoved(id) {
 		let s = await multiwindow_store('notifications', false);
 		await s.delete(id);
@@ -106,6 +101,7 @@
 		}
 	}
 
+	/** @returns {Promise<void>} */
 	async function clearNotifications() {
 		log.debug('clearNotifications');
 		for (let n of get(notifications)) {

@@ -4,15 +4,15 @@ import type { IFileDownload, FileDownloadStoreType, FileDownloadStoreValue, IFil
 export class FileDownloadStore implements FileDownloadStoreType {
 	store = writable<FileDownloadStoreValue>([]);
 
-	getAll() {
+	getAll(): FileDownloadStoreValue {
 		return get(this.store);
 	}
 
-	get(id: string) {
+	get(id: string): IFileDownload | undefined {
 		return get(this.store).find(download => download.record.id === id);
 	}
 
-	set(id: string, download: IFileDownload) {
+	set(id: string, download: IFileDownload): void {
 		this.store.update(store => {
 			const index = store.findIndex(d => d.record.id === id);
 			if (index !== -1) store[index] = download;
@@ -21,7 +21,7 @@ export class FileDownloadStore implements FileDownloadStoreType {
 		});
 	}
 
-	patch(id: string, data: Partial<IFileDownload>) {
+	patch(id: string, data: Partial<IFileDownload>): void {
 		// patch but dont change ref
 		this.store.update(store => {
 			const oldDownload = store.find(download => download.record.id === id);
@@ -33,15 +33,15 @@ export class FileDownloadStore implements FileDownloadStoreType {
 		});
 	}
 
-	delete(id: string) {
+	delete(id: string): void {
 		this.store.update(store => store.filter(download => download.record.id !== id));
 	}
 
-	updateDownloadRecord(id: string, record: IFileUploadRecord) {
+	updateDownloadRecord(id: string, record: IFileUploadRecord): void {
 		this.patch(id, { record });
 	}
 
-	isAnyDownloadRunning() {
+	isAnyDownloadRunning(): boolean {
 		return this.getAll().some(download => download.running);
 	}
 }

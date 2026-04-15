@@ -12,16 +12,16 @@
 		],
 	};
 
-	export function open() {
+	export function open(): void {
 		elDialog?.open();
 	}
 
-	function clickYes() {
+	function clickYes(): void {
 		stickers_db.delete();
 		elDialog?.close();
 	}
 
-	function clickNo() {
+	function clickNo(): void {
 		elDialog?.close();
 	}
 </script>

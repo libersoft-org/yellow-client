@@ -28,15 +28,15 @@
 		return true;
 	});
 
-	function clickManageStickerServers() {
+	function clickManageStickerServers(): void {
 		elWindowStickerServers?.open();
 	}
 
-	function clickManageGifServers() {
+	function clickManageGifServers(): void {
 		elWindowGifServers?.open();
 	}
 
-	function clickDeleteStickersDatabase() {
+	function clickDeleteStickersDatabase(): void {
 		elDialogDeleteStickers?.open();
 	}
 </script>

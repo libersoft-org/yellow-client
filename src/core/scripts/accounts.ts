@@ -1,5 +1,5 @@
 import { tick } from 'svelte';
-import { derived, get, writable } from 'svelte/store';
+import { derived, get, writable, type Readable } from 'svelte/store';
 import { listen } from '@tauri-apps/api/event';
 import { log, TAURI_SERVICE } from '@/core/scripts/tauri.ts';
 import { selected_module_id, active_account_id } from '@/core/scripts/stores.ts';
@@ -28,7 +28,7 @@ export let active_account = derived(active_account_store, ($active_account_store
 	return () => unsubscribe();
 });
 
-export function selectAccount(id: string) {
+export function selectAccount(id: string): void {
 	log.debug('SELECT ACCOUNT', id);
 	if (get(active_account_id) === id) return;
 	/* here we temporarily set selected_module_id to null, so that the module components are forced to be destroyed and re-created, so that they can re-initialize their data.
@@ -46,7 +46,7 @@ export function selectAccount(id: string) {
 	});
 }
 
-export function active_account_module_data(module_id: string) {
+export function active_account_module_data(module_id: string): Readable<any> {
 	return derived(active_account, ($active_account: IAccount | null) => {
 		if (!$active_account) {
 			//console.log('no active account => no module data.');
@@ -99,11 +99,11 @@ export async function accounts_init(): Promise<() => void> {
 	return sub;
 }
 
-export function findAccount(id: string) {
+export function findAccount(id: string): AccountStore | undefined {
 	return get(accounts).find((account: AccountStore) => get(account).id === id);
 }
 
-function updateLiveAccount(account: AccountStore, config: IAccountConfig) {
+function updateLiveAccount(account: AccountStore, config: IAccountConfig): void {
 	let acc = get(account);
 	//console.log('updateLiveAccount', acc, config);
 	if (acc.credentials.retry_nonce != config.credentials.retry_nonce) {
@@ -143,7 +143,7 @@ function updateLiveAccount(account: AccountStore, config: IAccountConfig) {
 	}
 }
 
-function createLiveAccount(config: IAccountConfig) {
+function createLiveAccount(config: IAccountConfig): void {
 	// add new account
 	let account = constructAccount(config.id, config.credentials, config.enabled, config.settings);
 	//console.log('NEW account', get(account));
@@ -152,7 +152,7 @@ function createLiveAccount(config: IAccountConfig) {
 	else _disableAccount(account);
 }
 
-function removeLiveAccountsNotInConfig(accounts_list: AccountStore[], value: IAccountConfig[]) {
+function removeLiveAccountsNotInConfig(accounts_list: AccountStore[], value: IAccountConfig[]): void {
 	// remove accounts that are not in config
 	for (let account of accounts_list) {
 		if (!value.find(conf => conf.id === get(account).id)) {
@@ -185,7 +185,7 @@ function constructAccount(id: string, credentials: IAccountCredentials, enabled:
 	return account;
 }
 
-function handleModulesAvailable(acc: IAccount, account: AccountStore, event: Event) {
+function handleModulesAvailable(acc: IAccount, account: AccountStore, event: Event): void {
 	const customEvent = event as CustomEvent;
 	for (const k in customEvent.detail?.data?.modules_available) {
 		acc.available_modules[k] = customEvent.detail.data.modules_available[k];
@@ -195,7 +195,7 @@ function handleModulesAvailable(acc: IAccount, account: AccountStore, event: Eve
 	account.update(v => v);
 }
 
-function _enableAccount(account: AccountStore) {
+function _enableAccount(account: AccountStore): void {
 	let acc = get(account);
 	acc.enabled = true;
 	acc.suspended = false;
@@ -225,7 +225,7 @@ function _enableAccount(account: AccountStore) {
 	reconnectAccount(account);
 }
 
-function _disableAccount(account: AccountStore) {
+function _disableAccount(account: AccountStore): void {
 	//log.debug('DISABLE ACCOUNT', account);
 	let acc = get(account);
 	// Remove event listeners if they exist
@@ -248,7 +248,7 @@ function _disableAccount(account: AccountStore) {
 	account.update(v => v);
 }
 
-function reconnectAccount(account: AccountStore) {
+function reconnectAccount(account: AccountStore): void {
 	if (TAURI_SERVICE) {
 		return;
 	}
@@ -354,7 +354,7 @@ function reconnectAccount(account: AccountStore) {
 	}
 }
 
-function retry(account: AccountStore, msg: string) {
+function retry(account: AccountStore, msg: string): void {
 	let acc = get(account);
 	log.debug('RETRY ACCOUNT', acc);
 	if (!acc.enabled || acc.suspended) return;
@@ -373,7 +373,7 @@ function retry(account: AccountStore, msg: string) {
 	setReconnectTimer(account);
 }
 
-function setReconnectTimer(account: AccountStore) {
+function setReconnectTimer(account: AccountStore): void {
 	let acc = get(account);
 	if (acc.reconnectTimer) clearInterval(acc.reconnectTimer);
 	acc.reconnectTimer = setTimeout(() => {
@@ -382,7 +382,7 @@ function setReconnectTimer(account: AccountStore) {
 	}, 1000);
 }
 
-function clearReconnectTimer(account: AccountStore) {
+function clearReconnectTimer(account: AccountStore): void {
 	let acc = get(account);
 	if (acc.reconnectTimer) {
 		clearTimeout(acc.reconnectTimer);
@@ -390,14 +390,14 @@ function clearReconnectTimer(account: AccountStore) {
 	}
 }
 
-function clearPingTimer(acc: IAccount) {
+function clearPingTimer(acc: IAccount): void {
 	if (acc.pingTimer) {
 		clearInterval(acc.pingTimer);
 		acc.pingTimer = undefined;
 	}
 }
 
-function sendLoginCommand(account: AccountStore) {
+function sendLoginCommand(account: AccountStore): void {
 	//log.debug('Sending login command');
 	let acc = get(account);
 	send(acc, account, 'core', 'user_login', { address: acc.credentials.address, password: acc.credentials.password }, false, (_req, res) => {
@@ -422,7 +422,7 @@ function sendLoginCommand(account: AccountStore) {
 	});
 }
 
-function saveOriginalWsGuid(acc: IAccount) {
+function saveOriginalWsGuid(acc: IAccount): void {
 	/* acc.original_wsGuid can be used to detect if a tab with an upload has been reloaded. Upload has to be paired with client wsGuid first. Module can then send a notification that asks clients with the original wsGuid if the file is still available. */
 	let sess = window.sessionStorage;
 	let json = sess.getItem('sessions') || '{}';
@@ -436,7 +436,7 @@ function saveOriginalWsGuid(acc: IAccount) {
 	acc.original_wsGuid = original_wsGuid;
 }
 
-function setupPing(account: AccountStore) {
+function setupPing(account: AccountStore): void {
 	let acc = get(account);
 	/*window.setInterval(() => {
   send(
@@ -506,7 +506,7 @@ function setupPing(account: AccountStore) {
 	}, ping_interval);
 }
 
-function disconnectAccount(acc: IAccount) {
+function disconnectAccount(acc: IAccount): void {
 	acc.requests = {};
 	acc.available_modules = {};
 	updateModulesComms(acc);
@@ -517,7 +517,7 @@ function disconnectAccount(acc: IAccount) {
 	//console.log('Account disconnected');
 }
 
-function clearAccount(acc: IAccount) {
+function clearAccount(acc: IAccount): void {
 	disconnectAccount(acc);
 	acc.requests = {};
 	acc.module_data = {};
@@ -526,37 +526,30 @@ function clearAccount(acc: IAccount) {
 // Mobile native message handling
 async function setupNativeMessageListener(): Promise<(() => void) | null> {
 	log.debug('Setting up native message listener');
-
 	try {
 		// Listen for messages from native
 		const unsubMessage = await listen('native-message', (event: any) => {
 			const { accountId, message } = event.payload;
 			log.debug('Received message from native:', accountId, message);
-
 			// Find the account
 			const accountStore = findAccount(accountId);
 			if (!accountStore) {
 				log.error('Account not found for native message:', accountId);
 				return;
 			}
-
 			const acc = get(accountStore);
-
 			// Handle the message through the normal socket message handler
 			handleSocketMessage(acc, message);
 		});
-
 		// Listen for connection status updates
 		const unsubStatus = await listen('native-connection-status', (event: any) => {
 			const { accountId, status, error } = event.payload;
 			log.debug('Native connection status update:', accountId, status);
-
 			const accountStore = findAccount(accountId);
 			if (!accountStore) {
 				log.error('Account not found for status update:', accountId);
 				return;
 			}
-
 			// Update account status
 			accountStore.update(acc => {
 				acc.status = status;
@@ -565,9 +558,7 @@ async function setupNativeMessageListener(): Promise<(() => void) | null> {
 				return acc;
 			});
 		});
-
 		log.debug('Native message listener setup complete');
-
 		return () => {
 			unsubMessage();
 			unsubStatus();

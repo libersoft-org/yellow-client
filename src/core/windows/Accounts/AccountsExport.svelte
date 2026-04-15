@@ -4,11 +4,11 @@
 	import Export from '@/core/components/Export/Export.svelte';
 	let elWindow;
 
-	export function open() {
+	export function open(): void {
 		elWindow?.open();
 	}
 
-	export function close() {
+	export function close(): void {
 		elWindow?.close();
 	}
 </script>

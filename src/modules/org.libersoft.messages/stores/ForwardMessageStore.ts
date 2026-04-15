@@ -1,4 +1,4 @@
-import { derived, get, writable } from 'svelte/store';
+import { derived, get, writable, type Readable } from 'svelte/store';
 import type { Message, Conversation } from '@/org.libersoft.messages/scripts/types.ts';
 
 export let windowForwardMessageStore = writable<any>(null);
@@ -23,36 +23,36 @@ export class ForwardMessageStore {
 		sentToConversations: [],
 	});
 
-	setForwardedMessage(forwardedMessage: IForwardedMessage | null) {
+	setForwardedMessage(forwardedMessage: IForwardedMessage | null): void {
 		this.store.update(store => {
 			store.forwardedMessage = forwardedMessage;
 			return store;
 		});
 	}
 
-	getForwardedMessage() {
+	getForwardedMessage(): Readable<IForwardedMessage | null> {
 		return derived(this.store, $store => $store.forwardedMessage);
 	}
 
-	getSentToConversations() {
+	getSentToConversations(): Readable<Conversation[]> {
 		return derived(this.store, $store => $store.sentToConversations);
 	}
 
-	addSentToConversation(conversation: Conversation) {
+	addSentToConversation(conversation: Conversation): void {
 		this.store.update(store => {
 			store.sentToConversations.push(conversation);
 			return store;
 		});
 	}
 
-	clearSentToConversations() {
+	clearSentToConversations(): void {
 		this.store.update(store => {
 			store.sentToConversations = [];
 			return store;
 		});
 	}
 
-	startForwardedMessage(forwardedMessage: IForwardedMessage) {
+	startForwardedMessage(forwardedMessage: IForwardedMessage): void {
 		console.log('startForwardedMessage:', forwardedMessage);
 		// Clear sent conversations when starting a new forward operation
 		this.clearSentToConversations();
@@ -60,7 +60,7 @@ export class ForwardMessageStore {
 		get(windowForwardMessageStore)?.open();
 	}
 
-	close() {
+	close(): void {
 		this.setForwardedMessage(null);
 		this.clearSentToConversations();
 		get(windowForwardMessageStore)?.close();

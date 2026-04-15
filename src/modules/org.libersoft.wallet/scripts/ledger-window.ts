@@ -3,7 +3,7 @@ import { ledgerConnected } from 'libersoft-crypto/ledger';
 
 export const ledgerWindow = writable<any>(null);
 
-export async function toggleLedgerWindow() {
+export async function toggleLedgerWindow(): Promise<void> {
 	const ledgerWin = get(ledgerWindow);
 	if (!ledgerWin) {
 		console.error('Ledger window is not initialized');

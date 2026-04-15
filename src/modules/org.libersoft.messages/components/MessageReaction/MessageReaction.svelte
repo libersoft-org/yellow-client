@@ -28,18 +28,18 @@
 		}
 	}
 
-	const onClick = () => {
+	const onClick = (): void => {
 		setShow(!show);
 	};
 
-	const handleOutsideClick = (e: MouseEvent) => {
+	const handleOutsideClick = (e: MouseEvent): void => {
 		if (floatingRef && !floatingRef.contains(e.target as Node) && !buttonRef.contains(e.target as Node)) {
 			setShow(false);
 			document.removeEventListener('click', handleOutsideClick);
 		}
 	};
 
-	const handleFloatingUI = () => {
+	const handleFloatingUI = (): (() => void) | undefined => {
 		if (!buttonRef || !floatingRef) return;
 		const autoUpdateCleanUp = autoUpdate(buttonRef, floatingRef, () => {
 			// @ts-ignore

@@ -56,13 +56,13 @@
 		return !error;
 	}
 
-	function clickAdd() {
+	function clickAdd(): void {
 		if (!validateFields()) return;
 		addToken(networkGuid, token);
 		close();
 	}
 
-	function clickEdit() {
+	function clickEdit(): void {
 		if (!validateFields()) return;
 		editToken(networkGuid, token);
 		close();

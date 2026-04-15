@@ -22,14 +22,14 @@
 		elFilter?.focus();
 	}
 
-	function selectNetwork(id) {
+	function selectNetwork(id): void {
 		console.log('SETTING NETWORK', id);
 		selectedNetworkID.set(id);
 		console.log('SELECTED NETWORK', $selectedNetworkID);
 		if (close) close();
 	}
 
-	function manageNetworks() {
+	function manageNetworks(): void {
 		$settingsWindow?.open('networks');
 	}
 </script>

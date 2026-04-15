@@ -3,7 +3,7 @@
 	import { stickerset_favorites } from '@/org.libersoft.messages/scripts/stickers.ts';
 	let view;
 
-	export function onShow() {
+	export function onShow(): void {
 		view.onShow();
 	}
 </script>

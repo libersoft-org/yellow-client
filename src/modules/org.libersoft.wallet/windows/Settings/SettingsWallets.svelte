@@ -31,7 +31,7 @@
 		elFilter?.focus();
 	}
 
-	function clickWallet(wallet: IWallet) {
+	function clickWallet(wallet: IWallet): void {
 		//console.log('CLICKWALLET', wallet);
 		setSettingsSection('wallets-' + wallet.guid);
 	}
@@ -42,11 +42,11 @@
 		elDialogWalletsDel?.open();
 	}
 
-	function editWallet(wallet: IWallet) {
+	function editWallet(wallet: IWallet): void {
 		setSettingsSection('wallets-edit-' + wallet.guid);
 	}
 
-	function handleWalletReorder(sourceIndex: number, targetIndex: number) {
+	function handleWalletReorder(sourceIndex: number, targetIndex: number): void {
 		const reordered = [...filteredWallets];
 		const [moved] = reordered.splice(sourceIndex, 1);
 		reordered.splice(targetIndex, 0, moved!);

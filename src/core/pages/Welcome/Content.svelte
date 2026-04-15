@@ -22,19 +22,19 @@
 		}
 	});
 
-	function onKeydown(event) {
+	function onKeydown(event): void {
 		if (event.key === 'Escape') exit();
 	}
 
-	function exit() {
+	function exit(): void {
 		elDialogExit?.open();
 	}
 
-	function clickLogo() {
+	function clickLogo(): void {
 		window.open(link, '_blank');
 	}
 
-	function back() {
+	function back(): void {
 		hideSidebarMobile.set(false);
 	}
 </script>

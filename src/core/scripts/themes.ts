@@ -2,16 +2,13 @@ import { derived, get, type Readable, type Writable, writable } from 'svelte/sto
 import { localStorageSharedStore } from '../../lib/svelte-shared-store.ts';
 import { log } from '@/core/scripts/tauri.ts';
 import { followBrowserTheme } from '@/core/scripts/settings.ts';
-
 // Define the Theme interface
 export interface ITheme {
 	name: string;
 	properties: Record<string, string>;
 }
-
 // Define the type for the selected theme index
 export let selected_theme_index: Writable<number> = localStorageSharedStore('selected_theme_index', 0);
-
 // Define the default themes
 export const default_themes: ITheme[] = [
 	{
@@ -59,45 +56,34 @@ export const default_themes: ITheme[] = [
 		},
 	},
 ];
-
 // Define the user themes store
 export let user_themes: Writable<ITheme[]> = localStorageSharedStore('user_themes', []);
-
 // Define the combined themes store
 export let themes: Readable<ITheme[]> = derived(user_themes, ($custom_themes: ITheme[]) => {
 	return [...default_themes, ...$custom_themes];
 });
-
 // Browser preference detection
 export const browserPrefersDark = writable(false);
-
 // Define the current theme store
 export let current_theme: Readable<ITheme> = derived([selected_theme_index, themes], ([$selected_theme_index, $themes]: [number, ITheme[]]) => {
 	return $themes[$selected_theme_index]!;
 });
 
 // Initialize browser theme preference detection
-export function initBrowserThemeDetection() {
+export function initBrowserThemeDetection(): void {
 	if (typeof window !== 'undefined') {
 		const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
 		browserPrefersDark.set(mediaQuery.matches);
-
 		mediaQuery.addEventListener('change', e => {
 			browserPrefersDark.set(e.matches);
 		});
-
 		// Subscribe to browser preference changes
 		browserPrefersDark.subscribe(prefersDark => {
-			if (get(followBrowserTheme)) {
-				selected_theme_index.set(prefersDark ? 1 : 0);
-			}
+			if (get(followBrowserTheme)) selected_theme_index.set(prefersDark ? 1 : 0);
 		});
-
 		// Subscribe to followBrowserTheme changes
 		followBrowserTheme.subscribe(follow => {
-			if (follow) {
-				selected_theme_index.set(get(browserPrefersDark) ? 1 : 0);
-			}
+			if (follow) selected_theme_index.set(get(browserPrefersDark) ? 1 : 0);
 		});
 	}
 }
@@ -105,7 +91,6 @@ export function initBrowserThemeDetection() {
 // Subscribe to selected_theme_index changes to validate the index
 selected_theme_index.subscribe((v: number) => {
 	//console.log(`🎨 THEME INDEX CHANGED: ${v} (themes.length: ${get(themes).length})`);
-
 	if (v < 0 || v >= get(themes).length) {
 		console.warn(`🔴 THEME INDEX OUT OF BOUNDS: ${v}, resetting to 0`);
 		selected_theme_index.set(0); // Reset to default if out of bounds
@@ -118,19 +103,15 @@ current_theme.subscribe((v: ITheme) => {
 	Object.keys(v.properties).forEach((key: string) => {
 		const value = v.properties[key];
 		//console.log('Setting CSS variable:', key, 'to', value);
-		if (key === '--background-image') {
-			applyBackgroundImage(key, value!);
-		} else {
-			document.documentElement.style.setProperty(key, value!);
-		}
+		if (key === '--background-image') applyBackgroundImage(key, value!);
+		else document.documentElement.style.setProperty(key, value!);
 	});
 });
 
 // avoid console errors when the image is not found
-function applyBackgroundImage(key, value) {
+function applyBackgroundImage(key, value): void {
 	const base = import.meta.env['VITE_CLIENT_PATH_BASE'] || '';
 	const val = `${base}/img/background/${value}`;
-
 	const img = new Image();
 	img.src = val;
 	img.onload = () => {
@@ -149,9 +130,6 @@ export function toggleDarkMode(enabled: boolean): void {
 	// Only toggle between built-in themes (Light = 0, Dark = 1)
 	// Don't interfere with custom themes (index >= 2)
 	const currentIndex = get(selected_theme_index);
-	if (currentIndex >= 2) {
-		return;
-	}
-
+	if (currentIndex >= 2) return;
 	selected_theme_index.set(enabled ? 1 : 0);
 }

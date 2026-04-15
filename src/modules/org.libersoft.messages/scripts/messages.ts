@@ -367,7 +367,7 @@ export function downloadAttachmentsSerial(records: any[], finishCallback: (downl
 }
 
 export const makeDownloadChunkAsyncFn =
-	(acc: any) =>
+	(acc: any): ((args: { uploadId: string; offsetBytes: number; chunkSize: number }) => Promise<any>) =>
 	({ uploadId, offsetBytes, chunkSize }: { uploadId: string; offsetBytes: number; chunkSize: number }): Promise<any> => {
 		return new Promise((resolve, reject) => {
 			sendData(acc, null, 'download_chunk', { uploadId, offsetBytes, chunkSize }, true, async (_req, res) => {

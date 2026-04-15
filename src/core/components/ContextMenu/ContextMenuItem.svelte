@@ -13,13 +13,13 @@
 	let { img, label, colorVariable = '--primary-foreground', onClick, testId, ...restProps }: Props = $props();
 	let menu = getContext('ContextMenu') as { close: () => void } | undefined;
 
-	function handleClick(e: Event) {
+	function handleClick(e: Event): void {
 		console.log('handleClick');
 		onClick?.(e);
 		menu?.close();
 	}
 
-	function handleMousedown(event) {
+	function handleMousedown(event: Event): void {
 		console.log('context-menu-item mousedown');
 		event.preventDefault();
 		event.stopPropagation();

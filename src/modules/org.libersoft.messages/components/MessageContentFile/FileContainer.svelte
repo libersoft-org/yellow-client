@@ -21,7 +21,7 @@
 		if (!upload) loadUploadData(uploadId);
 	});
 
-	function onDownload(e) {
+	function onDownload(e: Event): void {
 		e.preventDefault();
 		e.stopPropagation();
 
@@ -36,13 +36,13 @@
 	}
 
 	let changingStatus = $state(false);
-	const pauseUpload = () => {
+	const pauseUpload = (): void => {
 		changingStatus = true;
 		_pauseUpload(uploadId).finally(() => {
 			changingStatus = false;
 		});
 	};
-	const resumeUpload = () => {
+	const resumeUpload = (): void => {
 		changingStatus = true;
 		_resumeUpload(uploadId).finally(() => {
 			changingStatus = false;

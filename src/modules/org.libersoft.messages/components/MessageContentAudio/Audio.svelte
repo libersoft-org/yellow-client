@@ -23,7 +23,7 @@
 	const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--disabled-background');
 	const unsubDownloadStore = fileDownloadStore.store.subscribe(() => download.set(fileDownloadStore.get(uploadId) || null));
 
-	const fullDownloadAudio = () => {
+	const fullDownloadAudio = (): void => {
 		if (!upload) return;
 		downloadAttachmentsSerial([upload.record], download => {
 			const blob = new Blob(download.chunksReceived, { type: download.record.fileMimeType });
@@ -36,7 +36,7 @@
 		});
 	};
 
-	const setupWavesurfer = async (_url: string) => {
+	const setupWavesurfer = async (_url: string): Promise<void> => {
 		if (!upload) return;
 		const { record } = upload;
 		try {
@@ -75,7 +75,7 @@
 		}
 	};
 
-	const init = async () => {
+	const init = async (): Promise<void> => {
 		if (!upload) {
 			console.error('Upload is not available');
 			return;
@@ -105,7 +105,7 @@
 		unsubDownloadStore();
 	});
 
-	async function clickPlay() {
+	async function clickPlay(): Promise<void> {
 		if (wavesurfer) {
 			try {
 				await wavesurfer.playPause();
@@ -116,17 +116,17 @@
 		}
 	}
 
-	function formatTime(seconds) {
-		const minutes = Math.floor(seconds / 60)
+	function formatTime(sec: number): string {
+		const minutes = Math.floor(sec / 60)
 			.toString()
 			.padStart(2, '0');
-		seconds = Math.floor(seconds % 60)
+		const secs = Math.floor(sec % 60)
 			.toString()
 			.padStart(2, '0');
-		return minutes + ':' + seconds;
+		return minutes + ':' + secs;
 	}
 
-	function onDownload() {
+	function onDownload(): void {
 		if (!upload) {
 			console.error('Upload is not available');
 			return;

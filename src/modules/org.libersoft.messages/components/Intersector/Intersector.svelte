@@ -8,7 +8,7 @@
 		observer.disconnect();
 	});
 
-	function observeItem(node: HTMLElement) {
+	function observeItem(node: HTMLElement): { destroy(): void } {
 		observer.observe(node);
 		return {
 			destroy() {
@@ -17,18 +17,18 @@
 		};
 	}
 
-	function intersecting(entries: IntersectionObserverEntry[]) {
+	function intersecting(entries: IntersectionObserverEntry[]): void {
 		setTimeout(() => {
 			entries.forEach(entry => {
-				entry.target.dataset.intersecting = String(entry.isIntersecting);
-				let n = Number(entry.target.dataset.id);
+				(entry.target as HTMLElement).dataset['intersecting'] = String(entry.isIntersecting);
+				let n = Number((entry.target as HTMLElement).dataset['id']);
 				visibility[n] = entry.isIntersecting;
 			});
 		}, 60);
 	}
 </script>
 
-{#each items as item, i (item.id)}
+{#each items as item (item.id)}
 	<div class="item" data-id={item.id} use:observeItem>
 		<div style="min-height: {200}px;">
 			{@render item_slot(item, visibility[item.id] ? true : false)}

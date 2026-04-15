@@ -17,7 +17,7 @@ export class FileDownloadService extends EventEmitter {
 			chunk: IFileUploadChunk;
 		}>,
 		finishCallback: (download: IFileDownload) => void
-	) {
+	): Promise<void> {
 		for (const record of records) {
 			let download: IFileDownload | undefined = this.downloadStore.get(record.id);
 			if (!download) {
@@ -86,14 +86,12 @@ export class FileDownloadService extends EventEmitter {
 		}
 	}
 
-	async startDownload(download: IFileDownload) {
-		if (this.downloadStore.isAnyDownloadRunning()) {
-			return;
-		}
+	async startDownload(download: IFileDownload): Promise<void> {
+		if (this.downloadStore.isAnyDownloadRunning()) return;
 		download.pullChunk && (await download.pullChunk());
 	}
 
-	async startNextDownload(lastDownload: IFileDownload) {
+	async startNextDownload(lastDownload: IFileDownload): Promise<void> {
 		if (this.downloadStore.isAnyDownloadRunning()) {
 			return;
 		}
@@ -115,7 +113,7 @@ export class FileDownloadService extends EventEmitter {
 		}
 	}
 
-	async pauseDownload(uploadId: string) {
+	async pauseDownload(uploadId: string): Promise<void> {
 		const download = this.downloadStore.get(uploadId);
 		if (download) {
 			download.pausedLocally = true;
@@ -123,7 +121,7 @@ export class FileDownloadService extends EventEmitter {
 		}
 	}
 
-	async resumeDownload(uploadId: string) {
+	async resumeDownload(uploadId: string): Promise<void> {
 		const download = this.downloadStore.get(uploadId);
 		if (download) {
 			download.pausedLocally = false;
@@ -131,7 +129,7 @@ export class FileDownloadService extends EventEmitter {
 		}
 	}
 
-	async cancelDownload(uploadId: string) {
+	async cancelDownload(uploadId: string): Promise<void> {
 		const download = this.downloadStore.get(uploadId);
 		if (download) {
 			download.canceledLocally = true;

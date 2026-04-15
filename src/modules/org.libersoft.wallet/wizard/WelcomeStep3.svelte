@@ -25,7 +25,7 @@
 		return unsubscribe;
 	});
 
-	function checkWallets() {
+	function checkWallets(): void {
 		hasWallets = get(wallets).length > 0;
 		if (hasWallets) {
 			wizard?.setNextText('Next');

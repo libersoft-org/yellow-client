@@ -9,7 +9,7 @@
 	let { text = $bindable('') }: Props = $props();
 	let activeTab = $state('editor');
 
-	function setTab(_e, name) {
+	function setTab(_e: Event, name: string): void {
 		activeTab = name;
 	}
 </script>

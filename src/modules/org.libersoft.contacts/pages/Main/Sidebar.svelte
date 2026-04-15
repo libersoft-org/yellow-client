@@ -3,7 +3,7 @@
 	import SidebarButton from '@/core/components/Sidebar/SidebarButton.svelte';
 	import { module } from '../../scripts/module.ts';
 
-	function clickShowContent() {
+	function clickShowContent(): void {
 		hideSidebarMobile.set(true);
 	}
 </script>

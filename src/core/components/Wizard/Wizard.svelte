@@ -18,7 +18,7 @@
 	let setTitle = getContext('setTitle') as (title: string) => Promise<void>;
 	let pageChanged = getContext('pageChanged') as () => Promise<void>;
 
-	function setNextText(text: string) {
+	function setNextText(text: string): void {
 		nextText = text;
 	}
 
@@ -31,13 +31,13 @@
 
 	updateTitle();
 
-	async function nextStep() {
+	async function nextStep(): Promise<void> {
 		if (currentStep < steps.length - 1) currentStep += 1;
 		updateTitle();
 		if (pageChanged) await pageChanged();
 	}
 
-	async function prevStep() {
+	async function prevStep(): Promise<void> {
 		if (currentStep > 0) currentStep -= 1;
 		updateTitle();
 		if (pageChanged) await pageChanged();

@@ -19,24 +19,24 @@
 		],
 	};
 
-	function validateAddressBook(text: string) {
+	function validateAddressBook(text: string): { valid: boolean; error?: string } {
 		return validateAddressBookImport(text);
 	}
 
-	async function handleAdd(text: string) {
+	async function handleAdd(text: string): Promise<void> {
 		const result = importAddressBookItems(text);
 		if (!result.success && result.error) {
 			throw new Error(result.error);
 		}
 	}
 
-	async function handleReplace(text: string) {
+	async function handleReplace(text: string): Promise<void> {
 		pendingReplaceText = text;
 		if (hasExistingAddresses) replaceDialog?.open();
 		else await confirmReplaceWithText(text);
 	}
 
-	async function confirmReplace() {
+	async function confirmReplace(): Promise<void> {
 		if (pendingReplaceText) {
 			try {
 				await confirmReplaceWithText(pendingReplaceText);
@@ -49,7 +49,7 @@
 		} else replaceDialog?.close();
 	}
 
-	async function confirmReplaceWithText(text: string) {
+	async function confirmReplaceWithText(text: string): Promise<void> {
 		const result = replaceAddressBook(text);
 		if (!result.success && result.error) throw new Error(result.error);
 	}

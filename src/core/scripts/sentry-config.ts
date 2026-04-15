@@ -9,7 +9,7 @@ export const sentryBaseConfig = {
 };
 
 // Get platform information
-export function getPlatformInfo() {
+export function getPlatformInfo(): string {
 	if (typeof window === 'undefined') {
 		return 'server';
 	}
@@ -22,7 +22,7 @@ export function getPlatformInfo() {
 }
 
 // Get hostname
-export function getHostname() {
+export function getHostname(): string {
 	if (typeof window === 'undefined') {
 		// Server-side: try to get hostname from environment or os
 		try {
@@ -36,7 +36,7 @@ export function getHostname() {
 }
 
 // Common beforeSend hook
-export function createBeforeSendHook(isServer: boolean = false) {
+export function createBeforeSendHook(isServer: boolean = false): (event: any, _hint: any) => any {
 	return (event: any, _hint: any) => {
 		const platform = getPlatformInfo();
 		const hostname = getHostname();

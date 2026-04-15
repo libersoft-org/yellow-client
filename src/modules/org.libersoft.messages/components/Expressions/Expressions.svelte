@@ -21,7 +21,7 @@
 	let Expression = $derived(expressions[expression]);
 	let elExpression;
 
-	export async function setCategory(e, name) {
+	export async function setCategory(e: Event | null, name: string): Promise<void> {
 		expression = name;
 		e?.stopPropagation();
 		e?.preventDefault();
@@ -32,7 +32,7 @@
 		await currentTabOnShow();
 	});
 
-	async function currentTabOnShow() {
+	async function currentTabOnShow(): Promise<void> {
 		await tick();
 		console.log('currentTabOnShow:', expression);
 		elExpression?.onShow?.();

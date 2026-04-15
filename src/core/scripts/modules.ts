@@ -3,7 +3,7 @@ import { module_decls, modules_display_order, selected_module_id } from '@/core/
 import { modules_config } from '@/core/scripts/modules_config.ts';
 import { tick } from 'svelte';
 import type { IModuleDeclaration, IAccount } from './types.ts';
-export function initModules() {
+export function initModules(): (() => void)[] {
 	return [
 		selected_module_id.subscribe(async id => {
 			await tick();
@@ -27,7 +27,7 @@ export function initModules() {
 	];
 }
 
-function initModuleComms(acc: IAccount, module_id: string, decl: IModuleDeclaration) {
+function initModuleComms(acc: IAccount, module_id: string, decl: IModuleDeclaration): void {
 	//console.log('initModuleComms:', decl);
 	if (!acc.module_data[module_id]) {
 		if (decl.callbacks.initData) acc.module_data[module_id] = decl.callbacks?.initData(acc);
@@ -38,12 +38,12 @@ function initModuleComms(acc: IAccount, module_id: string, decl: IModuleDeclarat
 	if (decl.callbacks.initComms) decl.callbacks.initComms(acc);
 }
 
-function deinitModuleComms(decl: IModuleDeclaration, acc: IAccount) {
+function deinitModuleComms(decl: IModuleDeclaration, acc: IAccount): void {
 	acc.module_data[decl.id].online?.set(false);
 	if (decl.callbacks.deinitComms) decl.callbacks.deinitComms(acc);
 }
 
-export function updateModulesComms(acc: IAccount) {
+export function updateModulesComms(acc: IAccount): void {
 	let available_modules = acc.available_modules;
 	let module_decls_v = get(module_decls);
 	for (const module_id in module_decls_v) {
@@ -68,7 +68,7 @@ export function updateModulesComms(acc: IAccount) {
 	}
 }
 
-export function registerModule(decl: IModuleDeclaration) {
+export function registerModule(decl: IModuleDeclaration): void {
 	//console.log('register module:', decl.id, decl);
 	const config = get(modules_config);
 	const moduleConfig = config.modules[decl.id];

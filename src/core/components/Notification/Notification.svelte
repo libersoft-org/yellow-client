@@ -13,7 +13,7 @@
 	}
 	let { data, closing = false }: Props = $props();
 
-	function handleClosing(e) {
+	function handleClosing(e: Event): void {
 		e.stopPropagation();
 		e.stopImmediatePropagation();
 		closing = true;

@@ -34,7 +34,7 @@
 	});
 
 	// Test functions from Files.svelte
-	async function testOfferNativeDownload() {
+	async function testOfferNativeDownload(): Promise<void> {
 		log.debug('testOfferNativeDownload');
 		try {
 			result = 'Testing offerNativeDownload...';
@@ -50,7 +50,7 @@
 		}
 	}
 
-	async function setDefaultFolderFromDownload() {
+	async function setDefaultFolderFromDownload(): Promise<void> {
 		if (!download || !download.potential_default_folder) {
 			result = 'No download with folder selected. Use "Offer Download" first.';
 			return;
@@ -60,7 +60,7 @@
 		result = `Default folder set to: ${download.potential_default_folder}`;
 	}
 
-	async function testSaveNativeDownloadChunk() {
+	async function testSaveNativeDownloadChunk(): Promise<void> {
 		try {
 			if (!download) {
 				result = 'No download object. Run offerNativeDownload first!';
@@ -74,7 +74,7 @@
 		}
 	}
 
-	async function testFinishNativeDownload() {
+	async function testFinishNativeDownload(): Promise<void> {
 		try {
 			if (!download) {
 				result = 'No download object. Run offerNativeDownload first!';
@@ -87,7 +87,7 @@
 		}
 	}
 
-	async function testOpenDownload() {
+	async function testOpenDownload(): Promise<void> {
 		if (TAURI_MOBILE) {
 			try {
 				if (!download) {

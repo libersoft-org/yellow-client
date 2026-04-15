@@ -15,7 +15,7 @@
 		await initializeLedger();
 	});
 
-	async function loadFirstAccount() {
+	async function loadFirstAccount(): Promise<void> {
 		// Load just the first account for informative display
 		const accounts = await getLedgerEthereumAccounts(0, 1);
 		if (accounts.length > 0) {
@@ -24,7 +24,7 @@
 		}
 	}
 
-	async function handleConnectClick() {
+	async function handleConnectClick(): Promise<void> {
 		if ($ledgerLoading) return;
 		const connected = await connectLedger();
 		if (connected) {

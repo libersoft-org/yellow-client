@@ -33,7 +33,7 @@
 
 	//$: console.log('LOADER CHANGED:', loader);
 
-	function setup(loaderElement, loader) {
+	function setup(loaderElement: HTMLDivElement | undefined, loader: any): void {
 		//console.log('setup: loaderElement:', loaderElement, 'loader:', loader, 'active:', loader.active);
 		if (!loader.active) return;
 		//console.log('OBSERVINGOBSERVINGOBSERVING:', observing);
@@ -47,7 +47,7 @@
 		}
 	}
 
-	function setupInterval() {
+	function setupInterval(): void {
 		interval = setInterval(() => {
 			//console.log('check loaderElement:', loaderElement, loader.loading, loaderElement?.getBoundingClientRect(), window.innerHeight);
 			if (loader.loading) clearInterval(interval);
@@ -67,12 +67,12 @@
 	});
 
 	/* TODO: sometimes, intersection observer does not work properly. add timer? */
-	function handleIntersect(entries) {
+	function handleIntersect(entries: any[]): void {
 		let _loaderIsVisible = entries[0].isIntersecting;
 		if (_loaderIsVisible && !loader.loading) loadMore();
 	}
 
-	function loadMore() {
+	function loadMore(): void {
 		clearInterval(interval);
 		loader.loading = true;
 		console.log('LOADmORE: LOADER:', loader);

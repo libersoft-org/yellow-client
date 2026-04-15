@@ -10,23 +10,23 @@
 	let addressInputRef = $state<HTMLInputElement>();
 	let value = $state('');
 
-	function onKeydown(e: KeyboardEvent) {
+	function onKeydown(e: KeyboardEvent): void {
 		if (e.key === 'Enter') clickOpen();
 	}
 
-	function clickOpen() {
+	function clickOpen(): void {
 		if (value) {
 			openNewConversation(value);
 			close();
 		}
 	}
 
-	export function open() {
+	export function open(): void {
 		elWindow?.open();
 		tick().then(() => addressInputRef?.focus());
 	}
 
-	export function close() {
+	export function close(): void {
 		elWindow?.close();
 	}
 </script>

@@ -42,7 +42,7 @@
 		//console.log(`stickerset ${stickerset.id} destroyed`);
 	});
 
-	async function update(intersecting) {
+	async function update(intersecting: boolean): Promise<void> {
 		//console.log(`stickerset ${stickerset.id} intersecting: ${intersecting}`);
 		if (intersecting) {
 			if (stickers === undefined) {
@@ -53,11 +53,11 @@
 		}
 	}
 
-	function clickExpand() {
+	function clickExpand(): void {
 		expanded = !expanded;
 	}
 
-	function toggleFavorite() {
+	function toggleFavorite(): void {
 		if (stickerset_in_favorites(stickerset)) remove_stickerset_from_favorites(stickerset);
 		else add_stickerset_to_favorites(stickerset);
 	}

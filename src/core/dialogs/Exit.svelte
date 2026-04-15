@@ -12,16 +12,16 @@
 		],
 	};
 
-	export function open() {
+	export function open(): void {
 		elDialog?.open();
 	}
 
-	async function clickYes() {
+	async function clickYes(): Promise<void> {
 		console.log('Clicked on Yes button');
 		await exit();
 	}
 
-	async function clickNo() {
+	async function clickNo(): Promise<void> {
 		elDialog?.close();
 	}
 </script>

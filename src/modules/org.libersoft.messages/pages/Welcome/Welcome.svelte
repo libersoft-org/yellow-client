@@ -10,15 +10,15 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	const illustrations = ['man', 'woman', 'pigeon'];
 
-	function clickNew() {
+	function clickNew(): void {
 		$elWindowNewConversation?.open();
 	}
 
-	function back() {
+	function back(): void {
 		hideSidebarMobile.set(false);
 	}
 
-	function close() {
+	function close(): void {
 		setModule(null);
 	}
 </script>

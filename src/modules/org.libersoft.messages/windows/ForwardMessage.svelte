@@ -23,7 +23,7 @@
 		});
 	});
 
-	const onSend = (conversation: Conversation) => {
+	const onSend = (conversation: Conversation): void => {
 		sendMessage($fwMsg?.data.message, $fwMsg?.data.format, $fwMsg?.data.acc.deref(), conversation);
 		forwardMessageStore.addSentToConversation(conversation);
 	};

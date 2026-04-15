@@ -8,7 +8,7 @@
 	let openStickersetDetailsWindow: any = getContext('openStickersetDetailsWindow');
 	//$: console.log('MessageContentSticker node:', v);
 
-	function handleClick() {
+	function handleClick(): void {
 		if (stickerset) openStickersetDetailsWindow(stickerset);
 	}
 </script>

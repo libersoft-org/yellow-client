@@ -29,7 +29,7 @@
 	let elWalletNameInput: Input | undefined = $state();
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
-	export function onOpen() {
+	export function onOpen(): void {
 		name = 'My wallet ' + ($wallets.length + 1);
 		regenerate();
 		generateDummyQRCode();
@@ -38,29 +38,29 @@
 		if (elWalletNameInput) elWalletNameInput.focus();
 	}
 
-	function generateQRCode() {
+	function generateQRCode(): void {
 		QRCode.toDataURL(phrase, { width: 150 })
 			.then(url => (qrCodeData = url))
 			.catch(err => console.error(err));
 	}
 
-	function generateDummyQRCode() {
+	function generateDummyQRCode(): void {
 		QRCode.toDataURL(dummyPhrase, { width: 150 })
 			.then(url => (dummyQrCodeData = url))
 			.catch(err => console.error(err));
 	}
 
-	function toggleReveal() {
+	function toggleReveal(): void {
 		isRevealed = !isRevealed;
 	}
 
-	function regenerate() {
+	function regenerate(): void {
 		mnemonic = generateMnemonic();
 		phrase = mnemonic?.phrase || '';
 		generateQRCode();
 	}
 
-	function copy(e: Event) {
+	function copy(e: Event): void {
 		e.preventDefault();
 		e.stopPropagation();
 		navigator.clipboard
@@ -72,7 +72,7 @@
 			.catch(err => console.error('Error while copying to clipboard', err));
 	}
 
-	function save() {
+	function save(): void {
 		name = name?.trim();
 		const validationConfig = [{ field: name, element: elWalletNameInput, required: 'Wallet name is required' }];
 		error = validateForm(validationConfig);
@@ -82,7 +82,7 @@
 		setSettingsSection('wallets');
 	}
 
-	function print() {
+	function print(): void {
 		// TODO: print preview and print
 		const newWindow = window.open('', '_blank');
 		if (!newWindow) {

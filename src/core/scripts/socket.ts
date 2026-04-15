@@ -2,13 +2,13 @@ import type { IAccount, AccountStore } from './types.ts';
 import { TAURI_SERVICE } from './tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
 
-export function sendAsync(acc: IAccount, account: AccountStore | null, target: string, command: string, params: any = {}, sendSessionID = true, quiet = false) {
+export function sendAsync(acc: IAccount, account: AccountStore | null, target: string, command: string, params: any = {}, sendSessionID = true, quiet = false): Promise<any> {
 	return new Promise(resolve => {
 		send(acc, account, target, command, params, sendSessionID, (_req: any, res: any) => resolve(res), quiet);
 	});
 }
 
-export function send(acc: IAccount, _account: AccountStore | null, target: string, command: string, params: any = {}, sendSessionID = true, callback: ((req: any, res: any) => void) | null = null, quiet = false) {
+export function send(acc: IAccount, _account: AccountStore | null, target: string, command: string, params: any = {}, sendSessionID = true, callback: ((req: any, res: any) => void) | null = null, quiet = false): number | undefined {
 	/*
  acc: account object
  account: account store, optional, for debugging
@@ -97,11 +97,11 @@ export function send(acc: IAccount, _account: AccountStore | null, target: strin
 
 let lastRequestId = 0;
 
-function generateRequestID() {
+function generateRequestID(): number {
 	return ++lastRequestId;
 }
 
-export function handleSocketMessage(acc: IAccount, res: any) {
+export function handleSocketMessage(acc: IAccount, res: any): void {
 	//console.log('MESSAGE FROM SERVER', res);
 	if (res.requestID) {
 		// it is response to command:

@@ -114,35 +114,35 @@
 		resizeObserver?.disconnect();
 	});
 
-	export function isOpen() {
+	export function isOpen(): boolean {
 		console.log(title + ' isOpen:', show);
 		return show;
 	}
 
-	function onFocusIn() {
+	function onFocusIn(): void {
 		focused = true;
 	}
 
-	function onFocusOut() {
+	function onFocusOut(): void {
 		focused = false;
 	}
 
-	function onDragStart() {
+	function onDragStart(): void {
 		isDragging = true;
 	}
 
-	function onDragEnd() {
+	function onDragEnd(): void {
 		//console.log('[Window] onDragEnd called for window:', title);
 		isDragging = false;
 		hasBeenUserPositioned = true;
 		requestAnimationFrame(snapTransformIntoBounds);
 	}
 
-	function raiseZIndex() {
+	function raiseZIndex(): void {
 		bringToFront(windowId);
 	}
 
-	async function showUpdated(showing: boolean) {
+	async function showUpdated(showing: boolean): Promise<void> {
 		resizeObserver?.disconnect();
 		if (showing) {
 			await tick();
@@ -167,7 +167,7 @@
 		} else showContent = false;
 	}
 
-	function centerWindow() {
+	function centerWindow(): void {
 		if (!elWindow || isDragging) return;
 		// Get the center position
 		const browserWidth = window.innerWidth;
@@ -188,7 +188,7 @@
 		lastBrowserHeight = browserHeight;
 	}
 
-	function handleWindowResize() {
+	function handleWindowResize(): void {
 		if (!elWindow) return;
 		const currentWidth = window.innerWidth;
 		const currentHeight = window.innerHeight;
@@ -242,7 +242,7 @@
 		lastBrowserHeight = currentHeight;
 	}
 
-	function handleContentResize() {
+	function handleContentResize(): void {
 		if (!elWindow) return;
 		// Get current position and size
 		const rect = elWindow.getBoundingClientRect();
@@ -278,7 +278,7 @@
 		}
 	}
 
-	function snapTransformIntoBounds() {
+	function snapTransformIntoBounds(): void {
 		if (!elWindow) return;
 		if (!$isMobile) return;
 		const rect = elWindow.getBoundingClientRect();
@@ -307,7 +307,7 @@
 		}
 	}
 
-	export async function open<TParams extends readonly unknown[] = readonly unknown[]>(...params: TParams) {
+	export async function open<TParams extends readonly unknown[] = readonly unknown[]>(...params: TParams): Promise<void> {
 		//console.log('Opening window with params:', params, title);
 		setShow(true);
 		//console.debug('Window set to show, focusing window', title);
@@ -323,11 +323,11 @@
 		//console.debug('onOpen call complete', title);
 	}
 
-	export function close() {
+	export function close(): void {
 		setShow(false);
 	}
 
-	export function maximize() {
+	export function maximize(): void {
 		if (!elWindow || maximized) return;
 		// Store current state before maximizing
 		const computedStyle = window.getComputedStyle(elWindow);
@@ -342,7 +342,7 @@
 		maximized = true;
 	}
 
-	export function restore() {
+	export function restore(): void {
 		if (!maximized || !elWindow) return;
 		maximized = false;
 		// Restore original state if it exists
@@ -370,7 +370,7 @@
 		}
 	}
 
-	function doubleClickHeader() {
+	function doubleClickHeader(): void {
 		if (max) maximized ? restore() : maximize();
 	}
 
@@ -387,7 +387,7 @@
 		},
 	};
 
-	function setShow(value: boolean) {
+	function setShow(value: boolean): void {
 		show = value;
 		maximized = false;
 		if (!value) hasBeenUserPositioned = false;
@@ -395,7 +395,7 @@
 		showUpdated(value);
 	}
 
-	function onkeydown(event: KeyboardEvent) {
+	function onkeydown(event: KeyboardEvent): void {
 		if (event.key === 'Escape') {
 			event.preventDefault();
 			event.stopPropagation();
@@ -403,7 +403,7 @@
 		}
 	}
 
-	function setTitle(value: string) {
+	function setTitle(value: string): void {
 		title = value;
 	}
 </script>

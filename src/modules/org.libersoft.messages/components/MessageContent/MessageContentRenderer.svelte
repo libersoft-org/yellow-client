@@ -13,7 +13,7 @@
 	});
 
 	// Recursive function to render nodes
-	function renderNode(node: any, parentNode: any = null, level = 0) {
+	function renderNode(node: any, parentNode: any = null, level = 0): any {
 		const positionBetweenSiblings = parentNode && parentNode.childNodes ? Array.from(parentNode.childNodes).indexOf(node) : 0;
 		const tagUniqueId = `tag-unique-id-${node.tagName || node.nodeType}-${level}-${positionBetweenSiblings}`;
 
@@ -68,7 +68,7 @@
 	}
 
 	// Extract attributes from a node
-	function getNodeProps(node) {
+	function getNodeProps(node: any): Record<string, string> {
 		const props = {};
 		for (let attr of node.attributes || []) {
 			props[attr.name] = attr.value;
@@ -77,7 +77,7 @@
 	}
 
 	// Main rendering function
-	function processFragment(fragment) {
+	function processFragment(fragment: any): any[] {
 		try {
 			if (fragment.childNodes) {
 				const res = Array.from(fragment.childNodes).map(n => renderNode(n, fragment));

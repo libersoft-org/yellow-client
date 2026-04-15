@@ -30,16 +30,16 @@
 	let dropActive = $state(false);
 	let { fileUploadWindowFiles } = getContext<FileUploadWindowContext>('FileUploadWindow');
 
-	function onFileAdd(e) {
+	function onFileAdd(e): void {
 		e && e.preventDefault();
 		elFileInput.click();
 	}
 
-	function onDeleteAll() {
+	function onDeleteAll(): void {
 		$fileUploadWindowFiles = [];
 	}
 
-	function onFileDelete(file) {
+	function onFileDelete(file): void {
 		//console.log('Deleting file:', file);
 		//console.log($fileUploadWindowFiles);
 		const index = $fileUploadWindowFiles.indexOf(file);
@@ -50,34 +50,34 @@
 		}
 	}
 
-	function onFileUpload(e) {
+	function onFileUpload(e): void {
 		$fileUploadWindowFiles = [...$fileUploadWindowFiles, ...e.target.files];
 		elFileInput.value = '';
 	}
 
-	const uploadServer = () => {
+	const uploadServer = (): void => {
 		const recipientEmail = get(selectedConversation).address;
 		initUpload($fileUploadWindowFiles, FileUploadRecordType.SERVER, [recipientEmail]);
 		params.setFileUploadWindow(0);
 	};
 
-	const uploadP2P = () => {
+	const uploadP2P = (): void => {
 		const recipientEmail = get(selectedConversation).address;
 		initUpload($fileUploadWindowFiles, FileUploadRecordType.P2P, [recipientEmail]);
 		params.setFileUploadWindow(0);
 	};
 
-	function onDragOver(e) {
+	function onDragOver(e): void {
 		e.preventDefault();
 		dropActive = true;
 	}
 
-	function onDragLeave(e) {
+	function onDragLeave(e): void {
 		e.preventDefault();
 		dropActive = false;
 	}
 
-	function onDrop(e) {
+	function onDrop(e): void {
 		e.preventDefault();
 		dropActive = false;
 		$fileUploadWindowFiles = [...e.dataTransfer.files, ...$fileUploadWindowFiles];

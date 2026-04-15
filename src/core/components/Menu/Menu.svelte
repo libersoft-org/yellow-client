@@ -26,7 +26,7 @@
 		if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
 	});
 
-	function onKeydown(event) {
+	function onKeydown(event: KeyboardEvent): void {
 		if (event.key === 'Escape' && showMenu) {
 			event.stopImmediatePropagation();
 			event.preventDefault();
@@ -71,21 +71,21 @@
 				]
 	);
 
-	function clickMenuClose() {
+	function clickMenuClose(): void {
 		showMenu = false;
 	}
 
-	function openPage(url) {
+	function openPage(url: string): void {
 		window.open(url, '_blank');
 		clickMenuClose();
 	}
 
-	function clickSettings() {
+	function clickSettings(): void {
 		elSettings?.open();
 		clickMenuClose();
 	}
 
-	function exitApp() {
+	function exitApp(): void {
 		elDialogExit?.open();
 		clickMenuClose();
 	}

@@ -28,7 +28,7 @@
 
 	let results = $derived(find($emojiGroups, search));
 
-	function find(groups, search) {
+	function find(groups: any[], search: string): any[] | null {
 		console.log('find:', search);
 		if (!groups) return [];
 		if (!search) return null;
@@ -47,7 +47,7 @@
 		return res;
 	}
 
-	export function onShow() {
+	export function onShow(): void {
 		console.log('emojis onShow');
 		if (!get(isMobile)) {
 			elSearchInput?.focus?.();
@@ -57,7 +57,7 @@
 		}
 	}
 
-	function clickEmoji(codepoints) {
+	function clickEmoji(codepoints: any): void {
 		if (typeof onEmojiClick === 'function') {
 			onEmojiClick(codepoints);
 		} else {
@@ -66,12 +66,12 @@
 		}
 	}
 
-	function clickEmojiAndClose(codepoints) {
+	function clickEmojiAndClose(codepoints: any): void {
 		clickEmoji(codepoints);
 		altsMenu.close();
 	}
 
-	function showAlts(e, emoji) {
+	function showAlts(e: Event, emoji: any): void {
 		console.log('showAlts:', emoji);
 		e.preventDefault();
 		alts = emoji.alternates;
@@ -170,7 +170,7 @@
 	{#if $emojisLoading}
 		<Spinner />
 	{:else if search}
-		{#if results.length === 0}
+		{#if !results || results.length === 0}
 			<div>No emojis found</div>
 		{:else}
 			<div class="group">

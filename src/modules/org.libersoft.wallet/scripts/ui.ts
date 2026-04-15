@@ -12,7 +12,7 @@ export const rpcServersWindow = writable<Window | null>(null);
 export const networksWindow = writable<Window | null>(null);
 export const walletWelcomeWizardWindow = writable<Window | null>(null);
 
-export function setSection(name: string) {
+export function setSection(name: string): void {
 	if (get(section) !== name) section.set(name);
 }
 

@@ -33,7 +33,7 @@ export const AudioPlayer = {
 	},
 };
 
-export async function playAndStopExample(filePath: string) {
+export async function playAndStopExample(filePath: string): Promise<void> {
 	try {
 		const customId = 'my-audio-1';
 		await AudioPlayer.play(filePath, customId);

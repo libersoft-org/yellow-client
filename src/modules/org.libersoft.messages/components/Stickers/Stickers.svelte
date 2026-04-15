@@ -16,7 +16,7 @@
 	let activeTabName = $state('server');
 	let view: any = $state(null);
 
-	async function setTab(_e, name) {
+	async function setTab(_e: Event | null, name: string): Promise<void> {
 		activeTabName = name;
 		await tick();
 		view?.onShow?.();
@@ -26,7 +26,7 @@
 		await setTab(null, activeTabName);
 	});
 
-	async function clickUpdate() {
+	async function clickUpdate(): Promise<void> {
 		await updateStickerLibrary();
 	}
 </script>

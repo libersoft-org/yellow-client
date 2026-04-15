@@ -2,7 +2,7 @@
 	import StickersView from './StickersView.svelte';
 	let view;
 
-	export function onShow() {
+	export function onShow(): void {
 		view.onShow();
 	}
 </script>

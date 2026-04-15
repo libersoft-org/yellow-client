@@ -37,16 +37,16 @@
 		// QR scanner cleanup is handled by the component itself
 	});
 
-	function handleError(message: string) {
+	function handleError(message: string): void {
 		console.debug('handleError:', message);
 		alertText = message;
 	}
 
-	function loadFile() {
+	function loadFile(): void {
 		fileInput?.click();
 	}
 
-	function handleFileSelect(event: Event) {
+	function handleFileSelect(event: Event): void {
 		const file = (event.target as HTMLInputElement).files?.[0];
 		if (file) {
 			const reader = new FileReader();
@@ -61,7 +61,7 @@
 		}
 	}
 
-	async function handleAdd() {
+	async function handleAdd(): Promise<void> {
 		const currentText = activeTab === 'json' ? text : scannedText;
 		const validation = onValidate(currentText);
 		if (!validation.valid) {
@@ -77,7 +77,7 @@
 		}
 	}
 
-	export async function doContinue(fn: () => Promise<void>) {
+	export async function doContinue(fn: () => Promise<void>): Promise<void> {
 		try {
 			await fn();
 			console.debug('doContinue: Import finished');
@@ -87,12 +87,12 @@
 		}
 	}
 
-	export function handleException(err: unknown) {
+	export function handleException(err: unknown): void {
 		if (err instanceof Error && err.name === 'ImportSuccessWithWarnings' && onSuccess) onSuccess(err.message);
 		else handleError(err instanceof Error ? err.message : 'Unknown error');
 	}
 
-	async function handleReplace() {
+	async function handleReplace(): Promise<void> {
 		if (!onReplace) {
 			console.log('handleReplace: onReplace function is not defined');
 			return;
@@ -113,16 +113,16 @@
 		}
 	}
 
-	function handleQRScanned(data: string) {
+	function handleQRScanned(data: string): void {
 		scannedText = data;
 		alertText = '';
 	}
 
-	function handleQRError(error: string) {
+	function handleQRError(error: string): void {
 		alertText = error;
 	}
 
-	async function handleTabChange(tab: string) {
+	async function handleTabChange(tab: string): Promise<void> {
 		alertText = '';
 		activeTab = tab;
 		if (tab === 'qr' && !scannedText) qrScanner?.start();

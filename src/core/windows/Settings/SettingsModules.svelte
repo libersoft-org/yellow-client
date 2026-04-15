@@ -12,32 +12,32 @@
 	let tempServiceUrl: string = $state('');
 	const sortedModules = $derived(Object.values($modules_config.modules).sort((a, b) => (a.order || 0) - (b.order || 0)));
 
-	function toggleEnabled(moduleId: string) {
+	function toggleEnabled(moduleId: string): void {
 		const module = $modules_config.modules[moduleId];
 		if (module) updateModuleConfig(moduleId, { enabled: !module.enabled });
 	}
 
-	function changeType(moduleId: string, type: ModuleType) {
+	function changeType(moduleId: string, type: ModuleType): void {
 		updateModuleConfig(moduleId, { type });
 	}
 
-	function startEditingServiceUrl(module: IModuleConfig) {
+	function startEditingServiceUrl(module: IModuleConfig): void {
 		editingModule = module.id;
 		tempServiceUrl = module.serviceUrl || '';
 	}
 
-	function saveServiceUrl(moduleId: string) {
+	function saveServiceUrl(moduleId: string): void {
 		updateModuleConfig(moduleId, { serviceUrl: tempServiceUrl.trim() || undefined });
 		editingModule = null;
 		tempServiceUrl = '';
 	}
 
-	function cancelEditingServiceUrl() {
+	function cancelEditingServiceUrl(): void {
 		editingModule = null;
 		tempServiceUrl = '';
 	}
 
-	function handleResetToDefaults() {
+	function handleResetToDefaults(): void {
 		if (confirm('Reset all module configurations to defaults? This cannot be undone.')) resetModulesConfig();
 	}
 </script>

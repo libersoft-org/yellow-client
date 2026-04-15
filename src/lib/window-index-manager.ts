@@ -15,16 +15,16 @@ export function registerWindow(setZIndex: (z: number) => void): number {
 	return id;
 }
 
-export function unregisterWindow(id: number) {
+export function unregisterWindow(id: number): void {
 	windows = windows.filter(m => m.id !== id);
 	updateZIndices(); // reassign after one closes
 }
 
-export function bringToFront(id: number) {
+export function bringToFront(id: number): void {
 	updateZIndices(id);
 }
 
-function updateZIndices(focusId?: number) {
+function updateZIndices(focusId?: number): void {
 	let base = baseZIndex;
 	windows.sort((a, b) => (a.id === focusId ? 1 : b.id === focusId ? -1 : 0));
 	for (const window of windows) {

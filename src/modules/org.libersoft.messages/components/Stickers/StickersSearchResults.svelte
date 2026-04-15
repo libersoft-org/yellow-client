@@ -8,7 +8,7 @@
 	let { items }: Props = $props();
 	let container;
 
-	export async function scroll_to_top() {
+	export async function scroll_to_top(): Promise<void> {
 		//window.scrollTo(0, 0);
 		await tick();
 		console.log('scroll_to_top, container:', container, 'container.scrollTop:', container?.scrollTop);

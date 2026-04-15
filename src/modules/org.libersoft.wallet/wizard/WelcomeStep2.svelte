@@ -25,7 +25,7 @@
 		return unsubscribe;
 	});
 
-	function checkNetworks() {
+	function checkNetworks(): void {
 		hasNetworks = get(networks).length > 0;
 		if (hasNetworks) {
 			wizard?.setNextText('Next');

@@ -18,7 +18,7 @@
 	import type { SetSettingsSectionFn } from '@/core/types/settings.ts';
 	const setSettingsSection = getContext<SetSettingsSectionFn>('setSettingsSection');
 
-	async function create_new_theme() {
+	async function create_new_theme(): Promise<void> {
 		// Clone the current theme
 		let new_theme = JSON.parse(JSON.stringify($current_theme));
 		new_theme.name = $current_theme.name + ' Copy';
@@ -32,7 +32,7 @@
 		await setSettingsSection('edit-theme');
 	}
 
-	function delete_current_theme() {
+	function delete_current_theme(): void {
 		if ($selected_theme_index >= default_themes.length) {
 			let current_index = $selected_theme_index - default_themes.length;
 			$selected_theme_index = 0;

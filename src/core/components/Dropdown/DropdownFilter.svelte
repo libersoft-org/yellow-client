@@ -39,38 +39,38 @@
 	});
 	let inputValue = $derived(showOptions ? filterText : selectedLabel);
 
-	export function focus() {
+	export function focus(): void {
 		inputRef?.focus();
 	}
 
-	function handleInputChange(value: string | number) {
+	function handleInputChange(value: string | number): void {
 		filterText = String(value);
 		showOptions = true;
 		selectedIndex = -1;
 	}
 
-	function clickSelectOption(option: DropdownOption) {
+	function clickSelectOption(option: DropdownOption): void {
 		selected = option.value || option.label; // Return the value object or fallback to label
 		showOptions = false;
 		if (onChange) onChange(selected);
 	}
 
-	function clickClearSelection() {
+	function clickClearSelection(): void {
 		selected = undefined;
 		filterText = '';
 		inputRef?.focus();
 		if (onChange) onChange(undefined);
 	}
 
-	function toggleOptions() {
+	function toggleOptions(): void {
 		if (!selected) openOptionsIfClosed();
 	}
 
-	function handleInputBlur() {
+	function handleInputBlur(): void {
 		closeOptions();
 	}
 
-	function handleKeydown(e: KeyboardEvent) {
+	function handleKeydown(e: KeyboardEvent): void {
 		switch (e.key) {
 			case 'ArrowDown':
 				e.preventDefault();
@@ -93,11 +93,11 @@
 		}
 	}
 
-	function handleMouseEnter(index: number) {
+	function handleMouseEnter(index: number): void {
 		selectedIndex = index;
 	}
 
-	function openOptionsIfClosed() {
+	function openOptionsIfClosed(): boolean {
 		if (!showOptions) {
 			filterText = selectedLabel;
 			showOptions = true;
@@ -107,7 +107,7 @@
 		return false;
 	}
 
-	function closeOptions() {
+	function closeOptions(): void {
 		showOptions = false;
 		selectedIndex = -1;
 	}

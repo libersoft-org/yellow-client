@@ -51,7 +51,7 @@ export function setModule(name: string | null): void {
 	if (name === null) hideSidebarMobile.set(false);
 }
 
-export function updateLastModuleId(id) {
+export function updateLastModuleId(id): void {
 	//console.log('updateLastModuleId: ' + id);
 	const aa = get(active_account);
 	if (!aa) return;

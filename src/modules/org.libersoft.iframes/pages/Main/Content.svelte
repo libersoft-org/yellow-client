@@ -26,7 +26,7 @@
 		// }, 500);
 	});
 
-	async function processUserModuleMessage(data: any) {
+	async function processUserModuleMessage(data: any): Promise<any> {
 		console.log('processUserModuleMessage: ', data);
 		if (!data) return;
 		if (data.type === 'server_command') {
@@ -42,7 +42,7 @@
 		return undefined;
 	}
 
-	async function serverCommand(data: any) {
+	async function serverCommand(data: any): Promise<any> {
 		console.log('serverCommand: ', data);
 		let account = findAccount(data.account);
 		if (!account) return { error: 'Account not found' };

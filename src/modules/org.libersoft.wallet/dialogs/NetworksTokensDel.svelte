@@ -19,16 +19,16 @@
 		],
 	};
 
-	function clickYes() {
+	function clickYes(): void {
 		deleteToken(networkGuid, token.guid);
 		elDialog?.close();
 	}
 
-	function clickNo() {
+	function clickNo(): void {
 		elDialog?.close();
 	}
 
-	export function open() {
+	export function open(): void {
 		elDialog?.open();
 	}
 </script>

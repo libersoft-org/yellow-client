@@ -116,7 +116,7 @@ export async function init_emojis(): Promise<void> {
   */
 }
 
-export function replaceEmojisWithTags(text) {
+export function replaceEmojisWithTags(text): string {
 	//console.log('replaceEmojisWithTags', text);
 	for (let c of cp) {
 		let url_seq = c[0];

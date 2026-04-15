@@ -19,15 +19,15 @@
 		if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
 	});
 
-	function onKeydown(event) {
+	function onKeydown(event): void {
 		if (event.key === 'Escape') setModule(null);
 	}
 
-	function back() {
+	function back(): void {
 		hideSidebarMobile.set(false);
 	}
 
-	function close() {
+	function close(): void {
 		setModule(null);
 	}
 </script>

@@ -10,11 +10,11 @@
 	let snippet_top: Snippet | undefined = $state(undefined);
 	let snippet_bottom: Snippet | undefined = $state(undefined);
 
-	export function open() {
+	export function open(): void {
 		elWindow?.open();
 	}
 
-	export function close() {
+	export function close(): void {
 		elWindow?.close();
 	}
 </script>

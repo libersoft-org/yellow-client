@@ -32,13 +32,13 @@
 			});
 		}
 
-		destroy() {
+		destroy(): void {
 			this.unsubscribe_selected_theme_index();
 			this.unsubscribe_themes();
 			this.subscribers = [];
 		}
 
-		private notifySubscribers() {
+		private notifySubscribers(): void {
 			if (this.current_themes && this.current_selected_theme_index !== undefined) {
 				const theme = this.current_themes[this.current_selected_theme_index];
 				if (theme) {
@@ -49,7 +49,7 @@
 			}
 		}
 
-		subscribe(run: (value: ITheme) => void) {
+		subscribe(run: (value: ITheme) => void): () => void {
 			this.subscribers.push(run);
 
 			// Immediately call the subscriber with the current value if available
@@ -69,7 +69,7 @@
 			};
 		}
 
-		set(value: ITheme) {
+		set(value: ITheme): void {
 			if (this.current_selected_theme_index !== undefined) {
 				// If it's a default theme (index < default_themes.length), we don't modify it
 				if (this.current_selected_theme_index < default_themes.length) {
@@ -86,7 +86,7 @@
 			}
 		}
 
-		update(updater: (value: ITheme) => ITheme) {
+		update(updater: (value: ITheme) => ITheme): void {
 			if (this.current_themes && this.current_selected_theme_index !== undefined) {
 				const current_theme = this.current_themes[this.current_selected_theme_index];
 				if (current_theme) {

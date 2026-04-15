@@ -15,19 +15,19 @@
 		//console.log('elItems?.scrollTop:', elItems?.scrollTop);
 	}
 
-	function clickNewConversation() {
+	function clickNewConversation(): void {
 		$elWindowNewConversation?.open();
 	}
 
-	function clickMessagesSettings() {
+	function clickMessagesSettings(): void {
 		elSettings?.open();
 	}
 
-	function clickItem(conversation) {
+	function clickItem(conversation): void {
 		selectConversation(conversation);
 	}
 
-	function scrollToTop() {
+	function scrollToTop(): void {
 		//TODO: does not work
 		if (elItems) elItems.scrollTop = 0;
 	}

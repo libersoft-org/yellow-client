@@ -15,7 +15,7 @@
 	}
 	let { img, imgSize = '28px', text, expand = false, enabled = true, visibleOnMobile = true, visibleOnDesktop = true, onClick, ...restProps }: Props = $props();
 
-	function handleClick(e) {
+	function handleClick(e: Event): void {
 		console.log('SidebarButton clicked');
 		if (onClick) onClick(e);
 	}

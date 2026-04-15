@@ -53,7 +53,7 @@
 		}
 	}
 
-	function setupNotificationPermissionTimer() {
+	function setupNotificationPermissionTimer(): void {
 		permissionInterval = setInterval(() => {
 			//log.debug('permissionInterval:', Notification.permission);
 			if (get(isRequestingNotificationsPermission)) return;
@@ -140,7 +140,7 @@
 		}
 	});
 
-	async function updateMonitors() {
+	async function updateMonitors(): Promise<void> {
 		let mons = await availableMonitors();
 		//log.debug('updateMonitors:', mons);
 		monitors.set(mons);

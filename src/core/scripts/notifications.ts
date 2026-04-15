@@ -63,7 +63,7 @@ export async function deleteExampleNotifications(): Promise<void> {
 	return updateExampleNotificationMutex.runExclusive(() => deleteExampleNotificationsInternal());
 }
 
-export async function updateExampleNotification() {
+export async function updateExampleNotification(): Promise<void> {
 	return updateExampleNotificationMutex.runExclusive(async () => {
 		let v = get(exampleNotifications);
 		log.debug('updateExampleNotification v:', v);
@@ -89,7 +89,7 @@ export async function updateExampleNotification() {
 	});
 }
 
-export function setNotificationsEnabled(value) {
+export function setNotificationsEnabled(value): void {
 	if (!BROWSER) {
 		notificationsEnabled.set(value);
 		return;
@@ -135,13 +135,13 @@ export function setNotificationsEnabled(value) {
 	return;
 }
 
-export async function initBrowserNotifications() {
+export async function initBrowserNotifications(): Promise<void> {
 	if (BROWSER && isNotificationAPIAvailable() && Notification.permission !== 'granted' && Notification.permission !== 'denied') {
 		// fixme: ask for permission / in wizard?
 	}
 }
 
-export async function initCustomNotifications() {
+export async function initCustomNotifications(): Promise<void> {
 	//log.debug('init, CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS, '_events:', _events);
 	if (!CUSTOM_NOTIFICATIONS) return;
 	// let _notifications = await multiwindow_store('notifications');
@@ -175,7 +175,7 @@ function startMainWindowMonitorTimer(): void {
 	}, 1000);
 }
 
-async function onNotificationEvent(id: string, event: string) {
+async function onNotificationEvent(id: string, event: string): Promise<void> {
 	log.debug('onNotificationEvent:', id, event);
 	let n = notifications.get(id);
 	if (n && n.callback) {
@@ -224,7 +224,7 @@ export async function deleteNotification(id: string): Promise<void> {
 	await deleteTauriNotification(id);
 }
 
-async function sendTauriNotification(notification: IYellowNotification) {
+async function sendTauriNotification(notification: IYellowNotification): Promise<void> {
 	let permissionGranted = await isPermissionGranted();
 	log.debug('permissionGranted:', permissionGranted);
 	if (!permissionGranted) {
@@ -307,7 +307,7 @@ async function deleteCustomNotification(id: string): Promise<void> {
 	await s.set(id, null);
 }
 
-async function showBrowserNotification(notification: IYellowNotification) {
+async function showBrowserNotification(notification: IYellowNotification): Promise<void> {
 	playNotificationSound(notification);
 	console.log('showBrowserNotification:', notification);
 	let icon = await toPngBlob(notification.icon);

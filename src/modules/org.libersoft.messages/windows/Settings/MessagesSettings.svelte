@@ -24,7 +24,7 @@
 		return true;
 	});
 
-	async function defaultFileDownloadFolderButtonClick() {
+	async function defaultFileDownloadFolderButtonClick(): Promise<void> {
 		const file = await open({
 			directory: true,
 			multiple: false,

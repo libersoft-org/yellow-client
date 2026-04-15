@@ -16,7 +16,7 @@ interface ISubscriptionInfo {
 // Get globals - in service context these are injected, in frontend they're imported
 const getTauriService = (): boolean => (typeof TAURI_SERVICE !== 'undefined' ? TAURI_SERVICE : false);
 
-const getSend = () => {
+const getSend = (): ((...args: any[]) => any) => {
 	// In test environment, return a noop function instead of throwing
 	if (typeof vi !== 'undefined' || typeof (globalThis as any).vi !== 'undefined') {
 		return () => Promise.resolve();

@@ -45,7 +45,7 @@
 		$player?.dispose();
 	});
 
-	function start() {
+	function start(): void {
 		if (playerInstance) {
 			playerInstance.dispose();
 			$player.show();
@@ -55,7 +55,7 @@
 		isRecording = true;
 	}
 
-	function restart() {
+	function restart(): void {
 		if (playerInstance) {
 			playerInstance.dispose();
 			playerInstance = null;
@@ -66,7 +66,7 @@
 	}
 
 	let manuallyStop = false;
-	function stop() {
+	function stop(): void {
 		const record = $player.record();
 		record.stop();
 		//record.stopDevice(); TODO: stop stream and then restart if needed by start method
@@ -76,7 +76,7 @@
 	}
 
 	let sendingRequested = false;
-	function send() {
+	function send(): void {
 		sending = true;
 		const record = $player.record();
 		if (record.isRecording()) {
@@ -91,7 +91,7 @@
 		}
 	}
 
-	async function sendMessage(blob: Blob) {
+	async function sendMessage(blob: Blob): Promise<void> {
 		sending = true;
 		const recipientEmail = get(selectedConversation).address;
 		initUpload([blob], FileUploadRecordType.SERVER, [recipientEmail]).finally(() => {
@@ -100,7 +100,7 @@
 		});
 	}
 
-	function download() {
+	function download(): void {
 		if (!$recordedBlob) {
 			console.error('$recordedBlob is not set');
 			return;
@@ -108,7 +108,7 @@
 		assembleFile($recordedBlob);
 	}
 
-	function showPreview() {
+	function showPreview(): void {
 		$player.hide();
 		if (!$recordedBlob) {
 			console.error('$recordedBlob is not set');
@@ -150,7 +150,7 @@
 		});
 	}
 
-	function startRecorder() {
+	function startRecorder(): void {
 		if (playerInstance) {
 			playerInstance.dispose();
 			playerInstance = null;

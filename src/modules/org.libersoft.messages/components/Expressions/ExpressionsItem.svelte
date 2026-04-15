@@ -12,7 +12,7 @@
 	}
 	let { icon, label, active, colorVariable = '--default-foreground', onClick, mobileNoText = false }: Props = $props();
 
-	function onMousedown(e) {
+	function onMousedown(e: MouseEvent): void {
 		e.stopPropagation();
 		e.preventDefault();
 	}

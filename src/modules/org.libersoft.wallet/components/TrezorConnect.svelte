@@ -12,7 +12,7 @@
 		//await initializeTrezor();
 	});
 
-	async function handleConnectClick() {
+	async function handleConnectClick(): Promise<void> {
 		if ($trezorLoading) return;
 		await selectWallet();
 		await onConnected?.();

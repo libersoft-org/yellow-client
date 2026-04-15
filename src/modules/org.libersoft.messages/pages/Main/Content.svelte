@@ -14,7 +14,7 @@
 		if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
 	});
 
-	function onKeydown(event) {
+	function onKeydown(event): void {
 		if (event.key === 'Escape') {
 			if ($selectedConversation) closeConversation();
 			else setModule(null);

@@ -24,16 +24,18 @@
 		if (timer) clearTimeout(timer);
 	});
 
-	async function loadMore() {
+	async function loadMore(): Promise<void> {
 		if (loading) return;
 		loading = true;
 		await onVisible();
 		loading = false;
 	}
 
-	function handleIntersect(entries) {
+	function handleIntersect(entries: IntersectionObserverEntry[]): void {
 		console.log('handleIntersect', entries);
-		_loaderIsVisible = entries[entries.length - 1].isIntersecting;
+		const lastEntry = entries[entries.length - 1];
+		if (!lastEntry) return;
+		_loaderIsVisible = lastEntry.isIntersecting;
 		if (_loaderIsVisible) loadMore();
 	}
 </script>

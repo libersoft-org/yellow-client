@@ -18,17 +18,17 @@
 		return [];
 	});
 
-	async function checkServers() {
+	async function checkServers(): Promise<void> {
 		if (rpcServers.length === 0) return;
 		await checkAllRPCServers(rpcServers);
 	}
 
-	function selectServer(url: string) {
+	function selectServer(url: string): void {
 		selectRPCURL(url);
 		close?.();
 	}
 
-	function refreshServer(server: IRPCServer) {
+	function refreshServer(server: IRPCServer): void {
 		checkRPCServer(server).catch(console.error);
 	}
 

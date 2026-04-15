@@ -99,7 +99,7 @@
 	});
 
 	// Helper function for handling network changes - reload token infos only on actual network change
-	function handleNetworkChange(newNetwork: typeof $selectedNetwork, currentNetwork: typeof $selectedNetwork) {
+	function handleNetworkChange(newNetwork: typeof $selectedNetwork, currentNetwork: typeof $selectedNetwork): void {
 		// Only reload if the actual network (not just RPC) changed - compare by network GUID
 		const networkChanged = newNetwork?.guid !== currentNetwork?.guid;
 		if (isInitialized && networkChanged && newNetwork) {
@@ -115,7 +115,7 @@
 	}
 
 	// Helper function for handling address changes
-	function handleAddressChange(newAddress: typeof $selectedAddress, currentAddress: typeof $selectedAddress) {
+	function handleAddressChange(newAddress: typeof $selectedAddress, currentAddress: typeof $selectedAddress): void {
 		// Compare by address string instead of object reference to avoid proxy equality issues
 		const addressChanged = newAddress?.address !== currentAddress?.address;
 		if (isInitialized && addressChanged) {
@@ -124,14 +124,14 @@
 	}
 
 	// Helper function for handling active tab changes
-	function handleActiveTabChange() {
+	function handleActiveTabChange(): void {
 		if (isInitialized) {
 			updateAddressAndQR();
 		}
 	}
 
 	// Helper function for handling amount changes
-	function handleAmountChange(newAmount: string | number) {
+	function handleAmountChange(newAmount: string | number): void {
 		amount = newAmount.toString();
 		if (isInitialized) {
 			updateAddressAndQR();
@@ -139,7 +139,7 @@
 	}
 
 	// Helper function for handling currency changes
-	function handleCurrencyChange() {
+	function handleCurrencyChange(): void {
 		// Only proceed if currency actually changed
 		if (currentCurrency !== currency) {
 			if (isInitialized) {
@@ -149,7 +149,7 @@
 		}
 	}
 
-	async function loadTokenInfos() {
+	async function loadTokenInfos(): Promise<void> {
 		const tokensWithContracts = $tokenConfs.filter(token => token.contract_address);
 		if (!tokensWithContracts.length) return;
 		isLoadingTokenInfos = true;

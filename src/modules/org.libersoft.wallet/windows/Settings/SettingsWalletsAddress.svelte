@@ -10,7 +10,7 @@
 	// @ts-expect-error TS6133 - used in template bind:this
 	let _spanElem = $state();
 
-	function copyAddressToClipboard() {
+	function copyAddressToClipboard(): void {
 		navigator.clipboard
 			.writeText(address)
 			.then(() => {

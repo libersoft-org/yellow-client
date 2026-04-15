@@ -10,11 +10,11 @@
 	let filter = $state('');
 	let filteredAddressBook = $derived($addressBook.filter(item => item.name?.toLowerCase().includes(filter.toLowerCase()) || item.address.toLowerCase().includes(filter.toLowerCase())));
 
-	function clickShowContent() {
+	function clickShowContent(): void {
 		hideSidebarMobile.set(true);
 	}
 
-	function clickItem(address) {
+	function clickItem(address): void {
 		console.log('SIDEBAR ADDRESS ITEM:', address);
 		// TODO: check if send is not disabled !!!
 		setSection('send');

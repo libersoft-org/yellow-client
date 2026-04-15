@@ -15,20 +15,18 @@ let stylesInjected = false;
 // Registry for drag handles
 const dragHandleRegistry = new Set<HTMLElement>();
 
-export function registerDragHandle(element: HTMLElement) {
+export function registerDragHandle(element: HTMLElement): void {
 	dragHandleRegistry.add(element);
 }
 
-export function unregisterDragHandle(element: HTMLElement) {
+export function unregisterDragHandle(element: HTMLElement): void {
 	dragHandleRegistry.delete(element);
 }
 
-function injectDragStyles() {
+function injectDragStyles(): void {
 	if (stylesInjected) return;
-
 	const styleId = 'table-drag-styles';
 	if (document.getElementById(styleId)) return;
-
 	const style = document.createElement('style');
 	style.id = styleId;
 	style.textContent = `
@@ -81,28 +79,24 @@ function injectDragStyles() {
  * Svelte action for table drag & drop functionality
  * Usage: <div use:tableDrag={options}>
  */
-export function tableDrag(node: HTMLElement, options: TableDragOptions) {
+export function tableDrag(node: HTMLElement, options: TableDragOptions): { update(newOptions: TableDragOptions): void; destroy(): void } {
 	let dragManager: TableDragManager | undefined;
 	let currentItemsLength = 0;
 
-	function init() {
+	function init(): void {
 		cleanup(); // Always cleanup first
-
 		if (!options.items?.length) {
 			console.log('tableDrag: No items to work with');
 			return;
 		}
-
 		// Inject required styles
 		injectDragStyles();
-
 		// Find tbody within the node
 		const tbody = node.querySelector('tbody');
 		if (!tbody) {
 			console.warn('tableDrag: No tbody found in element');
 			return;
 		}
-
 		// Auto-detect column count if not provided
 		let columnCount = options.columnCount;
 		if (!columnCount) {
@@ -115,28 +109,23 @@ export function tableDrag(node: HTMLElement, options: TableDragOptions) {
 				columnCount = 1;
 			}
 		}
-
 		// Create new drag manager
 		const config: DragConfig = {
 			getDragHandles: () => Array.from(dragHandleRegistry),
 			columnCount: columnCount,
 			onReorder: options.onReorder,
 		};
-
 		dragManager = new TableDragManager(config);
 		dragManager.init(tbody);
 		currentItemsLength = options.items?.length ?? 0;
-
 		// Update drag handle states based on item count
 		updateDragHandleStates();
-
 		//console.log('tableDrag: Initialized for', options.items.length, 'items');
 	}
 
-	function updateDragHandleStates() {
+	function updateDragHandleStates(): void {
 		const itemCount = options.items?.length ?? 0;
 		const isDisabled = itemCount <= 1;
-
 		// Update all registered drag handles
 		dragHandleRegistry.forEach(handle => {
 			if (isDisabled) {
@@ -147,11 +136,10 @@ export function tableDrag(node: HTMLElement, options: TableDragOptions) {
 				handle.removeAttribute('title');
 			}
 		});
-
 		console.log('tableDrag: Drag handles', isDisabled ? 'disabled' : 'enabled', 'for', itemCount, 'items');
 	}
 
-	function cleanup() {
+	function cleanup(): void {
 		if (dragManager) {
 			dragManager.destroy();
 			dragManager = undefined;

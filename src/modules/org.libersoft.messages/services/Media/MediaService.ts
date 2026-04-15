@@ -23,7 +23,7 @@ class MediaService {
 		this.fileInfo = fileInfo;
 	}
 
-	setupWavesurfer(element, options) {
+	setupWavesurfer(element, options): WaveSurfer {
 		this.mediaSource = new MediaSource();
 		const mediaSource = this.mediaSource as MediaSource;
 		const url = URL.createObjectURL(mediaSource);
@@ -57,7 +57,7 @@ class MediaService {
 		return wavesurfer;
 	}
 
-	setupVideo() {
+	setupVideo(): ReturnType<typeof videoJS> | null {
 		const videoElement = this.videoElement;
 		this.player = videoJS(videoElement, {
 			controls: true,
@@ -138,7 +138,7 @@ class MediaService {
 		return this.player;
 	}
 
-	async downloadFullFile() {
+	async downloadFullFile(): Promise<Blob> {
 		const { chunkSize, totalSize, fileMime } = this.fileInfo;
 		const chunks: Uint8Array[] = [];
 		for (let offsetToFetch = 0; offsetToFetch < totalSize; offsetToFetch += chunkSize) {
@@ -148,11 +148,11 @@ class MediaService {
 		return new Blob(chunks as BlobPart[], { type: fileMime });
 	}
 
-	shouldStream() {
+	shouldStream(): boolean {
 		return ['video/mp4', 'video/webm'].includes(this.fileInfo.fileMime);
 	}
 
-	seekTo(time: number) {
+	seekTo(time: number): void {
 		const player = this.player as ReturnType<typeof videoJS>;
 		const duration = player.duration();
 		const loader = this.loader as MediaLoader;
@@ -170,12 +170,12 @@ class MediaService {
 		}
 	}
 
-	getLoader() {
+	getLoader(): MediaLoader {
 		if (!this.loader) throw new Error('Loader not set');
 		return this.loader;
 	}
 
-	async loadChunk(offset: number) {
+	async loadChunk(offset: number): Promise<void> {
 		const { chunkSize, totalSize } = this.fileInfo;
 		// TODO check if needed (in case of seek to history)
 		// const mediaSource = this.mediaSource as MediaSource;
@@ -196,7 +196,7 @@ class MediaService {
 		}
 	}
 
-	isOffsetInBuffer(offset: number) {
+	isOffsetInBuffer(offset: number): boolean {
 		const buffered = this.videoElement.buffered;
 		for (let i = 0; i < buffered.length; i++) {
 			if (offset >= buffered.start(i) && offset <= buffered.end(i)) return true;
@@ -204,7 +204,7 @@ class MediaService {
 		return false;
 	}
 
-	setupFetchQueue() {
+	setupFetchQueue(): void {
 		if (this.fetchQueueInterval) return;
 		this.fetchQueueInterval = setInterval(() => {
 			if (!this.fetchQueue.length) return;

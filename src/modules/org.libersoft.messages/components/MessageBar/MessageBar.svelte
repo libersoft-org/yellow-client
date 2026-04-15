@@ -77,7 +77,7 @@
 		},
 	});
 
-	export async function openExpressions(tab) {
+	export async function openExpressions(tab: string): Promise<void> {
 		if (expressionsAsContextMenu) {
 			expressionsMenu?.openMenu({ x: elExpressions.getBoundingClientRect().x, y: 0 });
 			// Notify MessagesList that expressions menu is open
@@ -90,7 +90,7 @@
 		await expressions?.setCategory(null, tab);
 	}
 
-	export async function insertText(text) {
+	export async function insertText(text: string): Promise<void> {
 		/* insert text at the current cursor position */
 		//console.log('elMessage.selectionStart:', elMessage.selectionStart);
 		const start = elMessage.selectionStart;
@@ -114,14 +114,14 @@
 		closeExpressions();
 	}
 
-	export async function setBarFocus() {
+	export async function setBarFocus(): Promise<void> {
 		if (expressionsBottomSheetOpen) return;
 		await tick();
 		//console.log('setBarFocus');
 		if (elMessage) elMessage.focus();
 	}
 
-	function resizeMessage() {
+	function resizeMessage(): void {
 		handleResize(true /*TODO: save*/);
 		const maxHeight = 200;
 		const textarea = elMessage;
@@ -131,18 +131,18 @@
 		else elMessage.style.overflowY = 'hidden';
 	}
 
-	export function dispatchEvent(_event) {
+	export function dispatchEvent(_event: KeyboardEvent): void {
 		text = _event.key;
 	}
 
 	const isMessageReplyOpen = messageBarReplyStore.isOpen();
 	const replyTo = messageBarReplyStore.getReplyTo();
 
-	function clickSend(_event) {
+	function clickSend(_event: Event): void {
 		clickSend2(elMessage.value);
 	}
 
-	function clickSend2(messageToSend) {
+	function clickSend2(messageToSend: string): void {
 		if (messageToSend && $replyTo && $replyTo.type === ReplyToType.MESSAGE) {
 			const replyToMessageUid = $replyTo?.data?.uid;
 			messageToSend = `<Reply id="${replyToMessageUid}"></Reply>${messageToSend}`;
@@ -156,7 +156,7 @@
 		messageBarReplyStore.close();
 	}
 
-	function debugClickSendSplit(_event) {
+	function debugClickSendSplit(_event: Event): void {
 		setTimeout(() => {
 			let messages = elMessage.value.split('\n');
 			for (let message of messages) {
@@ -167,7 +167,7 @@
 		}, 5000);
 	}
 
-	function onKeyDown(event) {
+	function onKeyDown(event: KeyboardEvent): void {
 		if (event.key === 'Enter' && !event.shiftKey) {
 			event.preventDefault();
 			clickSend(event);
@@ -181,7 +181,7 @@
 		}
 	}
 
-	function onMessageInputFocus(_event) {
+	function onMessageInputFocus(_event: FocusEvent): void {
 		// Close bottom sheet when user wants to type
 		if (expressionsBottomSheetOpen) {
 			expressionsBottomSheetOpen = false;
@@ -192,15 +192,15 @@
 		waitingForKeyboardClose = false;
 	}
 
-	function sendHTML() {
+	function sendHTML(): void {
 		elWindowHTML?.open();
 	}
 
-	function sendLocation() {
+	function sendLocation(): void {
 		console.log('clicked on location');
 	}
 
-	function handleAttachmentMousedown(_event) {
+	function handleAttachmentMousedown(_event: MouseEvent): void {
 		// Check if keyboard is currently open
 		const currentKeyboardHeight = get(keyboardHeight);
 		if (currentKeyboardHeight && currentKeyboardHeight > 50) {
@@ -243,7 +243,7 @@
 		}
 	});
 
-	function closeExpressions() {
+	function closeExpressions(): void {
 		//if (expressionsBottomSheetOpen) handleResize(true); // TODO: save wasScrolledToBottom2 before showing bottom sheet
 		expressionsBottomSheetOpen = false;
 		expressionsMenu?.close();
@@ -254,7 +254,7 @@
 		expressionsMenuOpen?.setOpen(false);
 	}
 
-	function elMessageBlur(event) {
+	function elMessageBlur(event: FocusEvent): void {
 		//console.log('elMessageBlur');
 		if (elBottomSheet?.contains(event.relatedTarget)) return;
 
@@ -268,12 +268,12 @@
 		expressionsMenuOpen?.setOpen(false);
 	}
 
-	const onVideoRecordClick = async () => {
+	const onVideoRecordClick = async (): Promise<void> => {
 		videoInputRef.click();
 	};
 
 	// Reactive bottom sheet opening - waits for keyboard to actually close
-	function handleBottomSheetOpenWithDelay() {
+	function handleBottomSheetOpenWithDelay(): void {
 		// Prevent multiple simultaneous requests
 		if (pendingBottomSheetOpen || waitingForKeyboardClose) {
 			return;

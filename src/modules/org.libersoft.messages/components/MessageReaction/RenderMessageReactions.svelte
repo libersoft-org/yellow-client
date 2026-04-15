@@ -46,19 +46,19 @@
 		return grouped;
 	});
 
-	const showTooltip = (e, reactions, _rgi) => {
+	const showTooltip = (e: MouseEvent, reactions: any[], _rgi: string): void => {
 		if (tooltipButton && tooltipButton.ref === e.target) return;
 		tooltipButton = {
 			reactions,
-			ref: e.target,
+			ref: e.target as HTMLElement,
 		};
 	};
 
-	const dismissTooltip = _e => {
+	const dismissTooltip = (_e: Event): void => {
 		tooltipButton = null;
 	};
 
-	const renderInfoFromReactions = (reactions: any[]) => {
+	const renderInfoFromReactions = (reactions: any[]): string | undefined => {
 		if (!reactions || !reactions.length) return '';
 		const activeAccount = get(active_account);
 		if (!activeAccount) {

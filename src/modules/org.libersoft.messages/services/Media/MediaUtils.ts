@@ -5,7 +5,7 @@ const debug = _debug('libersoft:messages:services:MediaUtils');
 
 class MediaUtils {
 	static PROGRESSIVE_DOWNLOAD_MEDIA_ENDPOINT = '/yellow/media';
-	static makeProgressiveDownloadUrl = (localAccountId: string, uploadId: string) => {
+	static makeProgressiveDownloadUrl = (localAccountId: string, uploadId: string): string => {
 		return `${MediaUtils.PROGRESSIVE_DOWNLOAD_MEDIA_ENDPOINT}/${localAccountId}/${uploadId}`;
 	};
 
@@ -78,7 +78,7 @@ class MediaUtils {
 		});
 	}
 
-	static getAudioDataFromFile(file: File) {
+	static getAudioDataFromFile(file: File): Promise<{ duration: number; peaks: number[] }> {
 		return new Promise((resolve, reject) => {
 			const reader = new FileReader();
 
@@ -95,7 +95,7 @@ class MediaUtils {
 		});
 	}
 
-	static async getAudioDataFromArrayBuffer(arrayBuffer: ArrayBuffer) {
+	static async getAudioDataFromArrayBuffer(arrayBuffer: ArrayBuffer): Promise<{ duration: number; peaks: number[] }> {
 		// @ts-ignore
 		const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 		const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
@@ -119,7 +119,7 @@ class MediaUtils {
 		return { duration, peaks };
 	}
 
-	static extractPeaks(audioBuffer: AudioBuffer, samplesPerPeak = 1000) {
+	static extractPeaks(audioBuffer: AudioBuffer, samplesPerPeak = 1000): number[] {
 		const channelData = audioBuffer.getChannelData(0); // Use the first channel
 		const peaks: number[] = [];
 		let max = 0;
@@ -134,7 +134,7 @@ class MediaUtils {
 		return peaks;
 	}
 
-	static async checkProgressiveDownloadAvailability(url: string) {
+	static async checkProgressiveDownloadAvailability(url: string): Promise<boolean> {
 		try {
 			debug('Trying to check progressive download availability for', url);
 

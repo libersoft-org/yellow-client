@@ -1,4 +1,4 @@
-import { get, writable, derived } from 'svelte/store';
+import { get, writable, derived, type Readable } from 'svelte/store';
 //import filesService from '@/org.libersoft.messages/services/Files/FilesService.ts';
 //import { LocalFileStatus } from '@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts';
 
@@ -25,25 +25,25 @@ export class GalleryStore {
 		currentId: null,
 	});
 
-	value() {
+	value(): IGalleryStoreValue {
 		return get(this.store);
 	}
 
-	setShow(show: boolean) {
+	setShow(show: boolean): void {
 		this.store.update(store => {
 			store.show = show;
 			return store;
 		});
 	}
 
-	setFiles(files: IGalleryFile[]) {
+	setFiles(files: IGalleryFile[]): void {
 		this.store.update(store => {
 			store.files = files;
 			return store;
 		});
 	}
 
-	updateFile(id: IGalleryFile['id'], file: Omit<IGalleryFile, 'id'>) {
+	updateFile(id: IGalleryFile['id'], file: Omit<IGalleryFile, 'id'>): void {
 		this.store.update(store => {
 			const index = store.files.findIndex(f => f.id === id);
 			if (index === -1) {
@@ -57,18 +57,18 @@ export class GalleryStore {
 		});
 	}
 
-	setCurrentId(currentIndex: number) {
+	setCurrentId(currentIndex: number): void {
 		this.store.update(store => {
 			store.currentId = currentIndex;
 			return store;
 		});
 	}
 
-	getFile(id: IGalleryFile['id']) {
+	getFile(id: IGalleryFile['id']): IGalleryFile | undefined {
 		return get(this.store).files.find(file => file.id === id);
 	}
 
-	currentFile() {
+	currentFile(): Readable<IGalleryFile | null | undefined> {
 		return derived(this.store, $store => {
 			if ($store.currentId === null) {
 				return null;
@@ -77,7 +77,7 @@ export class GalleryStore {
 		});
 	}
 
-	previous() {
+	previous(): void {
 		this.store.update(store => {
 			if (store.currentId === null) {
 				return store;
@@ -92,7 +92,7 @@ export class GalleryStore {
 		});
 	}
 
-	next() {
+	next(): void {
 		this.store.update(store => {
 			if (store.currentId === null) return store;
 			const currentIndex = store.files.findIndex(file => file.id === store.currentId);
@@ -103,7 +103,7 @@ export class GalleryStore {
 		});
 	}
 
-	canPrevious() {
+	canPrevious(): Readable<boolean> {
 		return derived(this.store, $store => {
 			if ($store.currentId === null) return false;
 			const currentIndex = $store.files.findIndex(file => file.id === $store.currentId);
@@ -111,7 +111,7 @@ export class GalleryStore {
 		});
 	}
 
-	canNext() {
+	canNext(): Readable<boolean> {
 		return derived(this.store, $store => {
 			if ($store.currentId === null) return false;
 			const currentIndex = $store.files.findIndex(file => file.id === $store.currentId);

@@ -13,15 +13,15 @@
 		buttons: [{ img: 'img/check.svg', text: 'OK', onClick: clickOK, expand: true }],
 	});
 
-	export function open() {
+	export function open(): void {
 		elDialog?.open();
 	}
 
-	export function close() {
+	export function close(): void {
 		elDialog?.close();
 	}
 
-	function clickOK() {
+	function clickOK(): void {
 		elDialog?.close();
 	}
 </script>

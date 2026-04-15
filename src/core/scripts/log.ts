@@ -27,7 +27,7 @@ export const log = {
 	},
 };
 
-function formatNoColor(args) {
+function formatNoColor(args): string {
 	let msg = '';
 	const inspected_nocolor = args.map(o => {
 		if (typeof o === 'string') return o;

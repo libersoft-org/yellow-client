@@ -13,23 +13,23 @@
 	let canNext = galleryStore.canNext();
 	let loading = $state(false);
 
-	function download() {
+	function download(): void {
 		if ($currentFile && $currentFile.url) assembleFile($currentFile.url, $currentFile.fileName);
 	}
 
-	function close() {
+	function close(): void {
 		galleryStore.setShow(false);
 	}
 
-	function previous() {
+	function previous(): void {
 		galleryStore.previous();
 	}
 
-	function next() {
+	function next(): void {
 		galleryStore.next();
 	}
 
-	function handleKeyboard(event) {
+	function handleKeyboard(event: KeyboardEvent): void {
 		event.preventDefault();
 		event.stopImmediatePropagation();
 		if (event.key === 'Escape') {
@@ -79,7 +79,7 @@
 		document.removeEventListener('keydown', handleKeyboard, keyboardOpts);
 	});
 
-	function onAnywhereClick(event) {
+	function onAnywhereClick(event: PointerEvent): void {
 		if (event.target === event.currentTarget) close();
 	}
 </script>

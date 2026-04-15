@@ -17,7 +17,7 @@
 	let buttonNextTitle = $derived(step === 'select-wallet' ? 'Next' : step === 'configure' ? 'Add Wallet' : step === 'add-address' ? 'Add First Address' : 'Finish');
 	let buttonNextEnabled = $derived(step === 'select-wallet' ? !!$trezorState : step === 'configure' ? !!walletName.trim() : true);
 
-	async function buttonNextClick() {
+	async function buttonNextClick(): Promise<void> {
 		if (step === 'select-wallet') step = 'configure';
 		else if (step === 'configure') {
 			await addWallet();
@@ -28,27 +28,27 @@
 		else if (step === 'finish') setSettingsSection('wallets');
 	}
 
-	async function addWallet() {
+	async function addWallet(): Promise<void> {
 		console.log('addWallet...');
 		createdWallet = await addHardwareWallet('trezor', walletName, { staticSessionId: $staticSessionId });
 	}
 
-	async function addFirstAddress() {
+	async function addFirstAddress(): Promise<void> {
 		if (formAddressAdd) await formAddressAdd.clickAdd();
 	}
 
-	function onAddressSuccess() {
+	function onAddressSuccess(): void {
 		step = 'finish';
 	}
 
-	function goBack() {
+	function goBack(): void {
 		if (step === 'finish') step = 'add-address';
 		else if (step === 'add-address') step = 'configure';
 		else if (step === 'configure') step = 'select-wallet';
 		else setSettingsSection('wallets-add');
 	}
 
-	function onConnected() {
+	function onConnected(): void {
 		console.log('onConnected');
 	}
 </script>

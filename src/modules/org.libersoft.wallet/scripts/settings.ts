@@ -5,7 +5,7 @@ import { networks, default_networks, type INetwork } from 'libersoft-crypto/netw
 import { settingsWindow } from '@/org.libersoft.wallet/scripts/ui';
 import { addressBook, type IAddressBookItem } from 'libersoft-crypto/addressbook';
 import { attachParents } from '@/core/scripts/base_settings.ts';
-import type { ISettingsNode } from '@/core/types/settings.ts';
+import type { ISettingsNode, IBaseSettingsInstance } from '@/core/types/settings.ts';
 import SettingsGeneral from '@/org.libersoft.wallet/windows/Settings/SettingsGeneral.svelte';
 import SettingsNetworks from '@/org.libersoft.wallet/windows/Settings/SettingsNetworks.svelte';
 import SettingsNetworksTokens from '@/org.libersoft.wallet/windows/Settings/SettingsNetworksTokens.svelte';
@@ -33,7 +33,7 @@ import SettingsWalletsAddressAdd from '@/org.libersoft.wallet/windows/Settings/S
 import SettingsWalletsAddressEdit from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsAddressEdit.svelte';
 import SettingsWalletsWalletExport from '@/org.libersoft.wallet/windows/Settings/SettingsWalletsWalletExport.svelte';
 
-function getSettingsWindow() {
+function getSettingsWindow(): IBaseSettingsInstance | null {
 	return get(settingsWindow);
 }
 

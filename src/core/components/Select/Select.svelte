@@ -14,7 +14,7 @@
 	let { enabled = true, value = $bindable(''), expand = false, minWidth, maxWidth, children, label, ...restProps }: Props = $props();
 	let selectRef: HTMLSelectElement;
 
-	export function focus() {
+	export function focus(): void {
 		selectRef?.focus();
 	}
 </script>

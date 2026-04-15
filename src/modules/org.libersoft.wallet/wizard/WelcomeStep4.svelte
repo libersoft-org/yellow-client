@@ -11,7 +11,7 @@
 	const walletCount = $derived(get(wallets).length);
 	const isFullySetup = $derived(networkCount > 0 && walletCount > 0);
 
-	function openSettings() {
+	function openSettings(): void {
 		const settings = get(settingsWindow);
 		if (settings) {
 			settings.open();

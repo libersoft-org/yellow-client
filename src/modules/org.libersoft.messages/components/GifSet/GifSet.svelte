@@ -19,7 +19,7 @@
 	let last_query;
 	let next_pos;
 
-	export function onShow() {
+	export function onShow(): void {
 		if (!get(isMobile)) {
 			console.log('Focus search text');
 			elSearchText.focus();
@@ -30,17 +30,17 @@
 		onShow();
 	});
 
-	async function searchGifs() {
+	async function searchGifs(): Promise<void> {
 		gifs = [];
 		await getGifs(query, undefined);
 	}
 
-	async function moreGifs() {
+	async function moreGifs(): Promise<void> {
 		console.log('More GIFS!');
 		await getGifs(null, next_pos);
 	}
 
-	async function getGifs(_query, _next_pos) {
+	async function getGifs(_query: string | null, _next_pos: string | undefined): Promise<void> {
 		if (_query) last_query = _query;
 		else _query = last_query;
 		let server_val = get(gif_server) ?? '';
@@ -79,11 +79,11 @@
 		}
 	}
 
-	function keySearchGifs(e) {
+	function keySearchGifs(e: KeyboardEvent): void {
 		if (e.key === 'Enter') searchGifs();
 	}
 
-	function sendGIF(item) {
+	function sendGIF(item: any): void {
 		const url = item.media_formats.gif?.url;
 		MessageBar.sendMessageHtml('<Gif file="' + htmlEscape(url) + '" alt="GIF (animated picture)" ></Gif>');
 		menu.close();

@@ -49,7 +49,7 @@
 			let currentMarkers: any[] = [];
 
 			// Function for clustering based on zoom level
-			function updateMarkers() {
+			function updateMarkers(): void {
 				// Clear current markers
 				currentMarkers.forEach(marker => map.removeLayer(marker));
 				currentMarkers = [];

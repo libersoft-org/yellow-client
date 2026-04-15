@@ -33,11 +33,11 @@
 		],
 	};
 
-	export function open() {
+	export function open(): void {
 		elWindow?.open();
 	}
 
-	export function close() {
+	export function close(): void {
 		elWindow?.close();
 	}
 
@@ -78,7 +78,7 @@
 		return { valid: true };
 	}
 
-	function handleSuccess(message: string) {
+	function handleSuccess(message: string): void {
 		console.debug('handleSuccess:', message);
 		successMessage = message;
 	}
@@ -159,7 +159,7 @@
 		}
 	}
 
-	function maybeActivateAccount() {
+	function maybeActivateAccount(): void {
 		log.debug('maybeActivateAccount: active_account:', get(active_account));
 		if (get(active_account) === null) {
 			log.debug('maybeActivateAccount: accounts.length:', get(accounts).length);
@@ -173,7 +173,7 @@
 		}
 	}
 
-	async function replaceConflictAccount() {
+	async function replaceConflictAccount(): Promise<void> {
 		if (currentConflictAccount) {
 			const newServer = currentConflictAccount.credentials?.server || currentConflictAccount.server;
 			const newAddress = currentConflictAccount.credentials?.address || currentConflictAccount.address;
@@ -195,14 +195,14 @@
 		await importUi.doContinue(async () => await processNextAccount());
 	}
 
-	async function skipConflictAccount() {
+	async function skipConflictAccount(): Promise<void> {
 		skippedCount++;
 		elDialogConflict?.close();
 		currentConflictAccount = null;
 		await importUi.doContinue(async () => await processNextAccount());
 	}
 
-	async function confirmReplace() {
+	async function confirmReplace(): Promise<void> {
 		if (pendingReplaceText) {
 			try {
 				await confirmReplaceWithText(pendingReplaceText);
@@ -216,7 +216,7 @@
 		} else elDialogReplace?.close();
 	}
 
-	async function confirmReplaceWithText(text: string) {
+	async function confirmReplaceWithText(text: string): Promise<void> {
 		// Validate first before replacing
 		const validation = validateImport(text);
 		if (!validation.valid) throw new Error(validation.error || 'Invalid data');

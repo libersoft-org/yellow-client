@@ -90,7 +90,7 @@
 		else console.log('[SUBSCRIBE] No account found');
 	});
 	*/
-	export function onOpen() {
+	export function onOpen(): void {
 		loadForm();
 		protocolElem?.focus();
 	}
@@ -100,7 +100,7 @@
 		wizard?.setNextText('Next');
 	});
 
-	function verify() {
+	function verify(): boolean {
 		if (!credentials_server) {
 			error = 'Server address is required';
 			console.warn('[VERIFY] Server address is missing');
@@ -121,7 +121,7 @@
 		return true;
 	}
 
-	function clickAdd() {
+	function clickAdd(): void {
 		console.log('[ACTION] Clicked ADD');
 		if (!verify()) return;
 		const id = addAccount(
@@ -144,7 +144,7 @@
 		close();
 	}
 
-	function clickSave() {
+	function clickSave(): void {
 		console.log('[ACTION] Clicked SAVE for ID:', params.id);
 		if (!verify()) return;
 		if (params.id === null) {

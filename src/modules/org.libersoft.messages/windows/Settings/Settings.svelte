@@ -9,11 +9,11 @@
 		body: MessagesSettings,
 	};
 
-	export function open() {
+	export function open(): void {
 		elBaseSettings.open();
 	}
 
-	export function close() {
+	export function close(): void {
 		elBaseSettings.close();
 	}
 </script>

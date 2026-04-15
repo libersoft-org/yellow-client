@@ -1,4 +1,4 @@
-export function highlightElement(el: HTMLElement) {
+export function highlightElement(el: HTMLElement): void {
 	const durationFromCSS = getComputedStyle(el).getPropertyValue('--animation-highlight-duration').trim();
 	el.classList.add('animation-highlight');
 	setTimeout(

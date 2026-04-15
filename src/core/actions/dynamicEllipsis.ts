@@ -17,7 +17,7 @@ export const dynamicEllipsis: Action<HTMLElement, DynamicEllipsisOptions> = (ele
 	let resizeObserver: ResizeObserver | null = null;
 	let debounceTimer: ReturnType<typeof setTimeout> | null = null;
 
-	function measureAndUpdateHeight() {
+	function measureAndUpdateHeight(): void {
 		if (debounceTimer) {
 			clearTimeout(debounceTimer);
 		}

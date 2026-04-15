@@ -65,7 +65,7 @@
 		return { valid: true };
 	}
 
-	function handleSuccess(message: string) {
+	function handleSuccess(message: string): void {
 		console.debug('handleSuccess:', message);
 		successMessage = message;
 	}
@@ -123,7 +123,7 @@
 		}
 	}
 
-	async function replaceConflictNetwork() {
+	async function replaceConflictNetwork(): Promise<void> {
 		if (currentConflictNetwork) {
 			replaceExistingNetwork(currentConflictNetwork);
 			processedCount++;
@@ -133,7 +133,7 @@
 		await importUI.doContinue(async () => await processNextNetwork());
 	}
 
-	async function importWithModifiedName() {
+	async function importWithModifiedName(): Promise<void> {
 		if (currentConflictNetwork) {
 			addNetworkWithUniqueName(currentConflictNetwork);
 			processedCount++;
@@ -143,14 +143,14 @@
 		await importUI.doContinue(async () => await processNextNetwork());
 	}
 
-	async function skipConflictNetwork() {
+	async function skipConflictNetwork(): Promise<void> {
 		skippedCount++;
 		conflictDialog?.close();
 		currentConflictNetwork = null;
 		await importUI.doContinue(async () => await processNextNetwork());
 	}
 
-	async function confirmReplace() {
+	async function confirmReplace(): Promise<void> {
 		if (pendingReplaceText) {
 			try {
 				await confirmReplaceWithText(pendingReplaceText);
@@ -163,7 +163,7 @@
 		} else replaceDialog?.close();
 	}
 
-	async function confirmReplaceWithText(text: string) {
+	async function confirmReplaceWithText(text: string): Promise<void> {
 		const validation = validateImport(text);
 		if (!validation.valid) throw new Error(validation.error || 'Invalid data');
 		const networksData = JSON.parse(text);

@@ -9,7 +9,7 @@ import { disable, enable } from '@tauri-apps/plugin-autostart';
 import { createTrayIcon, destroyTrayIcon } from '@/core/scripts/tray_icon.ts';
 import { TAURI, TAURI_MOBILE, log } from './tauri.ts';
 
-export async function setDefaultWindowSize() {
+export async function setDefaultWindowSize(): Promise<void> {
 	if (!TAURI || TAURI_MOBILE) {
 		return;
 	}
@@ -30,7 +30,7 @@ export async function setDefaultWindowSize() {
 	}
 }
 
-export async function initWindow() {
+export async function initWindow(): Promise<void> {
 	if (!TAURI || TAURI_MOBILE) {
 		return;
 	}

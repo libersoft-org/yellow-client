@@ -6,7 +6,7 @@
 	}
 	let { value = $bindable('top-right'), disabled = false }: Props = $props();
 
-	function selectCorner(corner) {
+	function selectCorner(corner: string): void {
 		if (disabled) return;
 		value = corner;
 	}

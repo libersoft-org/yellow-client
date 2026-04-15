@@ -13,7 +13,7 @@
 	let text = $state('');
 	let isSideBySide = $state(true);
 
-	function send() {
+	function send(): void {
 		console.log('send');
 		MessageBar?.sendMessageHtml(text);
 		close();

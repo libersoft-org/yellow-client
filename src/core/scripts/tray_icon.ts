@@ -14,7 +14,7 @@ import { product } from '@/core/scripts/stores.ts';
 let tray: TrayIcon | null = null;
 let tray_loading = false;
 
-async function showWindow() {
+async function showWindow(): Promise<void> {
 	log.debug('showWindow');
 	await getCurrentWindow().unminimize();
 	await getCurrentWindow().show();
@@ -28,7 +28,7 @@ async function hideWindow() {
 }
 */
 
-export async function destroyTrayIcon() {
+export async function destroyTrayIcon(): Promise<void> {
 	if (TAURI && !TAURI_MOBILE) {
 		log.debug('destroyTrayIcon');
 		if (tray) {
@@ -40,7 +40,7 @@ export async function destroyTrayIcon() {
 	}
 }
 
-export async function createTrayIcon() {
+export async function createTrayIcon(): Promise<void> {
 	//log.debug('createTrayIcon tray:', tray, 'tray_loading:', tray_loading);
 	if (tray || tray_loading) {
 		return;

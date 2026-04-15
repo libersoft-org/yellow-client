@@ -39,7 +39,7 @@
 		}*/
 	});
 
-	function clickCopyAddress() {
+	function clickCopyAddress(): void {
 		if ($selectedAddress && addressElement) {
 			navigator.clipboard
 				.writeText($selectedAddress.address)

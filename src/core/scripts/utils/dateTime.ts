@@ -1,4 +1,4 @@
-export function friendlyTimestamp(date: Date | string | number) {
+export function friendlyTimestamp(date: Date | string | number): string {
 	//log.debug('friendlyTimestamp', date);
 	let result = new Date(date)
 		.toISOString()

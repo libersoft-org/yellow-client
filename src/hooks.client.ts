@@ -24,6 +24,6 @@ export async function handleError(eee: any): Promise<{ message: string }> {
 	} else return { message: eee.message || 'An error occurred' };
 }
 
-export function init() {
+export function init(): void {
 	//console.log('Client-side initialization complete');
 }

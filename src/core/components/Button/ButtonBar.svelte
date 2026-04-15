@@ -11,7 +11,7 @@
 	let { children, expand = false, align = 'left', equalize = false, space = false }: Props = $props();
 	let elBar: HTMLDivElement | undefined;
 
-	async function applyEqualSize() {
+	async function applyEqualSize(): Promise<void> {
 		await tick();
 		if (!equalize || !elBar) return;
 		let max = 0;

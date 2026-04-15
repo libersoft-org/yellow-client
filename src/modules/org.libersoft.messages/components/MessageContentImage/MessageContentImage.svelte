@@ -23,7 +23,7 @@
 	const upload = writable<any>(null);
 	fileUploadStore.store.subscribe(() => upload.set(fileUploadStore.get(yellowId) || null));
 
-	function makeFilesForGallery() {
+	function makeFilesForGallery(): any[] {
 		const filesForGallery: any[] = [];
 		for (let index = 0; index < siblings.length; index++) {
 			const siblingNode = siblings[index];
@@ -67,13 +67,13 @@
 		return filesForGallery;
 	}
 
-	function openInGallery() {
+	function openInGallery(): void {
 		galleryStore.setFiles(makeFilesForGallery());
 		galleryStore.setShow(true);
 		galleryStore.setCurrentId(yellowId);
 	}
 
-	function downloadImage() {
+	function downloadImage(): void {
 		if (loaded) {
 			return;
 		}

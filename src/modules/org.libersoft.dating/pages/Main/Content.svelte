@@ -24,7 +24,7 @@
 		if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
 	});
 
-	function onKeydown(event: KeyboardEvent) {
+	function onKeydown(event: KeyboardEvent): void {
 		if (event.key === 'Escape') {
 			if ($page) closePage();
 			else setModule(null);

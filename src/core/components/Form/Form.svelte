@@ -9,7 +9,7 @@
 	}
 	let { onSubmit, children, class: className = '', width, ...restProps }: Props = $props();
 
-	function handleKeyDown(event: KeyboardEvent) {
+	function handleKeyDown(event: KeyboardEvent): void {
 		if (event.target instanceof HTMLInputElement && event.key === 'Enter') {
 			event.preventDefault();
 			onSubmit();

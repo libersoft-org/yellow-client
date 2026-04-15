@@ -28,38 +28,38 @@
 	}
 	let { type = 'text', placeholder = '', value = $bindable(), enabled = true, displayValue, expand = true, minWidth, maxWidth, onKeydown, onFocus, onBlur, onClick, min, max, step, icon, inputRef = $bindable(), 'data-testid': testId, onChange }: Props = $props();
 
-	function handleKeydown(e) {
+	function handleKeydown(e): void {
 		if (onKeydown) onKeydown(e);
 	}
 
-	function handleFocus(e) {
+	function handleFocus(e): void {
 		if (onFocus) onFocus(e);
 	}
 
-	function handleBlur(e) {
+	function handleBlur(e): void {
 		if (onBlur) onBlur(e);
 	}
 
-	function handleClick(e) {
+	function handleClick(e): void {
 		if (onClick) onClick(e);
 	}
 
-	function handleChange(e: Event) {
+	function handleChange(e: Event): void {
 		const target = e.target as HTMLInputElement;
 		setValue(target.value);
 	}
 
-	function handleInput(e: Event) {
+	function handleInput(e: Event): void {
 		const target = e.target as HTMLInputElement;
 		setValue(target.value);
 	}
 
-	function setValue(newValue: string | number) {
+	function setValue(newValue: string | number): void {
 		value = type === 'number' ? Number(newValue) : newValue;
 		onChange?.(value);
 	}
 
-	export function focus() {
+	export function focus(): void {
 		inputRef?.focus();
 	}
 </script>

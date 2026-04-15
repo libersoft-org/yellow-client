@@ -14,7 +14,7 @@
 	let inputId = Math.random().toString(36);
 	let labelId = `${inputId}-label`;
 
-	function keyPress(event) {
+	function keyPress(event: KeyboardEvent): void {
 		if (event.key === 'Enter' || event.key === ' ') {
 			event.preventDefault();
 			checked = !checked;

@@ -31,11 +31,11 @@
 		return attachedUploads.length > 0 ? (attachedUploads[0]?.record.type ?? null) : null;
 	});
 
-	function getAttachmentEls() {
+	function getAttachmentEls(): NodeListOf<Element> | undefined {
 		return ref?.closest('.attachments-wrap')?.querySelectorAll('.message-attachment');
 	}
 
-	function onAcceptAll() {
+	function onAcceptAll(): void {
 		downloadAttachmentsSerial(
 			downloadableRecords.map(upload => upload.record),
 			download => {

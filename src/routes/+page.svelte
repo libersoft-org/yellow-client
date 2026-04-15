@@ -59,7 +59,7 @@
 	setContext('menus', menus);
 	setContext('contentElement', contentElement);
 
-	function getFileChunkFactory(uploadId) {
+	function getFileChunkFactory(uploadId): (params: any) => Promise<any> {
 		const fn = makeDownloadChunkAsyncFn(get(active_account));
 		return params => fn({ uploadId, ...params });
 	}
@@ -140,7 +140,7 @@
 	// Capture initial height when keyboard is closed
 	let initialViewportHeight = window.innerHeight;
 
-	function updateAppHeight() {
+	function updateAppHeight(): void {
 		//console.log('updateAppHeight');
 		const visualViewport = window.visualViewport;
 		let viewportHeight;
@@ -177,23 +177,23 @@
 		}
 	});
 
-	function setupIframeListener() {
+	function setupIframeListener(): void {
 		// window.addEventListener('message', event => {
 		//  console.log('event.data: ', event.data);
 		// });
 	}
 
-	function onSelectModule(id) {
+	function onSelectModule(id): void {
 		//console.log('onSelectModule: ' + id);
 		setModule(id);
 	}
 
-	function onCloseModule() {
+	function onCloseModule(): void {
 		setModule(null);
 		updateLastModuleId(null);
 	}
 
-	function startResizeSideBar() {
+	function startResizeSideBar(): void {
 		console.log('startResizeSideBar');
 		isResizingSideBar = true;
 		document.body.style.userSelect = 'none';
@@ -202,7 +202,7 @@
 		window.addEventListener('mouseup', stopResizeSideBar);
 	}
 
-	function stopResizeSideBar() {
+	function stopResizeSideBar(): void {
 		isResizingSideBar = false;
 		document.body.style.userSelect = '';
 		document.body.style.webkitUserSelect = ''; // Restore Safari-specific selection
@@ -212,7 +212,7 @@
 		sidebarSize.set(sideBar.clientWidth);
 	}
 
-	function resizeSideBar(e) {
+	function resizeSideBar(e): void {
 		// const moduleBarItems = e.target.querySelector('.module-bar > .items');
 		// if (moduleBarItems) {
 		// 	moduleBarItems.style.height = 'auto';
@@ -227,7 +227,7 @@
 
 	let sidebarWidth = $state<string | undefined>();
 
-	function setSidebarSize(width) {
+	function setSidebarSize(width): void {
 		const max = 500;
 		const min = 200;
 		let sideBarWidth = Math.min(Math.max(width, min), max);
@@ -242,7 +242,7 @@
 		else sidebarWidth = ($sidebarSize || 300) + 'px';
 	});
 
-	function onkeydown(event) {
+	function onkeydown(event): void {
 		//console.log('window onkeydown: ', event);
 		if (event.ctrlKey && (event.key === '`' || event.key === '~' || event.key === ';')) debug.update(d => !d);
 		// Handle Ctrl + 0 to toggle between theme index 0 and 1

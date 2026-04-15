@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { onDestroy } from 'svelte';
+	import type { TransitionConfig } from 'svelte/transition';
 	import { get } from 'svelte/store';
 	import { active_account, accounts, selectAccount, setCorePage } from '@/core/scripts/core.ts';
 	import { hideSidebarMobile, debug } from '@/core/scripts/stores.ts';
@@ -16,7 +17,7 @@
 		document.removeEventListener('click', handleClickOutside);
 	});
 
-	function animateHeight(node, { duration = 220 } = {}) {
+	function animateHeight(node, { duration = 220 } = {}): TransitionConfig {
 		const style = getComputedStyle(node);
 		const paddingTop = parseFloat(style.paddingTop);
 		const paddingBottom = parseFloat(style.paddingBottom);
@@ -30,30 +31,30 @@
 		};
 	}
 
-	function open() {
+	function open(): void {
 		accountsVisible = true;
 		if (!$debug) document.addEventListener('click', handleClickOutside);
 	}
 
-	function close() {
+	function close(): void {
 		accountsVisible = false;
 		document.removeEventListener('click', handleClickOutside);
 	}
 
-	function toggle() {
+	function toggle(): void {
 		accountsVisible ? close() : open();
 	}
 
-	function clickSelectAccount(id) {
+	function clickSelectAccount(id): void {
 		selectAccount(id);
 		close();
 	}
 
-	function handleClickOutside(event) {
+	function handleClickOutside(event): void {
 		if (accountBar && !accountBar.contains(event.target)) close();
 	}
 
-	function clickAccountManagement() {
+	function clickAccountManagement(): void {
 		setCorePage('accounts');
 		hideSidebarMobile.set(true);
 		close();

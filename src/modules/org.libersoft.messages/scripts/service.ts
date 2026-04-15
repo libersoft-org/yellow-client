@@ -24,7 +24,7 @@ class MessagesBackgroundService {
 	private messageHandlers: Map<string, Function> = new Map();
 	private account: any = null;
 
-	init(config: IServiceConfig) {
+	init(config: IServiceConfig): void {
 		this.config = config;
 		this.log('info', `Messages service initialized for account ${config.accountId}`);
 
@@ -49,7 +49,7 @@ class MessagesBackgroundService {
 		this.subscribeToEvents();
 	}
 
-	private setupMessageHandlers() {
+	private setupMessageHandlers(): void {
 		// These handlers will be called when events are received
 		const handlers = {
 			new_message: this.handleNewMessage.bind(this),
@@ -66,13 +66,13 @@ class MessagesBackgroundService {
 		}
 	}
 
-	private subscribeToEvents() {
+	private subscribeToEvents(): void {
 		// Use connection module to subscribe (isService = true)
 		const result = initializeSubscriptions(this.account, true);
 		this.log('info', `Subscriptions initialized: ${result.subscribed ? 'yes' : 'no'}`);
 	}
 
-	handleMessage(message: any) {
+	handleMessage(message: any): void {
 		// Route incoming messages to appropriate handlers
 		const eventType = message.event || message.type;
 		const handler = this.messageHandlers.get(eventType);
@@ -88,7 +88,7 @@ class MessagesBackgroundService {
 		}
 	}
 
-	private handleNewMessage(event: any) {
+	private handleNewMessage(event: any): void {
 		const data = event.detail?.data || event.detail;
 		this.log('info', `New message received from ${data?.address_from || 'unknown'}`);
 
@@ -98,32 +98,32 @@ class MessagesBackgroundService {
 		}
 	}
 
-	private handleMessageUpdate(event: any) {
+	private handleMessageUpdate(event: any): void {
 		const data = event.detail?.data || event.detail;
 		this.log('info', `Message update: ${data?.type || 'unknown'} for ${data?.message?.uid || 'unknown'}`);
 	}
 
-	private handleSeenMessage(event: any) {
+	private handleSeenMessage(event: any): void {
 		const data = event.detail?.data || event.detail;
 		this.log('info', `Message seen: ${data?.uid || 'unknown'}`);
 	}
 
-	private handleSeenInboxMessage(event: any) {
+	private handleSeenInboxMessage(event: any): void {
 		const data = event.detail?.data || event.detail;
 		this.log('info', `Inbox message seen from ${data?.address_from || 'unknown'}`);
 	}
 
-	private handleUploadUpdate(event: any) {
+	private handleUploadUpdate(event: any): void {
 		const data = event.detail?.data || event.detail;
 		this.log('info', `Upload update: ${data?.record?.id || 'unknown'} status: ${data?.record?.status || 'unknown'}`);
 	}
 
-	private handleAskForChunk(event: any) {
+	private handleAskForChunk(event: any): void {
 		const data = event.detail?.data || event.detail;
 		this.log('info', `Ask for chunk: upload ${data?.uploadId || 'unknown'} offset ${data?.offsetBytes || 0}`);
 	}
 
-	private processMessageForNotification(message: any) {
+	private processMessageForNotification(message: any): void {
 		// Check if this message is for our account and we're not the sender
 		if (message.address_to === this.config?.address && message.address_from !== this.config?.address) {
 			// Strip HTML from message for notification using safe sanitization
@@ -145,7 +145,7 @@ class MessagesBackgroundService {
 	}
 
 	// Send message through connection module
-	sendMessageToServer(command: string, params: any) {
+	sendMessageToServer(command: string, params: any): void {
 		connectionSendData(
 			this.account,
 			null,
@@ -161,7 +161,7 @@ class MessagesBackgroundService {
 		);
 	}
 
-	private sendToKotlin(data: any) {
+	private sendToKotlin(data: any): void {
 		try {
 			KotlinBridge.sendMessage(JSON.stringify(data));
 		} catch (error) {
@@ -169,7 +169,7 @@ class MessagesBackgroundService {
 		}
 	}
 
-	private log(level: string, message: string) {
+	private log(level: string, message: string): void {
 		if (typeof KotlinBridge !== 'undefined') {
 			KotlinBridge.log(level, `[MessagesService] ${message}`);
 		} else {
@@ -177,7 +177,7 @@ class MessagesBackgroundService {
 		}
 	}
 
-	destroy() {
+	destroy(): void {
 		this.log('info', 'Service being destroyed');
 
 		// Deinitialize subscriptions

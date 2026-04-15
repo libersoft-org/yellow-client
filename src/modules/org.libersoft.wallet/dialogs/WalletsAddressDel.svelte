@@ -14,12 +14,12 @@
 		],
 	};
 
-	function clickYes() {
+	function clickYes(): void {
 		deleteAddressFromWallet(wallet, index);
 		elDialog?.close();
 	}
 
-	function clickNo() {
+	function clickNo(): void {
 		elDialog?.close();
 	}
 

@@ -37,15 +37,15 @@
 		if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
 	});
 
-	function onKeydown(event) {
+	function onKeydown(event): void {
 		if (event.key === 'Escape') setCorePage(null);
 	}
 
-	function back() {
+	function back(): void {
 		setCorePage(null);
 	}
 
-	async function addAccountWindow() {
+	async function addAccountWindow(): Promise<void> {
 		idItem = null;
 		windowKey++; // Force window component to recreate
 		console.log('[AccountsContent] Opening Add/Edit Account window, idItem set to', idItem, 'windowKey:', windowKey);
@@ -53,21 +53,21 @@
 		elWindowAccountsAddEdit?.open();
 	}
 
-	function clickEdit(id: string) {
+	function clickEdit(id: string): void {
 		idItem = id;
 		elWindowAccountsAddEdit?.open();
 	}
 
-	const clickDel = (id: string) => {
+	const clickDel = (id: string): void => {
 		idItem = id;
 		elDialogAccountsDelete?.open();
 	};
 
-	function clickImport() {
+	function clickImport(): void {
 		elWindowAccountsImport?.open();
 	}
 
-	function clickExport() {
+	function clickExport(): void {
 		elWindowAccountsExport?.open();
 	}
 </script>

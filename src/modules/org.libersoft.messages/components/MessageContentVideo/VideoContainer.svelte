@@ -26,12 +26,12 @@
 	let videoIsFullDownloading = $state(false);
 	let videoJsInstance = $state<ReturnType<typeof videoJS> | null>(null);
 
-	function getFileChunkFactory(uploadId) {
+	function getFileChunkFactory(uploadId: string): (params: any) => any {
 		const fn = makeDownloadChunkAsyncFn(get(active_account));
 		return params => fn({ uploadId, ...params });
 	}
 
-	function onDownload() {
+	function onDownload(): void {
 		if (!upload) {
 			debug('No upload data available');
 			return;
@@ -42,7 +42,7 @@
 		});
 	}
 
-	const fullDownloadVideo = () => {
+	const fullDownloadVideo = (): void => {
 		if (!upload) {
 			debug('No upload data available');
 			return;
@@ -59,7 +59,7 @@
 		});
 	};
 
-	async function startVideo() {
+	async function startVideo(): Promise<void> {
 		debug('Starting video');
 		if (!upload) {
 			debug('No upload data available');
@@ -144,7 +144,7 @@
 		});
 	};
 
-	const fetchPosterDynamically = () => {
+	const fetchPosterDynamically = (): Promise<void> => {
 		fetchingPoster = true;
 		const getFileChunk = getFileChunkFactory(uploadId);
 		return getFileChunk({ offsetBytes: 0, chunkSize: 1024 * 512 }).then(firstChunk => {
@@ -178,7 +178,7 @@
 
 				if (record.metadata && record.metadata.thumbnail) {
 					const thumbnailUint8Array = await base64ToUint8Array(record.metadata.thumbnail);
-					const thumbnailBlob = new Blob([thumbnailUint8Array]);
+					const thumbnailBlob = new Blob([thumbnailUint8Array as BlobPart]);
 					thumbnailSrc = URL.createObjectURL(thumbnailBlob);
 				} else {
 					fetchPosterDynamically();

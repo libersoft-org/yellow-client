@@ -3,7 +3,7 @@ import { trezorState } from 'libersoft-crypto/trezor';
 
 export const trezorWindow = writable<any>(null);
 
-export async function toggleTrezorWindow() {
+export async function toggleTrezorWindow(): Promise<void> {
 	const trezorWin = get(trezorWindow);
 	if (!trezorWin) {
 		console.error('Trezor window is not initialized');

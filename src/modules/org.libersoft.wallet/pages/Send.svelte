@@ -134,7 +134,7 @@
 	});
 
 	// Function to update currency options based on 'libersoft-crypto/currencies'
-	function updateCurrencyOptions() {
+	function updateCurrencyOptions(): void {
 		currencyOptions = $currencies.map(currency => {
 			let label = currency.symbol || 'Unknown';
 			// For tokens with contract addresses, get proper name and symbol from tokenInfos
@@ -153,7 +153,7 @@
 	}
 
 	// Helper function for handling network changes - reload currencies and data // uhh
-	function handleNetworkChange(newNetwork, currentNetwork) {
+	function handleNetworkChange(newNetwork, currentNetwork): void {
 		const networkChanged = newNetwork !== currentNetwork;
 		if (isInitialized && networkChanged) {
 			console.log('Send: Network switched - reloading data');
@@ -174,7 +174,7 @@
 	}
 
 	// Helper function for handling address changes
-	function handleAddressChange(newAddress: typeof $selectedAddress, currentAddress: typeof $selectedAddress) {
+	function handleAddressChange(newAddress: typeof $selectedAddress, currentAddress: typeof $selectedAddress): void {
 		if (isInitialized && newAddress !== currentAddress) {
 			console.log('Send: Address changed - reloading balance');
 			// Update balance for new address, but don't recalculate fee
@@ -187,7 +187,7 @@
 	let oldAmount: string | number | undefined = undefined;
 
 	// Helper function for handling currency changes
-	function handleCurrencyChange() {
+	function handleCurrencyChange(): void {
 		//console.log('Send: handleCurrencyChange called. Current currency:', oldCurrency, 'New currency:', currency);
 		//console.log('(oldCurrency !== currency):', oldCurrency !== currency);
 
@@ -216,7 +216,7 @@
 	}
 
 	// Helper function for updating currency symbol
-	function updateCurrencySymbol() {
+	function updateCurrencySymbol(): void {
 		if (!currency) {
 			selectedCurrencySymbol = '';
 			return;
@@ -232,14 +232,14 @@
 	}
 
 	// Helper function for handling fee level changes
-	function handleFeeLevelChange() {
+	function handleFeeLevelChange(): void {
 		if (isInitialized) {
 			updateFeeFromLevel();
 		}
 	}
 
 	// Helper function for handling amount changes
-	function handleAmountChange() {
+	function handleAmountChange(): void {
 		// Only proceed if amount actually changed
 		if (oldAmount !== amount) {
 			if (isInitialized) {
@@ -250,19 +250,19 @@
 	}
 
 	// debug wrapper for estimateTransactionFee
-	function estimateFeeWithLogging(contractAddress: string | undefined, reason: string) {
+	function estimateFeeWithLogging(contractAddress: string | undefined, reason: string): void {
 		console.log(`Send: Estimating transaction fee - ${reason}`);
 		estimateTransactionFee(contractAddress);
 	}
 
-	function scanQRCode() {
+	function scanQRCode(): void {
 		showQRScanner = !showQRScanner;
 		if (showQRScanner) {
 			qrError = null; // Clear any previous errors when opening scanner
 		}
 	}
 
-	async function handleQRScanned(data: string) {
+	async function handleQRScanned(data: string): Promise<void> {
 		const parsed = parseQRData(data);
 
 		if (parsed.error) {
@@ -313,7 +313,7 @@
 		qrError = null;
 	}
 
-	function switchToQRNetwork() {
+	function switchToQRNetwork(): void {
 		if (qrNetwork) {
 			// Switch to the existing network
 			console.log('Switching to network:', qrNetwork.name, 'Chain ID:', qrNetwork.chainID);
@@ -324,18 +324,18 @@
 		}
 	}
 
-	function manageNetworks() {
+	function manageNetworks(): void {
 		$networksWindow?.open();
 	}
 
-	function addQRToken() {
+	function addQRToken(): void {
 		if (qrContractAddress && $selectedNetwork?.guid) {
 			$settingsWindow?.open();
 			$settingsWindow?.setSettingsSection(`networks-tokens-add-${$selectedNetwork.guid}`, { contractAddress: qrContractAddress });
 		}
 	}
 
-	function handleQRError(error: string) {
+	function handleQRError(error: string): void {
 		qrError = error;
 	}
 
@@ -353,7 +353,7 @@
 
 	let needsTokenAdd = $derived(qrContractAddress && !qrCurrency && networkMatches);
 
-	async function updateBalance() {
+	async function updateBalance(): Promise<void> {
 		try {
 			nativeBalanceData = (await getBalance()) || undefined;
 			if (currency?.contract_address) currentBalanceData = (await getTokenBalanceByAddress(currency.contract_address)) || undefined;
@@ -366,7 +366,7 @@
 		}
 	}
 
-	function updateRemainingBalance() {
+	function updateRemainingBalance(): void {
 		if (!currentBalanceData || !amount || !$fee || !currency) {
 			remainingBalance = undefined;
 			remainingTokenBalance = undefined;
@@ -396,7 +396,7 @@
 		}
 	}
 
-	async function setMaxAmount() {
+	async function setMaxAmount(): Promise<void> {
 		if (!currentBalanceData || !$fee) return;
 		try {
 			const feeBigInt = parseUnits($fee.toString(), 18); // Fee is always in native currency (18 decimals)
@@ -414,7 +414,7 @@
 		}
 	}
 
-	async function send() {
+	async function send(): Promise<void> {
 		error = null;
 		// Validation config
 		const validationConfig: FormValidatorConfig = [
@@ -475,7 +475,7 @@
 		elDialogSend?.open();
 	}
 
-	async function onYes(params: any) {
+	async function onYes(params: any): Promise<void> {
 		console.log('ONYES - awaiting ensureWalletConnection...');
 		if (await ensureWalletConnection()) {
 			console.log('ensureWalletConnection passed, sending transaction...');

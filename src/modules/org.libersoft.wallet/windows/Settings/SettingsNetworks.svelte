@@ -37,11 +37,11 @@
 		elFilter?.focus();
 	}
 
-	function clickAddNetwork() {
+	function clickAddNetwork(): void {
 		setSettingsSection('networks-add');
 	}
 
-	async function clickEditNetwork(net: INetwork | null = null) {
+	async function clickEditNetwork(net: INetwork | null = null): Promise<void> {
 		if (net) await setSettingsSection('networks-edit-' + net.guid);
 	}
 
@@ -51,29 +51,29 @@
 		elDialogDeleteNetwork?.open();
 	}
 
-	function openTokens(net) {
+	function openTokens(net): void {
 		console.log('tokenList', net);
 		setSettingsSection('networks-tokens-' + net.guid, { item: net.guid });
 	}
 
-	function openNFTs(net) {
+	function openNFTs(net): void {
 		console.log('nftList', net);
 		setSettingsSection('networks-nfts-' + net.guid, { item: net.guid });
 	}
 
-	function doImport() {
+	function doImport(): void {
 		setSettingsSection('networks-import');
 	}
 
-	function doExport() {
+	function doExport(): void {
 		setSettingsSection('networks-export');
 	}
 
-	function openRPCServers(network: INetwork) {
+	function openRPCServers(network: INetwork): void {
 		setSettingsSection('networks-rpc-' + network.guid);
 	}
 
-	function handleNetworkReorder(sourceIndex: number, targetIndex: number) {
+	function handleNetworkReorder(sourceIndex: number, targetIndex: number): void {
 		const reordered = [...filteredNetworks];
 		const [moved] = reordered.splice(sourceIndex, 1);
 		reordered.splice(targetIndex, 0, moved!);

@@ -33,20 +33,20 @@
 		};
 	});
 
-	export function open() {
+	export function open(): void {
 		elDialog?.open();
 	}
 
-	export function close() {
+	export function close(): void {
 		elDialog?.close();
 	}
 
-	function clickYes() {
+	function clickYes(): void {
 		delAccount(id);
 		elDialog?.close();
 	}
 
-	function clickNo() {
+	function clickNo(): void {
 		elDialog?.close();
 	}
 </script>

@@ -25,15 +25,15 @@
 		inputElement?.focus();
 	});
 
-	function onKeydownAdd(e: KeyboardEvent) {
+	function onKeydownAdd(e: KeyboardEvent): void {
 		if (e.key === 'Enter') clickAdd();
 	}
 
-	function clickDefaults() {
+	function clickDefaults(): void {
 		elDialogDefaults?.open();
 	}
 
-	function clickAdd() {
+	function clickAdd(): void {
 		error = null;
 		if (addUrl) {
 			let addUrlTrim = addUrl.trim();
@@ -54,7 +54,7 @@
 		inputElement?.focus();
 	}
 
-	function clickDel(url) {
+	function clickDel(url): void {
 		serverUrl = url;
 		elDialogDelete?.open();
 	}

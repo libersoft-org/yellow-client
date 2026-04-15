@@ -17,14 +17,14 @@
 		return initializeRefreshSystem();
 	});
 
-	function selectToken(symbol: string) {
+	function selectToken(symbol: string): void {
 		console.log('SELECTED TOKEN:', symbol);
 		setSendCurrency($state.snapshot(symbol)); // Use snapshot to get plain value from proxy
 		setSection('send');
 		console.log('Set send currency to:', symbol, 'and switched to section', $section);
 	}
 
-	function selectNativeCurrency(symbol: string) {
+	function selectNativeCurrency(symbol: string): void {
 		console.log('SELECTED NATIVE CURRENCY:', symbol);
 		setSendCurrency($state.snapshot(symbol)); // Use snapshot to get plain value from proxy
 		setSection('send');

@@ -4,7 +4,7 @@
 	import { welcomeWizardWindow } from '@/core/scripts/stores.ts';
 	const hasNoAccounts = $derived($accounts_config.length === 0);
 
-	function openWizard() {
+	function openWizard(): void {
 		$welcomeWizardWindow?.open();
 	}
 </script>

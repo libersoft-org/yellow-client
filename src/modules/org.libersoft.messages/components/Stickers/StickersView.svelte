@@ -20,7 +20,7 @@
 	let loading = $state(true);
 	let elStickersSearchResults: StickersSearchResults | null = $state(null);
 
-	export function onShow() {
+	export function onShow(): void {
 		if (!get(isMobile)) fulltext_search_element.focus();
 	}
 
@@ -31,7 +31,8 @@
 	let query_store_unsubscribe;
 
 	function triggerQuery(): void {
-		live_query(get(sticker_server), fulltext_search_filter, animated_filter);
+		const server = get(sticker_server);
+		if (server) live_query(server, fulltext_search_filter, animated_filter);
 	}
 
 	function handleFilterChange(): void {
@@ -49,7 +50,7 @@
 		if (query_store_unsubscribe) query_store_unsubscribe.unsubscribe();
 	});
 
-	async function live_query(server, fulltext_search_filter, animated_filter) {
+	async function live_query(server: string, fulltext_search_filter: string, animated_filter: number[]): Promise<any> {
 		loading = true;
 		untrack(async () => {
 			console.log('scroll_to_top:', elStickersSearchResults?.scroll_to_top);
@@ -83,7 +84,7 @@
 		return query_store;
 	}
 
-	async function maybe_trigger_auto_update(count) {
+	async function maybe_trigger_auto_update(count: number): Promise<void> {
 		if (count === 0) {
 			console.log('No items found');
 			let state = (window as any).stickerLibraryUpdaterState;

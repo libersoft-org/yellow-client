@@ -24,25 +24,25 @@
 	let elModalImport: Window | undefined;
 	let elDialogDel: DialogDelete | undefined = $state();
 
-	function addToAddressBookModal() {
+	function addToAddressBookModal(): void {
 		modalItem = null;
 		elModalAddEdit?.open();
 	}
 
-	function editItemModal(item: IAddressBookItem) {
+	function editItemModal(item: IAddressBookItem): void {
 		elModalAddEdit?.open(item);
 	}
 
-	function deleteItemModal(item) {
+	function deleteItemModal(item): void {
 		modalItem = item;
 		elDialogDel?.open();
 	}
 
-	function exportAddressBook() {
+	function exportAddressBook(): void {
 		elModalExport?.open();
 	}
 
-	function importAddressBook() {
+	function importAddressBook(): void {
 		elModalImport?.open();
 	}
 </script>

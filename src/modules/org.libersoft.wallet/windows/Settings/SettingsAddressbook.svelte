@@ -46,7 +46,7 @@
 		setSettingsSection('addressbook-import');
 	}
 
-	function handleAddressBookReorder(sourceIndex: number, targetIndex: number) {
+	function handleAddressBookReorder(sourceIndex: number, targetIndex: number): void {
 		const reordered = [...filteredAddressBook];
 		const [moved] = reordered.splice(sourceIndex, 1);
 		reordered.splice(targetIndex, 0, moved!);

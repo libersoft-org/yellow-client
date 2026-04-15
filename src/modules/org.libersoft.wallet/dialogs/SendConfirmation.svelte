@@ -48,18 +48,18 @@
 		],
 	};
 
-	export function open() {
+	export function open(): void {
 		loadDecimals();
 		elDialog?.open();
 	}
 
-	async function clickYes() {
+	async function clickYes(): Promise<void> {
 		if (!params) throw new Error('dialog missing params');
 		onYes?.(params);
 		elDialog?.close();
 	}
 
-	function clickNo() {
+	function clickNo(): void {
 		elDialog?.close();
 	}
 </script>

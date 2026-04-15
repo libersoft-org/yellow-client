@@ -1,6 +1,6 @@
 import videoJS from 'video.js';
 import 'recordrtc';
-import { get, writable } from 'svelte/store';
+import { get, writable, type Writable } from 'svelte/store';
 
 type VideoJSWithRecorder = ReturnType<typeof videoJS> & {
 	record: any;
@@ -9,7 +9,29 @@ type VideoJSWithRecorder = ReturnType<typeof videoJS> & {
 	deviceErrorCode: string;
 };
 
-function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined, opts: any) {
+function useVideoRecorderSvelte(
+	getVideoRef: () => HTMLVideoElement | undefined,
+	opts: any
+): {
+	setup: () => Promise<VideoJSWithRecorder>;
+	player: Writable<VideoJSWithRecorder>;
+	loading: Writable<boolean>;
+	error: Writable<boolean>;
+	errorMessages: Writable<string[] | null>;
+	audioDevices: Writable<InputDeviceInfo[]>;
+	videoDevices: Writable<InputDeviceInfo[]>;
+	selectedVideoDeviceId: Writable<string | null>;
+	selectedAudioDeviceId: Writable<string | null>;
+	changeVideoInput: (deviceId: string) => void;
+	changeAudioInput: (deviceId: string) => void;
+	recordedBlob: Writable<Blob | null>;
+	isMuted: Writable<boolean>;
+	toggleMute: () => void;
+	facingMode: Writable<'user' | 'environment'>;
+	toggleFacingMode: () => void;
+	userDeviceId: Writable<string | null>;
+	environmentDeviceId: Writable<string | null>;
+} {
 	const player = writable<VideoJSWithRecorder>();
 	const audioDevices = writable<InputDeviceInfo[]>([]);
 	const videoDevices = writable<InputDeviceInfo[]>([]);
@@ -26,7 +48,7 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
 	const userDeviceId = writable<string | null>(null);
 	const environmentDeviceId = writable<string | null>(null);
 
-	const makePlayer = () => {
+	const makePlayer = (): VideoJSWithRecorder => {
 		const videoRef = getVideoRef();
 
 		if (!videoRef) {
@@ -47,7 +69,7 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
 			//videoJS.log(msg);
 		}) as VideoJSWithRecorder;
 	};
-	async function getDeviceIds() {
+	async function getDeviceIds(): Promise<void> {
 		try {
 			// First enumerate devices to see what's available
 			const devices = await navigator.mediaDevices.enumerateDevices();
@@ -90,7 +112,7 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
 		}
 	}
 
-	const displayErrors = (errors: string[] | null = null, clear = false) => {
+	const displayErrors = (errors: string[] | null = null, clear = false): void => {
 		error.set(true);
 		if (clear || !errors) {
 			errorMessages.set(errors || null);
@@ -105,7 +127,7 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
 		}
 	};
 
-	const checkPermissions = async () => {
+	const checkPermissions = async (): Promise<boolean> => {
 		try {
 			// @ts-ignore
 			const permissions = await navigator.permissions.query({ name: 'camera' });
@@ -142,7 +164,7 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
 		}
 	};
 
-	const setup = async () => {
+	const setup = async (): Promise<VideoJSWithRecorder> => {
 		const _player = makePlayer();
 		player.set(_player);
 		_player.hide();
@@ -291,7 +313,7 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
 		return _player;
 	};
 
-	const changeVideoInput = (deviceId: string) => {
+	const changeVideoInput = (deviceId: string): void => {
 		try {
 			console.log('rec: changeVideoInput', deviceId);
 			get(player)?.record().setVideoInput(deviceId);
@@ -303,7 +325,7 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
 		}
 	};
 
-	const changeAudioInput = (deviceId: string) => {
+	const changeAudioInput = (deviceId: string): void => {
 		try {
 			console.log('rec: changeAudioInput', deviceId);
 			get(player)?.record().setAudioInput(deviceId);
@@ -315,7 +337,7 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
 		}
 	};
 
-	const setMute = (value: boolean) => {
+	const setMute = (value: boolean): void => {
 		const _player = get(player);
 		isMuted.set(value);
 
@@ -332,11 +354,11 @@ function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined,
 		}
 	};
 
-	const toggleMute = () => {
+	const toggleMute = (): void => {
 		setMute(!get(isMuted));
 	};
 
-	const toggleFacingMode = () => {
+	const toggleFacingMode = (): void => {
 		const _facingMode = get(facingMode);
 		const newFacingMode = _facingMode === 'user' ? 'environment' : 'user';
 		facingMode.set(newFacingMode);

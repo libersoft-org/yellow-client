@@ -27,15 +27,15 @@
 	let elDialogAddressDel: DialogAddressDel | undefined = $state();
 	const setSettingsSection = getContext<Function>('setSettingsSection');
 
-	function addAddress() {
+	function addAddress(): void {
 		setSettingsSection('wallets-address-add-' + params.wallet.guid);
 	}
 
-	function editAddress(index: string | number) {
+	function editAddress(index: string | number): void {
 		setSettingsSection('wallets-address-edit-' + params.wallet.guid + '-' + index);
 	}
 
-	function deleteAddress(index: string | number) {
+	function deleteAddress(index: string | number): void {
 		elDialogAddressDel?.open(params.wallet, index);
 	}
 
@@ -47,7 +47,7 @@
 		reorderAddresses(params.wallet, reordered);
 	}
 
-	function openExport() {
+	function openExport(): void {
 		setSettingsSection('wallets-wallet-export-' + params.wallet.guid);
 	}
 </script>

@@ -24,12 +24,12 @@
 		return step === 'connect' ? $ledgerConnected : !!walletName.trim() && $ledgerConnected;
 	});
 
-	function onNext() {
+	function onNext(): void {
 		if (step === 'connect') step = 'configure';
 		else if (step === 'configure') addWallet();
 	}
 
-	async function addWallet() {
+	async function addWallet(): Promise<void> {
 		// Get device identifiers similar to how Trezor uses staticSessionId
 		const deviceIdentifiers = getLedgerDeviceIdentifiers();
 
@@ -39,7 +39,7 @@
 		setSettingsSection('wallets');
 	}
 
-	function goBack() {
+	function goBack(): void {
 		if (step === 'configure') step = 'connect';
 		else setSettingsSection('wallets-add');
 	}

@@ -58,13 +58,13 @@
 		return !error;
 	}
 
-	function clickAdd() {
+	function clickAdd(): void {
 		if (!validateFields()) return;
 		addNFT(networkGuid, nftData.contract_address, nftData.token_id);
 		close();
 	}
 
-	function clickEdit() {
+	function clickEdit(): void {
 		if (!validateFields() || !item?.guid) return;
 		editNFT(networkGuid, item.guid, nftData.contract_address, nftData.token_id);
 		close();

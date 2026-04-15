@@ -4,17 +4,17 @@ import { hideSidebarMobile } from '@/core/scripts/stores.ts';
 type PageName = 'map' | 'match' | 'people' | 'settings' | null;
 export let page = writable<PageName>(null);
 
-export function setPage(name: NonNullable<PageName>) {
+export function setPage(name: NonNullable<PageName>): void {
 	page.set(name);
 	hideSidebarMobile.set(true);
 }
 
-export function closePage() {
+export function closePage(): void {
 	page.set(null);
 	hideSidebarMobile.set(false);
 }
 
-export function closeModule() {
+export function closeModule(): void {
 	hideSidebarMobile.set(false);
 	setModule(null);
 }

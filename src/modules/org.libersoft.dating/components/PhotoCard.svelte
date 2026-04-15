@@ -12,14 +12,14 @@
 	let threshold = 100;
 	let isDragging = $state(false);
 
-	function startSwipe(e) {
+	function startSwipe(e): void {
 		moving = true;
 		isDragging = true;
 		startX = e.touches ? e.touches[0].clientX : e.clientX;
 		e.preventDefault();
 	}
 
-	function moveSwipe(e) {
+	function moveSwipe(e): void {
 		if (!isDragging) return;
 		const clientX = e.touches ? e.touches[0].clientX : e.clientX;
 		currentX = clientX - startX;
@@ -29,7 +29,7 @@
 		e.preventDefault();
 	}
 
-	function endSwipe(e) {
+	function endSwipe(e): void {
 		if (!isDragging) return;
 		e.preventDefault();
 		e.stopPropagation();
@@ -58,13 +58,13 @@
 	}
 
 	// Function for handling mouse leave event
-	function handleMouseLeave(e) {
+	function handleMouseLeave(e): void {
 		if (isDragging) {
 			endSwipe(e);
 		}
 	}
 
-	function onYes() {
+	function onYes(): void {
 		console.log('Yes');
 		// Animate swipe right
 		currentX = window.innerWidth;
@@ -74,7 +74,7 @@
 		}, 300);
 	}
 
-	function onNo() {
+	function onNo(): void {
 		console.log('No');
 		// Animate swipe left
 		currentX = -window.innerWidth;

@@ -59,7 +59,7 @@ modules_config.subscribe(config => {
 	}
 });
 
-async function syncModulesConfigToNative(config: IModulesConfiguration) {
+async function syncModulesConfigToNative(config: IModulesConfiguration): Promise<void> {
 	try {
 		await invoke('plugin:yellow|save_modules_config', {
 			configJson: JSON.stringify(config),
@@ -70,7 +70,7 @@ async function syncModulesConfigToNative(config: IModulesConfiguration) {
 	}
 }
 
-export function updateModuleConfig(moduleId: string, updates: Partial<IModuleConfig>) {
+export function updateModuleConfig(moduleId: string, updates: Partial<IModuleConfig>): void {
 	modules_config.update(config => {
 		if (config.modules[moduleId]) {
 			config.modules[moduleId] = { ...config.modules[moduleId], ...updates };
@@ -79,20 +79,20 @@ export function updateModuleConfig(moduleId: string, updates: Partial<IModuleCon
 	});
 }
 
-export function addModuleConfig(module: IModuleConfig) {
+export function addModuleConfig(module: IModuleConfig): void {
 	modules_config.update(config => {
 		config.modules[module.id] = module;
 		return config;
 	});
 }
 
-export function removeModuleConfig(moduleId: string) {
+export function removeModuleConfig(moduleId: string): void {
 	modules_config.update(config => {
 		delete config.modules[moduleId];
 		return config;
 	});
 }
 
-export function resetModulesConfig() {
+export function resetModulesConfig(): void {
 	modules_config.set({ modules: defaultModules });
 }

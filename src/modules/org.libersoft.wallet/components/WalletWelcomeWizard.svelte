@@ -29,7 +29,7 @@
 		checkAndShowWizard();
 	});
 
-	function checkAndShowWizard() {
+	function checkAndShowWizard(): void {
 		const walletsCount = get(wallets).length;
 		const networksCount = get(networks).length;
 
@@ -40,7 +40,7 @@
 	}
 
 	// Export function to manually open wizard
-	export function openWizard() {
+	export function openWizard(): void {
 		elWalletWelcomeWizard?.open();
 	}
 </script>

@@ -12,7 +12,7 @@
 	}
 	const { children, background = 'var(--primary-soft-background)', hover = true, onClick, ...restProps }: Props = $props();
 
-	function handleKeyDown(e: KeyboardEvent) {
+	function handleKeyDown(e: KeyboardEvent): void {
 		if (!onClick) return;
 		if (e.key === 'Enter' || e.key === ' ') {
 			e.preventDefault();

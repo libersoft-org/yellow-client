@@ -40,7 +40,7 @@ export function makeFileDownload(data: MakeFileDownloadData): IFileDownload {
 	return Object.assign(defaults, data);
 }
 
-export async function blobToBase64(blob: Blob) {
+export async function blobToBase64(blob: Blob): Promise<string> {
 	const arrayBuffer = await blob.arrayBuffer(); // Get ArrayBuffer from the Blob
 	const bytes = new Uint8Array(arrayBuffer); // Convert ArrayBuffer to Uint8Array
 	let binaryString = '';
@@ -52,7 +52,7 @@ export async function blobToBase64(blob: Blob) {
 	return btoa(binaryString); // Convert binary string to Base64
 }
 
-export async function base64ToUint8Array(base64: string) {
+export async function base64ToUint8Array(base64: string): Promise<Uint8Array> {
 	return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
 }
 
@@ -62,7 +62,7 @@ export async function base64ToUint8Array(base64: string) {
  * @param file {string | Blob} - url or blob
  * @param fileName - name of the file (this name will be used when downloading)
  */
-export function assembleFile(file: string | Blob, fileName?: string) {
+export function assembleFile(file: string | Blob, fileName?: string): void {
 	const downloadLink = document.createElement('a');
 	downloadLink.href = file instanceof Blob ? URL.createObjectURL(file) : file;
 	downloadLink.download = fileName || (file instanceof File ? file.name : 'unknown_file'); // fixme: file is (string | Blob), but Blob does not have name property
@@ -76,7 +76,7 @@ export function assembleFile(file: string | Blob, fileName?: string) {
 	console.log(`File download complete: ${fileName}`);
 }
 
-export async function transformFilesForServer(files: FileList) {
+export async function transformFilesForServer(files: FileList): Promise<FileList> {
 	for (let i = 0; i < files.length; i++) {
 		const file = files[i]!;
 		const mimeType = file.type;

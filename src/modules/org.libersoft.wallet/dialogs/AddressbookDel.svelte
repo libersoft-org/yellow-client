@@ -16,16 +16,16 @@
 		],
 	};
 
-	function clickYes() {
+	function clickYes(): void {
 		deleteAddressBookItem(item.guid);
 		elDialog?.close();
 	}
 
-	function clickNo() {
+	function clickNo(): void {
 		elDialog?.close();
 	}
 
-	export function open() {
+	export function open(): void {
 		console.log(item);
 		elDialog?.open();
 	}

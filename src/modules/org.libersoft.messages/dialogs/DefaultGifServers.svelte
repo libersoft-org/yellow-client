@@ -12,16 +12,16 @@
 		],
 	});
 
-	export function open() {
+	export function open(): void {
 		elDialog?.open();
 	}
 
-	function clickYes() {
+	function clickYes(): void {
 		gif_servers.set(defaultGifServers);
 		elDialog?.close();
 	}
 
-	function clickNo() {
+	function clickNo(): void {
 		elDialog?.close();
 	}
 </script>

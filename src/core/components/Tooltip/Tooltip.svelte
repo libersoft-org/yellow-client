@@ -9,7 +9,7 @@
 	}
 	let { targetRef, children }: Props = $props();
 	let floatingRef: HTMLElement;
-	const setupFloatingUI = () => {
+	const setupFloatingUI = (): void => {
 		computePosition(targetRef, floatingRef, {
 			placement: 'top',
 			middleware: [

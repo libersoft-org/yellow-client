@@ -51,7 +51,7 @@
 		switchTab('qr');
 	}
 
-	function generateDummyQRCode() {
+	function generateDummyQRCode(): void {
 		QRCode.toDataURL('DECODE ME', { width: 300, height: 300, margin: 0 })
 			.then(url => (dummyQrCodeData = url))
 			.catch(err => {
@@ -59,7 +59,7 @@
 			});
 	}
 
-	function generateQRCode() {
+	function generateQRCode(): void {
 		qrError = null;
 		// Use jsonEditorContents instead of JSON.stringify(data)
 		const dataString = jsonEditorContents;
@@ -71,11 +71,11 @@
 			});
 	}
 
-	function toggleReveal() {
+	function toggleReveal(): void {
 		isRevealed = !isRevealed;
 	}
 
-	function clickCopy() {
+	function clickCopy(): void {
 		navigator.clipboard.writeText(jsonEditorContents);
 		copyText = 'Copied!';
 		clearTimeout(timeoutId);
@@ -95,7 +95,7 @@
 		}
 	}
 
-	function clickDownload() {
+	function clickDownload(): void {
 		cleanupDownload();
 		let blob = new Blob([jsonEditorContents], { type: 'application/json' });
 		lastBlobUrl = URL.createObjectURL(blob);

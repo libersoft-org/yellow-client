@@ -35,7 +35,7 @@
 		if (stream) stream.getTracks().forEach(track => track.stop());
 	});
 
-	async function startCamera() {
+	async function startCamera(): Promise<void> {
 		try {
 			if (stream) {
 				stream.getTracks().forEach(track => track.stop());
@@ -57,17 +57,17 @@
 		}
 	}
 
-	function startScanning() {
+	function startScanning(): void {
 		if (!elScannerDiv) return;
 		scanning = true;
 		requestAnimationFrame(scanFrame);
 	}
 
-	function stopScanning() {
+	function stopScanning(): void {
 		scanning = false;
 	}
 
-	async function scanFrame() {
+	async function scanFrame(): Promise<void> {
 		if (!scanning || !elScannerDiv) return;
 
 		if (elVideo && elCanvas) {
@@ -120,32 +120,32 @@
 		}
 	}
 
-	function processQRCode(data: string) {
+	function processQRCode(data: string): void {
 		stopScanning();
 		if (stream) stream.getTracks().forEach(track => track.stop());
 		scannedText = data;
 		onScanned(data);
 	}
 
-	function scanAgain() {
+	function scanAgain(): void {
 		scannedText = '';
 		alertText = '';
 		lastProcessedCode = '';
 		startCamera();
 	}
 
-	export function reset() {
+	export function reset(): void {
 		scannedText = '';
 		alertText = '';
 		lastProcessedCode = '';
 		if (autoStart) startCamera();
 	}
 
-	export function start() {
+	export function start(): void {
 		startCamera();
 	}
 
-	export function stop() {
+	export function stop(): void {
 		stopScanning();
 		if (stream) {
 			stream.getTracks().forEach(track => track.stop());

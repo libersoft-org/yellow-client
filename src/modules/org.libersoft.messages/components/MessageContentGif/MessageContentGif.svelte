@@ -5,7 +5,7 @@
 	let v = $derived(node.attributes.file?.value);
 	let messages_context: any = getContext('MessagesContext');
 
-	async function openExpressions() {
+	async function openExpressions(): Promise<void> {
 		await messages_context.messageBar?.openExpressions('gifs');
 	}
 </script>
