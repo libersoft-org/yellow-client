@@ -5,7 +5,12 @@
 	}
 	let { children }: Props = $props();
 
-	function portal(node: HTMLElement): { update: () => void; destroy: () => void } {
+	interface IPortalAction {
+		update: () => void;
+		destroy: () => void;
+	}
+
+	function portal(node: HTMLElement): IPortalAction {
 		let target: HTMLElement | null = document.body;
 
 		function update(): void {

@@ -1,4 +1,4 @@
-import { type IFileDownload, type FileDownloadStoreType, type IFileUploadChunk, type IFileUploadRecord, FileUploadRecordStatus } from './types.ts';
+import { type IFileDownload, type FileDownloadStoreType, type IFileUploadRecord, FileUploadRecordStatus, type PullChunkFn } from './types.ts';
 import { makeFileDownload } from './utils.ts';
 import EventEmitter from 'events';
 import fileDownloadStore from '../../stores/FileDownloadStore.ts';
@@ -11,13 +11,7 @@ export class FileDownloadService extends EventEmitter {
 		this.downloadStore = downloadStore;
 	}
 
-	async startDownloadSerial(
-		records: IFileUploadRecord[],
-		pullChunkFn: (data: { uploadId: string; offsetBytes: number; chunkSize: number }) => Promise<{
-			chunk: IFileUploadChunk;
-		}>,
-		finishCallback: (download: IFileDownload) => void
-	): Promise<void> {
+	async startDownloadSerial(records: IFileUploadRecord[], pullChunkFn: PullChunkFn, finishCallback: (download: IFileDownload) => void): Promise<void> {
 		for (const record of records) {
 			let download: IFileDownload | undefined = this.downloadStore.get(record.id);
 			if (!download) {

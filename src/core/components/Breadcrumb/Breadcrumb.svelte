@@ -1,11 +1,15 @@
+<script lang="ts" module>
+	export interface IBreadcrumbItem {
+		title: string;
+		onClick: (e?: Event) => void;
+	}
+</script>
+
 <script lang="ts">
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	interface Props {
-		items: Array<{
-			title: string;
-			onClick: (e: Event) => void;
-		}>;
+		items: IBreadcrumbItem[];
 	}
 	let { items }: Props = $props();
 	let firstItemColor = $derived(items.length === 1 ? '--secondary-foreground' : '--disabled-foreground');

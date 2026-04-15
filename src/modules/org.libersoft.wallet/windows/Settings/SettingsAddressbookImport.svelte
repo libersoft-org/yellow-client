@@ -2,6 +2,7 @@
 	import { validateAddressBookImport, importAddressBookItems, replaceAddressBook, hasAddressBookItems } from 'libersoft-crypto/addressbook';
 	import Import from '@/core/components/Import/Import.svelte';
 	import Dialog, { type IDialogData } from '@/core/components/Dialog/Dialog.svelte';
+	import type { IValidationResult } from '@/core/types/validation.ts';
 	interface Props {
 		close: () => void;
 	}
@@ -19,7 +20,7 @@
 		],
 	};
 
-	function validateAddressBook(text: string): { valid: boolean; error?: string } {
+	function validateAddressBook(text: string): IValidationResult {
 		return validateAddressBookImport(text);
 	}
 

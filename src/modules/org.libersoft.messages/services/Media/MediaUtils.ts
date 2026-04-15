@@ -1,7 +1,10 @@
 import { InvalidFileReaderResult } from './errors.ts';
 import _debug from 'debug';
-
 const debug = _debug('libersoft:messages:services:MediaUtils');
+interface IAudioData {
+	duration: number;
+	peaks: number[];
+}
 
 class MediaUtils {
 	static PROGRESSIVE_DOWNLOAD_MEDIA_ENDPOINT = '/yellow/media';
@@ -78,7 +81,7 @@ class MediaUtils {
 		});
 	}
 
-	static getAudioDataFromFile(file: File): Promise<{ duration: number; peaks: number[] }> {
+	static getAudioDataFromFile(file: File): Promise<IAudioData> {
 		return new Promise((resolve, reject) => {
 			const reader = new FileReader();
 
@@ -95,7 +98,7 @@ class MediaUtils {
 		});
 	}
 
-	static async getAudioDataFromArrayBuffer(arrayBuffer: ArrayBuffer): Promise<{ duration: number; peaks: number[] }> {
+	static async getAudioDataFromArrayBuffer(arrayBuffer: ArrayBuffer): Promise<IAudioData> {
 		// @ts-ignore
 		const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 		const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);

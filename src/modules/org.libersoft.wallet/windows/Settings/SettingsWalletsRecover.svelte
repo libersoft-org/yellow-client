@@ -3,6 +3,7 @@
 	import { Mnemonic } from 'ethers';
 	import { addWallet, wallets } from 'libersoft-crypto/wallet';
 	import { validateForm } from '@/core/scripts/utils/form.ts';
+	import type { IValidationResult } from '@/core/types/validation.ts';
 	import Label from '@/core/components/Label/Label.svelte';
 	import Input from '@/core/components/Input/Input.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
@@ -21,7 +22,7 @@
 		name = 'My wallet ' + ($wallets.length + 1);
 	});
 
-	function validateRecoveryPhrase(text: string): { valid: boolean; error?: string } {
+	function validateRecoveryPhrase(text: string): IValidationResult {
 		const trimmedText = text.trim();
 		if (!trimmedText) return { valid: false, error: 'Recovery phrase is required' };
 		try {

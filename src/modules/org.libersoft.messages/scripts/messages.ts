@@ -3,7 +3,7 @@ import { get, writable } from 'svelte/store';
 import DOMPurify from 'dompurify';
 import { log } from '@/core/scripts/tauri.ts';
 import fileUploadManager from '@/org.libersoft.messages/services/Files/FileUploadService.ts';
-import { FileUploadRecordStatus, FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
+import { FileUploadRecordStatus, FileUploadRecordType, type IPullChunkRequest } from '@/org.libersoft.messages/services/Files/types.ts';
 import fileDownloadManager from '@/org.libersoft.messages/services/Files/FileDownloadService.ts';
 import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
@@ -366,9 +366,8 @@ export function downloadAttachmentsSerial(records: any[], finishCallback: (downl
 	return fileDownloadManager.startDownloadSerial(records, makeDownloadChunkAsyncFn(acc), finishCallback);
 }
 
-export const makeDownloadChunkAsyncFn =
-	(acc: any): ((args: { uploadId: string; offsetBytes: number; chunkSize: number }) => Promise<any>) =>
-	({ uploadId, offsetBytes, chunkSize }: { uploadId: string; offsetBytes: number; chunkSize: number }): Promise<any> => {
+export function makeDownloadChunkAsyncFn(acc: any): (args: IPullChunkRequest) => Promise<any> {
+	return ({ uploadId, offsetBytes, chunkSize }: IPullChunkRequest): Promise<any> => {
 		return new Promise((resolve, reject) => {
 			sendData(acc, null, 'download_chunk', { uploadId, offsetBytes, chunkSize }, true, async (_req, res) => {
 				if (res.error !== false) {
@@ -388,6 +387,7 @@ export const makeDownloadChunkAsyncFn =
 			});
 		});
 	};
+}
 
 export function cancelUpload(uploadId: string): void {
 	fileUploadManager.cancelUpload(uploadId);

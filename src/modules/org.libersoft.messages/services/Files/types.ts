@@ -107,3 +107,24 @@ export type FileDownloadStoreType = {
 	updateDownloadRecord: (id: string, record: IFileUploadRecord) => void;
 	isAnyDownloadRunning: () => boolean;
 } & BaseStoreType<FileDownloadStoreValue, IFileDownload>;
+
+export interface IFileChunkData {
+	chunkId: number;
+	uploadId: string;
+	checksum: string;
+	data: string;
+}
+
+export interface IGetChunkResult {
+	chunk: IFileChunkData;
+	upload: IFileUpload;
+	blob: Blob;
+}
+
+export interface IPullChunkRequest {
+	uploadId: string;
+	offsetBytes: number;
+	chunkSize: number;
+}
+
+export type PullChunkFn = (data: IPullChunkRequest) => Promise<{ chunk: IFileUploadChunk }>;

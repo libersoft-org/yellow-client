@@ -9,10 +9,7 @@ type VideoJSWithRecorder = ReturnType<typeof videoJS> & {
 	deviceErrorCode: string;
 };
 
-function useVideoRecorderSvelte(
-	getVideoRef: () => HTMLVideoElement | undefined,
-	opts: any
-): {
+interface IVideoRecorder {
 	setup: () => Promise<VideoJSWithRecorder>;
 	player: Writable<VideoJSWithRecorder>;
 	loading: Writable<boolean>;
@@ -31,7 +28,9 @@ function useVideoRecorderSvelte(
 	toggleFacingMode: () => void;
 	userDeviceId: Writable<string | null>;
 	environmentDeviceId: Writable<string | null>;
-} {
+}
+
+function useVideoRecorderSvelte(getVideoRef: () => HTMLVideoElement | undefined, opts: any): IVideoRecorder {
 	const player = writable<VideoJSWithRecorder>();
 	const audioDevices = writable<InputDeviceInfo[]>([]);
 	const videoDevices = writable<InputDeviceInfo[]>([]);

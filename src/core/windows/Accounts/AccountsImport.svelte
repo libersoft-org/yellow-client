@@ -3,6 +3,7 @@
 	import { accounts_config, accountConfigExistsByCredentials, accounts, active_account } from '@/core/scripts/core.ts';
 	import { active_account_id } from '@/core/scripts/stores.ts';
 	import { validateAccountsArray, validateAccountConfig } from '@/core/scripts/accounts_config.ts';
+	import type { IValidationResult } from '@/core/types/validation.ts';
 	import { ImportSuccessWithWarnings } from '@/core/scripts/import.ts';
 	import { log } from '@/core/scripts/tauri.ts';
 	import Window from '@/core/components/Window/Window.svelte';
@@ -52,7 +53,7 @@
 		],
 	});
 
-	function validateImport(text: string): { valid: boolean; error?: string } {
+	function validateImport(text: string): IValidationResult {
 		if (!text.trim()) {
 			return { valid: false, error: 'No data provided' };
 		}

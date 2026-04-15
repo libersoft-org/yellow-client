@@ -1,4 +1,5 @@
 import { TableDragManager, type DragConfig } from '@/core/scripts/drag.ts';
+import type { ActionReturn } from 'svelte/action';
 
 export interface TableDragOptions {
 	/** Number of columns in the table for colspan (auto-detected if not provided) */
@@ -79,7 +80,7 @@ function injectDragStyles(): void {
  * Svelte action for table drag & drop functionality
  * Usage: <div use:tableDrag={options}>
  */
-export function tableDrag(node: HTMLElement, options: TableDragOptions): { update(newOptions: TableDragOptions): void; destroy(): void } {
+export function tableDrag(node: HTMLElement, options: TableDragOptions): ActionReturn<TableDragOptions> {
 	let dragManager: TableDragManager | undefined;
 	let currentItemsLength = 0;
 

@@ -1,4 +1,4 @@
-<script>
+<script lang="ts">
 	import Button from '@/core/components/Button/Button.svelte';
 	import { writable, get } from 'svelte/store';
 	import Notification from '@/core/components/Notification/Notification.svelte';
@@ -7,9 +7,9 @@
 	import { onMount } from 'svelte';
 	import { invoke } from '@tauri-apps/api/core';
 	import { heightLogicalChanged, initPositioning } from './position.ts';
-	export let maxNotifications = 3;
-	let notifications = writable(/** @type {any[]} */ ([]));
-	let heightLogical = writable(100);
+	let maxNotifications = 3;
+	let notifications = writable<any[]>([]);
+	let heightLogical = writable<number>(100);
 
 	// // Catch all synchronous errors (see +layout.svelte)
 	// window.addEventListener('error', event => {
@@ -25,50 +25,52 @@
 	// 	console.error('+page Stack trace:\n', reason?.stack || reason);
 	// });
 
-	onMount(
-		/** @type {any} */ (
-			async () => {
-				log.debug('notifications onMount: CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
-				let deinit;
-				if (window.__TAURI__) {
-					deinit = initPositioning();
-					invoke('show', {});
-				}
-				if (CUSTOM_NOTIFICATIONS) await initNotificationsPage();
-				else log.debug('CUSTOM_NOTIFICATIONS is not defined');
-				return deinit;
-			}
-		)
-	);
+	onMount(() => {
+		let deinitPromise: Promise<(() => void) | undefined> | undefined;
 
-	heightLogical.subscribe(async v => {
+		async function init(): Promise<(() => void) | undefined> {
+			log.debug('notifications onMount: CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
+			let deinit: (() => void) | undefined;
+			if (window.__TAURI__) {
+				deinit = await initPositioning();
+				invoke('show', {});
+			}
+			if (CUSTOM_NOTIFICATIONS) await initNotificationsPage();
+			else log.debug('CUSTOM_NOTIFICATIONS is not defined');
+			return deinit;
+		}
+		deinitPromise = init();
+		return () => {
+			deinitPromise?.then(deinit => deinit?.());
+		};
+	});
+
+	heightLogical.subscribe(async (v: number): Promise<void> => {
 		await heightLogicalChanged(v);
 	});
 
-	/** @returns {Promise<void>} */
-	async function initNotificationsPage() {
+	async function initNotificationsPage(): Promise<void> {
 		let s = await multiwindow_store('notifications', false);
 		log.debug('initNotifications: store:', s);
-		s.onChange((k, v) => {
+		s.onChange((k: string, v: any) => {
 			log.debug('store.onChange', k, !!v);
 			if (!v) onNotificationRemoved(k);
 			else addNotificationData(v);
 		});
-		/** @type {any} */ (s).onKeyChange((k, v) => {
+		(s as any).onKeyChange((k: string, v: any) => {
 			log.debug('store.onKeyChange', k, v);
 		});
 		//log.debug('initial store:', await s.entries());
-		let values = await s.values();
+		let values: any[] = await s.values();
 		log.debug('initNotifications: values:', values);
-		values = values.filter(v => !!v);
-		values.sort((a, b) => a.ts - b.ts);
+		values = values.filter((v: any) => !!v);
+		values.sort((a: any, b: any) => a.ts - b.ts);
 		for (let v of values) {
-			if (v) await addNotificationData(v);
+			if (v) addNotificationData(v);
 		}
 	}
 
-	/** @returns {void} */
-	function addNotificationData(data) {
+	function addNotificationData(data: any): void {
 		log.debug('addNotificationData data:', data);
 		data.onClose = onClose.bind(data);
 		data.onClick = onClick.bind(data);
@@ -76,23 +78,20 @@
 		//log.debug('notification added');
 	}
 
-	/** @this {any} @returns {Promise<void>} */
-	async function onClose(e) {
+	async function onClose(this: any, e: Event): Promise<void> {
 		log.debug('onClose notification');
 		this.onClick(e, 'close');
 		onNotificationRemoved(this.id);
 	}
 
-	/** @this {any} @returns {Promise<void>} */
-	async function onClick(e, data) {
+	async function onClick(this: any, e: Event, data: any): Promise<void> {
 		e.stopPropagation();
 		log.debug('onClick notification');
 		await (await multiwindow_store('notification-events', false)).set(this.id, JSON.stringify(data));
 		log.debug('notification event set');
 	}
 
-	/** @returns {Promise<void>} */
-	async function onNotificationRemoved(id) {
+	async function onNotificationRemoved(id: string): Promise<void> {
 		let s = await multiwindow_store('notifications', false);
 		await s.delete(id);
 		notifications.update(v => v.filter(item => item.id !== id));
@@ -101,8 +100,7 @@
 		}
 	}
 
-	/** @returns {Promise<void>} */
-	async function clearNotifications() {
+	async function clearNotifications(): Promise<void> {
 		log.debug('clearNotifications');
 		for (let n of get(notifications)) {
 			await n.onClose();

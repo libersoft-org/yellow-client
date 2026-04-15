@@ -1,4 +1,4 @@
-import { type ICustomFile, type IFileUpload, type IFileUploadBeginOptions, type IFileUploadRecord, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole, type FileUploadStoreType } from './types.ts';
+import { type ICustomFile, type IFileUpload, type IFileUploadBeginOptions, type IFileUploadRecord, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole, type FileUploadStoreType, type IGetChunkResult } from './types.ts';
 import { blobToBase64, makeFileUpload, makeFileUploadRecord } from './utils.ts';
 import EventEmitter from 'events';
 import fileUploadStore from '../../stores/FileUploadStore.ts';
@@ -41,7 +41,7 @@ export class FileUploadService extends EventEmitter {
 		return { uploads };
 	}
 
-	async getChunk(uploadId: string, chunkId: number, chunkSize: number): Promise<{ chunk: { chunkId: number; uploadId: string; checksum: string; data: string }; upload: IFileUpload; blob: Blob }> {
+	async getChunk(uploadId: string, chunkId: number, chunkSize: number): Promise<IGetChunkResult> {
 		const upload = this.uploadsStore.get(uploadId);
 		if (!upload) throw new Error('Upload not found');
 		if (!upload.file) throw new Error('File is not set in file transfer');

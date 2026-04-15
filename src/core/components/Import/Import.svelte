@@ -7,8 +7,9 @@
 	import Button from '@/core/components/Button/Button.svelte';
 	import QRScanner from '@/core/components/QRScanner/QRScanner.svelte';
 	import { onMount, onDestroy } from 'svelte';
+	import type { IValidationResult } from '@/core/types/validation.ts';
 	interface Props {
-		onValidate: (text: string) => { valid: boolean; error?: string };
+		onValidate: (text: string) => IValidationResult;
 		onAdd: (text: string) => Promise<void>;
 		onReplace?: ((text: string) => Promise<void>) | undefined;
 		onSuccess?: (message: string) => void;

@@ -5,6 +5,7 @@
 	import { log } from '@/core/scripts/tauri.ts';
 	import { setContext, tick } from 'svelte';
 	import type { ISettingsNode, ISettingsNodeState, SetSettingsSectionFn, ISettingsComponent } from '@/core/types/settings.ts';
+	import type { IBreadcrumbItem } from '@/core/components/Breadcrumb/Breadcrumb.svelte';
 	interface IProps {
 		testId: string;
 		settingsObject: ISettingsNode;
@@ -91,7 +92,7 @@
 		return undefined;
 	}
 
-	function makeBreadcrumb(targetName: string): Array<{ title: string; onClick: () => Promise<void> }> {
+	function makeBreadcrumb(targetName: string): IBreadcrumbItem[] {
 		const stack: Array<{ node: any; path: any[] }> = [{ node: settingsObject, path: [] }];
 		while (stack.length) {
 			const item = stack.pop();

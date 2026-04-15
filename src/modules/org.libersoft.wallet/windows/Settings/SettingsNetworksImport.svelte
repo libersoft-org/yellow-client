@@ -3,6 +3,7 @@
 	import { networks, replaceAllNetworks, replaceExistingNetwork, addNetworkWithUniqueName, addSingleNetwork } from 'libersoft-crypto/network';
 	import { ImportSuccessWithWarnings } from '@/core/scripts/import.ts';
 	import Import from '@/core/components/Import/Import.svelte';
+	import type { IValidationResult } from '@/core/types/validation.ts';
 	import Dialog from '@/core/components/Dialog/Dialog.svelte';
 	import Alert from '@/core/components/Alert/Alert.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
@@ -43,7 +44,7 @@
 		],
 	});
 
-	function validateImport(text: string): { valid: boolean; error?: string } {
+	function validateImport(text: string): IValidationResult {
 		if (!text.trim()) return { valid: false, error: 'No data provided' };
 		let networksData;
 		try {

@@ -1,9 +1,11 @@
 // HMR State Debugging Utility
-export function createHMRDebugger(componentName: string): {
+interface IHMRDebugger {
 	trackState: (key: string, value: any) => void;
 	logReload: (currentState: Record<string, any>) => void;
 	trackLifecycle: (phase: 'mount' | 'destroy' | 'update') => void;
-} {
+}
+
+export function createHMRDebugger(componentName: string): IHMRDebugger {
 	if (!import.meta.hot)
 		return {
 			trackState: () => {},
