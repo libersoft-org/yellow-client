@@ -410,12 +410,6 @@
 
 <div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} role="button" tabindex="0" data-testid="message-item" data-uid={message.uid} data-msg-updated={_updateMessage || undefined} data-seen-sync={_maybeSetSeen || undefined} ontouchstart={handleTouchStart} ontouchend={handleTouchEnd} ontouchmove={handleTouchMove} oncontextmenu={rightClickContextMenu}>
 	<div bind:this={elIntersectionObserver}></div>
-	<!--<Reply name="Someone" text="Some text" />-->
-	<!--<Image file="https://cdn.britannica.com/87/196687-138-2D734164/facts-parrots.jpg" />-->
-	<!--<Audio file="audio/notification.mp3" />-->
-	<!--<Video file="https://file-examples.com/storage/fe3abb0cc967520c59b97f1/2017/04/file_example_MP4_1920_18MG.mp4" />-->
-	<!--<Map latitude="50.0755", longitude="14.4378" />-->
-	<!--<FileTransfer file="text.mp4" uploaded="10485760000" total="20000000000" />-->
 	{#if $debug}
 		<div class="debug">
 			<span class="bold">Original</span> (ID: <span class="bold">{message.id}</span>, format:
@@ -428,12 +422,6 @@
 	{:else}{/if}
 	<MessageContent {messageContent} />
 	<RenderMessageReactions reactions={message.reactions} {onReactionClick} />
-	<!--
- <div class="text">{@html 'processMessage(message.message)'}</div>
- <div class="text">{@html '<b>srtrstr'}</div>
- <div class="text">{@html 'srtrstr'}</div>
- <div class="text">{@html '<hr/>'}</div>
- -->
 	<div class="bottomline">
 		<div class="bottomline-reaction">
 			<MessageReaction {message} />
