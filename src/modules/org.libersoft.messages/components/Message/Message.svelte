@@ -1,12 +1,10 @@
-<script>
-	import { deleteMessage, identifier, processMessage, setMessageSeen, toggleMessageReaction } from '../../messages.js';
-	import { debug } from '@/core/core.ts';
+<script lang="ts">
+	import { deleteMessage, identifier, processMessage, setMessageSeen, toggleMessageReaction } from '@/org.libersoft.messages/scripts/messages.ts';
 	import { onDestroy, onMount, tick } from 'svelte';
-	import { isClientFocused } from '@/core/core.ts';
-	import { stripHtml } from '../../messages.js';
+	import { isClientFocused, debug } from '@/core/scripts/stores.ts';
+	import { stripHtml } from '@/org.libersoft.messages/scripts/utils/htmlUtils.ts';
 	import ContextMenu from '@/core/components/ContextMenu/ContextMenu.svelte';
 	import ContextMenuItem from '@/core/components/ContextMenu/ContextMenuItem.svelte';
-
 	// import Image from './image.svelte';
 	// import Audio from './audio.svelte';
 	// import Video from './video.svelte';
@@ -14,29 +12,23 @@
 	// import Map from './map.svelte';
 	import MessageContent from '../MessageContent/MessageContent.svelte';
 	// import Reply from './msgReply/Reply.svelte';
-	import messageBarReplyStore, { ReplyToType } from '../../stores/MessageBarReplyStore.ts';
-	import forwardMessageStore from '../../stores/ForwardMessageStore.ts';
-	import MessageReaction from '../MessageReaction/MessageReaction.svelte';
-	import RenderMessageReactions from '../MessageReaction/RenderMessageReactions.svelte';
-
-	export let message;
-	export let elContainer;
-
-	export let enableScroll;
-	export let disableScroll;
-
-	export function getRef() {
-		return elMessage;
+	import messageBarReplyStore, { ReplyToType } from '@/org.libersoft.messages/stores/MessageBarReplyStore.ts';
+	import { forwardMessageStore, ForwardedMessageType } from '@/org.libersoft.messages/stores/ForwardMessageStore.ts';
+	import MessageReaction from '@/org.libersoft.messages/components/MessageReaction/MessageReaction.svelte';
+	import RenderMessageReactions from '@/org.libersoft.messages/components/MessageReaction/RenderMessageReactions.svelte';
+	interface Props {
+		message: any;
+		elContainer: HTMLElement;
+		enableScroll: () => void;
+		disableScroll: () => void;
 	}
-
-	let seenTxt;
-	let checkmarks;
-	let observer;
-	let elIntersectionObserver;
-	let isVisible;
-	let elCaret;
-	let menu;
-	let elMessage;
+	let { message, elContainer, enableScroll, disableScroll }: Props = $props();
+	let observer: IntersectionObserver;
+	let elIntersectionObserver: HTMLDivElement;
+	let isVisible: boolean;
+	let elCaret: any;
+	let menu: any;
+	let elMessage: HTMLDivElement;
 	let touchStartX = 0;
 	let touchStartY = 0;
 	let touchCurrentX = 0;
@@ -44,55 +36,75 @@
 	let touchCurrentTranslation = 0;
 	let touchThreshold = 50;
 	let touchMaxTranslation = 80;
-	let moving;
-	let longPressTimer;
-	let thisWasALongPress;
-	let thisWasASwipe;
-	let thisWasAScroll;
-	let touchX;
-	let touchY;
-	let messageContent;
+	let moving: boolean;
+	let longPressTimer: ReturnType<typeof setTimeout> | null;
+	let thisWasALongPress: boolean;
+	let thisWasASwipe: boolean;
+	let thisWasAScroll: boolean;
+	let touchX: number;
+	let touchY: number;
+	let messageContent = $state<any>(undefined);
+	let renderedTs: number;
 
-	$: update(message);
+	let _updateMessage = $derived.by((): boolean => {
+		const msg = message;
+		queueMicrotask(() => update(msg));
+		return true;
+	});
+	//$: console.log('messageContent:', messageContent);
+	let _checkmarks = $derived(message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0');
+	let _seenTxt = $derived(message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending');
+	let checkmarks_img = $derived('modules/' + identifier + '/img/seen' + _checkmarks + '.svg');
+	//$: console.log('Core.isClientFocused:', $isClientFocused);
+	let _maybeSetSeen = $derived.by((): boolean => {
+		maybeSetSeen(isVisible, $isClientFocused);
+		return true;
+	});
+
+	export function getRef(): HTMLDivElement {
+		return elMessage;
+	}
+
 	// console.log('updated message:', message);
-	function update(message) {
+	function update(message: any): void {
 		if (messageContent) return;
 		//  console.log('update message:', message);
 		messageContent = processMessage(message);
 	}
 
-	//$: console.log('messageContent:', messageContent);
-	$: checkmarks = message.seen ? '2' : message.received_by_my_homeserver ? '1' : '0';
-	$: seenTxt = message.seen ? 'Seen' : message.received_by_my_homeserver ? 'Sent' : 'Sending';
-	$: checkmarks_img = 'modules/' + identifier + '/img/seen' + checkmarks + '.svg';
-	//$: console.log('Core.isClientFocused:', $isClientFocused);
-	$: maybeSetSeen(isVisible, $isClientFocused);
-
-	function maybeSetSeen(isVisible, isClientFocused) {
-		console.log('isVisible:', isVisible, 'isClientFocused:', isClientFocused);
+	function maybeSetSeen(isVisible: boolean, isClientFocused: boolean): void {
+		//console.log('isVisible:', isVisible, 'isClientFocused:', isClientFocused);
 		if (!isVisible || !isClientFocused) {
-			console.log('not setting seen because not visible or not focused');
+			//console.log('not setting seen because not visible or not focused');
 			return;
 		}
 		if (message.seen) {
-			console.log('not setting seen because already set');
+			//console.log('not setting seen because already set');
 			observer.disconnect();
 			isVisible = false;
 		} else {
-			console.log('setMessageSeen..');
-			setMessageSeen(message, () => {
-				console.log('seen set succesfully, disconnecting observer.');
-				observer.disconnect();
-				isVisible = false;
-			});
+			//console.log('setMessageSeen..');
+
+			const window_was_active_when_message_was_received = isClientFocused && Date.now() - renderedTs < 150;
+			setMessageSeen(
+				message,
+				() => {
+					console.log('seen set succesfully, disconnecting observer.');
+					observer.disconnect();
+					isVisible = false;
+				},
+				!(message.just_received && window_was_active_when_message_was_received)
+			);
 		}
 	}
 
-	function handleTouchStart(e) {
+	function handleTouchStart(e: TouchEvent): void {
 		//console.log('handle touch start', e);
+		const touch = e.changedTouches[0];
+		if (!touch) return;
 		moving = false;
-		touchX = e.changedTouches[0].clientX;
-		touchY = e.changedTouches[0].clientY;
+		touchX = touch.clientX;
+		touchY = touch.clientY;
 		thisWasALongPress = false;
 		thisWasASwipe = false;
 		thisWasAScroll = false;
@@ -102,19 +114,21 @@
 				console.log('Long press');
 			}
 		}, 500);
-		touchStartX = e.changedTouches[0].clientX;
-		touchStartY = e.changedTouches[0].clientY;
+		touchStartX = touch.clientX;
+		touchStartY = touch.clientY;
 		touchCurrentX = touchStartX;
 		touchCurrentY = touchStartY;
 		touchCurrentTranslation = 0;
 		elMessage.style.transition = 'none';
 	}
 
-	function handleTouchMove(e) {
+	function handleTouchMove(e: TouchEvent): void {
 		//console.log('handle touch move', e);
+		const touch = e.changedTouches[0];
+		if (!touch) return;
 		moving = true;
-		touchCurrentX = e.changedTouches[0].clientX;
-		touchCurrentY = e.changedTouches[0].clientY;
+		touchCurrentX = touch.clientX;
+		touchCurrentY = touch.clientY;
 		let diffX = touchCurrentX - touchStartX;
 		let diffY = touchCurrentY - touchStartY;
 
@@ -144,7 +158,7 @@
 		}
 	}
 
-	function handleTouchEnd(e) {
+	function handleTouchEnd(e: TouchEvent): void {
 		//console.log('handle touch end', e);
 		enableScroll();
 		if (longPressTimer) {
@@ -152,9 +166,9 @@
 			longPressTimer = null;
 		}
 		if (!moving && !thisWasALongPress) {
-			console.log('Short press:', e, e.x, e.y);
-			e.x = touchX;
-			e.y = touchY;
+			console.log('Short press:', e, touchX, touchY);
+			(e as any).x = touchX;
+			(e as any).y = touchY;
 			menu.openMenu(e);
 		}
 		let diff = touchCurrentTranslation;
@@ -200,6 +214,8 @@
    e.preventDefault();
   }, wheelOpt);*/
 
+		renderedTs = new Date().getTime();
+
 		if (!message.seen && !message.just_sent) {
 			if (message.is_outgoing && !(message.address_to === message.address_from)) {
 				console.log('no need to set seen');
@@ -210,8 +226,8 @@
 				async entries => {
 					//console.log(entries);
 					entries.sort((a, b) => a.time - b.time);
-					for (let entry of entries) {
-						isVisible = entries[0].isIntersecting;
+					for (let _entry of entries) {
+						isVisible = entries[0]!.isIntersecting;
 						await tick();
 					}
 				},
@@ -229,7 +245,7 @@
 		if (observer) observer.disconnect();
 	});
 
-	function replyMessage() {
+	function replyMessage(): void {
 		console.log('reply', message);
 		// startReply(message);
 		messageBarReplyStore.startReplyTo({
@@ -239,31 +255,31 @@
 		document.getElementById('message-input')?.focus();
 	}
 
-	function forwardMessage() {
+	function forwardMessage(): void {
 		console.log('forward');
 		forwardMessageStore.startForwardedMessage({
-			type: ReplyToType.MESSAGE,
+			type: ForwardedMessageType.MESSAGE,
 			data: message,
 		});
 	}
 
-	function onMessageDelete() {
+	function onMessageDelete(): void {
 		console.log('delete');
 		deleteMessage(message);
 	}
 
-	function copyTextOnly() {
+	function copyTextOnly(): void {
 		console.log('copy stripHtml');
 		navigator.clipboard.writeText(stripHtml(message.message));
 	}
 
-	function copyOriginal() {
+	function copyOriginal(): void {
 		console.log('copy original');
 		console.log(message.message);
 		navigator.clipboard.writeText(message.message);
 	}
 
-	function copyMessageHTML() {
+	function copyMessageHTML(): void {
 		console.log('copyMessagePseudoHtml');
 		console.log(messageContent);
 
@@ -276,9 +292,9 @@
 		navigator.clipboard.writeText(serialized);
 	}
 
-	async function rightClickContextMenu(e) {
+	async function rightClickContextMenu(e: MouseEvent): Promise<void> {
 		// for dev purposes: if you want to use native context menu (right mouse click) instead of app's in message list
-		if (import.meta.env.VITE_FORCE_NATIVE_CONTEXT_MENU && (e.ctrlKey || e.metaKey)) {
+		if (import.meta.env['VITE_FORCE_NATIVE_CONTEXT_MENU'] && (e.ctrlKey || e.metaKey)) {
 			return;
 		}
 		e.preventDefault();
@@ -288,14 +304,13 @@
 		await menu.openMenu(e);
 	}
 
-	const onReactionClick = codepoints_rgi => {
+	const onReactionClick = (codepoints_rgi: string): void => {
 		toggleMessageReaction(message, { emoji_codepoints_rgi: codepoints_rgi });
 	};
 </script>
 
 <style>
 	.message {
-		--animation-highlight-duration: 0.7s;
 		--message-max-width: 60%;
 		position: relative;
 		max-width: var(--message-max-width);
@@ -345,7 +360,7 @@
 	:global(.message .text a) {
 		font-weight: bold;
 		text-decoration: none;
-		color: #a60;
+		color: var(--primary-harder-background);
 	}
 
 	:global(.message .text img) {
@@ -393,14 +408,8 @@
 	}
 </style>
 
-<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} role="button" tabindex="0" data-testid="message-item" on:touchstart={handleTouchStart} on:touchend={handleTouchEnd} on:touchmove={handleTouchMove} on:contextmenu={rightClickContextMenu}>
+<div class="message {message.is_outgoing ? 'outgoing' : 'incoming'}" bind:this={elMessage} role="button" tabindex="0" data-testid="message-item" data-uid={message.uid} data-msg-updated={_updateMessage || undefined} data-seen-sync={_maybeSetSeen || undefined} ontouchstart={handleTouchStart} ontouchend={handleTouchEnd} ontouchmove={handleTouchMove} oncontextmenu={rightClickContextMenu}>
 	<div bind:this={elIntersectionObserver}></div>
-	<!--<Reply name="Someone" text="Some text" />-->
-	<!--<Image file="https://cdn.britannica.com/87/196687-138-2D734164/facts-parrots.jpg" />-->
-	<!--<Audio file="modules/{identifier}/audio/message.mp3" />-->
-	<!--<Video file="https://file-examples.com/storage/fe3abb0cc967520c59b97f1/2017/04/file_example_MP4_1920_18MG.mp4" />-->
-	<!--<Map latitude="50.0755", longitude="14.4378" />-->
-	<!--<FileTransfer file="text.mp4" uploaded="10485760000" total="20000000000" />-->
 	{#if $debug}
 		<div class="debug">
 			<span class="bold">Original</span> (ID: <span class="bold">{message.id}</span>, format:
@@ -413,12 +422,6 @@
 	{:else}{/if}
 	<MessageContent {messageContent} />
 	<RenderMessageReactions reactions={message.reactions} {onReactionClick} />
-	<!--
- <div class="text">{@html 'processMessage(message.message)'}</div>
- <div class="text">{@html '<b>srtrstr'}</div>
- <div class="text">{@html 'srtrstr'}</div>
- <div class="text">{@html '<hr/>'}</div>
- -->
 	<div class="bottomline">
 		<div class="bottomline-reaction">
 			<MessageReaction {message} />
@@ -426,17 +429,20 @@
 		<div class="bottomline-info">
 			<div class="time">{new Date(message.created /*.replace(' ', 'T') + 'Z'*/).toLocaleString()}</div>
 			{#if message.is_outgoing}
-				<div class="checkmark"><img src={checkmarks_img} alt={seenTxt} /></div>
+				<div class="checkmark"><img src={checkmarks_img} alt={_seenTxt} /></div>
 			{/if}
 		</div>
 	</div>
 </div>
-
 <ContextMenu bind:this={menu} target={elCaret}>
-	<ContextMenuItem img="img/copy.svg" label="Copy original" onClick={copyOriginal} />
-	<ContextMenuItem img="img/copy.svg" label="Copy text only" onClick={copyTextOnly} />
-	<ContextMenuItem img="img/copy.svg" label="Copy HTML" onClick={copyMessageHTML} />
-	<ContextMenuItem img="modules/{identifier}/img/reply.svg" label="Reply" onClick={replyMessage} data-testid="reply-context-menu-item" />
-	<ContextMenuItem img="modules/{identifier}/img/forward.svg" label="Forward" onClick={forwardMessage} />
-	<ContextMenuItem img="modules/{identifier}/img/delete.svg" label="Delete" onClick={onMessageDelete} />
+	{#if message.format === 'plaintext'}
+		<ContextMenuItem img="img/copy.svg" label="Copy" onClick={copyOriginal} testId={'message-context-menu-' + message.uid + '-copy'} />
+	{:else}
+		<ContextMenuItem img="img/copy.svg" label="Copy original" onClick={copyOriginal} testId={'message-context-menu-' + message.uid + '-copy-original'} />
+		<ContextMenuItem img="img/copy.svg" label="Copy text only" onClick={copyTextOnly} testId={'message-context-menu-' + message.uid + '-copy-text-only'} />
+		<ContextMenuItem img="img/copy.svg" label="Copy HTML" onClick={copyMessageHTML} testId={'message-context-menu-' + message.uid + '-copy-html'} />
+	{/if}
+	<ContextMenuItem img="modules/{identifier}/img/reply.svg" label="Reply" onClick={replyMessage} testId={'message-context-menu-' + message.uid + '-reply'} />
+	<ContextMenuItem img="modules/{identifier}/img/forward.svg" label="Forward" onClick={forwardMessage} testId={'message-context-menu-' + message.uid + '-forward'} />
+	<ContextMenuItem img="modules/{identifier}/img/delete.svg" label="Delete" onClick={onMessageDelete} testId={'message-context-menu-' + message.uid + '-delete'} />
 </ContextMenu>

@@ -1,13 +1,11 @@
-<script>
+<script lang="ts">
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import { getContext } from 'svelte';
-
 	let { node } = $props();
-	let v = node.attributes.file?.value;
+	let v = $derived(node.attributes.file?.value);
+	let messages_context: any = getContext('MessagesContext');
 
-	let messages_context = getContext('MessagesContext');
-
-	async function openExpressions() {
+	async function openExpressions(): Promise<void> {
 		await messages_context.messageBar?.openExpressions('gifs');
 	}
 </script>

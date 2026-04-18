@@ -1,14 +1,17 @@
-<script>
-	//import { debug } from '@/core/core.ts';
+<script lang="ts">
+	//import { debug } from '@/core/scripts/stores.ts';
 	import StickerSetItem from './StickerSetItem.svelte';
-	export let items;
-	export let stickerset;
-	export let intersecting;
+	interface Props {
+		items: any[];
+		stickerset: any;
+		intersecting?: boolean;
+	}
+	let { items, stickerset, intersecting = false }: Props = $props();
 	let size = 67;
 </script>
 
 {#if items}
-	{#each items as s, index (s.id)}
+	{#each items as s (s.id)}
 		<!--{#if $debug}<code>{JSON.stringify(s)}</code>{/if}-->
 		<StickerSetItem {size} sticker={s} {stickerset} {intersecting} />
 	{/each}

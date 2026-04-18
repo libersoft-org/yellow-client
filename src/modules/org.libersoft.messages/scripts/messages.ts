@@ -1,0 +1,1121 @@
+import { replaceEmojisWithTags } from '@/org.libersoft.messages/scripts/emojis.ts';
+import { get, writable } from 'svelte/store';
+import DOMPurify from 'dompurify';
+import { log } from '@/core/scripts/tauri.ts';
+import fileUploadManager from '@/org.libersoft.messages/services/Files/FileUploadService.ts';
+import { FileUploadRecordStatus, FileUploadRecordType, type IPullChunkRequest } from '@/org.libersoft.messages/services/Files/types.ts';
+import fileDownloadManager from '@/org.libersoft.messages/services/Files/FileDownloadService.ts';
+import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
+import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
+import { wrapConsecutiveElements, stripHtml } from '@/org.libersoft.messages/scripts/utils/htmlUtils.ts';
+import { splitAndLinkify } from './splitAndLinkify.ts';
+import { base64ToUint8Array, makeFileUpload, transformFilesForServer } from '@/org.libersoft.messages/services/Files/utils.ts';
+import { active_account, active_account_module_data, getGuid, relay, selectAccount, setModule } from '@/core/scripts/core.ts';
+import type { IAccount } from '@/core/scripts/types.ts';
+import { active_account_id, hideSidebarMobile, isClientFocused } from '@/core/scripts/stores.ts';
+import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
+import retry from 'retry';
+import { tick } from 'svelte';
+import { messages_db } from './db.ts';
+import filesDB, { LocalFileStatus } from '@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts';
+import { addNotification, deleteNotification, playAudio } from '@/core/scripts/notifications.ts';
+import { makeMessageReaction } from '@/org.libersoft.messages/factories/messageFactories.ts';
+import { identifier, connectionSendData, _send, initializeSubscriptions, deinitializeSubscriptions } from './connection.ts';
+export const uploadChunkSize = localStorageSharedStore('uploadChunkSize', 1024 * 1024 * 2);
+export const photoRadius = localStorageSharedStore('photoRadius', '50%');
+export const messageListMaxWidth = localStorageSharedStore('messageListMaxWidth', '1620');
+export const messageListApplyMaxWidth = localStorageSharedStore('messageListApplyMaxWidth', true);
+export const hideMessageTextInNotifications = localStorageSharedStore('hideMessageTextInNotifications', false);
+export const defaultFileDownloadFolder = localStorageSharedStore<string | null>('defaultFileDownloadFolder', null);
+export { identifier } from './connection.ts';
+export let md = active_account_module_data(identifier);
+export let online = relay<any>(md, 'online');
+export let conversationsArray = relay<any>(md, 'conversationsArray');
+export let events = relay<any>(md, 'events');
+export let messagesArray = relay<any>(md, 'messagesArray');
+export let messagesIsInitialLoading = relay<any>(md, 'messagesIsInitialLoading');
+export let selectedConversation = relay<any>(md, 'selectedConversation');
+export let emojiGroups = relay<any>(md, 'emojiGroups');
+export let emojisByCodepointsRgi = relay<any>(md, 'emojisByCodepointsRgi');
+export let emojisLoading = relay<any>(md, 'emojisLoading');
+export let showGallery = relay<any>(md, 'showGallery');
+export let galleryFile = relay<any>(md, 'galleryFile');
+export let elWindowNewConversation = writable<any>();
+
+class Message {
+	uid: string = '';
+	message: string = '';
+	address_from: string = '';
+	address_to: string = '';
+	format: string = '';
+	created: any = undefined;
+	just_sent: boolean = false;
+	just_received: boolean = false;
+	seen: boolean = false;
+	id: number | undefined = undefined;
+	prev: number | undefined = undefined;
+	next: number | string | undefined = undefined;
+	reactions: any[] = [];
+	acc: WeakRef<any> | undefined = undefined;
+	stripped_text: string = '';
+	is_outgoing: boolean = false;
+	remote_address: string = '';
+	received_by_my_homeserver: boolean = false;
+	is_lazyloaded: boolean = false;
+	keep_unseen_bar: boolean = false;
+	type: string = '';
+	author: string = '';
+	hide_author: boolean = false;
+
+	constructor(acc: any, data: any) {
+		Object.assign(this, data);
+		this.acc = new WeakRef(acc);
+		this.stripped_text = stripHtml(this.message);
+		//console.log('Message address_from: ' + this.address_from + ' acc:' + acc.credentials.address);
+		this.is_outgoing = this.address_from === acc.credentials.address;
+		if (this.address_to === acc.credentials.address) this.remote_address = this.address_from;
+		else this.remote_address = this.address_to;
+	}
+}
+
+export function initData(_acc: any): Record<string, any> {
+	//console.log('initData: ', _acc);
+	let result = {
+		online: writable(false),
+		selectedConversation: writable(null),
+		conversationsArray: writable([]),
+		events: writable([]),
+		messagesArray: writable([]),
+		messagesIsInitialLoading: writable(false),
+		emojiGroups: writable([]),
+		emojisByCodepointsRgi: writable(null),
+		emojisLoading: writable(false),
+		showGallery: writable(false),
+		galleryFile: writable(null),
+	};
+	//start_emojisets_fetch(acc, result.emojisLoading, result.emojiGroups, result.emojisByCodepointsRgi);
+	return result;
+}
+
+// Local sendData that adds online check
+/** @param {import('@/core/scripts/types.ts').IAccount} acc
+ *  @param {any} account
+ *  @param {string} command
+ *  @param {Record<string, any> | null} [params]
+ *  @param {boolean} [sendSessionID]
+ *  @param {((req: any, res: any) => void) | null} [callback]
+ *  @param {boolean} [quiet]
+ */
+function sendData(acc: any, account: any, command: string, params: Record<string, any> | null = {}, sendSessionID: boolean = true, callback: ((req: any, res: any) => void) | null = null, quiet: boolean = false): void {
+	let wrappedCallback = (req: any, res: any): void => {
+		if (res.error !== false) {
+			if (get(acc.module_data[identifier].online) === false) {
+				return;
+			}
+		}
+		if (callback) callback(req, res);
+	};
+	return connectionSendData(acc, account, command, params, sendSessionID, wrappedCallback, quiet);
+}
+
+export function onModuleSelected(selected: boolean): void {
+	//console.log(identifier + ' onModuleSelected', selected);
+	if (!selected) get(md)?.['selectedConversation']?.set(null);
+}
+
+export function selectConversation(conversation: any): void {
+	//console.log('SELECTcONVERSATION conversation:', conversation, 'conversation.acc:', conversation.acc, 'conversation.acc?.deref:', conversation.acc?.deref);
+	selectedConversation.set(conversation);
+	events.set([]);
+	messagesArray.set([]);
+	insertEvent({ type: 'select_conversation', array: get(messagesArray) });
+	hideSidebarMobile.set(true);
+	listMessages(conversation.acc.deref ? conversation.acc.deref() : conversation.acc, conversation.address);
+}
+
+export function listConversations(acc: any): void {
+	sendData(acc, null, 'conversations_list', null, true, (_req, res) => {
+		if (res.error !== false) {
+			console.error('this is bad.');
+			return;
+		}
+		if (res.data?.conversations) {
+			let conversationsArray = acc.module_data[identifier].conversationsArray;
+			//console.log('listConversations into:', get(conversationsArray));
+			conversationsArray.set(res.data.conversations.map(c => sanitizeConversation(acc, c)));
+			//console.log('listConversations:', get(conversationsArray));
+		}
+	});
+}
+
+export function closeConversation(): void {
+	selectedConversation.set(null);
+	hideSidebarMobile.set(false);
+}
+
+function sanitizeConversation(acc: any, c: any): any {
+	c.acc = new WeakRef(acc);
+	c.last_message_text = stripHtml(c.last_message_text);
+	return c;
+}
+
+// moduleEventSubscribe is now imported from connection.js
+
+export function initComms(acc: any): void {
+	// console.warn('init comms', acc);
+	// Initialize subscriptions based on platform
+	initializeSubscriptions(acc, false);
+	let data = acc.module_data[identifier];
+	//console.log('initComms:', data);
+	data.new_message_listener = async event => eventNewMessage(acc, event);
+	data.seen_message_listener = event => eventSeenMessage(acc, event);
+	data.seen_inbox_message_listener = event => eventSeenInboxMessage(acc, event);
+	// message events
+	acc.events.addEventListener('new_message', data.new_message_listener);
+	acc.events.addEventListener('seen_message', data.seen_message_listener);
+	acc.events.addEventListener('seen_inbox_message', data.seen_inbox_message_listener);
+	acc.events.addEventListener('message_update', message_update);
+	// file transfer events
+	acc.events.addEventListener('upload_update', upload_update);
+	acc.events.addEventListener('ask_for_chunk', ask_for_chunk);
+	refresh(acc);
+}
+
+export function init(): () => void {
+	let subs: (() => void)[] = [];
+	subs.push(
+		active_account_id.subscribe(_acc => {
+			get(md)?.['selectedConversation']?.set(null);
+		})
+	);
+
+	return function () {
+		subs.forEach(sub => sub());
+	};
+}
+
+async function refresh(acc: any): Promise<void> {
+	//console.log('refresh sendQueuedMessages...', acc);
+	await sendOutgoingMessages(acc);
+	if (get(acc.module_data[identifier].selectedConversation)) {
+		//console.log('refresh listMessages...', acc);
+		listMessages(acc, (get(acc.module_data[identifier].selectedConversation) as any).address);
+	}
+	//console.log('refresh listConversations...', acc);
+	listConversations(acc);
+}
+
+export async function initUpload(files: any, uploadType: any, recipients: any[]): Promise<void> {
+	console.log('2222', files, uploadType, recipients);
+	const acc = get(active_account);
+	try {
+		files = await transformFilesForServer(files);
+	} catch (error) {
+		console.error('Error transforming files for server:', error);
+	}
+	const { uploads } = fileUploadManager.beginUpload(files, uploadType, acc, {
+		chunkSize: get(uploadChunkSize),
+	});
+	//console.log('uploads', uploads);
+	const acceptedVideoTypes = ['video/mp4', 'video/webm', 'video/quicktime'];
+	const acceptedAudioTypes = ['audio/mp4', 'audio/mpeg', 'audio/wav', 'audio/webm'];
+	const acceptedImageTypes = [
+		'image/jpeg', // .jpg, .jpeg
+		'image/png', // .png
+		'image/gif', // .gif
+		'image/webp', // .webp
+		'image/avif', // .avif (modern browsers)
+		'image/svg+xml', // .svg
+		'image/x-icon', // .ico
+		'image/bmp', // .bmp
+	];
+
+	// send message
+	let messageHtml = '';
+	uploads.forEach(upload => {
+		const fileMimeType = upload.record.fileMimeType;
+		const isServerType = upload.record.type === FileUploadRecordType.SERVER;
+		// handle images
+		if (isServerType && acceptedImageTypes.some(v => fileMimeType.startsWith(v))) {
+			messageHtml += `<Imaged file="yellow:${upload.record.id}"></Imaged>`;
+			filesDB.addFile({
+				localFileStatus: LocalFileStatus.READY,
+				fileTransferId: upload.record.id,
+				fileOriginalName: upload.record.fileOriginalName,
+				fileMimeType: upload.record.fileMimeType,
+				fileSize: upload.record.fileSize,
+				fileBlob: new Blob([upload.file ?? new Uint8Array()], { type: fileMimeType }),
+			});
+		}
+		// handle videos
+		else if (isServerType && acceptedVideoTypes.some(v => fileMimeType.startsWith(v))) {
+			messageHtml += `<YellowVideo file="yellow:${upload.record.id}"></YellowVideo>`;
+		}
+		// handle audio
+		else if (isServerType && acceptedAudioTypes.some(v => fileMimeType.startsWith(v))) {
+			messageHtml += `<YellowAudio file="yellow:${upload.record.id}"></YellowAudio>`;
+		} else {
+			messageHtml += `<Attachment id="${upload.record.id}"></Attachment>`;
+		}
+	});
+	console.log('messageHtml', messageHtml);
+	setTimeout(() => {
+		sendMessage(messageHtml, 'html');
+	}, 100);
+	// send upload
+	const records = uploads.map(upload => upload.record);
+	sendData(acc as IAccount, null, 'upload_begin', { records, recipients }, true, (_req, res) => {
+		if (res.error !== false) {
+			return;
+		}
+		if (uploads?.[0]?.record.type === FileUploadRecordType.SERVER) {
+			fileUploadManager.startUploadSerial(res.allowedRecords, uploadChunkAsync);
+		} else {
+			console.error('Error starting upload'); // TODO: better error
+		}
+	});
+}
+
+function uploadChunkAsync({ upload, chunk }: { upload: any; chunk: any }): Promise<void> {
+	return new Promise<void>((resolve, reject) => {
+		let settled = false;
+		const op = retry.operation({
+			retries: 3,
+			factor: 1.5,
+			minTimeout: 1000,
+			maxTimeout: 3000,
+		});
+		op.attempt(() => {
+			const doRetry = (res?: any): void => {
+				if (settled) return;
+				const willRetry = op.retry(new Error());
+				if (!willRetry) {
+					settled = true;
+					reject(res);
+				}
+			};
+			const to = setTimeout(() => {
+				doRetry();
+			}, 5000); // TODO: maybe longer
+			sendData(upload.acc, null, 'upload_chunk', { chunk }, true, (_req, res) => {
+				clearTimeout(to);
+				if (settled) return;
+				if (res.error !== false) {
+					doRetry(res);
+					return;
+				}
+				settled = true;
+				op.stop();
+				resolve();
+			});
+		});
+	});
+}
+
+function ask_for_chunk(event: any): void {
+	const { uploadId } = event.detail.data;
+	const upload = fileUploadManager.uploadsStore.get(uploadId);
+	if (!upload) return;
+	if (upload.record.status === FileUploadRecordStatus.BEGUN) {
+		upload.record.status = FileUploadRecordStatus.UPLOADING;
+		fileUploadStore.set(uploadId, upload);
+		fileUploadManager.startUploadSerial([upload.record], uploadChunkAsync);
+	} else fileUploadManager.continueP2PUpload(uploadId);
+}
+
+function message_update(event: any): void {
+	const { type, message } = event.detail.data;
+	console.log('message_update', event.detail.data);
+	if (type === 'reaction') {
+		const messageUid = message.uid;
+		// TODO: this messagesArray.update will try to find the message in the current conversation (even if this update is from another conversation)
+		messagesArray.update(m => {
+			const foundMessage = m.find(msg => msg.uid === messageUid);
+			if (foundMessage) foundMessage.reactions = message.reactions;
+			return m;
+		});
+		insertEvent({ type: 'properties_update', array: get(messagesArray) });
+	}
+	if (type === 'delete') {
+		if (!message || !message.uid) {
+			console.error('message_update: message.uid is missing', message);
+			return;
+		}
+		snipeMessage(message.uid);
+	}
+}
+
+function upload_update(event: any): void {
+	const { record, uploadData } = event.detail.data;
+	const currentUpload = fileUploadStore.get(record.id);
+	if (currentUpload) {
+		if (currentUpload.file && [FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.PAUSED].includes(record.status)) {
+			// pass
+			// this is simple approach how to ignore status updates that are produced by sender because server does not know
+			// from which tab the upload is being issued we detect sender tab by existence of currentUpload.file
+			// in future if we want more sophisticated approach we can use session storage to store sender tab id
+		} else fileUploadStore.patch(record.id, { record, ...uploadData });
+	}
+	const currentDownload = fileDownloadStore.get(record.id);
+	if (currentDownload) fileDownloadStore.patch(record.id, { record });
+}
+
+export function downloadAttachmentsSerial(records: any[], finishCallback: (download: any) => void): any {
+	const acc = get(active_account);
+	// const records = recordIds.map(id => fileDownloadStore.get(id).record);
+	return fileDownloadManager.startDownloadSerial(records, makeDownloadChunkAsyncFn(acc), finishCallback);
+}
+
+export function makeDownloadChunkAsyncFn(acc: any): (args: IPullChunkRequest) => Promise<any> {
+	return ({ uploadId, offsetBytes, chunkSize }: IPullChunkRequest): Promise<any> => {
+		return new Promise((resolve, reject) => {
+			sendData(acc, null, 'download_chunk', { uploadId, offsetBytes, chunkSize }, true, async (_req, res) => {
+				if (res.error !== false) {
+					reject(res);
+					return;
+				}
+				resolve({
+					chunk: {
+						chunkId: res.chunk.chunkId,
+						uploadId: res.chunk.uploadId,
+						checksum: res.chunk.checksum,
+						chunkSize, // TODO: take this value from server
+						offsetBytes, // TODO: take this value from server
+						data: await base64ToUint8Array(res.chunk.data),
+					},
+				}); // TODO: better typing (whole function)
+			});
+		});
+	};
+}
+
+export function cancelUpload(uploadId: string): void {
+	fileUploadManager.cancelUpload(uploadId);
+	sendData(get(active_account) as IAccount, null, 'upload_cancel', { uploadId }, true, () => {});
+}
+
+export function pauseUpload(uploadId: string): Promise<void> {
+	return new Promise<void>(resolve => {
+		fileUploadManager.pauseUpload(uploadId);
+		sendData(
+			get(active_account) as IAccount,
+			null,
+			'upload_update_status',
+			{
+				uploadId,
+				status: FileUploadRecordStatus.PAUSED,
+			},
+			true,
+			() => {
+				resolve(); // TODO: handle error if needed
+			}
+		);
+	});
+}
+
+export function resumeUpload(uploadId: string): Promise<void> {
+	return new Promise<void>(resolve => {
+		fileUploadManager.resumeUpload(uploadId);
+		sendData(
+			get(active_account) as IAccount,
+			null,
+			'upload_update_status',
+			{
+				uploadId,
+				status: FileUploadRecordStatus.UPLOADING,
+			},
+			true,
+			() => {
+				resolve(); // TODO: handle error if needed
+			}
+		);
+	});
+}
+
+export function pauseDownload(uploadId: string): void {
+	fileDownloadManager.pauseDownload(uploadId);
+}
+
+export function resumeDownload(uploadId: string): void {
+	fileDownloadManager.resumeDownload(uploadId);
+}
+
+export function cancelDownload(uploadId: string): void {
+	const download = fileDownloadStore.get(uploadId);
+	if (!download) return;
+	if (download.record.type === FileUploadRecordType.P2P) {
+		// for p2p we want to cancel download but we gonna still use the same logic as is used in cancel upload because this is global cancel
+		// TODO: in case of more then one recipient we should cancel only for one recipient locally
+		cancelUpload(uploadId);
+	} else if (download.record.type === FileUploadRecordType.SERVER) {
+		fileDownloadManager.cancelDownload(uploadId);
+	}
+}
+
+export function loadUploadData(uploadId: string): Promise<any> {
+	return new Promise((resolve, reject) => {
+		const existingUpload = fileUploadStore.get(uploadId);
+		if (existingUpload) {
+			resolve(existingUpload);
+			return;
+		}
+		let acc = get(active_account) as IAccount;
+		const op = retry.operation({
+			retries: 3,
+			factor: 1.5,
+			minTimeout: 1000,
+			maxTimeout: 3000,
+		});
+		op.attempt(() => {
+			sendData(acc, null, 'upload_get', { id: uploadId }, true, (_req, res) => {
+				if (res.error !== false) {
+					const willRetry = op.retry(res);
+					if (!willRetry) {
+						reject(res);
+					}
+					return;
+				}
+				const { record, uploadData } = res.data;
+				const upload = makeFileUpload({
+					...uploadData,
+					file: null,
+					record,
+					chunksSent: [],
+					uploadInterval: null,
+					acc,
+				});
+				fileUploadStore.set(uploadId, upload);
+				resolve(upload);
+			});
+		});
+	});
+}
+
+export function deinitComms(acc: any): void {
+	// Deinitialize subscriptions based on platform
+	deinitializeSubscriptions(acc, false);
+}
+
+export function deinitData(acc: any): void {
+	console.log('DEINIT DATA');
+	let data = acc.module_data[identifier];
+	if (!data) return;
+	// message events
+	acc.events.removeEventListener('new_message', data.new_message_listener);
+	acc.events.removeEventListener('seen_message', data.seen_message_listener);
+	acc.events.removeEventListener('seen_inbox_message', data.seen_inbox_message_listener);
+	acc.events.removeEventListener('message_update', message_update);
+	// file transfer events
+	acc.events.removeEventListener('upload_update', upload_update);
+	acc.events.removeEventListener('ask_for_chunk', ask_for_chunk);
+	data.online.set(false);
+	data.events.set([]);
+	data.messagesArray.set([]);
+	data.conversationsArray.set([]);
+	data.selectedConversation.set(null);
+	acc.module_data[identifier] = null;
+}
+
+export function listMessages(acc: any, address: string): void {
+	//console.log('listMessages', acc, address);
+	messagesArray.set([{ type: 'initial_loading_placeholder' }]);
+	messagesIsInitialLoading.set(true);
+	loadMessages(acc, address, 'unseen', 3, 3, 'initial_load', _res => {});
+}
+
+export function loadMessages(acc: any, address: string, base: string | number, prev: number, next: number, reason: string, cb: (res: any) => void, force_refresh: boolean = false): void {
+	/*
+	acc: account object
+ address: contact address (identifies conversation)
+ base: message id
+	prev: number of messages to load before base
+	next: number of messages to load after base
+	reason: reason for loading messages (for debugging)
+	cb: callback (optional)
+	*/
+	console.log('reason', reason, 'force_refresh', force_refresh);
+	return sendData(acc, null, 'messages_list', { address: address, base, prev, next }, true, (_req, res) => {
+		if (res.error !== false || !res.data?.messages) {
+			console.error(res);
+			console.error('Error while listing messages: ' + (res.message || JSON.stringify(res)));
+			return;
+		}
+		let items = res.data.messages;
+		items = constructLoadedMessages(acc, items);
+		messagesIsInitialLoading.set(false);
+		addMessagesToMessagesArray(items, reason, force_refresh);
+		if (cb) cb(res);
+	});
+}
+
+export function findMessages(acc: any, address: string, base: string | number, prev: number, next: number): Promise<any[]> {
+	return new Promise((resolve, reject) => {
+		sendData(acc, null, 'messages_list', { address, base, prev, next }, true, (_req, res) => {
+			if (res.error !== false || !res.data?.messages) {
+				console.error(res);
+				console.error('Error while finding messages: ' + (res.message || JSON.stringify(res)));
+				reject(res);
+				return;
+			}
+			resolve(res.data.messages);
+		});
+	});
+}
+
+export function getMessageByUid(uid: string): Promise<any> {
+	return new Promise((resolve, reject) => {
+		const found = get(messagesArray).find(m => m.uid === uid);
+		if (found) {
+			resolve(found);
+			return;
+		}
+		const acc = get(active_account);
+		const address = get(selectedConversation).address; // TODO: won't work for multi conversations
+		findMessages(acc, address, 'uid:' + uid, 0, 0)
+			.then(messages => {
+				const message = messages.find(m => m.uid === uid);
+				resolve(message);
+			})
+			.catch(reject);
+	});
+}
+
+function addMessagesToMessagesArray(items: any[], reason: string, force_refresh: boolean = false): any[] {
+	let arr = get(messagesArray);
+	arr = arr.filter(m => m.type !== 'initial_loading_placeholder');
+	let result: any[] = [];
+	let state = { countAdded: 0 };
+	for (let m of items) result.push(addMessage(arr, m, state));
+	sortMessages(arr);
+	addMissingPrevNext(arr);
+	//console.log('messagesArray.set:', arr);
+	messagesArray.set(arr);
+	if (force_refresh || state.countAdded > 0) insertEvent({ type: reason, array: arr });
+	else insertEvent({ type: 'properties_update', array: arr });
+	return result;
+}
+
+export function handleResize(_wasScrolledToBottom: boolean): void {
+	insertEvent({ type: 'resize', wasScrolledToBottom2: true });
+}
+
+export function snipeMessage(messageUid: string): void {
+	messagesArray.update(v => {
+		return v.filter(m => m.uid !== messageUid);
+	});
+	insertEvent({ type: 'gc', array: get(messagesArray) });
+}
+
+function addMessage(arr: any[], msg: any, state: { countAdded: number }): any {
+	//TODO: this should only update the message if the data is actually more up-to-date
+	let m = arr.find(m => m.uid === msg.uid);
+	if (m) {
+		for (let key in msg) m[key] = msg[key];
+		return m;
+	} else {
+		arr.unshift(msg);
+		state.countAdded++;
+		return msg;
+	}
+}
+
+function constructLoadedMessages(acc: any, data: any[]): any[] {
+	let items = data.map(msg => {
+		let message = new Message(acc, msg);
+		message.received_by_my_homeserver = true;
+		message.is_lazyloaded = true;
+		return message;
+	});
+	return items;
+}
+
+function sortMessages(messages: any[]): void {
+	messages.sort((a, b) => {
+		//TODO: take care of just-sent messages, they don't have id yet
+		//console.log(a.created, b.created);
+		let akey = a.id;
+		let bkey = b.id;
+		if (akey === undefined && bkey === undefined) {
+			akey = a.created;
+			bkey = b.created;
+		} else if (akey === undefined) return 1;
+		else if (bkey === undefined) return -1;
+		if (akey > bkey) return 1;
+		if (akey < bkey) return -1;
+		return 0;
+	});
+}
+
+function addMissingPrevNext(messages: any[]): void {
+	for (let i = 0; i < messages.length; i++) {
+		let m = messages[i];
+		if (m.prev === undefined) m.prev = findPrev(messages, m);
+		if (m.next === undefined) m.next = findNext(messages, m);
+		else if (m.next === 'none') {
+			let next = findNext(messages, m);
+			if (next !== undefined) m.next = next;
+		}
+	}
+}
+
+function findPrev(messages: any[], i: any): number | undefined {
+	for (const m of messages) {
+		if (m.next === i.id) return m.id;
+	}
+	return undefined;
+}
+
+function findNext(messages: any[], i: any): number | undefined {
+	for (const m of messages) {
+		if (m.prev === i.id) return m.id;
+	}
+	return undefined;
+}
+
+export async function setMessageSeen(message: any, cb?: () => void, keep_unseen_bar: boolean = true): Promise<void> {
+	let acc = get(active_account) as IAccount;
+	log.debug('setMessageSeen', message);
+	deleteNotification(messageNotificationId(message));
+	sendData(acc, active_account, 'message_seen', { uid: message.uid }, true, (_req, res) => {
+		if (res.error !== false) {
+			console.error('this is bad.');
+			return;
+		}
+		//message.seen = true;
+		if (cb) cb();
+		// update conversationsArray:
+		/*
+		const conversation = get(conversationsArray).find(c => c.address === message.address_from);
+		if (conversation) {
+			conversation.unread_count--;
+			conversationsArray.update(v => v);
+		}
+		*/
+	});
+	await tick();
+	message.seen = true;
+	message.keep_unseen_bar = keep_unseen_bar;
+	messagesArray.update(v => v);
+	insertEvent({ type: 'message_seen', array: get(messagesArray) });
+}
+
+/** @param {string} text
+ *  @param {string} format
+ *  @param {import('@/core/scripts/types.ts').IAccount | null} [acc]
+ *  @param {any} [conversation]
+ */
+export function sendMessage(text: string, format: string, acc: any = null, conversation: any = null): string {
+	acc = acc ? acc : (get(active_account) as IAccount);
+	conversation = conversation ? conversation : get(selectedConversation);
+	let message = new Message(acc, {
+		uid: getGuid(),
+		address_from: acc.credentials.address,
+		address_to: conversation.address,
+		message: text,
+		format,
+		created: new Date(),
+		just_sent: true,
+	});
+	let params = {
+		address: message.address_to,
+		message: message.message,
+		format,
+		uid: message.uid,
+	};
+	saveAndSendOutgoingMessage(acc, conversation, params, message);
+	// append to message array only when conversation is also selected (active)
+	const _selectedConversation = get(selectedConversation);
+	if (_selectedConversation && _selectedConversation.id === conversation.id) addMessagesToMessagesArray([message], 'send_message');
+	updateConversationsArray(acc, message);
+	return message.uid;
+}
+
+export async function deleteMessage(message: any): Promise<void> {
+	console.log('123 deleteMessage', message);
+	const acc = get(active_account) as IAccount;
+	const params = {
+		id: message.id,
+		uid: message.uid,
+	};
+	sendData(acc, null, 'message_delete', params, true, (_req, res) => {
+		console.log('123 response', res);
+		snipeMessage(message.uid);
+	});
+}
+
+async function saveAndSendOutgoingMessage(acc: any, conversation: any, params: any, message: any): Promise<void> {
+	let outgoing_message_id = await messages_db.outgoing.add({ account: acc.id, data: params });
+	//console.log('saveAndSendOutgoingMessage saved message:', message.uid);
+	sendOutgoingMessage(acc, conversation, params, message, outgoing_message_id);
+}
+
+function sendOutgoingMessage(acc: any, conversation: any, params: any, message: any, outgoing_message_id: number): void {
+	sendData(acc, null, 'message_send', params, true, (_req, res) => {
+		//console.log('sendOutgoingMessage res', res);
+		if (res.error !== false) {
+			return;
+		}
+		messages_db.outgoing.delete(outgoing_message_id); // update the message status and trigger the update of the messagesArray:
+		message.received_by_my_homeserver = true;
+		if (get(active_account) === acc && get(acc.module_data[identifier].selectedConversation) === conversation) {
+			messagesArray.update(v => v);
+			insertEvent({ type: 'properties_update', array: get(messagesArray) });
+		}
+	});
+}
+
+/**
+ * @param messageUid
+ * @param operation {'set'|'unset'}
+ * @param reaction
+ * @param {import('@/core/scripts/types.ts').IAccount} [acc]
+ * @returns {Promise<unknown>}
+ */
+export function modifyMessageReaction(messageUid: string, operation: 'set' | 'unset', reaction: any, acc?: any): Promise<any> {
+	acc = acc || (get(active_account) as IAccount);
+	return new Promise((resolve, reject) => {
+		const params = {
+			messageUid,
+			operation,
+			reaction,
+		};
+		sendData(acc, null, 'message_reaction', params, true, (_req, res) => {
+			console.log('message_reaction res', res);
+			if (res.error !== false) {
+				reject(res);
+				return;
+			}
+			resolve(res);
+		});
+	});
+}
+
+export function setMessageReaction(message: any, reaction: any): Promise<any> {
+	return modifyMessageReaction(message.uid, 'set', reaction);
+}
+
+export function unsetMessageReaction(message: any, reaction: any): Promise<any> {
+	return modifyMessageReaction(message.uid, 'unset', reaction);
+}
+
+export function toggleMessageReaction(message: any, reaction: any): Promise<any> {
+	const userAddress = (get(active_account) as IAccount).credentials.address;
+	const didUserReact = message.reactions.some(existingReaction => {
+		if (existingReaction.user_address === userAddress && existingReaction.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi) {
+			return true;
+		}
+		return false;
+	});
+	playAudio('modules/' + identifier + '/audio/reaction.mp3');
+	if (didUserReact) {
+		message.reactions = message.reactions.filter(r => !(r.user_address === userAddress && r.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi));
+		insertEvent({ type: 'properties_update', array: get(messagesArray) });
+		return unsetMessageReaction(message, reaction);
+	} else {
+		const tempReaction = makeMessageReaction({
+			user_address: userAddress,
+			message_uid: message.uid,
+			emoji_codepoints_rgi: reaction.emoji_codepoints_rgi,
+		});
+		message.reactions.push(tempReaction);
+		insertEvent({ type: 'properties_update', array: get(messagesArray) });
+		return setMessageReaction(message, reaction);
+	}
+}
+
+async function sendOutgoingMessages(acc: any): Promise<void> {
+	/* try to send outgoing messages. Ensure they are sent in creation order. Break on error */
+	//console.log('sendOutgoingMessages for acc', acc.id);
+	for (const message of await messages_db.outgoing.where('account').equals(acc.id).toArray()) {
+		//console.log('sendOutgoingMessages found queued message:', message.data.uid);
+		let res = await new Promise<any>(resolve => {
+			sendData(acc, active_account, 'message_send', message.data, true, (_req, res) => {
+				resolve(res);
+			});
+		});
+		if (res.error !== false) {
+			console.log('Temporary error while sending message ' + message.id + ': ' + res.message);
+			return;
+		}
+		console.log('sendOutgoingMessages queued message sent:', message.data.uid);
+		await messages_db.outgoing.delete(message.id);
+	}
+}
+
+function updateConversationsArray(acc: any, msg: any): void {
+	let acc_ca = acc.module_data[identifier].conversationsArray;
+	let ca: any[] = get(acc_ca);
+	const conversation = ca.find(c => c.address === msg.remote_address);
+	//console.log('updateConversationsArray', conversation, msg);
+	let is_unread = !msg.seen && !msg.just_sent && msg.address_from !== acc.credentials.address;
+	if (conversation) {
+		conversation.last_message_date = msg.created;
+		conversation.last_message_text = msg.stripped_text;
+		if (is_unread) conversation.unread_count = (conversation.unread_count || 0) + 1;
+		// shift the affected conversation to the top:
+		const index = ca.indexOf(conversation);
+		ca.splice(index, 1);
+		ca.unshift(conversation);
+	} else {
+		let conversation = {
+			acc,
+			address: msg.remote_address,
+			last_message_date: msg.created,
+			last_message_text: msg.stripped_text,
+			visible_name: null,
+			unread_count: is_unread ? 1 : 0,
+		};
+		ca.unshift(conversation);
+	}
+	acc_ca.set(ca);
+}
+
+export function openNewConversation(address: string): void {
+	console.log('openNewConversation', address);
+	const acc = get(active_account);
+	if (!acc) return;
+	selectConversation({ acc: new WeakRef(acc), address });
+}
+
+export function jumpToMessage(acc: any, address: string, uid: string): void {
+	loadMessages(acc, address, 'uid:' + uid, 10, 10, 'load_referenced_message', _res => {
+		const message = get(messagesArray).find(m => m.uid === uid);
+		insertEvent({
+			type: 'jump_to_referenced_message',
+			array: get(messagesArray),
+			referenced_message: message,
+		});
+	});
+}
+
+export function insertEvent(event: any): void {
+	events?.update(v => {
+		console.log('insertEvent: ', v, event);
+		return [...v, event];
+	});
+}
+
+async function eventNewMessage(acc: any, event: any): Promise<void> {
+	const res = event.detail;
+	//console.log('eventNewMessage', acc, res);
+	if (!res.data) return;
+	res.data.just_received = true;
+	let msg = new Message(acc, res.data);
+	msg.received_by_my_homeserver = true;
+	let sc = get(selectedConversation);
+	if (msg.address_from !== acc.credentials.address) {
+		console.log('showNotification?: !get(isClientFocused): ', !get(isClientFocused), 'get(active_account) != acc:', get(active_account) !== acc, 'msg.address_from !== sc?.address:', msg.address_from !== sc?.address);
+		if (!get(isClientFocused) || get(active_account) !== acc || msg.address_from !== sc?.address) await showNotification(acc, msg);
+	}
+	//console.log('eventNewMessage updateConversationsArray with msg:', msg);
+	updateConversationsArray(acc, msg);
+	if (acc !== get(active_account)) return;
+	if ((msg.address_from === sc?.address && msg.address_to === acc.credentials.address) || (msg.address_from === acc.credentials.address && msg.address_to === sc?.address)) {
+		//let oldLen = get(messagesArray).length;
+		msg = addMessagesToMessagesArray([msg], 'new_message')[0];
+	}
+}
+
+function eventSeenMessage(acc: any, event: any): void {
+	console.log(event);
+	const res = event.detail;
+	log.debug('eventSeenMessage', res);
+	if (!res.data) {
+		console.log('eventSeenMessage: no data');
+		return;
+	}
+	deleteNotification(messageNotificationId(res.data.uid));
+	if (acc !== get(active_account)) {
+		//console.log('eventSeenMessage: acc !== get(active_account)', acc, get(active_account));
+		return;
+	}
+	//console.log('messagesArray:', get(messagesArray));
+	const message = get(messagesArray).find(m => m.uid === res.data.uid);
+	//console.log('eventSeenMessage: message found by uid:', message);
+	if (message) {
+		message.seen = res.data.seen;
+		messagesArray.update(v => v);
+		//console.log('insertEvent..');
+		insertEvent({ type: 'properties_update', array: get(messagesArray) });
+	} else console.log('eventSeenMessage: message not found by uid:', res);
+}
+
+function eventSeenInboxMessage(acc: any, event: any): void {
+	// mark, as seen, a message sent to us. This can be triggered by another client.
+	if (acc !== get(active_account)) return;
+	//console.log(event);
+	const res = event.detail;
+	//console.log('eventSeenInboxMessage', res);
+	if (!res.data) return;
+	//console.log(get(conversationsArray));
+	const conversation = get(conversationsArray).find(c => c.address === res.data.address_from);
+	if (conversation) {
+		conversation.unread_count--;
+		conversationsArray.update(v => v);
+	} else console.log('eventSeenInboxMessage: conversation not found by address:', res);
+}
+
+function messageNotificationId(msg: any): string {
+	return identifier + '\\' + 'message\\' + msg.uid;
+}
+
+async function showNotification(acc: any, msg: any): Promise<void> {
+	if (!acc) console.error('showNotification: no account');
+	console.log('showNotification conversationsArray:', get(conversationsArray));
+	const conversation = get(conversationsArray)?.find(c => c.address === msg.address_from);
+	console.log('new Notification in conversation', conversation);
+	let title;
+	if (conversation) title = 'New message from: ' + conversation.visible_name + ' (' + msg.address_from + ')';
+	else title = 'New message from: ' + msg.address_from;
+	let notification = {
+		id: messageNotificationId(msg),
+		title,
+		body: get(hideMessageTextInNotifications) ? 'You have a new message' : msg.stripped_text,
+		icon: 'img/photo.svg',
+		//icon: 'favicon.svg',
+		sound: 'audio/notification.mp3',
+		callback: async event => {
+			if (event === 'click') {
+				window.focus();
+				selectAccount(acc.id);
+				setModule(identifier);
+				await tick();
+				console.log('notification click: selectConversation', msg.address_from);
+				selectConversation({
+					acc: new WeakRef(acc),
+					address: msg.address_from,
+					visible_name: conversation?.visible_name,
+				});
+			}
+		},
+	};
+	addNotification(notification);
+}
+
+export function ensureConversationDetails(conversation: any): void {
+	//console.log('ensureConversationDetails', conversation);
+	if (conversation.visible_name) return;
+	let acc = get(active_account) as IAccount;
+	//console.log('ensureConversationDetails acc:', acc);
+	_send(
+		acc,
+		active_account as any,
+		'core',
+		'user_userinfo_get',
+		{ address: conversation.address },
+		true,
+		(_req, res) => {
+			if (res.error !== false) return;
+			Object.assign(conversation, res.data);
+			conversationsArray.update(v => v);
+		},
+		false
+	);
+}
+
+DOMPurify.addHook('uponSanitizeAttribute', function (node, data) {
+	if (node.tagName === 'IMAGED' || node.tagName === 'YELLOWVIDEO' || node.tagName === 'YELLOWAUDIO') {
+		if (data.attrName === 'file' && data.attrValue.startsWith('yellow:')) {
+			data.forceKeepAttr = true;
+		}
+	}
+});
+
+DOMPurify.addHook('afterSanitizeAttributes', function (node) {
+	if (node.tagName === 'IMAGED') {
+		// console.log('node 2', node);
+	}
+	if (node.tagName === 'A') {
+		node.setAttribute('target', '_blank');
+		node.setAttribute('rel', 'noopener noreferrer');
+	}
+	if (node.tagName === 'VIDEO') node.removeAttribute('autoplay');
+});
+
+DOMPurify.addHook('uponSanitizeElement', (node, data) => {
+	if (data.tagName) {
+		const t = data.tagName.toLowerCase();
+		if (CUSTOM_TAGS.find(tag => tag === t)) {
+			// Move children out to after the node. This is a hack to tolerate improperly closed sticker tag. // nope, jsdom (parse5) already produces them "wrong" (right, by spec)
+			while (node.firstChild) {
+				node.parentNode?.insertBefore(node.firstChild, node.nextSibling);
+			}
+		}
+	}
+});
+
+const CUSTOM_TAGS = ['sticker', 'gif', 'emoji', 'attachment', 'attachmentswrapper', 'imageswrapper', 'imaged', 'yellowvideo', 'yellowaudio', 'reply'];
+
+// Attributes that are only allowed on custom tags, not on standard HTML elements
+const CUSTOM_ONLY_ATTRS = new Set(['file', 'set', 'codepoints']);
+
+DOMPurify.addHook('uponSanitizeAttribute', (node, data) => {
+	if (CUSTOM_ONLY_ATTRS.has(data.attrName)) {
+		const tag = node.tagName.toLowerCase();
+		if (!CUSTOM_TAGS.includes(tag)) {
+			data.keepAttr = false;
+		}
+	}
+});
+
+export function saneHtml(content: string): DocumentFragment {
+	//console.log('saneHtml:');
+	let sane = DOMPurify.sanitize(content, {
+		ADD_TAGS: CUSTOM_TAGS,
+		//FORBID_CONTENTS: ['sticker'],
+		ADD_ATTR: ['file', 'set', 'alt', 'codepoints', 'id'],
+		RETURN_DOM_FRAGMENT: true,
+	});
+	/*
+	console.log('content:', content);
+	console.log(content);
+	console.log('sane:');
+	console.log(sane);
+	*/
+	return sane;
+}
+
+export function htmlEscape(str: string): string {
+	//console.log('htmlEscape:', str);
+	return str.replaceAll(/&/g, '&amp;').replaceAll(/</g, '&lt;').replaceAll(/>/g, '&gt;').replaceAll(/"/g, '&quot;').replaceAll(/'/g, '&#039;');
+}
+
+export function processMessage(message: { format: string; message: string }): { format: string; body: DocumentFragment } {
+	let html;
+	if (message.format === 'html') {
+		html = saneHtml(message.message);
+		wrapConsecutiveElements(html, 'Attachment', 'AttachmentsWrapper');
+		wrapConsecutiveElements(html, 'Imaged', 'ImagesWrapper', 1);
+		wrapConsecutiveElements(html, 'YellowVideo', 'VideosWrapper', 1);
+		wrapConsecutiveElements(html, 'YellowAudio', 'AudioWrapper', 1);
+	} else {
+		let text = preprocess_incoming_plaintext_message_text(message.message);
+		//console.log('text:', text);
+		html = saneHtml(text);
+		//console.log('html:', html);
+	}
+	//html = group_downloads(html);
+	//console.log('htmlhtmlhtml', html);
+	return {
+		format: 'html',
+		body: html,
+	};
+}
+
+export function preprocess_incoming_plaintext_message_text(content: string): string {
+	let result0 = content;
+	//console.log('splitAndLinkify input:', result0);
+	let result1 = splitAndLinkify(result0);
+	//console.log('splitAndLinkify output:', result1);
+	let result2 = result1.map((part): string => {
+		if (part.type === 'plain') {
+			let r = htmlEscape(part.value);
+			r = r.replaceAll('\n', '<br />');
+			r = replaceEmojisWithTags(r);
+			return r;
+		} else if (part.type === 'processed') return part.value;
+		return '';
+	});
+	let result3 = result2.join('');
+	return result3;
+}

@@ -1,16 +1,20 @@
-<script>
-	import MessageContent from '../MessageContent/MessageContent.svelte';
-	import { processMessage } from '../../messages.js';
-	export let text;
+<script lang="ts">
+	import MessageContent from '@/org.libersoft.messages/components/MessageContent/MessageContent.svelte';
+	import { processMessage } from '@/org.libersoft.messages/scripts/messages.ts';
+	interface Props {
+		text: string;
+	}
+	let { text }: Props = $props();
 
-	$: messageContent = processMessage({ format: 'html', message: text });
+	let messageContent = $derived(processMessage({ format: 'html', message: text }));
 </script>
 
 <style>
 	.preview {
+		box-sizing: border-box;
+		width: 100%;
+		height: 100%;
 		padding: 10px;
-		width: calc(100% - 22px);
-		height: calc(100% - 22px);
 		background-color: var(--default-background);
 		border: 1px solid var(--default-foreground);
 		border-radius: 10px;

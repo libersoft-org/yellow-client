@@ -1,15 +1,17 @@
-<script>
+<script lang="ts">
 	import { onMount, onDestroy, tick, getContext } from 'svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	export let onVisible;
+	interface Props {
+		onVisible: () => Promise<void>;
+	}
+	let { onVisible }: Props = $props();
 	const threshold = 0.1;
-	let loading = false;
-	let loaderElement;
-	let _loaderIsVisible = true;
-	let observer;
-	let timer;
-	let observing = false;
-	let contentElement = getContext('contentElement');
+	let loading: boolean = $state(false);
+	let loaderElement: HTMLDivElement;
+	let _loaderIsVisible: boolean = true;
+	let observer: IntersectionObserver;
+	let timer: ReturnType<typeof setTimeout> | undefined;
+	let contentElement = getContext('contentElement') as Element | null;
 
 	onMount(async () => {
 		await tick();
@@ -22,20 +24,22 @@
 		if (timer) clearTimeout(timer);
 	});
 
-	async function loadMore() {
+	async function loadMore(): Promise<void> {
 		if (loading) return;
 		loading = true;
 		await onVisible();
 		loading = false;
 	}
 
-	function handleIntersect(entries) {
+	function handleIntersect(entries: IntersectionObserverEntry[]): void {
 		console.log('handleIntersect', entries);
-		_loaderIsVisible = entries[entries.length - 1].isIntersecting;
+		const lastEntry = entries[entries.length - 1];
+		if (!lastEntry) return;
+		_loaderIsVisible = lastEntry.isIntersecting;
 		if (_loaderIsVisible) loadMore();
 	}
 </script>
 
 <div bind:this={loaderElement}>
-	<Spinner bind:show={loading} />
+	<Spinner show={loading} />
 </div>

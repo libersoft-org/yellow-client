@@ -1,80 +1,60 @@
-<script>
-	import { onDestroy, onMount, setContext, tick } from 'svelte';
-	import { hideSidebarMobile } from '@/core/core.ts';
+<script lang="ts">
+	import { setContext, tick } from 'svelte';
 	import { get, writable } from 'svelte/store';
-	import { selectedConversation } from '../../messages.js';
-	import ProfileBar from '../ProfileBar/ProfileBar.svelte';
-	import MessagesList from '../MessagesList/MessagesList.svelte';
-	import MessageBar from '../MessageBar/MessageBar.svelte';
-	let message_bar;
-	let oldSelectedConversation;
-	let messagesContext = {};
+	import { selectedConversation, closeConversation } from '@/org.libersoft.messages/scripts/messages.ts';
+	import Content from '@/core/components/Content/Content.svelte';
+	import ProfileBar from '@/org.libersoft.messages/components/ProfileBar/ProfileBar.svelte';
+	import MessagesList from '@/org.libersoft.messages/components/MessagesList/MessagesList.svelte';
+	import MessageBar from '@/org.libersoft.messages/components/MessageBar/MessageBar.svelte';
+	import { windowFileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
+	let message_bar = $state<any>(undefined);
+	let oldSelectedConversation: any;
+	let messagesContext: any = {};
+	let fileUploadWindowFiles = writable<any[]>([]);
+
 	setContext('MessagesContext', messagesContext);
 
-	$: messagesContext.messageBar = message_bar;
-	$: update($selectedConversation);
+	let _syncMessageBar = $derived.by((): boolean => {
+		messagesContext.messageBar = message_bar;
+		return true;
+	});
+	let _syncConversation = $derived.by((): boolean => {
+		update($selectedConversation);
+		return true;
+	});
 
-	let showFileUploadModal = writable(false);
-	let fileUploadModalFiles = writable([]);
-
-	async function update(selectedConversation) {
-		if (selectedConversation) {
-			if (oldSelectedConversation != selectedConversation) {
-				oldSelectedConversation = selectedConversation;
+	async function update(selectedConv: any): Promise<void> {
+		if (selectedConv) {
+			if (oldSelectedConversation != selectedConv) {
+				oldSelectedConversation = selectedConv;
 				await setBarFocus();
 			}
 		}
 	}
 
-	onMount(async () => {
-		console.log('conversation mounted for:', get(selectedConversation));
-		window.addEventListener('keydown', onKeydown);
-	});
-
-	onDestroy(() => {
-		if (typeof window !== 'undefined') window.removeEventListener('keydown', onKeydown);
-	});
-
-	function closeConversation() {
-		selectedConversation.set(null);
-		hideSidebarMobile.set(false);
-	}
-
-	export async function setBarFocus() {
+	export async function setBarFocus(): Promise<void> {
 		await tick();
 		await message_bar?.setBarFocus();
 	}
 
-	async function onKeydown(event) {
-		//console.log('Conversation keyDown: ', event.key);
-		if (event.key === 'Escape' && get(selectedConversation)) {
-			closeConversation();
-			return;
-		}
+	function setFileUploadWindow(value: any): void {
+		if (!!value !== get(windowFileUploadStore)?.isOpen()) fileUploadWindowFiles.set([]);
+		if (value) get(windowFileUploadStore)?.open();
+		else get(windowFileUploadStore)?.close();
 	}
 
-	function setFileUploadModal(value) {
-		if (value !== $showFileUploadModal) {
-			fileUploadModalFiles.set([]);
-		}
-		showFileUploadModal.set(value);
-	}
-
-	setContext('FileUploadModal', { showFileUploadModal, fileUploadModalFiles, setFileUploadModal });
+	// Set up context for expressions menu state (Android only)
+	setContext('expressionsMenuOpen', {
+		setOpen: (_open: boolean) => {
+			// State tracked by context consumers
+		},
+	});
+	setContext('FileUploadWindow', { fileUploadWindowFiles, setFileUploadWindow });
 </script>
 
-<style>
-	.conversation {
-		display: flex;
-		flex-direction: column;
-		height: 100vh;
-		overflow: hidden;
-		background: var(--background-image) 0 0 / 400px repeat;
-	}
-</style>
-
-<div role="none" class="conversation" onkeydown={onKeydown}>
+<Content>
+	<span hidden aria-hidden="true">{_syncMessageBar}{_syncConversation}</span>
 	<ProfileBar {closeConversation} />
 	<MessagesList {setBarFocus} conversation={$selectedConversation} />
 	<MessageBar bind:this={message_bar} />
-</div>
+</Content>

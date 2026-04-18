@@ -16,7 +16,7 @@
 	// const errors = [1, 2, 3];
 </script>
 
-<script>
+<script lang="ts">
 	import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 </script>
 

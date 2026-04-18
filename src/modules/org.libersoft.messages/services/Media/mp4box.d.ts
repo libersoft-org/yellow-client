@@ -1,5 +1,5 @@
 declare module '@webav/mp4box.js' {
-	interface MP4MediaTrack {
+	interface IMP4MediaTrack {
 		id: number;
 		type: 'video' | 'audio' | string;
 		created: Date;
@@ -18,28 +18,28 @@ declare module '@webav/mp4box.js' {
 		nb_samples: number;
 	}
 
-	interface MP4VideoData {
+	interface IMP4VideoData {
 		width: number;
 		height: number;
 	}
 
-	interface MP4VideoTrack extends MP4MediaTrack {
-		video: MP4VideoData;
+	interface IMP4VideoTrack extends IMP4MediaTrack {
+		video: IMP4VideoData;
 	}
 
-	interface MP4AudioData {
+	interface IMP4AudioData {
 		sample_rate: number;
 		channel_count: number;
 		sample_size: number;
 	}
 
-	interface MP4AudioTrack extends MP4MediaTrack {
-		audio: MP4AudioData;
+	interface IMP4AudioTrack extends IMP4MediaTrack {
+		audio: IMP4AudioData;
 	}
 
-	type MP4Track = MP4VideoTrack | MP4AudioTrack;
+	type MP4Track = IMP4VideoTrack | IMP4AudioTrack;
 
-	interface MP4Info {
+	interface IMP4Info {
 		duration: number;
 		timescale: number;
 		fragment_duration: number;
@@ -50,13 +50,13 @@ declare module '@webav/mp4box.js' {
 		created: Date;
 		modified: Date;
 		tracks: MP4Track[];
-		videoTracks: MP4VideoTrack[];
-		audioTracks: MP4AudioTrack[];
+		videoTracks: IMP4VideoTrack[];
+		audioTracks: IMP4AudioTrack[];
 	}
 
 	export type MP4ArrayBuffer = ArrayBuffer & { fileStart: number };
 
-	interface MP4Sample {
+	interface IMP4Sample {
 		number: number;
 		track_id: number;
 		description: any;
@@ -70,12 +70,12 @@ declare module '@webav/mp4box.js' {
 		is_sync: boolean;
 	}
 
-	export interface MP4File {
+	export interface IMP4File {
 		onMoovStart?: () => void;
-		onReady?: (info: MP4Info) => void;
+		onReady?: (info: IMP4Info) => void;
 		onError?: (e: string) => void;
 
-		onSamples?: (id: number, user: any, samples: MP4Sample[]) => void;
+		onSamples?: (id: number, user: any, samples: IMP4Sample[]) => void;
 
 		setExtractionOptions(track_id: number, user: any, options: { nbSamples?: number; rapAlignement?: boolean }): void;
 
@@ -89,5 +89,5 @@ declare module '@webav/mp4box.js' {
 		flush(): void;
 	}
 
-	export function createFile(): MP4File;
+	export function createFile(): IMP4File;
 }

@@ -1,26 +1,39 @@
-<script>
-	import { loadMessages, insertEvent, messagesArray } from '../../messages.js';
+<script lang="ts">
+	import { loadMessages } from '@/org.libersoft.messages/scripts/messages.ts';
 	import { getContext, onDestroy, onMount } from 'svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	export let loader;
-	let loaderElement;
-	let observer;
+	interface Props {
+		loader: any;
+	}
+	let { loader = $bindable() }: Props = $props();
+	let loaderElement = $state<HTMLDivElement | undefined>(undefined);
+	let observer: IntersectionObserver;
 	let observing = false;
 	const threshold = 0.6;
-	let interval;
-	let contentElement = getContext('contentElement');
+	let interval: ReturnType<typeof setInterval>;
+	let contentElement: any = getContext('contentElement');
 
-	$: loader.loaderElement = loaderElement;
+	let _syncLoaderEl = $derived.by((): boolean => {
+		const el = loaderElement;
+		queueMicrotask(() => {
+			loader.loaderElement = el;
+		});
+		return true;
+	});
+
+	let _setup = $derived.by((): boolean => {
+		setup(loaderElement, loader);
+		return true;
+	});
 
 	onMount(() => {
 		//console.log('LOADER MOUNTED:', loader);
 		observing = false;
 	});
 
-	$: setup(loaderElement, loader);
 	//$: console.log('LOADER CHANGED:', loader);
 
-	function setup(loaderElement, loader) {
+	function setup(loaderElement: HTMLDivElement | undefined, loader: any): void {
 		//console.log('setup: loaderElement:', loaderElement, 'loader:', loader, 'active:', loader.active);
 		if (!loader.active) return;
 		//console.log('OBSERVINGOBSERVINGOBSERVING:', observing);
@@ -34,7 +47,7 @@
 		}
 	}
 
-	function setupInterval() {
+	function setupInterval(): void {
 		interval = setInterval(() => {
 			//console.log('check loaderElement:', loaderElement, loader.loading, loaderElement?.getBoundingClientRect(), window.innerHeight);
 			if (loader.loading) clearInterval(interval);
@@ -54,12 +67,12 @@
 	});
 
 	/* TODO: sometimes, intersection observer does not work properly. add timer? */
-	function handleIntersect(entries) {
+	function handleIntersect(entries: any[]): void {
 		let _loaderIsVisible = entries[0].isIntersecting;
 		if (_loaderIsVisible && !loader.loading) loadMore();
 	}
 
-	function loadMore() {
+	function loadMore(): void {
 		clearInterval(interval);
 		loader.loading = true;
 		console.log('LOADmORE: LOADER:', loader);
@@ -94,7 +107,7 @@
 	}
 </style>
 
-<div class="container">
+<div class="container" data-loader-sync={_syncLoaderEl || undefined} data-setup={_setup || undefined}>
 	<div bind:this={loaderElement}>
 		<!--
   <hr><hr><hr><hr><hr>

@@ -1,62 +1,64 @@
-<script>
-	import { identifier } from '../../messages.js';
-	import Button from '@/core/components/Button/Button.svelte';
+<script lang="ts">
+	import { onDestroy } from 'svelte';
+	import { get } from 'svelte/store';
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
+	import galleryStore from '@/org.libersoft.messages/stores/GalleryStore.ts';
+	import Button from '@/core/components/Button/Button.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	import galleryStore from '../../stores/GalleryStore.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
-
 	let gallery = galleryStore.store;
 	let currentFile = galleryStore.currentFile();
-	let currentFilePosition = $derived($gallery.files.indexOf($currentFile) + 1);
+	let currentFilePosition = $derived($currentFile ? $gallery.files.indexOf($currentFile) + 1 : 0);
+	let canPrevious = galleryStore.canPrevious();
+	let canNext = galleryStore.canNext();
+	let loading = $state(false);
 
-	function download() {
-		assembleFile($currentFile.url, $currentFile.fileName);
+	function download(): void {
+		if ($currentFile && $currentFile.url) assembleFile($currentFile.url, $currentFile.fileName);
 	}
 
-	function close() {
+	function close(): void {
 		galleryStore.setShow(false);
 	}
 
-	function previous() {
+	function previous(): void {
 		galleryStore.previous();
 	}
 
-	function next() {
+	function next(): void {
 		galleryStore.next();
 	}
 
-	let canPrevious = galleryStore.canPrevious();
-	let canNext = galleryStore.canNext();
-
-	let loading = $state(false);
-
-	function handleKeyboard(event) {
+	function handleKeyboard(event: KeyboardEvent): void {
 		event.preventDefault();
 		event.stopImmediatePropagation();
 		if (event.key === 'Escape') {
 			event.preventDefault();
 			close();
-		} else if (event.key === 'ArrowLeft' && $canPrevious) {
-			previous();
-		} else if (event.key === 'ArrowRight' && $canNext) {
-			next();
-		}
+		} else if (event.key === 'ArrowLeft' && $canPrevious) previous();
+		else if (event.key === 'ArrowRight' && $canNext) next();
 	}
 
-	$effect(() => {
-		if ($currentFile && !$currentFile.loaded) {
+	// Load file data when currentFile changes and isn't loaded yet
+	const unsubCurrentFile = currentFile.subscribe(file => {
+		if (file && !file.loaded && file.loadFile) {
 			loading = true;
-			$currentFile
+			file
 				.loadFile()
 				.then(loadedFile => {
-					galleryStore.updateFile($currentFile.id, {
-						loaded: true,
-						...loadedFile,
-					});
+					const current = get(currentFile);
+					if (current) {
+						galleryStore.updateFile(current.id, {
+							...loadedFile,
+							loaded: true,
+						});
+					}
 				})
 				.catch(err => {
-					console.error('error fetching image data for yellow id:', $currentFile.id, err);
+					const current = get(currentFile);
+					if (current) {
+						console.error('error fetching image data for yellow id:', current.id, err);
+					}
 				})
 				.finally(() => {
 					loading = false;
@@ -64,52 +66,51 @@
 		}
 	});
 
-	$effect(() => {
-		const opts = { capture: true };
-		if ($gallery.show) {
-			document.addEventListener('keydown', handleKeyboard, opts);
-		} else {
-			document.removeEventListener('keydown', handleKeyboard, opts);
-		}
+	// Add/remove keyboard listener based on gallery visibility
+	const keyboardOpts = { capture: true } as const;
+	const unsubGallery = gallery.subscribe(g => {
+		if (g.show) document.addEventListener('keydown', handleKeyboard, keyboardOpts);
+		else document.removeEventListener('keydown', handleKeyboard, keyboardOpts);
 	});
 
-	function onAnywhereClick(event) {
-		// very simple background close
-		if (event.target === event.currentTarget) {
-			close();
-		}
+	onDestroy(() => {
+		unsubCurrentFile();
+		unsubGallery();
+		document.removeEventListener('keydown', handleKeyboard, keyboardOpts);
+	});
+
+	function onAnywhereClick(event: PointerEvent): void {
+		if (event.target === event.currentTarget) close();
 	}
 </script>
 
 <style>
 	.gallery {
-		z-index: 9999;
+		z-index: 150;
 		position: fixed;
 		display: flex;
-		flex-direction: column;
 		align-items: center;
 		justify-content: center;
 		top: 0;
 		left: 0;
 		width: 100%;
 		height: 100%;
-		background-color: rgb(0, 0, 0, 0.9);
+		background-color: var(--secondary-background);
 	}
 
 	.side-control {
 		position: absolute;
-		top: 0;
-		width: 100px;
-		height: 100%;
-		background-color: rgba(0, 0, 0, 0.5);
 		display: flex;
-		flex-direction: column;
 		align-items: center;
 		justify-content: center;
+		top: 0;
+		width: 80px;
+		height: 100%;
+		background-color: var(--secondary-hard-background);
 	}
 
 	.side-control:hover {
-		background-color: rgba(0, 0, 0, 0.75);
+		background-color: var(--secondary-soft-background);
 	}
 
 	.side-prev {
@@ -121,21 +122,19 @@
 	}
 
 	.top-left {
-		top: 0;
 		left: 0;
 	}
 
 	.top-right {
-		top: 0;
 		right: 0;
 	}
 
 	.top-left,
 	.top-right {
-		z-index: 10000;
+		z-index: 151;
 		position: absolute;
 		padding: 10px;
-		background-color: var(--primary-foreground);
+		top: 0;
 	}
 
 	.image {
@@ -144,32 +143,42 @@
 		overflow: hidden;
 		flex-flow: column;
 		justify-content: center;
+		max-width: calc(100% - 160px);
 	}
 
-	.image-caption {
-		width: 100%;
+	.image .caption {
+		display: flex;
+		align-items: center;
+		justify-content: center;
 		text-align: center;
-		margin-top: 8px;
-		color: #ccc;
+		padding: 10px;
+		color: var(--secondary-foreground);
 	}
 
 	.image img {
 		max-width: 100%;
 		max-height: 85vh;
+		border-radius: 10px;
 	}
 </style>
 
 {#if $gallery.show}
-	<div class="gallery" onpointerdown={onAnywhereClick}>
+	<div class="gallery" role="dialog" tabindex="-1" onpointerdown={onAnywhereClick}>
 		<div class="top-left">
-			<Button img="img/download.svg" colorVariable="--secondary-foreground" onClick={download} />
+			<Button img="img/download.svg" onClick={download} />
 		</div>
 		<div class="top-right">
-			<Button img="img/close.svg" colorVariable="--secondary-foreground" onClick={close} />
+			<Button img="img/cross.svg" onClick={close} />
 		</div>
-		{#key $currentFile.id}
+		<div class="side-control side-prev" style:display={$canPrevious ? undefined : 'none'}>
+			<Icon img="img/caret-left.svg" alt="Previous" colorVariable="--secondary-foreground" size="80px" onClick={previous} />
+		</div>
+		{#key $currentFile?.id}
 			{#if $currentFile}
 				<div class="image">
+					<div class="caption">
+						{$currentFile.fileName}
+					</div>
 					{#if !loading}
 						<img src={$currentFile.url} alt={$currentFile.fileName} />
 					{:else}
@@ -177,17 +186,15 @@
 							<Spinner />
 						</div>
 					{/if}
-					<div class="image-caption">
-						{$currentFile.fileName} ({currentFilePosition} of {$gallery.files.length})
+					<div class="caption">
+						{currentFilePosition} of {$gallery.files.length}
 					</div>
 				</div>
 			{/if}
 		{/key}
-		<div class="side-control side-prev" style:display={$canPrevious ? undefined : 'none'}>
-			<Icon img="img/caret-left.svg" alt="Previous" colorVariable="--primary-foreground" size="80px" onClick={previous} />
-		</div>
+
 		<div class="side-control side-next" style:display={$canNext ? undefined : 'none'}>
-			<Icon img="img/caret-right.svg" alt="Next" colorVariable="--primary-foreground" size="80px" onClick={next} />
+			<Icon img="img/caret-right.svg" alt="Next" colorVariable="--secondary-foreground" size="80px" onClick={next} />
 		</div>
 	</div>
 {/if}

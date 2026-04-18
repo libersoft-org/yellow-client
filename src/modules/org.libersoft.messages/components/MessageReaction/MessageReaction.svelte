@@ -1,13 +1,14 @@
 <script lang="ts">
-	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import Emojis from '../Emoji/Emojis.svelte';
-	import Icon from '@/core/components/Icon/Icon.svelte';
+	import { playAudio } from '@/core/scripts/notifications.ts';
 	import { computePosition, autoPlacement, autoUpdate, shift, offset } from '@floating-ui/dom';
 	import { onDestroy, onMount } from 'svelte';
-	import { toggleMessageReaction, identifier } from '../../messages';
-	import Emoji from '../Emoji/Emoji.svelte';
-	import { rgi } from '../../emojis';
+	import { toggleMessageReaction, identifier } from '@/org.libersoft.messages/scripts/messages.ts';
+	import { rgi } from '@/org.libersoft.messages/scripts/emojis.ts';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
+	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Portal from '@/core/components/Portal/Portal.svelte';
+	import Emojis from '../Emoji/Emojis.svelte';
+	import Emoji from '../Emoji/Emoji.svelte';
 	interface Props {
 		message: any;
 	}
@@ -17,21 +18,29 @@
 	let show = $state(false);
 	let showFull = $state(false);
 	let autoPlacementCleanup: ReturnType<typeof handleFloatingUI>;
-	const onClick = () => {
-		show = !show;
+
+	function setShow(value: boolean): void {
+		show = value;
+		if (value) autoPlacementCleanup = handleFloatingUI();
+		else {
+			autoPlacementCleanup?.();
+			showFull = false;
+		}
+	}
+
+	const onClick = (): void => {
+		setShow(!show);
 	};
 
-	const handleOutsideClick = (e: MouseEvent) => {
+	const handleOutsideClick = (e: MouseEvent): void => {
 		if (floatingRef && !floatingRef.contains(e.target as Node) && !buttonRef.contains(e.target as Node)) {
-			show = false;
+			setShow(false);
 			document.removeEventListener('click', handleOutsideClick);
 		}
 	};
 
-	const handleFloatingUI = () => {
-		if (!buttonRef || !floatingRef) {
-			return;
-		}
+	const handleFloatingUI = (): (() => void) | undefined => {
+		if (!buttonRef || !floatingRef) return;
 		const autoUpdateCleanUp = autoUpdate(buttonRef, floatingRef, () => {
 			// @ts-ignore
 			computePosition(buttonRef, floatingRef, {
@@ -58,24 +67,17 @@
 		};
 	};
 
-	$effect(() => {
-		if (show) autoPlacementCleanup = handleFloatingUI();
-		else {
-			autoPlacementCleanup && autoPlacementCleanup();
-			showFull = false;
-		}
-	});
-
 	onMount(() => {});
 
 	onDestroy(() => {
 		autoPlacementCleanup && autoPlacementCleanup();
 	});
 
-	const onEmojiClick = (codepoints: number[]) => {
+	const onEmojiClick = (codepoints: any): void => {
 		const codepoints_rgi = rgi(codepoints);
 		toggleMessageReaction(message, { emoji_codepoints_rgi: codepoints_rgi });
-		show = false;
+		setShow(false);
+		playAudio('modules/' + identifier + '/audio/reaction.mp3');
 	};
 </script>
 
@@ -100,7 +102,6 @@
 		border-radius: 20px;
 		box-shadow: var(--shadow);
 		max-width: 300px;
-		z-index: 100000;
 	}
 
 	.emojis {
@@ -127,18 +128,25 @@
 	.emoji {
 		font-size: 24px;
 	}
+
+	.floating {
+		position: absolute;
+		width: max-content;
+		top: 0;
+		left: 0;
+	}
 </style>
 
 {#snippet emoji(codepoints)}
 	<Clickable onClick={() => onEmojiClick(codepoints)} data-testid="message-reaction-emoji-button">
 		<div class="emoji-button emoji">
-			<Emoji {codepoints} context={'menu'} is_single={true} size={30} />
+			<Emoji {codepoints} context={'menu'} is_single size={30} />
 		</div>
 	</Clickable>
 {/snippet}
 
 <div bind:this={buttonRef} class="reaction-button" class:open={show}>
-	<Icon data-testid="message-reaction-menu-button" img="modules/{identifier}/img/reaction-add.svg" alt="Add reaction" colorVariable="--primary-foreground" size="24px" padding="0px" {onClick} />
+	<Icon testId="message-reaction-menu-button" img="modules/{identifier}/img/reaction-add.svg" alt="Add reaction" colorVariable="--primary-foreground" size="24px" padding="0px" {onClick} />
 </div>
 
 {#if show}
@@ -154,7 +162,7 @@
 				{@render emoji([9829, 65039])}
 				<Clickable onClick={() => (showFull = !showFull)}>
 					<div class="expand">
-						<Icon img={showFull ? 'img/close.svg' : 'img/plus.svg'} alt={showFull ? 'Close' : 'Expand'} size="20px" colorVariable="--primary-foreground" />
+						<Icon img={showFull ? 'img/cross.svg' : 'img/plus.svg'} alt={showFull ? 'Close' : 'Expand'} size="20px" colorVariable="--primary-foreground" />
 					</div>
 				</Clickable>
 			</div>

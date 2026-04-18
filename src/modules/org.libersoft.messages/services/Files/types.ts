@@ -24,11 +24,11 @@ export enum FileUploadRecordErrorType {
 	TIMEOUT_BY_SERVER = 'TIMEOUT_BY_SERVER',
 }
 
-export interface CustomFile extends File {
+export interface ICustomFile extends File {
 	metadata: object | null;
 }
 
-export interface FileUploadRecord {
+export interface IFileUploadRecord {
 	id: string;
 	type: FileUploadRecordType;
 	status: FileUploadRecordStatus;
@@ -42,21 +42,21 @@ export interface FileUploadRecord {
 	metadata: object | null;
 }
 
-export interface FileUpload {
+export interface IFileUpload {
 	role: FileUploadRole;
-	file: CustomFile | null;
-	record: FileUploadRecord;
+	file: ICustomFile | null;
+	record: IFileUploadRecord;
 	chunksSent: number[];
 	uploadInterval: NodeJS.Timeout | null;
 	paused?: boolean;
 	running?: boolean; // TODO: maybe refactor to setTimeout (see upload.pushChunk)
 	uploadedBytes?: number; // only for non senders
-	pushChunk?: () => Promise<void>;
+	pushChunk?: (() => Promise<void>) | undefined;
 	acc: any;
 }
 
-export interface FileDownload {
-	record: FileUploadRecord;
+export interface IFileDownload {
+	record: IFileUploadRecord;
 	chunksReceived: any[];
 	data: any;
 	createdAt: number;
@@ -66,7 +66,7 @@ export interface FileDownload {
 	pullChunk?: () => Promise<void>;
 }
 
-export interface FileUploadChunk {
+export interface IFileUploadChunk {
 	chunkId: number;
 	uploadId: string;
 	checksum: string;
@@ -75,19 +75,19 @@ export interface FileUploadChunk {
 	data: Uint8Array;
 }
 
-export interface FileUploadBeginOptions {
+export interface IFileUploadBeginOptions {
 	chunkSize?: number;
 }
 
-export type MakeFileUploadRecordData = Partial<FileUploadRecord> & Pick<FileUploadRecord, 'type' | 'fileOriginalName' | 'fileMimeType' | 'fileSize' | 'chunkSize' | 'fromUserUid' | 'metadata'>;
+export type MakeFileUploadRecordData = Partial<IFileUploadRecord> & Pick<IFileUploadRecord, 'type' | 'fileOriginalName' | 'fileMimeType' | 'fileSize' | 'chunkSize' | 'fromUserUid' | 'metadata'>;
 
-export type MakeFileUploadData = Partial<FileUpload> & Pick<FileUpload, 'role' | 'file' | 'record' | 'acc'>;
+export type MakeFileUploadData = Partial<IFileUpload> & Pick<IFileUpload, 'role' | 'file' | 'record' | 'acc'>;
 
-export type MakeFileDownloadData = Partial<FileDownload> & Pick<FileDownload, 'record'>;
+export type MakeFileDownloadData = Partial<IFileDownload> & Pick<IFileDownload, 'record'>;
 
-export type FileUploadStoreValue = FileUpload[];
+export type FileUploadStoreValue = IFileUpload[];
 
-export type FileDownloadStoreValue = FileDownload[];
+export type FileDownloadStoreValue = IFileDownload[];
 
 export type BaseStoreType<StoreValue, Item> = {
 	store: Writable<StoreValue>;
@@ -99,11 +99,32 @@ export type BaseStoreType<StoreValue, Item> = {
 };
 
 export type FileUploadStoreType = {
-	updateUploadRecord: (id: string, record: FileUploadRecord) => void;
+	updateUploadRecord: (id: string, record: IFileUploadRecord) => void;
 	isAnyUploadRunning: () => boolean;
-} & BaseStoreType<FileUploadStoreValue, FileUpload>;
+} & BaseStoreType<FileUploadStoreValue, IFileUpload>;
 
 export type FileDownloadStoreType = {
-	updateDownloadRecord: (id: string, record: FileUploadRecord) => void;
+	updateDownloadRecord: (id: string, record: IFileUploadRecord) => void;
 	isAnyDownloadRunning: () => boolean;
-} & BaseStoreType<FileDownloadStoreValue, FileDownload>;
+} & BaseStoreType<FileDownloadStoreValue, IFileDownload>;
+
+export interface IFileChunkData {
+	chunkId: number;
+	uploadId: string;
+	checksum: string;
+	data: string;
+}
+
+export interface IGetChunkResult {
+	chunk: IFileChunkData;
+	upload: IFileUpload;
+	blob: Blob;
+}
+
+export interface IPullChunkRequest {
+	uploadId: string;
+	offsetBytes: number;
+	chunkSize: number;
+}
+
+export type PullChunkFn = (data: IPullChunkRequest) => Promise<{ chunk: IFileUploadChunk }>;

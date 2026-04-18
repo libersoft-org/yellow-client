@@ -1,27 +1,27 @@
 <script lang="ts">
+	import { onMount } from 'svelte';
 	import Label from '@/core/components/Label/Label.svelte';
-
 	interface Props {
-		checked: boolean;
+		checked?: boolean;
 		showLabel?: boolean;
-		label: string;
-		orientation?: 'horizontal' | 'vertical';
+		label?: string;
+		row?: boolean;
+		onchange?: (checked: boolean) => void;
+		'data-testid'?: string;
 	}
-
-	let { checked = $bindable(), label, showLabel = false, orientation = 'horizontal', ...restProps }: Props = $props();
-
+	let { checked = $bindable(), label, showLabel = false, row = false, onchange, ...restProps }: Props = $props();
 	let mounted = $state(false);
 	let inputId = Math.random().toString(36);
 	let labelId = `${inputId}-label`;
 
-	function keyPress(event) {
+	function keyPress(event: KeyboardEvent): void {
 		if (event.key === 'Enter' || event.key === ' ') {
 			event.preventDefault();
 			checked = !checked;
 		}
 	}
 
-	$effect(() => {
+	onMount(() => {
 		requestAnimationFrame(() => {
 			mounted = true;
 		});
@@ -34,15 +34,17 @@
 		grid-template-columns: repeat(2, auto);
 		align-items: center;
 		gap: 10px;
+		width: fit-content;
+	}
 
-		&.vertical {
-			grid-template-columns: unset;
-			grid-template-rows: repeat(2, auto);
-		}
+	.switch.row {
+		grid-template-columns: unset;
+		grid-template-rows: repeat(2, auto);
+	}
 
-		.label {
-			font-weight: bold;
-		}
+	.switch .label {
+		font-weight: bold;
+		cursor: pointer;
 	}
 
 	.switch-wrapper {
@@ -66,8 +68,9 @@
 		left: 0;
 		right: 0;
 		bottom: 0;
-		background-color: #ccc;
+		background-color: var(--disabled-background);
 		border-radius: 34px;
+		border: 1px solid var(--primary-foreground);
 		cursor: pointer;
 		pointer-events: none;
 	}
@@ -87,9 +90,9 @@
 		content: '';
 		height: 26px;
 		width: 26px;
-		left: 4px;
-		bottom: 4px;
-		background-color: white;
+		left: 3px;
+		bottom: 3px;
+		background-color: var(--primary-foreground);
 		border-radius: 50%;
 	}
 
@@ -120,12 +123,12 @@
 
 <Label>
 	<span id={labelId} class="visually-hidden">{label}</span>
-	<div class={`switch ${orientation}`}>
+	<div class="switch" class:row>
 		{#if showLabel}
 			<span class="label">{label}:</span>
 		{/if}
 		<div class="switch-wrapper">
-			<input {...restProps} id={inputId} aria-labelledby={labelId} type="checkbox" bind:checked onkeydown={keyPress} />
+			<input {...restProps} id={inputId} aria-labelledby={labelId} type="checkbox" bind:checked onchange={() => onchange?.(checked ?? false)} onkeydown={keyPress} />
 			<span class="slider {mounted ? 'transition' : ''}"></span>
 		</div>
 	</div>

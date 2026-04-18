@@ -1,20 +1,47 @@
 import { writable, get, type Writable } from 'svelte/store';
 
+// Storage abstraction - use localStorage in browser, in-memory fallback for SSR
+let storage: Storage;
+if (typeof window !== 'undefined' && window.localStorage) {
+	storage = window.localStorage;
+} else {
+	// SSR fallback - in-memory storage (no persistence needed during SSR)
+	const map = new Map<string, string>();
+	storage = {
+		get length(): number {
+			return map.size;
+		},
+		clear(): void {
+			map.clear();
+		},
+		getItem(key: string): string | null {
+			return map.get(key) ?? null;
+		},
+		key(index: number): string | null {
+			return [...map.keys()][index] ?? null;
+		},
+		removeItem(key: string): void {
+			map.delete(key);
+		},
+		setItem(key: string, value: string): void {
+			map.set(key, value);
+		},
+	};
+}
+
 export function localStorageSharedStore<T>(name: string, default_: T): Writable<T> {
 	function setStorage(value: T): void {
 		const str = JSON.stringify(value);
 		//console.log('SAVE', name, str);
-		window.localStorage.setItem(name, str);
+		storage.setItem(name, str);
 	}
 
 	function getStorage(): T {
-		const item = window.localStorage.getItem(name);
+		const item = storage.getItem(name);
 		let result: T = default_;
 		try {
 			//console.log('LOAD', name, item);
-			if (item !== null) {
-				result = JSON.parse(item) as T;
-			}
+			if (item !== null) result = JSON.parse(item) as T;
 		} catch (e) {
 			console.error('trying to parse: "' + item + '"');
 			console.error(e);
@@ -37,12 +64,16 @@ export function localStorageSharedStore<T>(name: string, default_: T): Writable<
 			}
 		}
 
-		// Add the event listener
-		window.addEventListener('storage', handleStorageEvent);
+		// Add the event listener (only in browser)
+		if (typeof window !== 'undefined') {
+			window.addEventListener('storage', handleStorageEvent);
+		}
 
 		// Return the unsubscribe function that removes the event listener
 		return () => {
-			window.removeEventListener('storage', handleStorageEvent);
+			if (typeof window !== 'undefined') {
+				window.removeEventListener('storage', handleStorageEvent);
+			}
 		};
 	});
 
@@ -72,11 +103,11 @@ export function localStorageReadOnceSharedStore<T>(name: string, default_: T): W
 	function setStorage(value: T): void {
 		const str = JSON.stringify(value);
 		//console.log('SAVE', name, str);
-		window.localStorage.setItem(name, str);
+		storage.setItem(name, str);
 	}
 
 	function getStorage(): T {
-		const item = window.localStorage.getItem(name);
+		const item = storage.getItem(name);
 		let result: T = default_;
 		try {
 			if (item !== 'undefined' && item) result = JSON.parse(item) as T;

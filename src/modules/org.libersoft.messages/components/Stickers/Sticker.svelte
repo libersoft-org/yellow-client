@@ -1,50 +1,55 @@
-<script>
-	import { debug } from '@/core/core.ts';
+<script lang="ts">
+	import { getContext, onDestroy } from 'svelte';
+	import { readable } from 'svelte/store';
 	import lottie from 'lottie-web';
 	import pako from 'pako';
-	import { getContext, onMount, onDestroy } from 'svelte';
-	import { readable } from 'svelte/store';
-	import { identifier } from '../../messages.js';
-	import { expressions_renderer, animate_all_expressions } from '../../expressions.svelte.ts';
-	export let file = '';
-	export let size = 200;
-	export let intersecting;
-	export let force_animate = false;
-	let componentContainer;
-	let animContainer;
-	let isLottie = false;
-	let isImage = false;
-	let isLoading = false;
-	let error;
-	let observer;
-	let playing = false;
-	let ext;
-	let anim;
-	let isInViewport = false;
-	let mouseOver = false;
-	let elStaticImg;
-	let ContextMenu = getContext('ContextMenu');
+	import { debug } from '@/core/scripts/stores.ts';
+	import { identifier } from '@/org.libersoft.messages/scripts/messages.ts';
+	import { expressions_renderer, animate_all_expressions } from '@/org.libersoft.messages/scripts/expressions.svelte.ts';
+	import Alert from '@/core/components/Alert/Alert.svelte';
+	interface Props {
+		file?: string;
+		size?: number;
+		intersecting: boolean;
+		force_animate?: boolean;
+	}
+	let { file = '', size = 200, intersecting, force_animate = false }: Props = $props();
+	// @ts-expect-error TS6133 - used in template bind:this
+	let _componentContainer: HTMLDivElement;
+	let animContainer = $state<HTMLDivElement>();
+	let isLoading = $state(false);
+	let error: string | undefined = $state(undefined);
+	let observer: IntersectionObserver;
+	let playing = $state(false);
+	let ext = $derived(file.split('.').pop()?.toLowerCase());
+	let isLottie = $derived(ext === 'lottie' || ext === 'json' || ext === 'tgs');
+	let isImage = $derived(!isLottie);
+	let anim: any;
+	let isInViewport = $state(false);
+	let mouseOver = $state(false);
+	// @ts-expect-error TS6133 - used in template bind:this
+	let _elStaticImg = $state<HTMLImageElement>();
+	let ContextMenu: any = getContext('ContextMenu');
 	let ContextMenuOpen = ContextMenu ? ContextMenu.isOpen : readable(undefined);
-	let renderer = 'svg';
-	let animationData;
+	let renderer = $state<any>('svg');
+	let animationData: any;
 
-	$: update_playing(playing);
-
-	ext = file.split('.').pop().toLowerCase();
-	//  console.log('STICKER file:', file, 'ext:', ext);
-	if (ext === 'lottie' || ext === 'json' || ext === 'tgs') isLottie = true;
-	else isImage = true;
+	let _updatePlaying = $derived.by((): boolean => {
+		update_playing(playing);
+		return true;
+	});
 
 	onDestroy(() => {
 		unload_lottie();
 	});
 
-	//$: console.log('anim:', anim, 'playing:', playing, 'isInViewport:', isInViewport, 'mouseOver:', mouseOver, 'force_animate:', force_animate, 'intersecting:', intersecting, 'isLottie:', isLottie, 'isImage:', isImage, 'error:', error, 'renderer:', renderer, 'file:', file, 'size:', size, 'ext:', ext);
-	// $: console.log('ANIM:', anim);
+	let _shouldBePlaying = $derived.by((): boolean => {
+		const args = [$ContextMenuOpen, isInViewport, $expressions_renderer, $animate_all_expressions, force_animate, mouseOver, animContainer, anim] as const;
+		queueMicrotask(() => on_update_should_be_playing(...args));
+		return true;
+	});
 
-	$: on_update_should_be_playing($ContextMenuOpen, isInViewport, $expressions_renderer, $animate_all_expressions, force_animate, mouseOver, animContainer, anim);
-
-	async function on_update_should_be_playing(ContextMenuOpen, isInViewport, expressions_renderer, animate_all_stickers, force_animate, mouseOver, animContainer, _anim) {
+	async function on_update_should_be_playing(ContextMenuOpen: boolean | undefined, isInViewport: boolean, expressions_renderer: string, animate_all_stickers: boolean, force_animate: boolean, mouseOver: boolean, animContainer: HTMLDivElement | undefined, _anim: any): Promise<void> {
 		if (!animContainer) return;
 
 		let should_be_loaded = (ContextMenuOpen === undefined || ContextMenuOpen) && isInViewport;
@@ -69,7 +74,7 @@
 		}
 	}
 
-	function unload_lottie() {
+	function unload_lottie(): void {
 		//console.log('unload lottie, anim:', anim);
 		if (anim) {
 			anim.stop();
@@ -78,20 +83,23 @@
 		}
 	}
 
-	function update_playing(playing) {
+	function update_playing(playing: boolean): void {
 		if (!anim) return;
 		if (playing) anim.play();
 		else anim.pause();
 	}
 
-	$: setup_observer(animContainer);
+	let _setupObserver = $derived.by((): boolean => {
+		setup_observer(animContainer);
+		return true;
+	});
 
-	function setup_observer(animContainer) {
+	function setup_observer(animContainer: HTMLDivElement | undefined): void {
 		if (!animContainer) return;
 		//console.log('create sticker observer');
 		observer = new IntersectionObserver(
 			entries => {
-				isInViewport = entries[entries.length - 1].isIntersecting;
+				isInViewport = entries[entries.length - 1]?.isIntersecting ?? false;
 				//console.log(entries, 'isInViewport: ', isInViewport);
 			},
 			{
@@ -102,7 +110,7 @@
 		observer.observe(animContainer);
 	}
 
-	async function load_lottie() {
+	async function load_lottie(): Promise<void> {
 		//console.log('load lottie, isLoading:', isLoading);
 		if (isLoading) return;
 		isLoading = true;
@@ -121,11 +129,9 @@
 		isLoading = false;
 	}
 
-	async function construct_lottie() {
-		let start = Date.now();
-
+	async function construct_lottie(): Promise<void> {
 		anim = lottie.loadAnimation({
-			container: animContainer,
+			container: animContainer!,
 			renderer,
 			//renderer: 'canvas',
 			loop: true,
@@ -136,7 +142,7 @@
 		/*anim.onComplete = () => {
    console.log('lottie animation completed');
   };*/
-		anim.onLoopComplete = () => {
+		/** @type {any} */ (anim).onLoopComplete = () => {
 			//console.log('lottie animation loop completed');
 			// how to control the rendering fps of a lottie-web animation?
 			//console.log(anim);
@@ -172,15 +178,7 @@
 		//console.log('constructed lottie in ' + (Date.now() - start) + 'ms');
 	}
 
-	async function intersection(entries) {
-		//console.log(entries);
-		entries.sort((a, b) => a.time - b.time);
-		for (let entry of entries) {
-			isInViewport = entries[0].isIntersecting;
-		}
-	}
-
-	async function loadTgs(file) {
+	async function loadTgs(file: string): Promise<any> {
 		try {
 			//let start = Date.now();
 			/*
@@ -211,7 +209,7 @@
 		}
 	}
 
-	async function loadJson(file) {
+	async function loadJson(file: string): Promise<any> {
 		try {
 			//let start = Date.now();
 			const response = await fetch(file);
@@ -227,8 +225,8 @@
 		}
 	}
 
-	function static_img_load_error(event) {
-		error = 'Error loading IMG: ' + event.detail;
+	function static_img_load_error(event: Event): void {
+		error = 'Error loading IMG: ' + (event as CustomEvent).detail;
 	}
 </script>
 
@@ -248,13 +246,9 @@
 		max-height: 100%;
 		object-fit: contain;
 	}
-
-	.error {
-		font-size: 10px;
-	}
 </style>
 
-<div class="sticker" role="button" tabindex="0" bind:this={componentContainer} on:mouseover={() => (mouseOver = true)} on:mouseleave={() => (mouseOver = false)} on:focus={() => (mouseOver = true)} on:blur={() => (mouseOver = false)}>
+<div class="sticker" role="button" tabindex="0" bind:this={_componentContainer} data-playing={_updatePlaying || undefined} data-should-play={_shouldBePlaying || undefined} data-observer={_setupObserver || undefined} onmouseover={() => (mouseOver = true)} onmouseleave={() => (mouseOver = false)} onfocus={() => (mouseOver = true)} onblur={() => (mouseOver = false)}>
 	{#if $debug}
 		renderer: {renderer}
 		isLottie: {isLottie}
@@ -263,7 +257,7 @@
 	{/if}
 	{#if error}
 		<img class="image" style="width: {size}px; height: {size}px;" src="modules/{identifier}/img/question.svg" alt="" />
-		<div class="error">{error}</div>
+		<Alert type="error" message={error} />
 	{:else if isLottie}
 		<div class="lottie" style="width: {size}px; height: {size}px;" bind:this={animContainer}></div>
 	{:else if isImage && intersecting}
@@ -272,8 +266,8 @@
 			style="width: {size}px; height: {size}px;"
 			src={file}
 			alt=""
-			bind:this={elStaticImg}
-			on:error={e => {
+			bind:this={_elStaticImg}
+			onerror={e => {
 				static_img_load_error(e);
 			}}
 		/>

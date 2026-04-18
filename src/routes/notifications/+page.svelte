@@ -1,94 +1,76 @@
-<script>
-	//import '../../../static/app.css';
+<script lang="ts">
 	import Button from '@/core/components/Button/Button.svelte';
 	import { writable, get } from 'svelte/store';
-	import Notification from '../../core/components/Notification/Notification.svelte';
-	import { multiwindow_store } from '../../core/multiwindow_store.ts';
-	import { CUSTOM_NOTIFICATIONS, BROWSER, log } from '../../core/tauri.ts';
-	import { onMount, onDestroy } from 'svelte';
+	import Notification from '@/core/components/Notification/Notification.svelte';
+	import { multiwindow_store } from '@/core/scripts/multiwindow_store.ts';
+	import { CUSTOM_NOTIFICATIONS, log } from '@/core/scripts/tauri.ts';
+	import { onMount } from 'svelte';
 	import { invoke } from '@tauri-apps/api/core';
 	import { heightLogicalChanged, initPositioning } from './position.ts';
+	let maxNotifications = 3;
+	let notifications = writable<any[]>([]);
+	let heightLogical = writable<number>(100);
 
-	export let maxNotifications = 3;
-	let notifications = writable([]);
-	let counter = 0;
-	let heightLogical = writable(100);
+	// // Catch all synchronous errors (see +layout.svelte)
+	// window.addEventListener('error', event => {
+	// 	// event.error is the Error object
+	// 	console.error('+page Uncaught error:', event.error);
+	// 	console.error('+page Stack trace:\n', event.error?.stack);
+	// });
+	//
+	// // Catch unhandled promise rejections
+	// window.addEventListener('unhandledrejection', event => {
+	// 	const reason = event.reason;
+	// 	console.error('+page Unhandled promise rejection:', reason);
+	// 	console.error('+page Stack trace:\n', reason?.stack || reason);
+	// });
 
-	// Catch all synchronous errors
-	window.addEventListener('error', event => {
-		// event.error is the Error object
-		console.error('Uncaught error:', event.error);
-		console.error('Stack trace:\n', event.error?.stack);
-	});
+	onMount(() => {
+		let deinitPromise: Promise<(() => void) | undefined> | undefined;
 
-	// Catch unhandled promise rejections
-	window.addEventListener('unhandledrejection', event => {
-		const reason = event.reason;
-		console.error('Unhandled promise rejection:', reason);
-		console.error('Stack trace:\n', reason?.stack || reason);
-	});
-
-	onMount(async () => {
-		log.debug('/notifications onMount: CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
-
-		// Catch all synchronous errors
-		window.addEventListener('error', event => {
-			// event.error is the Error object
-			console.error('Uncaught error:', event.error);
-			console.error('Stack trace:\n', event.error?.stack);
-		});
-
-		// Catch unhandled promise rejections
-		window.addEventListener('unhandledrejection', event => {
-			const reason = event.reason;
-			console.error('Unhandled promise rejection:', reason);
-			console.error('Stack trace:\n', reason?.stack || reason);
-		});
-
-		let deinit;
-
-		if (window.__TAURI__) {
-			deinit = initPositioning();
-			invoke('show', {});
+		async function init(): Promise<(() => void) | undefined> {
+			log.debug('notifications onMount: CUSTOM_NOTIFICATIONS:', CUSTOM_NOTIFICATIONS);
+			let deinit: (() => void) | undefined;
+			if (window.__TAURI__) {
+				deinit = await initPositioning();
+				invoke('show', {});
+			}
+			if (CUSTOM_NOTIFICATIONS) await initNotificationsPage();
+			else log.debug('CUSTOM_NOTIFICATIONS is not defined');
+			return deinit;
 		}
-		if (CUSTOM_NOTIFICATIONS) {
-			await initNotificationsPage();
-		} else {
-			log.debug('CUSTOM_NOTIFICATIONS is not defined');
-		}
-
-		return deinit;
+		deinitPromise = init();
+		return () => {
+			deinitPromise?.then(deinit => deinit?.());
+		};
 	});
 
-	heightLogical.subscribe(async v => {
+	heightLogical.subscribe(async (v: number): Promise<void> => {
 		await heightLogicalChanged(v);
 	});
 
-	async function initNotificationsPage() {
+	async function initNotificationsPage(): Promise<void> {
 		let s = await multiwindow_store('notifications', false);
 		log.debug('initNotifications: store:', s);
-		s.onChange((k, v) => {
+		s.onChange((k: string, v: any) => {
 			log.debug('store.onChange', k, !!v);
-			if (!v) {
-				onNotificationRemoved(k);
-			} else {
-				addNotificationData(v);
-			}
+			if (!v) onNotificationRemoved(k);
+			else addNotificationData(v);
 		});
-		s.onKeyChange((k, v) => {
+		(s as any).onKeyChange((k: string, v: any) => {
 			log.debug('store.onKeyChange', k, v);
 		});
 		//log.debug('initial store:', await s.entries());
-		let values = await s.values();
+		let values: any[] = await s.values();
 		log.debug('initNotifications: values:', values);
-		values = values.filter(v => !!v);
-		values.sort((a, b) => a.ts - b.ts);
+		values = values.filter((v: any) => !!v);
+		values.sort((a: any, b: any) => a.ts - b.ts);
 		for (let v of values) {
-			if (v) await addNotificationData(v);
+			if (v) addNotificationData(v);
 		}
 	}
 
-	function addNotificationData(data) {
+	function addNotificationData(data: any): void {
 		log.debug('addNotificationData data:', data);
 		data.onClose = onClose.bind(data);
 		data.onClick = onClick.bind(data);
@@ -96,54 +78,20 @@
 		//log.debug('notification added');
 	}
 
-	function clickAddNotification() {
-		log.debug('Clicked on add notification');
-		let notificationData = {
-			id: 'n' + counter,
-			img: 'https://img.freepik.com/free-vector/night-ocean-landscape-full-moon-stars-shine_107791-7397.jpg',
-			title: 'Very ' + counter++,
-			body: 'Veřejné s autorská počítačové vyhotovení, ',
-		};
-		notificationData.buttons = [
-			{
-				text: 'Abort',
-				id: 'abort',
-				onClick: onClick.bind(notificationData),
-				expand: true,
-			},
-			{
-				text: 'Retry',
-				id: 'retry',
-				onClick: onClick.bind(notificationData),
-				expand: true,
-			},
-			{
-				text: 'Fail',
-				id: 'fail',
-				onClick: onClick.bind(notificationData),
-				expand: true,
-			},
-		];
-		notificationData.onClick = onClick.bind(notificationData);
-		notificationData.onClose = onClose.bind(notificationData);
-		notifications.update(n => [...n, notificationData]);
-		log.debug('notification added');
-	}
-
-	async function onClose(e) {
+	async function onClose(this: any, e: Event): Promise<void> {
 		log.debug('onClose notification');
 		this.onClick(e, 'close');
 		onNotificationRemoved(this.id);
 	}
 
-	async function onClick(e, data) {
+	async function onClick(this: any, e: Event, data: any): Promise<void> {
 		e.stopPropagation();
 		log.debug('onClick notification');
 		await (await multiwindow_store('notification-events', false)).set(this.id, JSON.stringify(data));
 		log.debug('notification event set');
 	}
 
-	async function onNotificationRemoved(id) {
+	async function onNotificationRemoved(id: string): Promise<void> {
 		let s = await multiwindow_store('notifications', false);
 		await s.delete(id);
 		notifications.update(v => v.filter(item => item.id !== id));
@@ -152,7 +100,7 @@
 		}
 	}
 
-	async function clearNotifications() {
+	async function clearNotifications(): Promise<void> {
 		log.debug('clearNotifications');
 		for (let n of get(notifications)) {
 			await n.onClose();
@@ -160,7 +108,7 @@
 	}
 </script>
 
-<!--<Button text="Add notification" onClick={clickAddNotification} />-->
+<!--<Button img="img/add.svg" text="Add notification" onClick={clickAddNotification} />-->
 
 <style>
 	.notifications-wrapper {
@@ -184,7 +132,7 @@
 
 <div class="notifications-wrapper" bind:clientHeight={$heightLogical}>
 	{#if $notifications.length >= 2}
-		<Button text="Close all {$notifications.length} notifications" onClick={clearNotifications} />
+		<Button img="img/cross.svg" text="Close all {$notifications.length} notifications" onClick={clearNotifications} />
 	{/if}
 
 	<div class="notifications {'reverse'}">
