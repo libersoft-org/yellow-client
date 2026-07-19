@@ -207,27 +207,29 @@
 </ContextMenu>
 
 {#snippet clickable_emoji(emoji)}
-	<IntersectionObserver once element={intersectedElements[emoji.codepoints_rgi] ?? null} let:intersecting>
-		<Clickable onRightClick={e => showAlts(e, emoji)}>
-			<div
-				bind:this={intersectedElements[emoji.codepoints_rgi]}
-				class="emoji hover"
-				use:longpress
-				{...{
-					onlongpress: (e: any) => showAlts(e, emoji),
-					onmymousedown: () => {
-						altsMenu.close();
-					},
-				}}
-				onclick={() => clickEmoji(emoji.base)}
-				onkeydown={() => {}}
-				role="button"
-				tabindex="0"
-			>
-				{#if intersecting}
-					<Emoji codepoints={emoji.base} context={'menu'} is_single />
-				{/if}
-			</div>
-		</Clickable>
+	<IntersectionObserver once element={intersectedElements[emoji.codepoints_rgi] ?? null}>
+		{#snippet children({ intersecting })}
+			<Clickable onRightClick={e => showAlts(e, emoji)}>
+				<div
+					bind:this={intersectedElements[emoji.codepoints_rgi]}
+					class="emoji hover"
+					use:longpress
+					{...{
+						onlongpress: (e: any) => showAlts(e, emoji),
+						onmymousedown: () => {
+							altsMenu.close();
+						},
+					}}
+					onclick={() => clickEmoji(emoji.base)}
+					onkeydown={() => {}}
+					role="button"
+					tabindex="0"
+				>
+					{#if intersecting}
+						<Emoji codepoints={emoji.base} context={'menu'} is_single />
+					{/if}
+				</div>
+			</Clickable>
+		{/snippet}
 	</IntersectionObserver>
 {/snippet}

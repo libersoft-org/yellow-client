@@ -2,7 +2,7 @@
 	import { getContext, onDestroy } from 'svelte';
 	import { readable } from 'svelte/store';
 	import lottie from 'lottie-web';
-	import pako from 'pako';
+	import { ungzip } from 'pako';
 	import { debug } from '@/core/scripts/stores.ts';
 	import { identifier } from '@/org.libersoft.messages/scripts/messages.ts';
 	import { expressions_renderer, animate_all_expressions } from '@/org.libersoft.messages/scripts/expressions.svelte.ts';
@@ -142,7 +142,7 @@
 		/*anim.onComplete = () => {
    console.log('lottie animation completed');
   };*/
-		/** @type {any} */ (anim).onLoopComplete = () => {
+		/** @type {any} */ anim.onLoopComplete = () => {
 			//console.log('lottie animation loop completed');
 			// how to control the rendering fps of a lottie-web animation?
 			//console.log(anim);
@@ -201,7 +201,7 @@
 				return;
 			}
 			const arrayBuffer = await response.arrayBuffer();
-			const decompressed = pako.ungzip(new Uint8Array(arrayBuffer), { to: 'string' });
+			const decompressed = ungzip(new Uint8Array(arrayBuffer), { toText: true });
 			//console.log('fetched ' + file + ' in ' + (Date.now() - start) + 'ms');
 			return JSON.parse(decompressed);
 		} catch (e) {

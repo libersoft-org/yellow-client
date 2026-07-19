@@ -1,4 +1,3 @@
-import pluginChecker from 'vite-plugin-checker';
 import { sveltekit } from '@sveltejs/kit/vite';
 import devtoolsJson from 'vite-plugin-devtools-json';
 import { defineConfig } from 'vite';
@@ -25,7 +24,7 @@ export function getGitBranch() {
 	}
 }
 
-export default defineConfig(({ mode }) => {
+export default defineConfig(() => {
 	// Load environment variables from .env.local if it exists
 	dotenv.config({ path: '.env.local' });
 
@@ -62,10 +61,9 @@ export default defineConfig(({ mode }) => {
 			devtoolsJson(),
 			sveltekit(),
 			// svelteInspector configured in svelte.config.js
-			...(mode === 'development' ? [pluginChecker({ typescript: true })] : []),
 		],
 		define: {
-			__BUILD_DATE__: new Date(),
+			__BUILD_DATE__: JSON.stringify(new Date().toISOString()),
 			__COMMIT_HASH__: JSON.stringify(getGitCommitHash()),
 			__BRANCH__: JSON.stringify(getGitBranch()),
 			global: 'globalThis',
@@ -84,7 +82,7 @@ export default defineConfig(({ mode }) => {
 							}
 						: undefined
 			),
-			allowedHosts: true,
+			allowedHosts: /** @type {const} */ (true),
 			host: true,
 			port: 3000,
 		},
@@ -99,7 +97,7 @@ export default defineConfig(({ mode }) => {
 				},
 				transform: {
 					inject: {
-						Buffer: ['buffer', 'Buffer'],
+						Buffer: /** @type {[string, string]} */ (['buffer', 'Buffer']),
 					},
 				},
 			},
