@@ -37,6 +37,7 @@
 	let showVideoRecorder = $state(false);
 	let pendingBottomSheetOpen = $state(false);
 	let waitingForKeyboardClose = $state(false);
+	let expressionsMenuOpen: any = getContext('expressionsMenuOpen');
 
 	isMobile.subscribe((value: boolean) => {
 		let changed = expressionsAsContextMenu !== !value;
@@ -46,7 +47,6 @@
 	});
 
 	let { setFileUploadWindow }: { setFileUploadWindow: (show: boolean) => void } = getContext('FileUploadWindow');
-	let expressionsMenuOpen: any = getContext('expressionsMenuOpen');
 
 	documentHeight.subscribe(value => {
 		if (value != lastDocumentHeight) {
