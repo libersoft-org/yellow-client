@@ -1,7 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { get } from 'svelte/store';
 	import { debug } from '@/core/scripts/stores.ts';
-	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type IPayment, estimatedTransactionTimes, avgBlockTimeStore, confirmationBlocksStore, sendTransaction } from 'libersoft-crypto/transaction';
+	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type FeeEstimate, type IPayment, estimatedTransactionTimes, avgBlockTimeStore, confirmationBlocksStore, sendTransaction } from 'libersoft-crypto/transaction';
 	import { sendAddress, sendCurrency } from 'libersoft-crypto/wallet';
 	import { selectedNetwork, selectedNetworkID, networks, type ICurrency } from 'libersoft-crypto/network';
 	import { currencies } from 'libersoft-crypto/currencies';
@@ -32,6 +33,7 @@
 	import QRScanner from '@/core/components/QRScanner/QRScanner.svelte';
 	import { parseQRData } from '@/org.libersoft.wallet/scripts/payment-qr.ts';
 	import { ensureWalletConnection, networksWindow, settingsWindow, setSection } from '@/org.libersoft.wallet/scripts/ui';
+	import { parseTransferAmount, validateSufficientBalance } from '@/org.libersoft.wallet/scripts/send-validation.ts';
 	import { playAudio } from '@/core/scripts/notifications.ts';
 
 	let isInitialized = $state(false);
@@ -46,6 +48,13 @@
 	let remainingBalance: bigint | undefined = $state();
 	let remainingNativeBalance: bigint | undefined = $state();
 	let remainingTokenBalance: bigint | undefined = $state();
+	let balanceRequestGeneration = 0;
+	let feeRequestGeneration = 0;
+	let feeReady = $state(false);
+	let latestFeeEstimate: { context: string; values: FeeEstimate } | null = null;
+	let paymentContext: string | null = null;
+	let paymentDecimals: number | undefined;
+	let balancesReady = $derived(!!currency && !!currentBalanceData && (!currency.contract_address || (currentBalanceData.decimals !== undefined && !!nativeBalanceData)));
 
 	let remainingBalanceObj: IBalance | undefined = $derived.by(() => {
 		return remainingBalance !== undefined ? { amount: remainingBalance, currency: $selectedNetwork?.currency?.symbol || '', decimals: 18 } : undefined;
@@ -71,6 +80,31 @@
 
 	let currencyOptions = $state<Array<{ label: string; icon: { img: string; size: string }; value: ICurrency }>>([]);
 	let selectedCurrencySymbol = $state(''); // Computed property to get the selected currency symbol
+
+	function getCurrencyKey(value: ICurrency | null | undefined = currency): string {
+		if (!value) return 'none';
+		return value.contract_address ? `token:${value.contract_address.toLowerCase()}` : `native:${value.symbol ?? ''}`;
+	}
+
+	function getRequestContext(): string {
+		return `${get(selectedNetworkID) ?? ''}|${get(selectedAddress)?.address ?? ''}|${getCurrencyKey()}`;
+	}
+
+	function invalidateAsyncRequests(): void {
+		balanceRequestGeneration++;
+		feeRequestGeneration++;
+		feeReady = false;
+		payment = undefined;
+		paymentContext = null;
+		paymentDecimals = undefined;
+		if (get(feeLevel) !== 'custom') fee.set('');
+	}
+
+	function applyLatestFeeEstimate(): void {
+		if (!latestFeeEstimate || latestFeeEstimate.context !== getRequestContext()) return;
+		const level = get(feeLevel);
+		if (level !== 'custom') fee.set(latestFeeEstimate.values[level]);
+	}
 
 	onMount(() => {
 		elAddressInput?.focus();
@@ -159,16 +193,17 @@
 			console.log('Send: Network switched - reloading data');
 
 			// Reset state and reload data
+			invalidateAsyncRequests();
 			currency = null;
 			error = null;
 			currentBalanceData = undefined;
 			nativeBalanceData = undefined;
-			updateBalance();
+			void updateBalance();
 
 			// Estimate transaction fee for new network only on actual network change
 			if ($provider && $selectedNetwork && $selectedAddress) {
 				console.log('Send: Estimating fee due to network change');
-				estimateFeeWithLogging((currency as any)?.contract_address, 'network change');
+				void estimateFeeWithLogging(undefined, 'network change');
 			}
 		}
 	}
@@ -177,8 +212,11 @@
 	function handleAddressChange(newAddress: typeof $selectedAddress, currentAddress: typeof $selectedAddress): void {
 		if (isInitialized && newAddress !== currentAddress) {
 			console.log('Send: Address changed - reloading balance');
-			// Update balance for new address, but don't recalculate fee
-			updateBalance();
+			invalidateAsyncRequests();
+			currentBalanceData = undefined;
+			nativeBalanceData = undefined;
+			void updateBalance();
+			if ($provider && $selectedNetwork && newAddress) void estimateFeeWithLogging(currency?.contract_address, 'address change');
 		}
 	}
 
@@ -201,10 +239,13 @@
 
 			if (isInitialized && c) {
 				console.log('Send: Currency changed - updating balance and fee');
-				updateBalance();
+				invalidateAsyncRequests();
+				currentBalanceData = undefined;
+				nativeBalanceData = undefined;
+				void updateBalance();
 				if ($provider && $selectedNetwork && $selectedAddress) {
 					console.log('Send: Estimating fee due to currency change');
-					estimateFeeWithLogging(c?.contract_address, 'currency change');
+					void estimateFeeWithLogging(c.contract_address, 'currency change');
 				}
 			}
 			oldCurrency = c;
@@ -233,9 +274,14 @@
 
 	// Helper function for handling fee level changes
 	function handleFeeLevelChange(): void {
-		if (isInitialized) {
-			updateFeeFromLevel();
-		}
+		if (!isInitialized) return;
+		updateFeeFromLevel();
+		if ($feeLevel === 'custom') feeReady = true;
+		else if (latestFeeEstimate?.context === getRequestContext()) {
+			fee.set(latestFeeEstimate.values[$feeLevel]);
+			feeReady = true;
+		} else void estimateFeeWithLogging(currency?.contract_address, 'fee level change');
+		updateRemainingBalance();
 	}
 
 	// Helper function for handling amount changes
@@ -250,9 +296,21 @@
 	}
 
 	// debug wrapper for estimateTransactionFee
-	function estimateFeeWithLogging(contractAddress: string | undefined, reason: string): void {
+	async function estimateFeeWithLogging(contractAddress: string | undefined, reason: string): Promise<void> {
+		const generation = ++feeRequestGeneration;
+		const context = getRequestContext();
+		feeReady = false;
 		console.log(`Send: Estimating transaction fee - ${reason}`);
-		estimateTransactionFee(contractAddress);
+		const values = await estimateTransactionFee(contractAddress);
+		if (generation !== feeRequestGeneration || context !== getRequestContext()) {
+			applyLatestFeeEstimate();
+			return;
+		}
+		if (!values) return;
+		latestFeeEstimate = { context, values };
+		applyLatestFeeEstimate();
+		feeReady = true;
+		updateRemainingBalance();
 	}
 
 	function scanQRCode(): void {
@@ -347,6 +405,7 @@
 
 	// Computed property to check if QR network matches
 	let networkMatches = $derived(qrChainID === null || $state.snapshot($selectedNetwork?.chainID) === $state.snapshot(qrChainID));
+	let canSubmit = $derived(!!($selectedNetwork && $selectedAddress && networkMatches && balancesReady && feeReady));
 
 	// currency object based on qrContractAddress and $currencies
 	let qrCurrency: ICurrency | undefined = $derived($state.snapshot(qrContractAddress) ? $state.snapshot($currencies).find(c => c.contract_address === $state.snapshot(qrContractAddress)) : undefined);
@@ -354,12 +413,20 @@
 	let needsTokenAdd = $derived(qrContractAddress && !qrCurrency && networkMatches);
 
 	async function updateBalance(): Promise<void> {
+		const generation = ++balanceRequestGeneration;
+		const context = getRequestContext();
+		const selectedCurrency = $state.snapshot(currency);
 		try {
-			nativeBalanceData = (await getBalance()) || undefined;
-			if (currency?.contract_address) currentBalanceData = (await getTokenBalanceByAddress(currency.contract_address)) || undefined;
-			else if (currency) currentBalanceData = nativeBalanceData;
+			const nativeBalance = (await getBalance()) || undefined;
+			const tokenBalance = selectedCurrency?.contract_address ? (await getTokenBalanceByAddress(selectedCurrency.contract_address)) || undefined : undefined;
+			if (generation !== balanceRequestGeneration || context !== getRequestContext()) return;
+			nativeBalanceData = nativeBalance;
+			if (selectedCurrency?.contract_address) currentBalanceData = tokenBalance;
+			else if (selectedCurrency) currentBalanceData = nativeBalance;
 			else currentBalanceData = undefined;
+			updateRemainingBalance();
 		} catch (e) {
+			if (generation !== balanceRequestGeneration || context !== getRequestContext()) return;
 			console.error('Error updating balance:', e);
 			currentBalanceData = undefined;
 			nativeBalanceData = undefined;
@@ -374,7 +441,7 @@
 			return;
 		}
 		try {
-			const amountBigInt = parseUnits(amount.toString().replace(',', '.'), currentBalanceData.decimals || 18);
+			const amountBigInt = parseUnits(amount.toString().replace(',', '.'), currentBalanceData.decimals ?? 18);
 			const feeBigInt = parseUnits($fee.toString(), 18); // Fee is always in native currency (18 decimals)
 			// If sending native currency
 			if (!currency?.contract_address) {
@@ -404,10 +471,10 @@
 			if (!currency?.contract_address) {
 				let maxAmount = currentBalanceData.amount - feeBigInt;
 				if (maxAmount < 0) maxAmount = 0n;
-				amount = formatUnits(maxAmount, currentBalanceData.decimals || 18);
+				amount = formatUnits(maxAmount, currentBalanceData.decimals ?? 18);
 			} else {
 				// If sending token, use full token balance (fee is paid in native currency)
-				amount = formatUnits(currentBalanceData.amount, currentBalanceData.decimals || 18);
+				amount = formatUnits(currentBalanceData.amount, currentBalanceData.decimals ?? 18);
 			}
 		} catch (e) {
 			console.error('Error setting max amount:', e);
@@ -433,8 +500,10 @@
 				element: elAmountInput,
 				required: 'Amount is required',
 				validate: value => {
-					const etherAmount = getEtherAmount(value);
-					if (!etherAmount) return 'Invalid amount';
+					const decimals = currency?.contract_address ? currentBalanceData?.decimals : (currentBalanceData?.decimals ?? 18);
+					if (decimals === undefined) return 'Balance is still loading';
+					const parsedAmount = parseTransferAmount(value, decimals);
+					if (!parsedAmount || parsedAmount <= 0n) return 'Invalid amount';
 					return null;
 				},
 			},
@@ -455,16 +524,36 @@
 			error = validationError;
 			return;
 		}
-		// If validation passes, create payment
-		let etherAmount: bigint;
-		if (currency?.contract_address && currentBalanceData) {
-			// For tokens, use the correct decimals
-			etherAmount = parseUnits(amount!.toString().replace(',', '.'), currentBalanceData.decimals || 18);
-		} else {
-			// For native currency, use 18 decimals
-			etherAmount = getEtherAmount(amount || 0)!;
+		if (!currency || !currentBalanceData) {
+			error = 'Balance is still loading';
+			return;
 		}
+		if (!feeReady) {
+			error = 'Transaction fee is still loading';
+			return;
+		}
+		const decimals = currency.contract_address ? currentBalanceData.decimals : (currentBalanceData.decimals ?? 18);
+		if (decimals === undefined) {
+			error = 'Token decimals are not available';
+			return;
+		}
+		const etherAmount = parseTransferAmount(amount!, decimals);
 		const etherFee = getEtherAmount($fee);
+		if (!etherAmount || !etherFee) {
+			error = 'Invalid amount or transaction fee';
+			return;
+		}
+		const balanceError = validateSufficientBalance({
+			amount: etherAmount,
+			fee: etherFee,
+			currentBalance: currentBalanceData.amount,
+			nativeBalance: nativeBalanceData?.amount,
+			isToken: !!currency.contract_address,
+		});
+		if (balanceError) {
+			error = balanceError;
+			return;
+		}
 		payment = {
 			address: $sendAddress!.toString(),
 			amount: etherAmount,
@@ -472,16 +561,26 @@
 			symbol: currency?.symbol,
 			...(currency?.contract_address !== undefined && { contractAddress: currency.contract_address }),
 		};
+		paymentContext = getRequestContext();
+		paymentDecimals = decimals;
 		elDialogSend?.open();
 	}
 
 	async function onYes(params: any): Promise<void> {
+		if (paymentContext !== getRequestContext()) {
+			error = 'Network, address, or currency changed. Please review the transaction again.';
+			return;
+		}
 		console.log('ONYES - awaiting ensureWalletConnection...');
 		if (await ensureWalletConnection()) {
+			if (paymentContext !== getRequestContext()) {
+				error = 'Network, address, or currency changed. Please review the transaction again.';
+				return;
+			}
 			console.log('ensureWalletConnection passed, sending transaction...');
 
 			try {
-				const hash = await sendTransaction(params.address, params.amount, params.fee, params.contractAddress, selectedCurrencySymbol, currentBalanceData?.decimals);
+				const hash = await sendTransaction(params.address, params.amount, params.fee, params.contractAddress, selectedCurrencySymbol, paymentDecimals);
 
 				console.log('Transaction sent, hash:', hash);
 
@@ -655,7 +754,7 @@
 				confirmationBlocks: {JSON.stringify($confirmationBlocksStore)}
 			</div>
 		{/if}
-		<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={!!($selectedNetwork && $selectedAddress && networkMatches)} onClick={send} data-testid="wallet-send-submit-btn" />
+		<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={canSubmit} onClick={send} data-testid="wallet-send-submit-btn" />
 	</Form>
 </div>
 <DialogSend params={payment} bind:this={elDialogSend} {onYes} />
