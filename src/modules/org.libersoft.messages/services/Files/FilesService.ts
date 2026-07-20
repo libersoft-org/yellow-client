@@ -4,11 +4,13 @@ import { active_account } from '@/core/scripts/core.ts';
 import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/scripts/messages.ts';
 import fileUploadManager, { type FileUploadService } from './FileUploadService.ts';
 import fileDownloadManager, { type FileDownloadService } from './FileDownloadService.ts';
+import type { IFileDownload } from './types.ts';
 import { liveQuery } from 'dexie';
 
 export class FilesService {
 	fileUploadManager: FileUploadService;
 	fileDownloadManager: FileDownloadService;
+	private attachmentRequests = new Map<string, Promise<{ localFile: ILocalFile }>>();
 
 	constructor(fileUploadManager: FileUploadService, fileDownloadManager: FileDownloadService) {
 		this.fileUploadManager = fileUploadManager;
@@ -16,52 +18,96 @@ export class FilesService {
 	}
 
 	getOrDownloadAttachment(uploadId: string): Promise<{ localFile: ILocalFile }> {
-		return new Promise(async resolve => {
-			const acc = get(active_account);
-			// check indexedDB if file is already downloaded (or being downloaded)
-			const localFile = await filesDB.findFile(uploadId);
-			if (localFile) {
-				if (localFile.localFileStatus === LocalFileStatus.READY) {
-					resolve({ localFile });
-					return;
-				}
-				// try to find download for this uploadId
-				const existingDownload = this.fileDownloadManager.downloadStore.get(uploadId);
-				if (existingDownload) {
-					// download is in progress
-					const obs = liveQuery(() => filesDB.files.where({ fileTransferId: uploadId }).first());
-					const sub = obs.subscribe(subscribedLocalFile => {
-						if (subscribedLocalFile?.localFileStatus === LocalFileStatus.READY) {
-							sub.unsubscribe();
-							resolve({ localFile: subscribedLocalFile });
-						} else if (!subscribedLocalFile || !this.fileDownloadManager.downloadStore.get(uploadId)) {
-							sub.unsubscribe();
-							// Download failed or was removed — delete stale record and re-download
-							if (subscribedLocalFile) {
-								filesDB.files.delete(subscribedLocalFile.id).then(() => {
-									this.getOrDownloadAttachment(uploadId).then(resolve);
-								});
-							} else this.getOrDownloadAttachment(uploadId).then(resolve);
-						}
-					});
-					return;
-				} else await filesDB.files.delete(localFile.id); // if reached here, file will probably never be downloaded so we gonna delete it
+		const existingRequest = this.attachmentRequests.get(uploadId);
+		if (existingRequest) return existingRequest;
+		const request = this.loadOrDownloadAttachment(uploadId);
+		this.attachmentRequests.set(uploadId, request);
+		request.then(
+			(): void => {
+				this.attachmentRequests.delete(uploadId);
+			},
+			(): void => {
+				this.attachmentRequests.delete(uploadId);
 			}
-			// first fetch file record data
-			const { record } = await loadUploadData(uploadId);
-			const newLocalFile: Omit<ILocalFile, 'id'> = {
-				localFileStatus: LocalFileStatus.DOWNLOADING,
-				fileTransferId: record.id,
-				fileOriginalName: record.fileOriginalName,
-				fileMimeType: record.fileMimeType,
-				fileSize: record.fileSize,
+		);
+		return request;
+	}
+
+	private async loadOrDownloadAttachment(uploadId: string): Promise<{ localFile: ILocalFile }> {
+		const acc = get(active_account);
+		if (!acc) throw new Error('Cannot download an attachment without an active account');
+		const localFile = await filesDB.findFile(uploadId);
+		if (localFile?.localFileStatus === LocalFileStatus.READY) return { localFile };
+		if (localFile && this.fileDownloadManager.downloadStore.get(uploadId)) return this.waitForExistingDownload(uploadId);
+		if (localFile) await filesDB.files.delete(localFile.id);
+
+		const { record } = await loadUploadData(uploadId);
+		const newLocalFile: Omit<ILocalFile, 'id'> = {
+			localFileStatus: LocalFileStatus.DOWNLOADING,
+			fileTransferId: record.id,
+			fileOriginalName: record.fileOriginalName,
+			fileMimeType: record.fileMimeType,
+			fileSize: record.fileSize,
+		};
+		const localFileId = await filesDB.addFile(newLocalFile);
+		return new Promise<{ localFile: ILocalFile }>((resolve, reject): void => {
+			let settled = false;
+			let unsubscribe = (): void => {};
+			const complete = (callback: () => void): void => {
+				if (settled) return;
+				settled = true;
+				unsubscribe();
+				callback();
 			};
-			await filesDB.addFile(newLocalFile);
-			this.fileDownloadManager.startDownloadSerial([record], makeDownloadChunkAsyncFn(acc), async download => {
-				newLocalFile.localFileStatus = LocalFileStatus.READY;
-				newLocalFile.fileBlob = new Blob(download.chunksReceived, { type: record.fileMimeType });
-				// const result = await filesDB.updateFile(record.id, newLocalFile);
-				resolve({ localFile: newLocalFile as ILocalFile });
+			const startPromise = this.fileDownloadManager.startDownloadSerial([record], makeDownloadChunkAsyncFn(acc), async (download: IFileDownload): Promise<void> => {
+				const fileBlob = new Blob(download.chunksReceived, { type: record.fileMimeType });
+				const completedFile: ILocalFile = {
+					...newLocalFile,
+					id: localFileId,
+					localFileStatus: LocalFileStatus.READY,
+					fileBlob,
+				};
+				const updatedCount = await filesDB.updateFile(record.id, {
+					localFileStatus: completedFile.localFileStatus,
+					fileBlob,
+				});
+				if (updatedCount === 0) throw new Error('Downloaded attachment record is missing from IndexedDB');
+				complete((): void => resolve({ localFile: completedFile }));
+			});
+			unsubscribe = this.fileDownloadManager.downloadStore.store.subscribe((): void => {
+				if (!settled && !this.fileDownloadManager.downloadStore.get(uploadId)) complete((): void => reject(new Error('Attachment download was canceled or failed')));
+			});
+			startPromise.catch((error: unknown): void => complete((): void => reject(error)));
+		});
+	}
+
+	private waitForExistingDownload(uploadId: string): Promise<{ localFile: ILocalFile }> {
+		return new Promise<{ localFile: ILocalFile }>((resolve, reject): void => {
+			let settled = false;
+			let downloadUnsubscribe = (): void => {};
+			let dbSubscription: { unsubscribe: () => void } | undefined;
+			const complete = (callback: () => void): void => {
+				if (settled) return;
+				settled = true;
+				dbSubscription?.unsubscribe();
+				downloadUnsubscribe();
+				callback();
+			};
+			dbSubscription = liveQuery(() => filesDB.files.where({ fileTransferId: uploadId }).first()).subscribe({
+				next: (localFile: ILocalFile | undefined): void => {
+					if (localFile?.localFileStatus === LocalFileStatus.READY) complete((): void => resolve({ localFile }));
+				},
+				error: (error: unknown): void => complete((): void => reject(error)),
+			});
+			downloadUnsubscribe = this.fileDownloadManager.downloadStore.store.subscribe((): void => {
+				if (settled || this.fileDownloadManager.downloadStore.get(uploadId)) return;
+				void filesDB
+					.findFile(uploadId)
+					.then((localFile: ILocalFile | undefined): void => {
+						if (localFile?.localFileStatus === LocalFileStatus.READY) complete((): void => resolve({ localFile }));
+						else complete((): void => reject(new Error('Attachment download was canceled or failed')));
+					})
+					.catch((error: unknown): void => complete((): void => reject(error)));
 			});
 		});
 	}

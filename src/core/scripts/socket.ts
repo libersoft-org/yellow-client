@@ -1,10 +1,42 @@
-import type { IAccount, AccountStore } from './types.ts';
+import type { IAccount, IAccountRequest, AccountStore } from './types.ts';
 import { TAURI_SERVICE } from './tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
 
+export const REQUEST_TIMEOUT_MS = 60_000;
+
+function transportError(message: string): { error: true; message: string } {
+	return { error: true, message };
+}
+
+function completeRequest(acc: IAccount, requestID: number, response: any): void {
+	const request = acc.requests[requestID];
+	if (!request) return;
+	delete acc.requests[requestID];
+	clearTimeout(request.timeoutId);
+	try {
+		request.callback?.(request.req, response);
+	} catch (error) {
+		console.error('Request callback failed:', error);
+	}
+}
+
+function registerRequest(acc: IAccount, requestID: number, req: any, callback: ((req: any, res: any) => void) | null, quiet: boolean): void {
+	const request: IAccountRequest = {
+		req,
+		callback,
+		quiet,
+		timeoutId: setTimeout((): void => completeRequest(acc, requestID, transportError('Request timed out')), REQUEST_TIMEOUT_MS),
+	};
+	acc.requests[requestID] = request;
+}
+
+export function failPendingRequests(acc: IAccount, message: string): void {
+	for (const requestID of Object.keys(acc.requests)) completeRequest(acc, Number(requestID), transportError(message));
+}
+
 export function sendAsync(acc: IAccount, account: AccountStore | null, target: string, command: string, params: any = {}, sendSessionID = true, quiet = false): Promise<any> {
-	return new Promise(resolve => {
-		send(acc, account, target, command, params, sendSessionID, (_req: any, res: any) => resolve(res), quiet);
+	return new Promise<any>((resolve: (value: any) => void): void => {
+		send(acc, account, target, command, params, sendSessionID, (_req: any, res: any): void => resolve(res), quiet);
 	});
 }
 
@@ -15,6 +47,7 @@ export function send(acc: IAccount, _account: AccountStore | null, target: strin
   */
 	if (!acc) {
 		console.error('Error while sending command: account is not defined');
+		callback?.(null, transportError('Account is not defined'));
 		return;
 	}
 
@@ -31,24 +64,26 @@ export function send(acc: IAccount, _account: AccountStore | null, target: strin
 		if (params) req.data.params = params;
 
 		// Store the callback for when we receive the response
-		acc.requests[requestID] = {
+		registerRequest(
+			acc,
+			requestID,
 			req,
-			callback: (req: any, res: any) => {
+			(req: any, res: any): void => {
 				if (res.error) {
 					console.debug(res);
 				}
 				if (callback) callback(req, res);
 			},
-			quiet,
-		};
+			quiet
+		);
 
 		// Send through native bridge
 		invoke('plugin:yellow|send_to_native', {
 			accountId: acc.id,
 			message: req,
-		}).catch(error => {
+		}).catch((error: unknown): void => {
 			console.error('Failed to send message through native:', error);
-			if (callback) callback(req, { error: true, message: 'Native send failed' });
+			completeRequest(acc, requestID, transportError('Native send failed'));
 		});
 
 		return;
@@ -56,6 +91,7 @@ export function send(acc: IAccount, _account: AccountStore | null, target: strin
 
 	if (!acc.socket || acc.socket.readyState !== WebSocket.OPEN) {
 		console.debug('Error while sending command: WebSocket is not open');
+		callback?.(null, transportError('WebSocket is not open'));
 		return;
 	}
 	const requestID = generateRequestID();
@@ -68,13 +104,16 @@ export function send(acc: IAccount, _account: AccountStore | null, target: strin
 	if (command) req.data.command = command;
 	if (params) req.data.params = params;
 	//console.log('SENDING COMMAND:', req);
-	acc.requests[requestID] = {
+	registerRequest(
+		acc,
+		requestID,
 		req,
-		callback: (req: any, res: any) => {
+		(req: any, res: any): void => {
 			if (res.error) console.debug(res);
 			if (callback) callback(req, res);
 		},
-	};
+		quiet
+	);
 	/* if (!quiet) {
   console.log('------------------');
   console.log('SENDING COMMAND:');*/
@@ -85,8 +124,7 @@ export function send(acc: IAccount, _account: AccountStore | null, target: strin
 		acc.socket.send(JSON.stringify(req));
 	} catch (e) {
 		console.error('WebSocket send failed:', e);
-		delete acc.requests[requestID];
-		if (callback) callback(req, { error: true, message: 'WebSocket send failed' });
+		completeRequest(acc, requestID, transportError('WebSocket send failed'));
 		return;
 	}
 	acc.lastTransmissionTs = Date.now();
@@ -128,8 +166,7 @@ export function handleSocketMessage(acc: IAccount, res: any): void {
 			);
 		}
 
-		if (reqData.callback) reqData.callback(reqData.req, res);
-		delete acc.requests[res.requestID];
+		completeRequest(acc, res.requestID, res);
 	} else if (res.event) {
 		//console.log('EVENT:', res);
 		acc.events?.dispatchEvent(new CustomEvent(res.event, { detail: res }));

@@ -11,7 +11,7 @@ export class FileDownloadService extends EventEmitter {
 		this.downloadStore = downloadStore;
 	}
 
-	async startDownloadSerial(records: IFileUploadRecord[], pullChunkFn: PullChunkFn, finishCallback: (download: IFileDownload) => void): Promise<void> {
+	async startDownloadSerial(records: IFileUploadRecord[], pullChunkFn: PullChunkFn, finishCallback: (download: IFileDownload) => void | Promise<void>): Promise<void> {
 		for (const record of records) {
 			let download: IFileDownload | undefined = this.downloadStore.get(record.id);
 			if (!download) {
@@ -63,7 +63,7 @@ export class FileDownloadService extends EventEmitter {
 					// Check if all chunks have been received
 					if (totalReceived * chunkSize >= record.fileSize) {
 						setRunning(false);
-						finishCallback && finishCallback(download);
+						await finishCallback(download);
 						download.chunksReceived = [];
 						setTimeout(() => this.startNextDownload(download));
 						this.downloadStore.delete(record.id);
@@ -71,6 +71,12 @@ export class FileDownloadService extends EventEmitter {
 						download.pullChunk && (await download.pullChunk());
 					}
 				} catch (e) {
+					const totalReceived = download.chunksReceived.filter(c => c !== undefined).length;
+					if (totalReceived * record.chunkSize >= record.fileSize) {
+						setRunning(false);
+						this.downloadStore.delete(record.id);
+						throw e;
+					}
 					// try again
 					// TODO: check for specific errors
 					retry();

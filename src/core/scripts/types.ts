@@ -11,6 +11,13 @@ export interface IAccountSettings {
 	[key: string]: any;
 }
 
+export interface IAccountRequest {
+	req: any;
+	callback: ((req: any, res: any) => void) | null;
+	quiet?: boolean;
+	timeoutId: ReturnType<typeof setTimeout>;
+}
+
 export interface IAccount {
 	id: string;
 	socket_id: number;
@@ -27,7 +34,7 @@ export interface IAccount {
 	lastCommsTs?: number;
 	lastTransmissionTs?: number;
 	bufferedAmount?: number;
-	requests: { [key: string]: any };
+	requests: Record<number, IAccountRequest>;
 	module_data: { [moduleId: string]: any };
 	available_modules: { [moduleId: string]: any };
 	socket?: WebSocket | undefined;

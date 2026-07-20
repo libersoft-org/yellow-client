@@ -3,7 +3,7 @@ import { derived, get, writable, type Readable } from 'svelte/store';
 import { listen } from '@tauri-apps/api/event';
 import { log, TAURI_SERVICE } from '@/core/scripts/tauri.ts';
 import { selected_module_id, active_account_id } from '@/core/scripts/stores.ts';
-import { send, handleSocketMessage } from '@/core/scripts/socket.ts';
+import { send, handleSocketMessage, failPendingRequests } from '@/core/scripts/socket.ts';
 import { updateModulesComms } from '@/core/scripts/modules.ts';
 import { accounts_config } from '@/core/scripts/accounts_config.ts';
 import type { IAccount, AccountStore, IAccountConfig, IAccountCredentials, IAccountSettings } from './types.ts';
@@ -342,6 +342,7 @@ function reconnectAccount(account: AccountStore): void {
 				return;
 			}
 			log.debug('WebSocket ' + socket_id + '  closed:', event, 'wasClean:', event.wasClean, 'reason:', event.reason, 'code:', event.code);
+			failPendingRequests(acc, 'Connection closed');
 			acc.session_status = undefined;
 			account.update(v => v);
 			setTimeout(() => {
@@ -478,7 +479,8 @@ function setupPing(account: AccountStore): void {
 			'ping',
 			{},
 			true,
-			() => {
+			(_req: any, res: any): void => {
+				if (res.error !== false) return;
 				//console.log('Ping response:', res);
 				acc.lastCommsTs = Date.now();
 				//console.log('lastCommsTs:', acc.lastCommsTs);
@@ -507,7 +509,7 @@ function setupPing(account: AccountStore): void {
 }
 
 function disconnectAccount(acc: IAccount): void {
-	acc.requests = {};
+	failPendingRequests(acc, 'Connection closed');
 	acc.available_modules = {};
 	updateModulesComms(acc);
 	if (acc.socket) {
@@ -519,7 +521,6 @@ function disconnectAccount(acc: IAccount): void {
 
 function clearAccount(acc: IAccount): void {
 	disconnectAccount(acc);
-	acc.requests = {};
 	acc.module_data = {};
 }
 

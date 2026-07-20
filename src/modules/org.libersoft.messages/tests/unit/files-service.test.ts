@@ -1,0 +1,105 @@
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { writable } from 'svelte/store';
+import type { IFileDownload, IFileUploadRecord } from '../../services/Files/types.ts';
+
+const mocks = vi.hoisted(() => ({
+	findFile: vi.fn(),
+	addFile: vi.fn(),
+	updateFile: vi.fn(),
+	deleteFile: vi.fn(),
+	loadUploadData: vi.fn(),
+}));
+
+vi.mock('@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts', (): any => ({
+	LocalFileStatus: { INIT: 'INIT', DOWNLOADING: 'DOWNLOADING', READY: 'READY' },
+	default: {
+		findFile: mocks.findFile,
+		addFile: mocks.addFile,
+		updateFile: mocks.updateFile,
+		files: { delete: mocks.deleteFile, where: vi.fn() },
+	},
+}));
+
+vi.mock('@/core/scripts/core.ts', async (): Promise<any> => {
+	const { writable: makeWritable } = await import('svelte/store');
+	return {
+		active_account: makeWritable({ id: 'account' }),
+	};
+});
+
+vi.mock('@/org.libersoft.messages/scripts/messages.ts', (): any => ({
+	loadUploadData: mocks.loadUploadData,
+	makeDownloadChunkAsyncFn: vi.fn((): (() => Promise<never>) => async (): Promise<never> => {
+		throw new Error('Unused pull chunk mock');
+	}),
+}));
+
+vi.mock('@/org.libersoft.messages/services/Files/FileUploadService.ts', (): any => ({ default: {} }));
+vi.mock('@/org.libersoft.messages/services/Files/FileDownloadService.ts', (): any => ({ default: {} }));
+
+import { FilesService } from '../../services/Files/FilesService.ts';
+
+const record: IFileUploadRecord = {
+	id: 'upload',
+	fileOriginalName: 'file.txt',
+	fileMimeType: 'text/plain',
+	fileSize: 4,
+	chunkSize: 4,
+} as IFileUploadRecord;
+
+function makeDownloadManager(): any {
+	const downloads = new Map<string, IFileDownload>();
+	const store = writable<IFileDownload[]>([]);
+	return {
+		downloadStore: {
+			store,
+			get: (id: string): IFileDownload | undefined => downloads.get(id),
+		},
+		startDownloadSerial: async (_records: IFileUploadRecord[], _pullChunk: unknown, finish: (download: IFileDownload) => void | Promise<void>): Promise<void> => {
+			const download = { record, chunksReceived: [new Uint8Array([1, 2, 3, 4])] } as IFileDownload;
+			downloads.set(record.id, download);
+			store.set([download]);
+			await finish(download);
+			downloads.delete(record.id);
+			store.set([]);
+		},
+	};
+}
+
+describe('FilesService', (): void => {
+	beforeEach((): void => {
+		vi.clearAllMocks();
+		mocks.findFile.mockResolvedValue(undefined);
+		mocks.addFile.mockResolvedValue(1);
+		mocks.updateFile.mockResolvedValue(1);
+		mocks.deleteFile.mockResolvedValue(undefined);
+		mocks.loadUploadData.mockResolvedValue({ record });
+	});
+
+	it('persists READY and the downloaded Blob before resolving', async (): Promise<void> => {
+		const service = new FilesService({} as any, makeDownloadManager());
+		const result = await service.getOrDownloadAttachment(record.id);
+		expect(mocks.updateFile).toHaveBeenCalledWith(record.id, {
+			localFileStatus: 'READY',
+			fileBlob: expect.any(Blob),
+		});
+		expect(result.localFile).toMatchObject({
+			id: 1,
+			fileTransferId: record.id,
+			localFileStatus: 'READY',
+		});
+		expect(result.localFile.fileBlob).toBeInstanceOf(Blob);
+	});
+
+	it('rejects IndexedDB failures instead of leaving the request pending', async (): Promise<void> => {
+		mocks.findFile.mockRejectedValue(new Error('IndexedDB failed'));
+		const service = new FilesService({} as any, makeDownloadManager());
+		await expect(service.getOrDownloadAttachment(record.id)).rejects.toThrow('IndexedDB failed');
+	});
+
+	it('rejects when persisting READY fails', async (): Promise<void> => {
+		mocks.updateFile.mockRejectedValue(new Error('READY persistence failed'));
+		const service = new FilesService({} as any, makeDownloadManager());
+		await expect(service.getOrDownloadAttachment(record.id)).rejects.toThrow('READY persistence failed');
+	});
+});
