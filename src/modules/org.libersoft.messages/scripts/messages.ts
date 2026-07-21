@@ -259,9 +259,16 @@ export async function initUpload(files: any, uploadType: any, recipients: any[])
 		}
 	});
 	console.log('messageHtml', messageHtml);
-	setTimeout(() => {
-		sendMessage(messageHtml, 'html');
-	}, 100);
+	await new Promise<void>((resolve: () => void): void => {
+		setTimeout(resolve, 100);
+	});
+	try {
+		await sendMessage(messageHtml, 'html');
+	} catch (error) {
+		for (const upload of uploads) fileUploadStore.delete(upload.record.id);
+		console.error('Failed to queue attachment message:', error);
+		return;
+	}
 	// send upload
 	const records = uploads.map(upload => upload.record);
 	sendData(acc as IAccount, null, 'upload_begin', { records, recipients }, true, (_req, res) => {
@@ -704,9 +711,11 @@ export async function setMessageSeen(message: any, cb?: () => void, keep_unseen_
  *  @param {import('@/core/scripts/types.ts').IAccount | null} [acc]
  *  @param {any} [conversation]
  */
-export function sendMessage(text: string, format: string, acc: any = null, conversation: any = null): string {
+export async function sendMessage(text: string, format: string, acc: any = null, conversation: any = null): Promise<string> {
 	acc = acc ? acc : (get(active_account) as IAccount);
 	conversation = conversation ? conversation : get(selectedConversation);
+	if (!acc) throw new Error('Cannot send a message without an active account');
+	if (!conversation) throw new Error('Cannot send a message without a selected conversation');
 	let message = new Message(acc, {
 		uid: getGuid(),
 		address_from: acc.credentials.address,
@@ -722,7 +731,7 @@ export function sendMessage(text: string, format: string, acc: any = null, conve
 		format,
 		uid: message.uid,
 	};
-	saveAndSendOutgoingMessage(acc, conversation, params, message);
+	await saveAndSendOutgoingMessage(acc, conversation, params, message);
 	// append to message array only when conversation is also selected (active)
 	const _selectedConversation = get(selectedConversation);
 	if (_selectedConversation && _selectedConversation.id === conversation.id) addMessagesToMessagesArray([message], 'send_message');
@@ -739,6 +748,10 @@ export async function deleteMessage(message: any): Promise<void> {
 	};
 	sendData(acc, null, 'message_delete', params, true, (_req, res) => {
 		console.log('123 response', res);
+		if (res.error !== false) {
+			console.error('Message deletion failed:', res);
+			return;
+		}
 		snipeMessage(message.uid);
 	});
 }

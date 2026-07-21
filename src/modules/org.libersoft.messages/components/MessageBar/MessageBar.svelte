@@ -10,6 +10,7 @@
 	import Window from '@/core/components/Window/Window.svelte';
 	import WindowFileUpload from '../../windows/FileUpload.svelte';
 	import WindowHtml from '../../windows/Html.svelte';
+	import DialogError from '@/org.libersoft.messages/dialogs/DialogError.svelte';
 	import Expressions from '../Expressions/Expressions.svelte';
 	import { init_emojis } from '@/org.libersoft.messages/scripts/emojis.ts';
 	import { get } from 'svelte/store';
@@ -38,6 +39,8 @@
 	let pendingBottomSheetOpen = $state(false);
 	let waitingForKeyboardClose = $state(false);
 	let expressionsMenuOpen: any = getContext('expressionsMenuOpen');
+	let elDialogError = $state<DialogError>();
+	let errorMessage = $state('');
 
 	isMobile.subscribe((value: boolean) => {
 		let changed = expressionsAsContextMenu !== !value;
@@ -107,11 +110,16 @@
 	let lastSentMessageUid: string | null = $state(null);
 
 	export async function doSendMessage(message: string, html: boolean): Promise<void> {
-		//console.log('doSendMessage', message);
-		const uid = await sendMessage(message, html ? 'html' : 'plaintext');
-		lastSentMessageUid = uid;
-		await setBarFocus();
-		closeExpressions();
+		try {
+			const uid = await sendMessage(message, html ? 'html' : 'plaintext');
+			lastSentMessageUid = uid;
+			await setBarFocus();
+			closeExpressions();
+		} catch (error) {
+			errorMessage = error instanceof Error ? error.message : 'Failed to queue message';
+			elDialogError?.open();
+			throw error;
+		}
 	}
 
 	export async function setBarFocus(): Promise<void> {
@@ -139,21 +147,23 @@
 	const replyTo = messageBarReplyStore.getReplyTo();
 
 	function clickSend(_event: Event): void {
-		clickSend2(elMessage.value);
+		void clickSend2(elMessage.value);
 	}
 
-	function clickSend2(messageToSend: string): void {
-		if (messageToSend && $replyTo && $replyTo.type === ReplyToType.MESSAGE) {
-			const replyToMessageUid = $replyTo?.data?.uid;
-			messageToSend = `<Reply id="${replyToMessageUid}"></Reply>${messageToSend}`;
-			doSendMessage(messageToSend, true);
-		} else if (messageToSend) {
-			doSendMessage(messageToSend, false);
+	async function clickSend2(messageToSend: string): Promise<void> {
+		if (!messageToSend) return;
+		try {
+			if ($replyTo && $replyTo.type === ReplyToType.MESSAGE) {
+				const replyToMessageUid = $replyTo?.data?.uid;
+				await doSendMessage(`<Reply id="${replyToMessageUid}"></Reply>${messageToSend}`, true);
+			} else await doSendMessage(messageToSend, false);
+			elMessage.value = '';
+			resizeMessage();
+			elMessage.focus();
+			messageBarReplyStore.close();
+		} catch (error) {
+			console.error('Failed to send message:', error);
 		}
-		elMessage.value = '';
-		resizeMessage();
-		elMessage.focus();
-		messageBarReplyStore.close();
 	}
 
 	function debugClickSendSplit(_event: Event): void {
@@ -161,7 +171,7 @@
 			let messages = elMessage.value.split('\n');
 			for (let message of messages) {
 				if (message) {
-					clickSend2(message);
+					void clickSend2(message);
 				}
 			}
 		}, 5000);
@@ -451,3 +461,4 @@
 
 <Window title="File upload" body={WindowFileUpload} params={{ setFileUploadWindow: setFileUploadWindow }} bind:this={$windowFileUploadStore} />
 <Window title="HTML composer" body={WindowHtml} bind:this={elWindowHTML} width="700px" height="500px" max resizable />
+<DialogError bind:this={elDialogError} message={errorMessage} title="Message not sent" />

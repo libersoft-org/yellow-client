@@ -124,6 +124,7 @@
 	let messagesHeight = $state(-1);
 	let scrolledToBottom0: boolean = false;
 	let scrolledToBottom1: boolean = false;
+	let scrollCheckInterval: ReturnType<typeof setInterval> | undefined;
 	let wrapperWidth = $state<number | null>(null);
 	let elWindowForwardMessage = $state<any>();
 	let _syncForwardStore = $derived.by((): boolean => {
@@ -148,8 +149,8 @@
 		return true;
 	});
 
-	onMount(() => {
-		setInterval(() => {
+	onMount((): void => {
+		scrollCheckInterval = setInterval((): void => {
 			scrolledToBottom0 = scrolledToBottom1;
 			scrolledToBottom1 = isScrolledToBottom();
 			fixScroll();
@@ -216,6 +217,7 @@
 	});
 
 	onDestroy(() => {
+		if (scrollCheckInterval) clearInterval(scrollCheckInterval);
 		unsubEvents();
 	});
 

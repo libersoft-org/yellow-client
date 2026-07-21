@@ -7,10 +7,12 @@
 	import Input from '@/core/components/Input/Input.svelte';
 	import Photo from '@/core/components/Photo/Photo.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
+	import Alert from '@/core/components/Alert/Alert.svelte';
 	import MessageContent from '@/org.libersoft.messages/components/MessageContent/MessageContent.svelte';
 	const fwMsg = forwardMessageStore.getForwardedMessage();
 	const sentToConversations = forwardMessageStore.getSentToConversations();
 	let search = $state('');
+	let sendError = $state<string | null>(null);
 	// Process the message to get the content for preview
 	let messageContent = $derived($fwMsg ? processMessage($fwMsg.data) : null);
 	// TODO: this is simple search, in future we want to at least debounce it or make backend solution for filtering
@@ -23,10 +25,16 @@
 		});
 	});
 
-	const onSend = (conversation: Conversation): void => {
-		sendMessage($fwMsg?.data.message, $fwMsg?.data.format, $fwMsg?.data.acc.deref(), conversation);
-		forwardMessageStore.addSentToConversation(conversation);
-	};
+	async function onSend(conversation: Conversation): Promise<void> {
+		try {
+			await sendMessage($fwMsg?.data.message, $fwMsg?.data.format, $fwMsg?.data.acc.deref(), conversation);
+			forwardMessageStore.addSentToConversation(conversation);
+			sendError = null;
+		} catch (error) {
+			console.error('Failed to forward message:', error);
+			sendError = error instanceof Error ? error.message : 'Failed to queue forwarded message';
+		}
+	}
 </script>
 
 <style>
@@ -105,6 +113,9 @@
 	</div>
 {/snippet}
 <div class="forward-message" data-testid="forward-message-window">
+	{#if sendError}
+		<Alert type="error" message={sendError} />
+	{/if}
 	{#if $fwMsg && messageContent}
 		<div class="message-preview" data-testid="forward-message-preview">
 			<div class="message-preview-header" data-testid="forward-message-preview-header">Forwarding message:</div>
