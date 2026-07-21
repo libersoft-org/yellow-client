@@ -27,6 +27,7 @@
 	import '@/org.libersoft.dating/scripts/module.ts';
 	import '@/org.libersoft.iframes/scripts/module.ts';
 	import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/scripts/messages.ts';
+	import type { IAccount } from '@/core/scripts/types.ts';
 	import { setDefaultWindowSize, initWindow } from '../core/scripts/tauri-app.ts';
 	import { initZoom } from '@/core/scripts/zoom.ts';
 	const wizardData = {
@@ -55,54 +56,112 @@
 	let selectedModuleDecl = $derived($selected_module_id !== null ? $module_decls[$selected_module_id] : undefined);
 	let contentElement: HTMLElement = undefined as any;
 	let initCleanup: (() => void) | null = null;
+	let serviceWorkerMessageListener: ((event: MessageEvent) => void) | null = null;
+	let pageDestroyed = false;
 
 	setContext('menus', menus);
 	setContext('contentElement', contentElement);
 
-	function getFileChunkFactory(uploadId): (params: any) => Promise<any> {
-		const fn = makeDownloadChunkAsyncFn(get(active_account));
-		return params => fn({ uploadId, ...params });
+	function getFileChunkFactory(uploadId: string, acc: IAccount): (params: any) => Promise<any> {
+		const fn = makeDownloadChunkAsyncFn(acc);
+		return (params: any): Promise<any> => fn({ uploadId, ...params });
+	}
+
+	function getServiceWorkerErrorMessage(error: unknown): string {
+		return error instanceof Error ? error.message : 'Media request failed';
+	}
+
+	function respondToServiceWorker(port: MessagePort, response: any): void {
+		try {
+			port.postMessage(response);
+		} catch (error) {
+			console.error('Failed to respond to service worker:', error);
+		} finally {
+			port.close();
+		}
+	}
+
+	function isServiceWorkerMediaRequest(data: unknown): data is { type: 'GET_FILE_INFO' | 'GET_CHUNK'; payload: { accId?: unknown; uploadId?: unknown; start?: unknown; end?: unknown } } {
+		if (typeof data !== 'object' || data === null) return false;
+		const request = data as { type?: unknown; payload?: unknown };
+		return (request.type === 'GET_FILE_INFO' || request.type === 'GET_CHUNK') && typeof request.payload === 'object' && request.payload !== null;
+	}
+
+	async function handleServiceWorkerMessage(event: MessageEvent): Promise<void> {
+		const port = event.ports[0];
+		if (!port) return;
+		if (!isServiceWorkerMediaRequest(event.data)) {
+			respondToServiceWorker(port, { error: true, message: 'Invalid media request' });
+			return;
+		}
+		const { payload, type } = event.data;
+		const uploadId = typeof payload.uploadId === 'string' ? payload.uploadId : undefined;
+		const accId = typeof payload.accId === 'string' ? payload.accId : undefined;
+		const acc = get(active_account);
+		if (!uploadId || !accId || !acc || acc.id !== accId) {
+			respondToServiceWorker(port, { error: true, message: 'Requested media account is unavailable' });
+			return;
+		}
+
+		try {
+			if (type === 'GET_FILE_INFO') {
+				const upload = await loadUploadData(uploadId);
+				if (!upload?.record) throw new Error('Media file metadata is unavailable');
+				respondToServiceWorker(port, upload.record);
+				return;
+			}
+			const start = payload.start;
+			const end = payload.end;
+			if (typeof start !== 'number' || typeof end !== 'number' || !Number.isSafeInteger(start) || !Number.isSafeInteger(end) || start < 0 || end < start) throw new Error('Invalid media chunk range');
+			const getChunk = getFileChunkFactory(uploadId, acc);
+			const result = await getChunk({
+				offsetBytes: start,
+				chunkSize: end - start + 1,
+			});
+			if (!result?.chunk) throw new Error('Media chunk is unavailable');
+			respondToServiceWorker(port, result);
+		} catch (error) {
+			respondToServiceWorker(port, { error: true, message: getServiceWorkerErrorMessage(error) });
+		}
 	}
 
 	onMount((async () => {
 		//console.log('+page onMount');
 		if ('serviceWorker' in window.navigator) {
-			//console.log('+page registering service worker');
-			const SW_VERSION = '_version_v1_'; // change this to force update the service worker
-			// TODO: rm after testing and dev
-			const existing = await navigator.serviceWorker.getRegistrations();
-			for (const reg of existing) {
-				if (reg.active && !reg.active.scriptURL.includes(SW_VERSION)) {
-					await reg.unregister();
-					console.log('Unregistered old SW:', reg.active.scriptURL);
+			try {
+				//console.log('+page registering service worker');
+				const SW_VERSION = '_version_v2_'; // change this to force update the service worker
+				// TODO: rm after testing and dev
+				const existing = await navigator.serviceWorker.getRegistrations();
+				for (const reg of existing) {
+					if (reg.active && !reg.active.scriptURL.includes(SW_VERSION)) {
+						await reg.unregister();
+						console.log('Unregistered old SW:', reg.active.scriptURL);
+					}
 				}
-			}
-			navigator.serviceWorker.register(`service-worker.js?v=${SW_VERSION}`);
-			navigator.serviceWorker.ready.then(registration => {
-				/*console.log('+page service worker ready');
+				void navigator.serviceWorker
+					.register(`service-worker.js?v=${SW_VERSION}`)
+					.then((): Promise<ServiceWorkerRegistration> => navigator.serviceWorker.ready)
+					.then((registration: ServiceWorkerRegistration): void => {
+						if (pageDestroyed) return;
+						/*console.log('+page service worker ready');
 								console.log('Service worker registration:', registration);
 								console.log('Service worker active:', registration.active);
 								console.log('Service worker script URL:', registration.active.scriptURL);
 								console.log('Service worker state:', registration.active.state);
 								console.log('Service worker scope:', registration.scope);**/
-				(window as any).sw = registration;
-				navigator.serviceWorker.addEventListener('message', e => {
-					if (e.data.type === 'GET_FILE_INFO') {
-						const { uploadId } = e.data.payload;
-						loadUploadData(uploadId).then(uploadData => e.ports[0]?.postMessage(uploadData.record));
-					}
-					if (e.data.type === 'GET_CHUNK') {
-						const { uploadId, start, end } = e.data.payload;
-						const getChunk = getFileChunkFactory(uploadId);
-						getChunk({
-							offsetBytes: start,
-							chunkSize: end + 1 - start,
-						}).then(data => {
-							e.ports[0]?.postMessage(data);
-						});
-					}
-				});
-			});
+						(window as any).sw = registration;
+						serviceWorkerMessageListener = (event: MessageEvent): void => {
+							void handleServiceWorkerMessage(event);
+						};
+						navigator.serviceWorker.addEventListener('message', serviceWorkerMessageListener);
+					})
+					.catch((error: unknown): void => {
+						console.error('Failed to register service worker:', error);
+					});
+			} catch (error) {
+				console.error('Failed to register service worker:', error);
+			}
 		} else console.log('+page This browser does not support service workers.');
 		initZoom();
 		setDefaultWindowSize();
@@ -133,6 +192,8 @@
 
 	onDestroy(async () => {
 		console.log('+page onDestroy');
+		pageDestroyed = true;
+		if (serviceWorkerMessageListener && 'serviceWorker' in navigator) navigator.serviceWorker.removeEventListener('message', serviceWorkerMessageListener);
 		initCleanup?.();
 		await destroyTrayIcon();
 	});
