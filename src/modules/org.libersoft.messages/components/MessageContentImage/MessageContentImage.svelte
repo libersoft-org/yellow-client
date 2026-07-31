@@ -21,7 +21,7 @@
 	let imgUrl: string | null = $state(null);
 	let imgFileName: string | null = $state(null);
 	const upload = writable<any>(null);
-	fileUploadStore.store.subscribe(() => upload.set(fileUploadStore.get(yellowId) || null));
+	const unsubscribeUploadStore = fileUploadStore.store.subscribe((): void => upload.set(fileUploadStore.get(yellowId) || null));
 
 	function makeFilesForGallery(): any[] {
 		const filesForGallery: any[] = [];
@@ -99,7 +99,10 @@
 		}
 	});
 
-	onDestroy(unsubUpload);
+	onDestroy((): void => {
+		unsubscribeUploadStore();
+		unsubUpload();
+	});
 
 	onMount(() => {
 		if (isYellow && !$upload) {

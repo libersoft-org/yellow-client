@@ -75,7 +75,7 @@
 
 	const onEmojiClick = (codepoints: any): void => {
 		const codepoints_rgi = rgi(codepoints);
-		toggleMessageReaction(message, { emoji_codepoints_rgi: codepoints_rgi });
+		void toggleMessageReaction(message, { emoji_codepoints_rgi: codepoints_rgi });
 		setShow(false);
 		playAudio('modules/' + identifier + '/audio/reaction.mp3');
 	};

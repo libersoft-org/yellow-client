@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount, setContext, tick, getContext } from 'svelte';
+	import { onDestroy, onMount, setContext, tick, getContext } from 'svelte';
 	import { documentHeight, keyboardHeight, isMobile, debug } from '@/core/scripts/stores.ts';
 	import { handleResize, identifier, initUpload, sendMessage, selectedConversation } from '@/org.libersoft.messages/scripts/messages.ts';
 	import Bar from '@/core/components/Content/ContentBar.svelte';
@@ -42,7 +42,7 @@
 	let elDialogError = $state<DialogError>();
 	let errorMessage = $state('');
 
-	isMobile.subscribe((value: boolean) => {
+	const unsubscribeMobileMode = isMobile.subscribe((value: boolean): void => {
 		let changed = expressionsAsContextMenu !== !value;
 		expressionsAsContextMenu = !value;
 		expressionsHeight = value ? '250px' : '500px';
@@ -51,7 +51,7 @@
 
 	let { setFileUploadWindow }: { setFileUploadWindow: (show: boolean) => void } = getContext('FileUploadWindow');
 
-	documentHeight.subscribe(value => {
+	const unsubscribeDocumentHeight = documentHeight.subscribe((value: number): void => {
 		if (value != lastDocumentHeight) {
 			//if (value < lastDocumentHeight - 100) expressionsBottomSheetOpen = false;
 			lastDocumentHeight = value;
@@ -227,15 +227,15 @@
 		}
 	}
 
-	isMobile.subscribe(_value => {
+	const unsubscribeMobileLayout = isMobile.subscribe((_value: boolean): void => {
 		expressionsAsContextMenu = !_value;
 	});
 
-	documentHeight.subscribe(_value => {
+	const unsubscribeDocumentResize = documentHeight.subscribe((_value: number): void => {
 		handleResize(true); // TODO: save wasScrolledToBottom2 before showing bottom sheet /// periodically?
 	});
 
-	keyboardHeight.subscribe(_value => {
+	const unsubscribeKeyboardHeight = keyboardHeight.subscribe((_value: number): void => {
 		if (_value > 100) {
 			if (get(isMobile)) {
 				expressionsHeight = _value + 'px';
@@ -307,17 +307,28 @@
 		// when the keyboard actually closes (height becomes 0)
 	}
 
-	onMount(() => {
-		videoInputRef.addEventListener('change', function (event) {
-			const recipientEmail = get(selectedConversation).address;
-			const file = event.target.files[0]; // Get the selected video file
-			if (file) {
-				// const url = URL.createObjectURL(file); // Create a URL for the video file
-				// videoPreview.src = url;
-				// videoPreview.style.display = "block"; // Show the preview of the video
-				initUpload([file], FileUploadRecordType.SERVER, [recipientEmail]);
-			}
+	function handleVideoInputChange(event: Event): void {
+		const input = event.currentTarget;
+		if (!(input instanceof HTMLInputElement)) return;
+		const recipientEmail = get(selectedConversation)?.address;
+		const file = input.files?.[0];
+		if (!recipientEmail || !file) return;
+		void initUpload([file], FileUploadRecordType.SERVER, [recipientEmail]).catch((error: unknown): void => {
+			console.error('Failed to upload recorded video:', error);
 		});
+	}
+
+	onMount((): (() => void) => {
+		videoInputRef?.addEventListener('change', handleVideoInputChange);
+		return (): void => videoInputRef?.removeEventListener('change', handleVideoInputChange);
+	});
+
+	onDestroy((): void => {
+		unsubscribeMobileMode();
+		unsubscribeDocumentHeight();
+		unsubscribeMobileLayout();
+		unsubscribeDocumentResize();
+		unsubscribeKeyboardHeight();
 	});
 </script>
 

@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { downloadAttachmentsSerial } from '@/org.libersoft.messages/scripts/messages.ts';
 	import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole, type IFileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
@@ -18,7 +18,7 @@
 	// determine if the bulk download action should be shown
 	let showBulkDownloadAction = $derived(downloadableRecords.length > 1);
 	// subscribe to the store to get the uploads
-	fileUploadStore.store.subscribe(uploads => {
+	const unsubscribeUploadStore = fileUploadStore.store.subscribe((uploads: IFileUpload[]): void => {
 		if (attachmentIds.length === 0) {
 			return;
 		}
@@ -55,6 +55,8 @@
 			if (uploadId) attachmentIds.push(uploadId);
 		});
 	});
+
+	onDestroy(unsubscribeUploadStore);
 </script>
 
 <style>

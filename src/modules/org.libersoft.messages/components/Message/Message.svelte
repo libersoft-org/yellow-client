@@ -305,7 +305,7 @@
 	}
 
 	const onReactionClick = (codepoints_rgi: string): void => {
-		toggleMessageReaction(message, { emoji_codepoints_rgi: codepoints_rgi });
+		void toggleMessageReaction(message, { emoji_codepoints_rgi: codepoints_rgi });
 	};
 </script>
 

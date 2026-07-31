@@ -1,5 +1,5 @@
 <script lang="ts">
-	import { onMount } from 'svelte';
+	import { onDestroy, onMount } from 'svelte';
 	import { cancelDownload, cancelUpload, downloadAttachmentsSerial, loadUploadData, pauseDownload, pauseUpload as _pauseUpload, resumeDownload, resumeUpload as _resumeUpload } from '@/org.libersoft.messages/scripts/messages.ts';
 	import { type IFileDownload, type IFileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
 	import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
@@ -11,14 +11,23 @@
 
 	/** uploads */
 	let upload = $state<IFileUpload | null>(null);
-	fileUploadStore.store.subscribe(() => (upload = fileUploadStore.get(uploadId) || null));
+	const unsubscribeUploadStore = fileUploadStore.store.subscribe((): void => {
+		upload = fileUploadStore.get(uploadId) || null;
+	});
 
 	/** downloads */
 	let download = $state<IFileDownload | null>(null);
-	fileDownloadStore.store.subscribe(() => (download = fileDownloadStore.get(uploadId) || null));
+	const unsubscribeDownloadStore = fileDownloadStore.store.subscribe((): void => {
+		download = fileDownloadStore.get(uploadId) || null;
+	});
 
 	onMount(() => {
 		if (!upload) loadUploadData(uploadId);
+	});
+
+	onDestroy((): void => {
+		unsubscribeUploadStore();
+		unsubscribeDownloadStore();
 	});
 
 	function onDownload(e: Event): void {

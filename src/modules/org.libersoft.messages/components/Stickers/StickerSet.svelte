@@ -30,7 +30,9 @@
 	});
 	let first = $derived(showall ? stickers : (stickers as any[] | undefined)?.slice(0, splitAt));
 	let rest = $derived(showall ? [] : (stickers as any[] | undefined)?.slice(splitAt));
-	stickerset_favorites.subscribe((_value: any) => (in_favorites = stickerset_in_favorites(stickerset)));
+	const unsubscribeFavorites = stickerset_favorites.subscribe((_value: any): void => {
+		in_favorites = stickerset_in_favorites(stickerset);
+	});
 	let favorite_alt = $derived(in_favorites ? 'Remove from favorites' : 'Add to favorites');
 	let favorite_icon = $derived(in_favorites ? 'full' : 'empty');
 
@@ -38,7 +40,8 @@
 		//console.log(`stickerset ${stickerset.id} mounted, intersecting: ${intersecting}`);
 	});
 
-	onDestroy(() => {
+	onDestroy((): void => {
+		unsubscribeFavorites();
 		//console.log(`stickerset ${stickerset.id} destroyed`);
 	});
 

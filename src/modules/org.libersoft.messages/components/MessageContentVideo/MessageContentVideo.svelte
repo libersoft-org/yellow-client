@@ -3,6 +3,7 @@
 	import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	import { FileUploadRecordStatus, type IFileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
+	import { onDestroy } from 'svelte';
 	import { writable } from 'svelte/store';
 	let { node } = $props();
 	let file = $derived(node.attributes.file?.value);
@@ -11,7 +12,9 @@
 	let isYellow = $derived(file && file.startsWith(YELLOW_SRC_PROTOCOL)); // TODO: check deep prop reactivity (in case of message edit)
 	let yellowId = $derived(isYellow ? file.slice(YELLOW_SRC_PROTOCOL.length) : null);
 	let upload = writable<IFileUpload | null>(null);
-	fileUploadStore.store.subscribe(() => upload.set(fileUploadStore.get(yellowId) || null));
+	const unsubscribeUploadStore = fileUploadStore.store.subscribe((): void => upload.set(fileUploadStore.get(yellowId) || null));
+
+	onDestroy(unsubscribeUploadStore);
 </script>
 
 <style>

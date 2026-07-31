@@ -811,28 +811,43 @@ export function unsetMessageReaction(message: any, reaction: any): Promise<any> 
 	return modifyMessageReaction(message.uid, 'unset', reaction);
 }
 
-export function toggleMessageReaction(message: any, reaction: any): Promise<any> {
-	const userAddress = (get(active_account) as IAccount).credentials.address;
-	const didUserReact = message.reactions.some(existingReaction => {
-		if (existingReaction.user_address === userAddress && existingReaction.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi) {
-			return true;
-		}
-		return false;
-	});
+export async function toggleMessageReaction(message: any, reaction: any): Promise<void> {
+	const acc = get(active_account) as IAccount | null;
+	if (!acc) return;
+	const userAddress = acc.credentials.address;
+	const existingReaction = message.reactions.find((currentReaction: any): boolean => currentReaction.user_address === userAddress && currentReaction.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi);
 	playAudio('modules/' + identifier + '/audio/reaction.mp3');
-	if (didUserReact) {
-		message.reactions = message.reactions.filter(r => !(r.user_address === userAddress && r.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi));
+	if (existingReaction) {
+		message.reactions = message.reactions.filter((currentReaction: any): boolean => currentReaction !== existingReaction);
 		insertEvent({ type: 'properties_update', array: get(messagesArray) });
-		return unsetMessageReaction(message, reaction);
-	} else {
-		const tempReaction = makeMessageReaction({
-			user_address: userAddress,
-			message_uid: message.uid,
-			emoji_codepoints_rgi: reaction.emoji_codepoints_rgi,
-		});
-		message.reactions.push(tempReaction);
-		insertEvent({ type: 'properties_update', array: get(messagesArray) });
-		return setMessageReaction(message, reaction);
+		try {
+			await unsetMessageReaction(message, reaction);
+		} catch (error) {
+			const hasReaction = message.reactions.some((currentReaction: any): boolean => currentReaction.user_address === userAddress && currentReaction.emoji_codepoints_rgi === reaction.emoji_codepoints_rgi);
+			if (!hasReaction) {
+				message.reactions.push(existingReaction);
+				insertEvent({ type: 'properties_update', array: get(messagesArray) });
+			}
+			console.error('Failed to remove message reaction:', error);
+		}
+		return;
+	}
+	const tempReaction = makeMessageReaction({
+		user_address: userAddress,
+		message_uid: message.uid,
+		emoji_codepoints_rgi: reaction.emoji_codepoints_rgi,
+	});
+	message.reactions.push(tempReaction);
+	insertEvent({ type: 'properties_update', array: get(messagesArray) });
+	try {
+		await setMessageReaction(message, reaction);
+	} catch (error) {
+		const tempReactionIndex = message.reactions.indexOf(tempReaction);
+		if (tempReactionIndex !== -1) {
+			message.reactions.splice(tempReactionIndex, 1);
+			insertEvent({ type: 'properties_update', array: get(messagesArray) });
+		}
+		console.error('Failed to add message reaction:', error);
 	}
 }
 
