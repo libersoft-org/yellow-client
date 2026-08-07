@@ -1,5 +1,5 @@
 import { type IFileDownload, type FileDownloadStoreType, type IFileUploadRecord, FileUploadRecordStatus, type PullChunkFn } from './types.ts';
-import { makeFileDownload, sha256Hex } from './utils.ts';
+import { fileDigestFromChunkHashes, makeFileDownload, sha256Hex } from './utils.ts';
 import { scopeAccountKey, type ITransferScope } from './accountScope.ts';
 import EventEmitter from 'events';
 import fileDownloadStore from '../../stores/FileDownloadStore.ts';
@@ -8,19 +8,28 @@ import fileDownloadStore from '../../stores/FileDownloadStore.ts';
 const RETRY_BASE_MS = 1000;
 const RETRY_MAX_MS = 30_000;
 const MAX_RETRIES = 8;
+/** Event emitted once a transfer has failed for good. See the note at the emit site. */
+export const DOWNLOAD_ERROR_EVENT = 'download-error';
+
+/** Payload of {@link DOWNLOAD_ERROR_EVENT}. */
+export interface IDownloadErrorEvent {
+	uploadId: string;
+	accountKey: string;
+	error: Error;
+}
+
 /** Refuse absurd chunk sizes announced by the server before allocating anything. */
 const MAX_CHUNK_SIZE = 8 * 1024 * 1024;
 
-/* Whether a chunk without a checksum is accepted.
+/* Whether a chunk without a checksum, or a transfer without a whole-file digest, is accepted.
  *
- * Every sender in this codebase has computed per-chunk SHA-256 since the integrity work landed, so
- * the only thing lenient mode buys is receiving files from clients that predate it. A peer that
- * wants to avoid verification can simply omit the checksum while this is false, so flip it to true
- * once the deployed senders have been updated. The switch is deliberately a single constant so the
- * decision is one line and one date, not a code change.
+ * Now enforced. Leaving it optional meant a peer could skip verification entirely by sending
+ * `checksum: ''`, which made the integrity work advisory rather than binding. Every sender in this
+ * codebase has computed per-chunk SHA-256 since that work landed; the cost of enforcing is that
+ * files from senders older than that are refused rather than accepted unverified.
  *
  * Structural verification (chunk id, offset, length, total size) applies either way. */
-export const REQUIRE_CHUNK_CHECKSUMS = false;
+export const REQUIRE_CHUNK_CHECKSUMS = true;
 
 export class FileDownloadService extends EventEmitter {
 	downloadStore: FileDownloadStoreType;
@@ -44,6 +53,9 @@ export class FileDownloadService extends EventEmitter {
 				this.downloadStore.set(scope, download);
 			}
 			const totalChunks = Math.ceil(record.fileSize / record.chunkSize);
+			/* Per-chunk hashes in arrival order, folded into the whole-file digest at the end. */
+			const chunkHashes: string[] = [];
+			const expectedFileDigest = typeof (record.metadata as any)?.fileDigest === 'string' ? ((record.metadata as any).fileDigest as string) : null;
 			let retries = 0;
 			download.pullChunk = async () => {
 				const retry = (error: unknown) => {
@@ -55,7 +67,10 @@ export class FileDownloadService extends EventEmitter {
 						download.record.status = FileUploadRecordStatus.ERROR;
 						download.error = error instanceof Error ? error : new Error(String(error));
 						console.error('Download failed permanently:', record.id, error);
-						this.emit('error', { uploadId: record.id, accountKey: download.accountKey, error: download.error });
+						/* Deliberately not called 'error': an EventEmitter with no 'error' listener rethrows
+						 * the payload as an unhandled exception, and downloadAttachmentsSerial() uses this
+						 * service without attaching one. */
+						this.emit(DOWNLOAD_ERROR_EVENT, { uploadId: record.id, accountKey: download.accountKey, error: download.error });
 						this.downloadStore.delete(scope);
 						/* Do not leave the rest of the queue waiting on a transfer that will never finish. */
 						setTimeout(() => this.startNextDownload(download));
@@ -109,7 +124,7 @@ export class FileDownloadService extends EventEmitter {
 						offsetBytes,
 						chunkSize,
 					});
-					await this.verifyChunk(chunk, { record, expectedChunkId, offsetBytes, totalChunks });
+					chunkHashes[expectedChunkId] = await this.verifyChunk(chunk, { record, expectedChunkId, offsetBytes, totalChunks });
 					/* Index by the chunk id we asked for, never by the one the server echoed back:
 					 * a hostile or buggy value would create a sparse array of arbitrary length. */
 					download.chunksReceived[expectedChunkId] = chunk.data;
@@ -120,6 +135,14 @@ export class FileDownloadService extends EventEmitter {
 					if (totalReceived >= totalChunks) {
 						const assembledSize = download.chunksReceived.reduce((sum: number, c: any) => sum + (c?.byteLength ?? c?.length ?? 0), 0);
 						if (assembledSize !== record.fileSize) throw new Error(`Assembled file size ${assembledSize} does not match declared size ${record.fileSize}`);
+						/* The whole file, not just its pieces: this pins content, order and chunk count
+						 * against the digest the sender published. */
+						if (expectedFileDigest) {
+							const actualFileDigest = await fileDigestFromChunkHashes(chunkHashes);
+							if (actualFileDigest !== expectedFileDigest) throw new Error('Assembled file does not match the digest the sender published');
+						} else if (REQUIRE_CHUNK_CHECKSUMS) {
+							throw new Error('The sender published no file digest');
+						}
 						setRunning(false);
 						await finishCallback(download);
 						download.chunksReceived = [];
@@ -144,8 +167,8 @@ export class FileDownloadService extends EventEmitter {
 		}
 	}
 
-	/** Structural and cryptographic validation of a single chunk before it is stored. */
-	private async verifyChunk(chunk: any, context: { record: IFileUploadRecord; expectedChunkId: number; offsetBytes: number; totalChunks: number }): Promise<void> {
+	/** Structural and cryptographic validation of a single chunk. Returns the chunk's hash. */
+	private async verifyChunk(chunk: any, context: { record: IFileUploadRecord; expectedChunkId: number; offsetBytes: number; totalChunks: number }): Promise<string> {
 		const { record, expectedChunkId, offsetBytes, totalChunks } = context;
 		if (!chunk || !chunk.data) throw new Error('Empty chunk received');
 		if (chunk.uploadId !== undefined && chunk.uploadId !== record.id) throw new Error('Chunk belongs to a different upload');
@@ -155,29 +178,34 @@ export class FileDownloadService extends EventEmitter {
 		const expectedLength = isLastChunk ? record.fileSize - offsetBytes : record.chunkSize;
 		const actualLength = chunk.data.byteLength ?? chunk.data.length;
 		if (actualLength !== expectedLength) throw new Error(`Chunk length ${actualLength} does not match expected ${expectedLength}`);
+		const actual = await sha256Hex(chunk.data);
 		const hasChecksum = typeof chunk.checksum === 'string' && chunk.checksum.length > 0;
 		if (!hasChecksum) {
 			/* Senders that predate per-chunk checksums send an empty string. */
 			if (REQUIRE_CHUNK_CHECKSUMS) throw new Error('Chunk is missing its checksum');
 			console.warn('Accepting a chunk without a checksum from an outdated sender:', record.id);
-			return;
+			return actual;
 		}
-		const actual = await sha256Hex(chunk.data);
 		if (actual && actual !== chunk.checksum) throw new Error('Chunk checksum mismatch');
+		return chunk.checksum;
 	}
 
 	async startDownload(download: IFileDownload): Promise<void> {
-		if (this.downloadStore.isAnyDownloadRunning()) return;
+		/* Serialised per account, not globally: one account's large transfer used to block every other
+		 * account's downloads for its whole duration. */
+		if (this.downloadStore.isAnyDownloadRunning(download.accountKey)) return;
 		download.pullChunk && (await download.pullChunk());
 	}
 
 	async startNextDownload(lastDownload: IFileDownload): Promise<void> {
-		if (this.downloadStore.isAnyDownloadRunning()) {
+		if (this.downloadStore.isAnyDownloadRunning(lastDownload.accountKey)) {
 			return;
 		}
-		const downloads = this.downloadStore.getAll();
+		/* Only this account's queue moves on - see startDownload(). */
+		const downloads = this.downloadStore.getAllForAccount(lastDownload.accountKey);
 		let nextDownload: IFileDownload | undefined;
-		const lastDownloadIndex = downloads.findIndex(d => d.record.id === lastDownload.record.id);
+		/* Compare the owner as well - see startNextUpload(). */
+		const lastDownloadIndex = downloads.findIndex(d => d.record.id === lastDownload.record.id && d.accountKey === lastDownload.accountKey);
 
 		// find next download
 		for (let i = lastDownloadIndex + 1; i < downloads.length; i++) {

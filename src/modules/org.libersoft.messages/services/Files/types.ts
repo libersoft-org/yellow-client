@@ -110,12 +110,12 @@ export type BaseStoreType<StoreValue, Item> = {
 
 export type FileUploadStoreType = {
 	updateUploadRecord: (scope: ITransferScope, record: IFileUploadRecord) => void;
-	isAnyUploadRunning: () => boolean;
+	isAnyUploadRunning: (accountKey?: string) => boolean;
 } & BaseStoreType<FileUploadStoreValue, IFileUpload>;
 
 export type FileDownloadStoreType = {
 	updateDownloadRecord: (scope: ITransferScope, record: IFileUploadRecord) => void;
-	isAnyDownloadRunning: () => boolean;
+	isAnyDownloadRunning: (accountKey?: string) => boolean;
 } & BaseStoreType<FileDownloadStoreValue, IFileDownload>;
 
 export interface IFileChunkData {

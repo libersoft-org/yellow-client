@@ -3,8 +3,8 @@ import filesDB, { type ILocalFile, LocalFileStatus } from '@/org.libersoft.messa
 import { active_account } from '@/core/scripts/core.ts';
 import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/scripts/messages.ts';
 import fileUploadManager, { type FileUploadService } from './FileUploadService.ts';
-import fileDownloadManager, { type FileDownloadService } from './FileDownloadService.ts';
-import { accountScopeKey, transferKey, transferScope, type ITransferScope } from './accountScope.ts';
+import fileDownloadManager, { DOWNLOAD_ERROR_EVENT, type FileDownloadService, type IDownloadErrorEvent } from './FileDownloadService.ts';
+import { accountScopeKey, scopeAccountKey, transferKey, transferScope, type ITransferScope } from './accountScope.ts';
 import type { IFileDownload } from './types.ts';
 import { liveQuery } from 'dexie';
 
@@ -59,17 +59,19 @@ export class FilesService {
 			let settled = false;
 			let unsubscribe = (): void => {};
 			/* The service reports a terminal failure explicitly, so the waiter can surface the real
-			 * cause instead of a generic "canceled or failed". */
-			const onDownloadError = (event: { uploadId: string; error: Error }): void => {
-				if (event.uploadId !== uploadId) return;
+			 * cause instead of a generic "canceled or failed". Matched on the whole scope: two accounts
+			 * can hold the same upload id, and one account's dead transfer must not reject the other's
+			 * waiter. */
+			const onDownloadError = (event: IDownloadErrorEvent): void => {
+				if (event.uploadId !== scope.uploadId || event.accountKey !== scopeAccountKey(scope)) return;
 				complete((): void => reject(event.error));
 			};
-			this.fileDownloadManager.on('error', onDownloadError);
+			this.fileDownloadManager.on(DOWNLOAD_ERROR_EVENT, onDownloadError);
 			const complete = (callback: () => void): void => {
 				if (settled) return;
 				settled = true;
 				unsubscribe();
-				this.fileDownloadManager.off('error', onDownloadError);
+				this.fileDownloadManager.off(DOWNLOAD_ERROR_EVENT, onDownloadError);
 				callback();
 			};
 			const startPromise = this.fileDownloadManager.startDownloadSerial(
@@ -105,17 +107,17 @@ export class FilesService {
 			let settled = false;
 			let downloadUnsubscribe = (): void => {};
 			let dbSubscription: { unsubscribe: () => void } | undefined;
-			const onDownloadError = (event: { uploadId: string; error: Error }): void => {
-				if (event.uploadId !== uploadId) return;
+			const onDownloadError = (event: IDownloadErrorEvent): void => {
+				if (event.uploadId !== scope.uploadId || event.accountKey !== scopeAccountKey(scope)) return;
 				complete((): void => reject(event.error));
 			};
-			this.fileDownloadManager.on('error', onDownloadError);
+			this.fileDownloadManager.on(DOWNLOAD_ERROR_EVENT, onDownloadError);
 			const complete = (callback: () => void): void => {
 				if (settled) return;
 				settled = true;
 				dbSubscription?.unsubscribe();
 				downloadUnsubscribe();
-				this.fileDownloadManager.off('error', onDownloadError);
+				this.fileDownloadManager.off(DOWNLOAD_ERROR_EVENT, onDownloadError);
 				callback();
 			};
 			dbSubscription = liveQuery(() => filesDB.findFile(scopeKey, uploadId)).subscribe({

@@ -36,7 +36,11 @@ vi.mock('@/org.libersoft.messages/scripts/messages.ts', (): any => ({
 }));
 
 vi.mock('@/org.libersoft.messages/services/Files/FileUploadService.ts', (): any => ({ default: {} }));
-vi.mock('@/org.libersoft.messages/services/Files/FileDownloadService.ts', (): any => ({ default: {} }));
+vi.mock('@/org.libersoft.messages/services/Files/FileDownloadService.ts', (): any => ({
+	default: {},
+	/* FilesService listens for this event name - keep the mock in step with the real module. */
+	DOWNLOAD_ERROR_EVENT: 'download-error',
+}));
 
 import { FilesService } from '../../services/Files/FilesService.ts';
 

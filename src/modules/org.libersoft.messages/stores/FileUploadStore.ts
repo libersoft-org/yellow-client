@@ -63,8 +63,9 @@ export class FileUploadStore implements FileUploadStoreType {
 		this.patch(scope, { record });
 	}
 
-	isAnyUploadRunning(): boolean {
-		return get(this.store).some(upload => upload && [FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.BEGUN].includes(upload.record.status) && upload.file && upload.running);
+	/** Whether an upload is running, optionally limited to one account's queue. */
+	isAnyUploadRunning(accountKey?: string): boolean {
+		return get(this.store).some(upload => upload && [FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.BEGUN].includes(upload.record.status) && upload.file && upload.running && (accountKey === undefined || upload.accountKey === accountKey));
 	}
 }
 

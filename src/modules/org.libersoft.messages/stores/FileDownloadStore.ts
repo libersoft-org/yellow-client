@@ -56,8 +56,9 @@ export class FileDownloadStore implements FileDownloadStoreType {
 		this.patch(scope, { record });
 	}
 
-	isAnyDownloadRunning(): boolean {
-		return get(this.store).some(download => download.running);
+	/** Whether a download is running, optionally limited to one account's queue. */
+	isAnyDownloadRunning(accountKey?: string): boolean {
+		return get(this.store).some(download => download.running && (accountKey === undefined || download.accountKey === accountKey));
 	}
 }
 

@@ -523,7 +523,8 @@ async function checkFileExistsMobile(fileName: string): Promise<boolean> {
 		const errorStr = JSON.stringify(error, null, 2);
 		log.debug('Error checking file existence:', errorMessage);
 		log.debug('Error details:', errorStr);
-		throw new Error(`File system error checking existence of "${fileName}": ${errorMessage}`);
+		/* Keep the original error attached - the redactor sanitizes causes too, so nothing is lost. */
+		throw new Error(`File system error checking existence of "${fileName}": ${errorMessage}`, { cause: error });
 	}
 }
 

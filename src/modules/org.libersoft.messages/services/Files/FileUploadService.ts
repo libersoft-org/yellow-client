@@ -1,5 +1,5 @@
 import { type ICustomFile, type IFileUpload, type IFileUploadBeginOptions, type IFileUploadRecord, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole, type FileUploadStoreType, type IGetChunkResult } from './types.ts';
-import { bytesToBase64, makeFileUpload, makeFileUploadRecord, sha256Hex } from './utils.ts';
+import { bytesToBase64, fileDigestFromChunkHashes, makeFileUpload, makeFileUploadRecord, sha256Hex } from './utils.ts';
 import { accountScopeKey, scopeKey, type ITransferScope } from './accountScope.ts';
 import EventEmitter from 'events';
 import fileUploadStore from '../../stores/FileUploadStore.ts';
@@ -7,7 +7,9 @@ import fileUploadStore from '../../stores/FileUploadStore.ts';
 export class FileUploadService extends EventEmitter {
 	uploadsStore: FileUploadStoreType;
 
-	p2pThrottleMemory = new Map();
+	/* Keyed by the full transfer scope, like the in-flight guard below: two accounts can hold the
+	 * same upload id, and a shared key made them throttle each other. */
+	p2pThrottleMemory = new Map<string, number>();
 	p2pMaxBatchChunks = 10;
 	/* One chunk in flight per upload, keyed by the full transfer scope: two accounts can hold the
 	 * same upload id, and a shared key would let one of them suppress the other's chunk loop. */
@@ -32,6 +34,8 @@ export class FileUploadService extends EventEmitter {
 				fromUserUid: acc.id,
 				metadata: file.metadata,
 			});
+			/* The whole-file digest is computed while the chunks are read and published in the record's
+			 * metadata, which the server round-trips untouched (the same path video thumbnails use). */
 			const accountKey = accountScopeKey(acc);
 			if (!accountKey) throw new Error('Cannot begin an upload without an account');
 			const upload = makeFileUpload({
@@ -56,14 +60,28 @@ export class FileUploadService extends EventEmitter {
 		const blob = upload.file.slice(chunkId * chunkSize, chunkId * chunkSize + chunkSize);
 		/* Read the slice once and derive both the checksum and the wire encoding from it. */
 		const bytes = new Uint8Array(await blob.arrayBuffer());
+		const checksum = await sha256Hex(bytes);
 		const chunk = {
 			chunkId,
 			uploadId,
 			/* Lets the receiver detect corruption, truncation and reordering. */
-			checksum: await sha256Hex(bytes),
+			checksum,
 			data: bytesToBase64(bytes),
 		};
 		return { chunk, upload, blob };
+	}
+
+	/** Hashes the whole file so the receiver can verify the assembled result, not just each chunk. */
+	async computeFileDigest(upload: IFileUpload): Promise<string> {
+		if (!upload.file) throw new Error('File is not set in file transfer');
+		const { chunkSize, fileSize } = upload.record;
+		const total = Math.ceil(fileSize / chunkSize);
+		const hashes: string[] = [];
+		for (let i = 0; i < total; i++) {
+			const slice = upload.file.slice(i * chunkSize, i * chunkSize + chunkSize);
+			hashes.push(await sha256Hex(new Uint8Array(await slice.arrayBuffer())));
+		}
+		return fileDigestFromChunkHashes(hashes);
 	}
 
 	async startUploadSerial(records: IFileUploadRecord[], pushFn: (data: { chunk: any; upload: IFileUpload }) => Promise<void>, owner: ITransferScope | null): Promise<void> {
@@ -95,18 +113,18 @@ export class FileUploadService extends EventEmitter {
 					for (;;) {
 						if (upload.record.status === FileUploadRecordStatus.CANCELED || upload.record.status === FileUploadRecordStatus.ERROR) {
 							upload.pushChunk = undefined;
-							this.p2pThrottleMemory.delete(record.id);
+							this.p2pThrottleMemory.delete(guardKey);
 							return;
 						}
 						if (upload.record.status === FileUploadRecordStatus.PAUSED) return;
 						if (chunksSent.length === totalChunks) {
 							upload.record.status = FileUploadRecordStatus.FINISHED;
 							this.uploadsStore.set(scope, upload);
-							this.p2pThrottleMemory.delete(record.id);
+							this.p2pThrottleMemory.delete(guardKey);
 							setTimeout(() => this.startNextUpload(upload));
 							return;
 						}
-						if (record.type === FileUploadRecordType.P2P && this.p2pThrottleMemory.get(record.id) >= this.p2pMaxBatchChunks) return;
+						if (record.type === FileUploadRecordType.P2P && (this.p2pThrottleMemory.get(guardKey) ?? 0) >= this.p2pMaxBatchChunks) return;
 						const lastChunkId = chunksSent[chunksSent.length - 1];
 						const newChunkId = lastChunkId === undefined ? 0 : lastChunkId + 1;
 						const { chunk } = await this.getChunk(scope, newChunkId, chunkSize);
@@ -114,8 +132,8 @@ export class FileUploadService extends EventEmitter {
 						chunksSent[newChunkId] = newChunkId;
 						this.uploadsStore.set(scope, upload);
 						if (record.type === FileUploadRecordType.P2P) {
-							const throttleMemory = this.p2pThrottleMemory.get(record.id) || 0;
-							this.p2pThrottleMemory.set(record.id, throttleMemory + 1);
+							const throttleMemory = this.p2pThrottleMemory.get(guardKey) || 0;
+							this.p2pThrottleMemory.set(guardKey, throttleMemory + 1);
 						}
 					}
 				} catch (e) {
@@ -136,13 +154,17 @@ export class FileUploadService extends EventEmitter {
 	}
 
 	async startUpload(upload: IFileUpload): Promise<void> {
-		if (this.uploadsStore.isAnyUploadRunning()) return;
+		/* Serialised per account - see FileDownloadService.startDownload(). */
+		if (this.uploadsStore.isAnyUploadRunning(upload.accountKey)) return;
 		upload.pushChunk && (await upload.pushChunk());
 	}
 
 	async startNextUpload(lastUpload: IFileUpload): Promise<void> {
-		const uploads = this.uploadsStore.getAll();
-		const lastUploadIndex = uploads.findIndex(upload => upload.record.id === lastUpload.record.id);
+		/* Only this account's queue moves on. */
+		const uploads = this.uploadsStore.getAllForAccount(lastUpload.accountKey);
+		/* Compare the owner as well: with two accounts holding the same upload id, matching on the id
+		 * alone can land on the wrong entry and skip a transfer. */
+		const lastUploadIndex = uploads.findIndex(upload => upload.record.id === lastUpload.record.id && upload.accountKey === lastUpload.accountKey);
 		let nextUpload: IFileUpload | undefined;
 		// find next suitable upload
 		for (let i = lastUploadIndex + 1; i < uploads.length; i++) {
@@ -161,7 +183,7 @@ export class FileUploadService extends EventEmitter {
 		if (!upload || !scope) return;
 		if (!upload.file) return;
 		// reset throttle memory
-		this.p2pThrottleMemory.set(scope.uploadId, 0);
+		this.p2pThrottleMemory.set(scopeKey(scope), 0);
 		if (upload.pushChunk && !this.inFlight.has(scopeKey(scope))) await upload.pushChunk();
 	}
 

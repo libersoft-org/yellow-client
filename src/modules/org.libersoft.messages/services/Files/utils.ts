@@ -59,6 +59,20 @@ export async function base64ToUint8Array(base64: string): Promise<Uint8Array> {
 	return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
 }
 
+/* End-to-end integrity of a whole file.
+ *
+ * Per-chunk checksums prove that each chunk arrived intact, but not that the set of chunks is the
+ * file the sender meant to send - the same untrusted peer supplies both the chunks and the metadata.
+ * The file digest closes that: it is the hash of the concatenated per-chunk hashes, in order, so it
+ * pins the content, the order and the chunk count.
+ *
+ * Hashing the chunk hashes rather than the bytes is deliberate: Web Crypto has no streaming digest,
+ * so hashing the raw file would mean holding all of it in memory. This scheme is computed
+ * incrementally as the chunks are read. */
+export async function fileDigestFromChunkHashes(chunkHashes: string[]): Promise<string> {
+	return sha256Hex(new TextEncoder().encode(chunkHashes.join('')));
+}
+
 /** Hex SHA-256 of a chunk payload, used as the per-chunk integrity checksum. */
 export async function sha256Hex(data: Uint8Array | ArrayBuffer): Promise<string> {
 	const subtle = globalThis.crypto?.subtle;

@@ -32,6 +32,8 @@ jobs:
     - run: npm run test:unit
     - name: Type-check .svelte files
       run: npm run svelte-check
+    - name: Lint
+      run: npm run lint
 
   storybook-tests:
     runs-on: ubuntu-latest

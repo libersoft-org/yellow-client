@@ -282,6 +282,17 @@ export async function initUpload(files: any, uploadType: any, recipients: any[])
 			messageHtml += `<Attachment id="${upload.record.id}"></Attachment>`;
 		}
 	});
+	/* Publish a digest of the whole file so the receiver can verify the assembled result, not just
+	 * the individual chunks. It travels in the record metadata, which the server round-trips. */
+	for (const upload of uploads) {
+		try {
+			const fileDigest = await fileUploadManager.computeFileDigest(upload);
+			upload.record.metadata = { ...(upload.record.metadata ?? {}), fileDigest };
+		} catch (error) {
+			console.error('Could not compute the file digest for', upload.record.fileOriginalName, error);
+		}
+	}
+
 	/* The local copy has to be on disk before the message referencing it goes out, otherwise a failed
 	 * write (quota, concurrent access) leaves the sender's own message pointing at nothing. */
 	try {

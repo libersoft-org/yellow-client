@@ -2,6 +2,12 @@
 import { handleErrorWithSentry, replayIntegration } from '@sentry/sveltekit';
 import * as Sentry from '@sentry/sveltekit';
 import { sentryClientConfig } from '@/core/scripts/sentry-config.ts';
+import { installConsoleRedaction } from '@/core/scripts/console-redaction.ts';
+
+/* Before Sentry.init(), so console breadcrumbs record the redacted arguments. In production the
+ * build already compiles console.log/debug/info/trace away, which leaves error and warn - the two
+ * that are kept on purpose and therefore the two that need scrubbing. */
+installConsoleRedaction();
 
 // Only initialize Sentry if enabled
 const sentryEnabled = /^(true|1|yes|on)$/i.test((import.meta.env['VITE_SENTRY_ENABLED'] || '').trim());
