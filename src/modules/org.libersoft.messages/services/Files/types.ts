@@ -1,4 +1,5 @@
 import type { Writable } from 'svelte/store';
+import type { ITransferScope } from './accountScope.ts';
 
 export enum FileUploadRole {
 	ACTIVE_UPLOAD = 'ACTIVE_UPLOAD',
@@ -46,8 +47,8 @@ export interface IFileUpload {
 	role: FileUploadRole;
 	file: ICustomFile | null;
 	record: IFileUploadRecord;
-	/** Owning account scope - see services/Files/accountScope.ts. */
-	accountKey?: string | null;
+	/** Owning account scope, captured at creation - see services/Files/accountScope.ts. */
+	accountKey: string;
 	chunksSent: number[];
 	uploadInterval: NodeJS.Timeout | null;
 	paused?: boolean;
@@ -59,8 +60,10 @@ export interface IFileUpload {
 
 export interface IFileDownload {
 	record: IFileUploadRecord;
-	/** Owning account scope - see services/Files/accountScope.ts. */
-	accountKey?: string | null;
+	/** Owning account scope, captured at creation - see services/Files/accountScope.ts. */
+	accountKey: string;
+	/** Set when the transfer failed terminally, so waiters can report the real cause. */
+	error?: Error;
 	chunksReceived: any[];
 	data: any;
 	createdAt: number;
@@ -85,9 +88,9 @@ export interface IFileUploadBeginOptions {
 
 export type MakeFileUploadRecordData = Partial<IFileUploadRecord> & Pick<IFileUploadRecord, 'type' | 'fileOriginalName' | 'fileMimeType' | 'fileSize' | 'chunkSize' | 'fromUserUid' | 'metadata'>;
 
-export type MakeFileUploadData = Partial<IFileUpload> & Pick<IFileUpload, 'role' | 'file' | 'record' | 'acc'>;
+export type MakeFileUploadData = Partial<IFileUpload> & Pick<IFileUpload, 'role' | 'file' | 'record' | 'acc' | 'accountKey'>;
 
-export type MakeFileDownloadData = Partial<IFileDownload> & Pick<IFileDownload, 'record'>;
+export type MakeFileDownloadData = Partial<IFileDownload> & Pick<IFileDownload, 'record' | 'accountKey'>;
 
 export type FileUploadStoreValue = IFileUpload[];
 
@@ -96,19 +99,22 @@ export type FileDownloadStoreValue = IFileDownload[];
 export type BaseStoreType<StoreValue, Item> = {
 	store: Writable<StoreValue>;
 	getAll: () => StoreValue;
-	get: (id: string) => Item | undefined;
-	set: (id: string, download: Item) => void;
-	patch: (id: string, data: Partial<Item>) => void;
-	delete: (id: string) => void;
+	getAllForAccount: (accountKey: string) => StoreValue;
+	/* Every lookup carries the owning scope explicitly - the stores never consult the active
+	 * account on their own. */
+	get: (scope: ITransferScope | null) => Item | undefined;
+	set: (scope: ITransferScope, item: Item) => void;
+	patch: (scope: ITransferScope, data: Partial<Item>) => void;
+	delete: (scope: ITransferScope) => void;
 };
 
 export type FileUploadStoreType = {
-	updateUploadRecord: (id: string, record: IFileUploadRecord) => void;
+	updateUploadRecord: (scope: ITransferScope, record: IFileUploadRecord) => void;
 	isAnyUploadRunning: () => boolean;
 } & BaseStoreType<FileUploadStoreValue, IFileUpload>;
 
 export type FileDownloadStoreType = {
-	updateDownloadRecord: (id: string, record: IFileUploadRecord) => void;
+	updateDownloadRecord: (scope: ITransferScope, record: IFileUploadRecord) => void;
 	isAnyDownloadRunning: () => boolean;
 } & BaseStoreType<FileDownloadStoreValue, IFileDownload>;
 

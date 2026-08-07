@@ -1,44 +1,45 @@
 import { get, writable } from 'svelte/store';
 import type { IFileDownload, FileDownloadStoreType, FileDownloadStoreValue, IFileUploadRecord } from '@/org.libersoft.messages/services/Files/types.ts';
-import { activeAccountScopeKey } from '@/org.libersoft.messages/services/Files/accountScope.ts';
+import { scopeAccountKey, type ITransferScope } from '@/org.libersoft.messages/services/Files/accountScope.ts';
 
-/* Entries are addressed by upload id, which is only unique per server, so every lookup is also
- * matched against the owning account scope. Entries created before an account scope was known
- * (accountKey == null) stay reachable so that nothing silently disappears. */
-function matches(download: IFileDownload, id: string, scopeKey: string | null): boolean {
-	if (download.record.id !== id) return false;
-	if (download.accountKey == null) return true;
-	return download.accountKey === scopeKey;
+/* Entries are addressed by an explicit transfer scope, never by upload id alone: the id is unique
+ * per server only, and the account that owns a running transfer is not necessarily the one that is
+ * in the foreground when someone looks it up. */
+function matches(download: IFileDownload, scope: ITransferScope): boolean {
+	return download.record.id === scope.uploadId && download.accountKey === scopeAccountKey(scope);
 }
 
 export class FileDownloadStore implements FileDownloadStoreType {
 	store = writable<FileDownloadStoreValue>([]);
 
+	/** Every download, regardless of owner - used by the serial queue. */
 	getAll(): FileDownloadStoreValue {
-		const scopeKey = activeAccountScopeKey();
-		return get(this.store).filter(download => download.accountKey == null || download.accountKey === scopeKey);
+		return get(this.store);
 	}
 
-	get(id: string): IFileDownload | undefined {
-		const scopeKey = activeAccountScopeKey();
-		return get(this.store).find(download => matches(download, id, scopeKey));
+	/** Downloads owned by one account. */
+	getAllForAccount(accountKey: string): FileDownloadStoreValue {
+		return get(this.store).filter(download => download.accountKey === accountKey);
 	}
 
-	set(id: string, download: IFileDownload): void {
-		const scopeKey = activeAccountScopeKey();
+	get(scope: ITransferScope | null): IFileDownload | undefined {
+		if (!scope) return undefined;
+		return get(this.store).find(download => matches(download, scope));
+	}
+
+	set(scope: ITransferScope, download: IFileDownload): void {
 		this.store.update(store => {
-			const index = store.findIndex(d => matches(d, id, download.accountKey ?? scopeKey));
+			const index = store.findIndex(d => matches(d, scope));
 			if (index !== -1) store[index] = download;
 			else store.push(download);
 			return [...store];
 		});
 	}
 
-	patch(id: string, data: Partial<IFileDownload>): void {
-		const scopeKey = activeAccountScopeKey();
+	patch(scope: ITransferScope, data: Partial<IFileDownload>): void {
 		// patch but dont change ref
 		this.store.update(store => {
-			const oldDownload = store.find(download => matches(download, id, scopeKey));
+			const oldDownload = store.find(download => matches(download, scope));
 			if (!oldDownload) return store;
 			for (const key in data) {
 				oldDownload[key] = data[key];
@@ -47,13 +48,12 @@ export class FileDownloadStore implements FileDownloadStoreType {
 		});
 	}
 
-	delete(id: string): void {
-		const scopeKey = activeAccountScopeKey();
-		this.store.update(store => store.filter(download => !matches(download, id, scopeKey)));
+	delete(scope: ITransferScope): void {
+		this.store.update(store => store.filter(download => !matches(download, scope)));
 	}
 
-	updateDownloadRecord(id: string, record: IFileUploadRecord): void {
-		this.patch(id, { record });
+	updateDownloadRecord(scope: ITransferScope, record: IFileUploadRecord): void {
+		this.patch(scope, { record });
 	}
 
 	isAnyDownloadRunning(): boolean {

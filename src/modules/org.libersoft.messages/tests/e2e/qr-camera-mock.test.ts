@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
 import { setupConsoleLogging } from '@/core/tests/e2e/test-utils.js';
+import { CLIENT_URL } from '@/core/tests/e2e/clientUrl.ts';
 
 /**
  * Helper function to setup initial account via wizard
@@ -36,7 +37,7 @@ test.describe.parallel('QR Code Camera Mock Tests', () => {
 		// Setup console logging
 		setupConsoleLogging(page);
 
-		await page.goto(process.env['PLAYWRIGHT_CLIENT_URL'] || 'http://localhost:3000/');
+		await page.goto(CLIENT_URL);
 
 		// Setup initial account via wizard
 		await setupAccountInWizard(page, {

@@ -54,12 +54,25 @@ const record: IFileUploadRecord = {
 function makeDownloadManager(): any {
 	const downloads = new Map<string, IFileDownload>();
 	const store = writable<IFileDownload[]>([]);
+	const listeners = new Map<string, Set<(payload: any) => void>>();
 	return {
+		/* FilesService listens for terminal failures so it can reject with the real cause. */
+		on: (event: string, fn: (payload: any) => void): void => {
+			if (!listeners.has(event)) listeners.set(event, new Set());
+			listeners.get(event)!.add(fn);
+		},
+		off: (event: string, fn: (payload: any) => void): void => {
+			listeners.get(event)?.delete(fn);
+		},
+		emit: (event: string, payload: any): void => {
+			for (const fn of listeners.get(event) ?? []) fn(payload);
+		},
 		downloadStore: {
 			store,
-			get: (id: string): IFileDownload | undefined => downloads.get(id),
+			/* The real store is addressed by an explicit transfer scope now. */
+			get: (scope: any): IFileDownload | undefined => (scope ? downloads.get(scope.uploadId) : undefined),
 		},
-		startDownloadSerial: async (_records: IFileUploadRecord[], _pullChunk: unknown, finish: (download: IFileDownload) => void | Promise<void>): Promise<void> => {
+		startDownloadSerial: async (_records: IFileUploadRecord[], _pullChunk: unknown, finish: (download: IFileDownload) => void | Promise<void>, _owner?: unknown): Promise<void> => {
 			const download = { record, chunksReceived: [new Uint8Array([1, 2, 3, 4])] } as IFileDownload;
 			downloads.set(record.id, download);
 			store.set([download]);

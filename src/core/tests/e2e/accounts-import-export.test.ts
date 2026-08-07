@@ -3,6 +3,7 @@ import { type Page } from '@playwright/test';
 
 // TODO: unify
 import { closeWindow, setupConsoleLogging } from '@/core/tests/e2e/test-utils.js';
+import { CLIENT_URL } from '@/core/tests/e2e/clientUrl.ts';
 
 /**
  * Valid account configurations for testing
@@ -62,7 +63,7 @@ test.describe.parallel('Accounts Import/Export', () => {
 
 	test.beforeEach(async ({ page }) => {
 		setupConsoleLogging(page);
-		await page.goto(process.env['PLAYWRIGHT_CLIENT_URL'] || 'http://localhost:3000/');
+		await page.goto(CLIENT_URL);
 		await setupAccountInWizard(page, {
 			server: serverUrl,
 			address: 'initial@example.com',

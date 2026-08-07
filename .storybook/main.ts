@@ -3,7 +3,9 @@ import path from 'path';
 
 const config: StorybookConfig = {
 	stories: ['../src/**/*.mdx', '../src/**/*.stories.@(js|ts|svelte)'],
-	addons: ['@storybook/addon-essentials', '@storybook/addon-svelte-csf', '@chromatic-com/storybook', '@storybook/experimental-addon-test', '@storybook/addon-viewport'],
+	/* Storybook 9 dissolved addon-essentials and addon-viewport into the core package, so they are no
+	 * longer listed here - keeping the v8 packages around made the test project fail to build. */
+	addons: ['@storybook/addon-svelte-csf', '@chromatic-com/storybook', '@storybook/addon-vitest'],
 	framework: {
 		name: '@storybook/sveltekit',
 		options: {},

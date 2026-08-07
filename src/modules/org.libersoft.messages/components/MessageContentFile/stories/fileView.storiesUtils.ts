@@ -4,7 +4,10 @@ import { makeFileDownload, makeFileUpload, makeFileUploadRecord } from '@/org.li
 import _merge from 'lodash/merge';
 import { defineMeta } from '@storybook/addon-svelte-csf';
 //import FileView from '../FileView.svelte';
-import { fn } from '@storybook/test';
+import { fn } from 'storybook/test';
+
+/* Transfers are owned by an account; the stories run without one, so they use a fixed placeholder. */
+const STORY_ACCOUNT_KEY = 'storybook';
 
 class FileViewStoriesUtils {
 	static makeDefaultStoryArgs(mergeWithMeta?: Parameters<typeof defineMeta>[0]) {
@@ -58,6 +61,7 @@ class FileViewStoriesUtils {
 			file,
 			record,
 			acc,
+			accountKey: STORY_ACCOUNT_KEY,
 			chunksSent: [1, 2, 3],
 		});
 
@@ -78,6 +82,7 @@ class FileViewStoriesUtils {
 			uid: 'test-uid',
 		};
 		const download = makeFileDownload({
+			accountKey: STORY_ACCOUNT_KEY,
 			record: makeFileUploadRecord({
 				type: FileUploadRecordType.SERVER,
 				fileOriginalName: file.name,

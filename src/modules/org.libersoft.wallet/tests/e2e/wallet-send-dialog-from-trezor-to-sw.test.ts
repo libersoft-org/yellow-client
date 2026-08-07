@@ -1,5 +1,6 @@
 import { expect, test, chromium } from '@playwright/test';
 import { setupConsoleLogging, closeWelcomeWizardWindow, switchModule } from '@/core/tests/e2e/test-utils.js';
+import { CLIENT_URL } from '@/core/tests/e2e/clientUrl.ts';
 
 const SLEEP_MS = parseInt(process.env['SLEEP'] || '0');
 
@@ -36,7 +37,7 @@ async function sleep() {
 		// Setup console logging (controlled by PLAYWRIGHT_CONSOLE_LOG env var)
 		setupConsoleLogging(currentPage);
 
-		await currentPage.goto(process.env['PLAYWRIGHT_CLIENT_URL'] || 'http://localhost:3000/');
+		await currentPage.goto(CLIENT_URL);
 
 		// Wait for the page to be ready
 		await currentPage.waitForLoadState('networkidle');

@@ -11,6 +11,7 @@
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
 	import WaveSurfer from 'wavesurfer.js';
 	import type { IFileDownload, IFileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
+	import { activeTransferScope } from '@/org.libersoft.messages/services/Files/accountScope.ts';
 	const { uploadId } = $props();
 	let wavesurfer: WaveSurfer;
 	let isPlaying = $state(false);
@@ -21,7 +22,7 @@
 	let download = writable<IFileDownload | null>(null);
 	const primaryColor = getComputedStyle(document.documentElement).getPropertyValue('--primary-background');
 	const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--disabled-background');
-	const unsubDownloadStore = fileDownloadStore.store.subscribe(() => download.set(fileDownloadStore.get(uploadId) || null));
+	const unsubDownloadStore = fileDownloadStore.store.subscribe(() => download.set(fileDownloadStore.get(activeTransferScope(uploadId)) || null));
 
 	/* Object URLs handed to wavesurfer; revoked on destroy so the audio Blob can be collected. */
 	let objectUrls: string[] = [];

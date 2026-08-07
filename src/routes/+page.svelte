@@ -5,7 +5,7 @@
 	import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
 	import { init, active_account, accounts_config, setModule, updateLastModuleId } from '../core/scripts/core.ts';
 	import { isClientFocused, hideSidebarMobile, selected_corepage_id, selected_module_id, module_decls, product, debug, documentHeight, keyboardHeight, mobileWidth, mobileClass, isMobile, welcomeWizardWindow } from '@/core/scripts/stores.ts';
-	import { initBrowserNotifications, initCustomNotifications, handleServiceWorkerNotificationClick, handleServiceWorkerNotificationClose } from '@/core/scripts/notifications.ts';
+	import { initBrowserNotifications, initCustomNotifications, handleServiceWorkerNotificationClick, handleServiceWorkerNotificationClose, teardownTauriNotifications } from '@/core/scripts/notifications.ts';
 	import { selected_theme_index, initBrowserThemeDetection } from '@/core/scripts/themes.ts';
 	import Menu from '@/core/components/Menu/Menu.svelte';
 	import MenuBar from '@/core/components/Menu/MenuBar.svelte';
@@ -222,6 +222,11 @@
 		if (serviceWorkerMessageListener && 'serviceWorker' in navigator) navigator.serviceWorker.removeEventListener('message', serviceWorkerMessageListener);
 		for (const cleanup of globalListenerCleanups) cleanup();
 		globalListenerCleanups = [];
+		/* Releases the process-wide Tauri notification action listener. */
+		teardownTauriNotifications();
+		unsubscribeIsMobile();
+		/* A destroy in the middle of a sidebar drag would otherwise leave these behind. */
+		stopResizeSideBar();
 		initCleanup?.();
 		await destroyTrayIcon();
 	});
@@ -325,7 +330,8 @@
 		resizer.style.left = sideBarWidth + 'px';
 	}
 
-	isMobile.subscribe(v => {
+	/* Kept with the other cleanups: this subscription outlived the component otherwise. */
+	const unsubscribeIsMobile = isMobile.subscribe(v => {
 		//console.log('isMobile: ', v);
 		if (v) sidebarWidth = '';
 		else sidebarWidth = ($sidebarSize || 300) + 'px';

@@ -2,13 +2,14 @@ import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
 import { setupConsoleLogging } from '@/core/tests/e2e/test-utils.ts';
 import { mockQRCodeScan, disableQRMocking } from '@/core/tests/e2e/qr-mock-utility.ts';
+import { CLIENT_URL } from '@/core/tests/e2e/clientUrl.ts';
 
 test.describe.parallel('QR Code Import Tests', () => {
 	test.beforeEach(async ({ page }) => {
 		// Setup console logging (controlled by PLAYWRIGHT_CONSOLE_LOG env var)
 		setupConsoleLogging(page);
 
-		await page.goto(process.env['PLAYWRIGHT_CLIENT_URL'] || 'http://localhost:3000/');
+		await page.goto(CLIENT_URL);
 		const serverUrl = process.env['PLAYWRIGHT_SERVER_URL'] || 'ws://localhost:8084';
 
 		// Setup initial account via wizard

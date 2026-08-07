@@ -27,8 +27,11 @@ function normalizeAddress(value: string | null | undefined): string | null {
 export function parseQRData(data: string): ParsedQRData {
 	// Handle plain addresses
 	if (!data.startsWith('ethereum:')) {
-		const plain = normalizeAddress(data);
-		return plain ? { address: plain } : { address: data };
+		/* Anything that is not a valid address is refused rather than handed to the send form as a
+		 * recipient - a scanned URL, a truncated address or a typo would otherwise be pre-filled and
+		 * look like the scanner had understood it. */
+		const plain = normalizeAddress(data.trim());
+		return plain ? { address: plain } : { error: 'The scanned code is not a valid address' };
 	}
 	try {
 		// Parse ethereum: URLs (ERC-681 format)

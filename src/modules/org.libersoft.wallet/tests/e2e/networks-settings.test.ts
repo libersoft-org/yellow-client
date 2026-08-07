@@ -1,6 +1,7 @@
 import { expect, test } from '@playwright/test';
 import { type Page } from '@playwright/test';
 import { setupConsoleLogging, closeWelcomeWizardWindow, switchModule } from '@/core/tests/e2e/test-utils.js';
+import { CLIENT_URL } from '@/core/tests/e2e/clientUrl.ts';
 
 const TEST_NETWORK = {
 	name: 'Test Network',
@@ -23,7 +24,7 @@ test.describe.parallel('Wallet Settings - Networks', () => {
 		// Setup console logging (controlled by PLAYWRIGHT_CONSOLE_LOG env var)
 		setupConsoleLogging(page);
 
-		await page.goto(process.env['PLAYWRIGHT_CLIENT_URL'] || 'http://localhost:3000/');
+		await page.goto(CLIENT_URL);
 
 		// Wait for the page to be ready
 		await page.waitForLoadState('networkidle');

@@ -36,7 +36,7 @@
 // ];
 //
 // const logInAccount = async (page: Page, accountsConfig: object, activeAccountId: string) => {
-//  await page.goto('http://localhost:3000'); // Avoid possible race conditions
+//  await page.goto(CLIENT_URL); // Avoid possible race conditions
 //  await page.evaluate(
 //   ({ accountsConfig, activeAccountId }) => {
 //    localStorage.setItem('accounts_config', JSON.stringify(accountsConfig));
@@ -48,7 +48,7 @@
 // };
 //
 // // test.beforeEach(async ({ page }) => {
-// //  await page.goto('http://localhost:3000'); // Avoid possible race conditions
+// //  await page.goto(CLIENT_URL); // Avoid possible race conditions
 // //  await page.evaluate(({ accountsConfig, activeAccountId }) => {
 // //   console.log('accountsConfig', accountsConfig);
 // //   localStorage.setItem('accounts_config', JSON.stringify(accountsConfig));
@@ -77,7 +77,7 @@
 // test('Test basic file upload & download', async ({ page }) => {
 //  const activeAccountId = '"' + accountsConfig1[0].id + '"';
 //  await logInAccount(page, accountsConfig1, activeAccountId);
-//  await page.goto('http://localhost:3000');
+//  await page.goto(CLIENT_URL);
 //
 //  // Verify localStorage
 //  const active_account_id = await page.evaluate(() => localStorage.getItem('active_account_id'));
@@ -126,8 +126,8 @@
 //  await logInAccount(receiverPage, accountsConfig2, receiverActiveAccountId);
 //
 //  // Navigate both users to the P2P transfer page
-//  await senderPage.goto('http://localhost:3000');
-//  await receiverPage.goto('http://localhost:3000');
+//  await senderPage.goto(CLIENT_URL);
+//  await receiverPage.goto(CLIENT_URL);
 //
 //  // Verify localStorage data
 //  expect(await senderPage.evaluate(() => localStorage.getItem('active_account_id'))).toBe(senderActiveAccountId);
@@ -166,7 +166,7 @@
 // test('sdfsdfs', async ({ page }) => {
 //  const activeAccountId = '"' + accountsConfig1[0].id + '"';
 //  await logInAccount(page, accountsConfig1, activeAccountId);
-//  await page.goto('http://localhost:3000');
+//  await page.goto(CLIENT_URL);
 //
 //  // Verify localStorage
 //  const active_account_id = await page.evaluate(() => localStorage.getItem('active_account_id'));

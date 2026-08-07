@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { setupConsoleLogging } from '@/core/tests/e2e/test-utils.js';
+import { CLIENT_URL } from '@/core/tests/e2e/clientUrl.ts';
 
 const accountsConfig = [
 	{
@@ -25,7 +26,7 @@ test.describe.parallel('Theme Management', () => {
 		setupConsoleLogging(page);
 
 		// Set up local storage with account configuration
-		await page.goto('http://localhost:3000');
+		await page.goto(CLIENT_URL);
 		await page.evaluate(
 			({ accountsConfig, activeAccountId }) => {
 				localStorage.setItem('accounts_config', JSON.stringify(accountsConfig));
@@ -180,7 +181,7 @@ test.describe.parallel('Theme Management', () => {
 
 	test('should delete custom theme', async ({ page }) => {
 		// First create a custom theme
-		await page.goto('http://localhost:3000');
+		await page.goto(CLIENT_URL);
 		await page.evaluate(() => {
 			const customTheme = {
 				name: 'Theme to Delete',
@@ -365,7 +366,7 @@ test.describe.parallel('Theme Management', () => {
 
 	test('should edit custom theme properties', async ({ page }) => {
 		// Create a custom theme
-		await page.goto('http://localhost:3000');
+		await page.goto(CLIENT_URL);
 		await page.evaluate(() => {
 			const customTheme = {
 				name: 'Editable Theme',

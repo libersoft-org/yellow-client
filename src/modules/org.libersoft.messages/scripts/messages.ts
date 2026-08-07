@@ -10,7 +10,7 @@ import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore
 import { wrapConsecutiveElements, stripHtml } from '@/org.libersoft.messages/scripts/utils/htmlUtils.ts';
 import { splitAndLinkify } from './splitAndLinkify.ts';
 import { base64ToUint8Array, makeFileUpload, transformFilesForServer } from '@/org.libersoft.messages/services/Files/utils.ts';
-import { accountScopeKey } from '@/org.libersoft.messages/services/Files/accountScope.ts';
+import { accountScopeKey, activeTransferScope, transferScope } from '@/org.libersoft.messages/services/Files/accountScope.ts';
 import { active_account, active_account_module_data, getGuid, relay, selectAccount, setModule } from '@/core/scripts/core.ts';
 import type { IAccount } from '@/core/scripts/types.ts';
 import { active_account_id, hideSidebarMobile, isClientFocused } from '@/core/scripts/stores.ts';
@@ -287,7 +287,7 @@ export async function initUpload(files: any, uploadType: any, recipients: any[])
 	try {
 		await Promise.all(localFileWrites);
 	} catch (error) {
-		for (const upload of uploads) fileUploadStore.delete(upload.record.id);
+		for (const upload of uploads) fileUploadStore.delete({ accountId: acc!.id, server: acc!.credentials?.server ?? '', uploadId: upload.record.id });
 		console.error('Failed to store local copies of attachments:', error);
 		throw error;
 	}
@@ -306,20 +306,20 @@ export async function initUpload(files: any, uploadType: any, recipients: any[])
 		});
 	});
 	if (allowedRecords === null) {
-		for (const upload of uploads) fileUploadStore.delete(upload.record.id);
+		for (const upload of uploads) fileUploadStore.delete({ accountId: acc!.id, server: acc!.credentials?.server ?? '', uploadId: upload.record.id });
 		throw new Error('The server refused the upload');
 	}
 
 	try {
 		await sendMessage(messageHtml, 'html');
 	} catch (error) {
-		for (const upload of uploads) fileUploadStore.delete(upload.record.id);
+		for (const upload of uploads) fileUploadStore.delete({ accountId: acc!.id, server: acc!.credentials?.server ?? '', uploadId: upload.record.id });
 		console.error('Failed to queue attachment message:', error);
 		return;
 	}
 
 	if (uploads?.[0]?.record.type === FileUploadRecordType.SERVER) {
-		void fileUploadManager.startUploadSerial(allowedRecords, uploadChunkAsync).catch((error: unknown) => {
+		void fileUploadManager.startUploadSerial(allowedRecords, uploadChunkAsync, transferScope(acc as IAccount, '')).catch((error: unknown) => {
 			console.error('Upload failed:', error);
 		});
 	} else {
@@ -365,16 +365,17 @@ function uploadChunkAsync({ upload, chunk }: { upload: any; chunk: any }): Promi
 
 function ask_for_chunk(event: any): void {
 	const { uploadId } = event.detail.data;
-	const upload = fileUploadManager.uploadsStore.get(uploadId);
-	if (!upload) return;
+	const scope = activeTransferScope(uploadId);
+	const upload = fileUploadManager.uploadsStore.get(scope);
+	if (!upload || !scope) return;
 	if (upload.record.status === FileUploadRecordStatus.BEGUN) {
 		upload.record.status = FileUploadRecordStatus.UPLOADING;
-		fileUploadStore.set(uploadId, upload);
-		void fileUploadManager.startUploadSerial([upload.record], uploadChunkAsync).catch((error: unknown) => {
+		fileUploadStore.set(scope, upload);
+		void fileUploadManager.startUploadSerial([upload.record], uploadChunkAsync, scope).catch((error: unknown) => {
 			console.error('Upload failed:', error);
 		});
 	} else {
-		void fileUploadManager.continueP2PUpload(uploadId).catch((error: unknown) => {
+		void fileUploadManager.continueP2PUpload(scope).catch((error: unknown) => {
 			console.error('P2P upload failed:', error);
 		});
 	}
@@ -404,23 +405,24 @@ function message_update(event: any): void {
 
 function upload_update(event: any): void {
 	const { record, uploadData } = event.detail.data;
-	const currentUpload = fileUploadStore.get(record.id);
+	const scope = activeTransferScope(record.id);
+	const currentUpload = fileUploadStore.get(scope);
 	if (currentUpload) {
 		if (currentUpload.file && [FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.PAUSED].includes(record.status)) {
 			// pass
 			// this is simple approach how to ignore status updates that are produced by sender because server does not know
 			// from which tab the upload is being issued we detect sender tab by existence of currentUpload.file
 			// in future if we want more sophisticated approach we can use session storage to store sender tab id
-		} else fileUploadStore.patch(record.id, { record, ...uploadData });
+		} else if (scope) fileUploadStore.patch(scope, { record, ...uploadData });
 	}
-	const currentDownload = fileDownloadStore.get(record.id);
-	if (currentDownload) fileDownloadStore.patch(record.id, { record });
+	const currentDownload = fileDownloadStore.get(scope);
+	if (currentDownload && scope) fileDownloadStore.patch(scope, { record });
 }
 
 export function downloadAttachmentsSerial(records: any[], finishCallback: (download: any) => void): any {
 	const acc = get(active_account);
 	// const records = recordIds.map(id => fileDownloadStore.get(id).record);
-	return fileDownloadManager.startDownloadSerial(records, makeDownloadChunkAsyncFn(acc), finishCallback, accountScopeKey(acc as IAccount)).catch((error: unknown) => {
+	return fileDownloadManager.startDownloadSerial(records, makeDownloadChunkAsyncFn(acc), finishCallback, transferScope(acc as IAccount, '')).catch((error: unknown) => {
 		console.error('Attachment download failed:', error);
 	});
 }
@@ -449,13 +451,13 @@ export function makeDownloadChunkAsyncFn(acc: any): (args: IPullChunkRequest) =>
 }
 
 export function cancelUpload(uploadId: string): void {
-	fileUploadManager.cancelUpload(uploadId);
+	fileUploadManager.cancelUpload(activeTransferScope(uploadId));
 	sendData(get(active_account) as IAccount, null, 'upload_cancel', { uploadId }, true, () => {});
 }
 
 export function pauseUpload(uploadId: string): Promise<void> {
 	return new Promise<void>(resolve => {
-		fileUploadManager.pauseUpload(uploadId);
+		fileUploadManager.pauseUpload(activeTransferScope(uploadId));
 		sendData(
 			get(active_account) as IAccount,
 			null,
@@ -474,7 +476,7 @@ export function pauseUpload(uploadId: string): Promise<void> {
 
 export function resumeUpload(uploadId: string): Promise<void> {
 	return new Promise<void>(resolve => {
-		fileUploadManager.resumeUpload(uploadId);
+		fileUploadManager.resumeUpload(activeTransferScope(uploadId));
 		sendData(
 			get(active_account) as IAccount,
 			null,
@@ -492,28 +494,28 @@ export function resumeUpload(uploadId: string): Promise<void> {
 }
 
 export function pauseDownload(uploadId: string): void {
-	fileDownloadManager.pauseDownload(uploadId);
+	fileDownloadManager.pauseDownload(activeTransferScope(uploadId));
 }
 
 export function resumeDownload(uploadId: string): void {
-	fileDownloadManager.resumeDownload(uploadId);
+	fileDownloadManager.resumeDownload(activeTransferScope(uploadId));
 }
 
 export function cancelDownload(uploadId: string): void {
-	const download = fileDownloadStore.get(uploadId);
+	const download = fileDownloadStore.get(activeTransferScope(uploadId));
 	if (!download) return;
 	if (download.record.type === FileUploadRecordType.P2P) {
 		// for p2p we want to cancel download but we gonna still use the same logic as is used in cancel upload because this is global cancel
 		// TODO: in case of more then one recipient we should cancel only for one recipient locally
 		cancelUpload(uploadId);
 	} else if (download.record.type === FileUploadRecordType.SERVER) {
-		fileDownloadManager.cancelDownload(uploadId);
+		fileDownloadManager.cancelDownload(activeTransferScope(uploadId));
 	}
 }
 
 export function loadUploadData(uploadId: string): Promise<any> {
 	return new Promise((resolve, reject) => {
-		const existingUpload = fileUploadStore.get(uploadId);
+		const existingUpload = fileUploadStore.get(activeTransferScope(uploadId));
 		if (existingUpload) {
 			resolve(existingUpload);
 			return;
@@ -535,6 +537,12 @@ export function loadUploadData(uploadId: string): Promise<any> {
 					return;
 				}
 				const { record, uploadData } = res.data;
+				const accountKey = accountScopeKey(acc);
+				const scope = transferScope(acc, uploadId);
+				if (!accountKey || !scope) {
+					reject(new Error('Cannot load upload data without an active account'));
+					return;
+				}
 				const upload = makeFileUpload({
 					...uploadData,
 					file: null,
@@ -542,8 +550,10 @@ export function loadUploadData(uploadId: string): Promise<any> {
 					chunksSent: [],
 					uploadInterval: null,
 					acc,
+					/* The owner is fixed here, when the record enters the store. */
+					accountKey,
 				});
-				fileUploadStore.set(uploadId, upload);
+				fileUploadStore.set(scope, upload);
 				resolve(upload);
 			});
 		});

@@ -1,5 +1,6 @@
 import { type IFileDownload, type FileDownloadStoreType, type IFileUploadRecord, FileUploadRecordStatus, type PullChunkFn } from './types.ts';
 import { makeFileDownload, sha256Hex } from './utils.ts';
+import { scopeAccountKey, type ITransferScope } from './accountScope.ts';
 import EventEmitter from 'events';
 import fileDownloadStore from '../../stores/FileDownloadStore.ts';
 
@@ -10,6 +11,17 @@ const MAX_RETRIES = 8;
 /** Refuse absurd chunk sizes announced by the server before allocating anything. */
 const MAX_CHUNK_SIZE = 8 * 1024 * 1024;
 
+/* Whether a chunk without a checksum is accepted.
+ *
+ * Every sender in this codebase has computed per-chunk SHA-256 since the integrity work landed, so
+ * the only thing lenient mode buys is receiving files from clients that predate it. A peer that
+ * wants to avoid verification can simply omit the checksum while this is false, so flip it to true
+ * once the deployed senders have been updated. The switch is deliberately a single constant so the
+ * decision is one line and one date, not a code change.
+ *
+ * Structural verification (chunk id, offset, length, total size) applies either way. */
+export const REQUIRE_CHUNK_CHECKSUMS = false;
+
 export class FileDownloadService extends EventEmitter {
 	downloadStore: FileDownloadStoreType;
 
@@ -18,24 +30,35 @@ export class FileDownloadService extends EventEmitter {
 		this.downloadStore = downloadStore;
 	}
 
-	async startDownloadSerial(records: IFileUploadRecord[], pullChunkFn: PullChunkFn, finishCallback: (download: IFileDownload) => void | Promise<void>, accountKey?: string | null): Promise<void> {
+	async startDownloadSerial(records: IFileUploadRecord[], pullChunkFn: PullChunkFn, finishCallback: (download: IFileDownload) => void | Promise<void>, owner: ITransferScope | null): Promise<void> {
+		if (!owner) throw new Error('Cannot download without an owning account');
+		const accountKey = scopeAccountKey(owner);
 		for (const record of records) {
 			if (!Number.isSafeInteger(record.chunkSize) || record.chunkSize <= 0 || record.chunkSize > MAX_CHUNK_SIZE) throw new Error('Invalid chunk size in upload record');
 			if (!Number.isSafeInteger(record.fileSize) || record.fileSize < 0) throw new Error('Invalid file size in upload record');
-			let download: IFileDownload | undefined = this.downloadStore.get(record.id);
+			/* The scope of this transfer, fixed for its whole lifetime. */
+			const scope: ITransferScope = { accountId: owner.accountId, server: owner.server, uploadId: record.id };
+			let download: IFileDownload | undefined = this.downloadStore.get(scope);
 			if (!download) {
-				download = makeFileDownload({ record, accountKey: accountKey ?? null });
-				this.downloadStore.set(record.id, download);
+				download = makeFileDownload({ record, accountKey });
+				this.downloadStore.set(scope, download);
 			}
 			const totalChunks = Math.ceil(record.fileSize / record.chunkSize);
 			let retries = 0;
 			download.pullChunk = async () => {
 				const retry = (error: unknown) => {
 					if (retries >= MAX_RETRIES) {
+						/* Terminal failure. The record has to leave the store and an explicit failure has
+						 * to be emitted: anyone waiting on this transfer watches the store, so leaving a
+						 * dead entry behind meant their promise never settled and the queue stalled. */
 						setRunning(false);
 						download.record.status = FileUploadRecordStatus.ERROR;
-						this.downloadStore.set(record.id, download);
+						download.error = error instanceof Error ? error : new Error(String(error));
 						console.error('Download failed permanently:', record.id, error);
+						this.emit('error', { uploadId: record.id, accountKey: download.accountKey, error: download.error });
+						this.downloadStore.delete(scope);
+						/* Do not leave the rest of the queue waiting on a transfer that will never finish. */
+						setTimeout(() => this.startNextDownload(download));
 						return;
 					}
 					/* Exponential backoff with jitter, so a server that keeps refusing does not turn into
@@ -51,10 +74,10 @@ export class FileDownloadService extends EventEmitter {
 				};
 				const setRunning = (running: boolean) => {
 					download.running = running;
-					this.downloadStore.set(record.id, download);
+					this.downloadStore.set(scope, download);
 				};
 				if (download.canceledLocally) {
-					this.downloadStore.delete(record.id);
+					this.downloadStore.delete(scope);
 					return;
 				}
 				if (
@@ -91,7 +114,7 @@ export class FileDownloadService extends EventEmitter {
 					 * a hostile or buggy value would create a sparse array of arbitrary length. */
 					download.chunksReceived[expectedChunkId] = chunk.data;
 					retries = 0;
-					this.downloadStore.set(record.id, download);
+					this.downloadStore.set(scope, download);
 					const totalReceived = download.chunksReceived.filter(c => c !== undefined).length;
 					// Check if all chunks have been received
 					if (totalReceived >= totalChunks) {
@@ -101,7 +124,7 @@ export class FileDownloadService extends EventEmitter {
 						await finishCallback(download);
 						download.chunksReceived = [];
 						setTimeout(() => this.startNextDownload(download));
-						this.downloadStore.delete(record.id);
+						this.downloadStore.delete(scope);
 					} else {
 						download.pullChunk && (await download.pullChunk());
 					}
@@ -109,7 +132,7 @@ export class FileDownloadService extends EventEmitter {
 					const totalReceived = download.chunksReceived.filter(c => c !== undefined).length;
 					if (totalReceived >= totalChunks) {
 						setRunning(false);
-						this.downloadStore.delete(record.id);
+						this.downloadStore.delete(scope);
 						throw e;
 					}
 					// try again
@@ -132,12 +155,15 @@ export class FileDownloadService extends EventEmitter {
 		const expectedLength = isLastChunk ? record.fileSize - offsetBytes : record.chunkSize;
 		const actualLength = chunk.data.byteLength ?? chunk.data.length;
 		if (actualLength !== expectedLength) throw new Error(`Chunk length ${actualLength} does not match expected ${expectedLength}`);
-		/* Senders that predate per-chunk checksums send an empty string; structural checks above still
-		 * apply in that case. */
-		if (typeof chunk.checksum === 'string' && chunk.checksum.length > 0) {
-			const actual = await sha256Hex(chunk.data);
-			if (actual && actual !== chunk.checksum) throw new Error('Chunk checksum mismatch');
+		const hasChecksum = typeof chunk.checksum === 'string' && chunk.checksum.length > 0;
+		if (!hasChecksum) {
+			/* Senders that predate per-chunk checksums send an empty string. */
+			if (REQUIRE_CHUNK_CHECKSUMS) throw new Error('Chunk is missing its checksum');
+			console.warn('Accepting a chunk without a checksum from an outdated sender:', record.id);
+			return;
 		}
+		const actual = await sha256Hex(chunk.data);
+		if (actual && actual !== chunk.checksum) throw new Error('Chunk checksum mismatch');
 	}
 
 	async startDownload(download: IFileDownload): Promise<void> {
@@ -167,27 +193,27 @@ export class FileDownloadService extends EventEmitter {
 		}
 	}
 
-	async pauseDownload(uploadId: string): Promise<void> {
-		const download = this.downloadStore.get(uploadId);
-		if (download) {
+	async pauseDownload(scope: ITransferScope | null): Promise<void> {
+		const download = this.downloadStore.get(scope);
+		if (download && scope) {
 			download.pausedLocally = true;
-			this.downloadStore.set(uploadId, download);
+			this.downloadStore.set(scope, download);
 		}
 	}
 
-	async resumeDownload(uploadId: string): Promise<void> {
-		const download = this.downloadStore.get(uploadId);
-		if (download) {
+	async resumeDownload(scope: ITransferScope | null): Promise<void> {
+		const download = this.downloadStore.get(scope);
+		if (download && scope) {
 			download.pausedLocally = false;
-			this.downloadStore.set(uploadId, download);
+			this.downloadStore.set(scope, download);
 		}
 	}
 
-	async cancelDownload(uploadId: string): Promise<void> {
-		const download = this.downloadStore.get(uploadId);
-		if (download) {
+	async cancelDownload(scope: ITransferScope | null): Promise<void> {
+		const download = this.downloadStore.get(scope);
+		if (download && scope) {
 			download.canceledLocally = true;
-			this.downloadStore.set(uploadId, download);
+			this.downloadStore.set(scope, download);
 		}
 	}
 }

@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { closeWelcomeWizardWindow, setupConsoleLogging, openGlobalSettings, closeWindow } from './test-utils.ts';
+import { CLIENT_URL } from '@/core/tests/e2e/clientUrl.ts';
 
 test.describe.parallel('Settings Window Resize Behavior', () => {
 	// Helper function to get common test elements and data
@@ -28,7 +29,7 @@ test.describe.parallel('Settings Window Resize Behavior', () => {
 
 	test.beforeEach(async ({ page }) => {
 		setupConsoleLogging(page);
-		await page.goto(process.env['PLAYWRIGHT_CLIENT_URL'] || 'http://localhost:3000/');
+		await page.goto(CLIENT_URL);
 		await closeWelcomeWizardWindow(page);
 	});
 

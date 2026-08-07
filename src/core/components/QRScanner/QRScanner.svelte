@@ -171,6 +171,9 @@
 	}
 
 	export function stop(): void {
+		/* Invalidate any getUserMedia() still in flight, otherwise it resolves after this call and
+		 * turns the camera back on. */
+		cameraGeneration++;
 		stopScanning();
 		if (stream) {
 			stream.getTracks().forEach(track => track.stop());

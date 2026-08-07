@@ -6,19 +6,20 @@
 	import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts';
 	import { assembleFile } from '@/org.libersoft.messages/services/Files/utils.ts';
 	import FileView from '@/org.libersoft.messages/components/MessageContentFile/FileView.svelte';
+	import { activeTransferScope } from '@/org.libersoft.messages/services/Files/accountScope.ts';
 
 	let { uploadId } = $props();
 
 	/** uploads */
 	let upload = $state<IFileUpload | null>(null);
 	const unsubscribeUploadStore = fileUploadStore.store.subscribe((): void => {
-		upload = fileUploadStore.get(uploadId) || null;
+		upload = fileUploadStore.get(activeTransferScope(uploadId)) || null;
 	});
 
 	/** downloads */
 	let download = $state<IFileDownload | null>(null);
 	const unsubscribeDownloadStore = fileDownloadStore.store.subscribe((): void => {
-		download = fileDownloadStore.get(uploadId) || null;
+		download = fileDownloadStore.get(activeTransferScope(uploadId)) || null;
 	});
 
 	onMount(() => {

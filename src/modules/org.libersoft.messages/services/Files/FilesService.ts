@@ -4,7 +4,7 @@ import { active_account } from '@/core/scripts/core.ts';
 import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messages/scripts/messages.ts';
 import fileUploadManager, { type FileUploadService } from './FileUploadService.ts';
 import fileDownloadManager, { type FileDownloadService } from './FileDownloadService.ts';
-import { accountScopeKey, transferKey } from './accountScope.ts';
+import { accountScopeKey, transferKey, transferScope, type ITransferScope } from './accountScope.ts';
 import type { IFileDownload } from './types.ts';
 import { liveQuery } from 'dexie';
 
@@ -22,11 +22,12 @@ export class FilesService {
 	getOrDownloadAttachment(uploadId: string): Promise<{ localFile: ILocalFile }> {
 		const acc = get(active_account);
 		const scopeKey = accountScopeKey(acc);
-		if (!acc || !scopeKey) return Promise.reject(new Error('Cannot download an attachment without an active account'));
+		const scope = transferScope(acc, uploadId);
+		if (!acc || !scopeKey || !scope) return Promise.reject(new Error('Cannot download an attachment without an active account'));
 		const requestKey = transferKey(scopeKey, uploadId);
 		const existingRequest = this.attachmentRequests.get(requestKey);
 		if (existingRequest) return existingRequest;
-		const request = this.loadOrDownloadAttachment(scopeKey, uploadId);
+		const request = this.loadOrDownloadAttachment(scopeKey, scope);
 		this.attachmentRequests.set(requestKey, request);
 		const forget = (): void => {
 			this.attachmentRequests.delete(requestKey);
@@ -35,12 +36,13 @@ export class FilesService {
 		return request;
 	}
 
-	private async loadOrDownloadAttachment(scopeKey: string, uploadId: string): Promise<{ localFile: ILocalFile }> {
+	private async loadOrDownloadAttachment(scopeKey: string, scope: ITransferScope): Promise<{ localFile: ILocalFile }> {
+		const uploadId = scope.uploadId;
 		const acc = get(active_account);
 		if (!acc) throw new Error('Cannot download an attachment without an active account');
 		const localFile = await filesDB.findFile(scopeKey, uploadId);
 		if (localFile?.localFileStatus === LocalFileStatus.READY) return { localFile };
-		if (localFile && this.fileDownloadManager.downloadStore.get(uploadId)) return this.waitForExistingDownload(scopeKey, uploadId);
+		if (localFile && this.fileDownloadManager.downloadStore.get(scope)) return this.waitForExistingDownload(scopeKey, scope);
 		if (localFile) await filesDB.deleteFile(localFile.id);
 
 		const { record } = await loadUploadData(uploadId);
@@ -56,10 +58,18 @@ export class FilesService {
 		return new Promise<{ localFile: ILocalFile }>((resolve, reject): void => {
 			let settled = false;
 			let unsubscribe = (): void => {};
+			/* The service reports a terminal failure explicitly, so the waiter can surface the real
+			 * cause instead of a generic "canceled or failed". */
+			const onDownloadError = (event: { uploadId: string; error: Error }): void => {
+				if (event.uploadId !== uploadId) return;
+				complete((): void => reject(event.error));
+			};
+			this.fileDownloadManager.on('error', onDownloadError);
 			const complete = (callback: () => void): void => {
 				if (settled) return;
 				settled = true;
 				unsubscribe();
+				this.fileDownloadManager.off('error', onDownloadError);
 				callback();
 			};
 			const startPromise = this.fileDownloadManager.startDownloadSerial(
@@ -80,25 +90,32 @@ export class FilesService {
 					if (updatedCount === 0) throw new Error('Downloaded attachment record is missing from IndexedDB');
 					complete((): void => resolve({ localFile: completedFile }));
 				},
-				scopeKey
+				scope
 			);
 			unsubscribe = this.fileDownloadManager.downloadStore.store.subscribe((): void => {
-				if (!settled && !this.fileDownloadManager.downloadStore.get(uploadId)) complete((): void => reject(new Error('Attachment download was canceled or failed')));
+				if (!settled && !this.fileDownloadManager.downloadStore.get(scope)) complete((): void => reject(new Error('Attachment download was canceled or failed')));
 			});
 			startPromise.catch((error: unknown): void => complete((): void => reject(error)));
 		});
 	}
 
-	private waitForExistingDownload(scopeKey: string, uploadId: string): Promise<{ localFile: ILocalFile }> {
+	private waitForExistingDownload(scopeKey: string, scope: ITransferScope): Promise<{ localFile: ILocalFile }> {
+		const uploadId = scope.uploadId;
 		return new Promise<{ localFile: ILocalFile }>((resolve, reject): void => {
 			let settled = false;
 			let downloadUnsubscribe = (): void => {};
 			let dbSubscription: { unsubscribe: () => void } | undefined;
+			const onDownloadError = (event: { uploadId: string; error: Error }): void => {
+				if (event.uploadId !== uploadId) return;
+				complete((): void => reject(event.error));
+			};
+			this.fileDownloadManager.on('error', onDownloadError);
 			const complete = (callback: () => void): void => {
 				if (settled) return;
 				settled = true;
 				dbSubscription?.unsubscribe();
 				downloadUnsubscribe();
+				this.fileDownloadManager.off('error', onDownloadError);
 				callback();
 			};
 			dbSubscription = liveQuery(() => filesDB.findFile(scopeKey, uploadId)).subscribe({
@@ -108,7 +125,7 @@ export class FilesService {
 				error: (error: unknown): void => complete((): void => reject(error)),
 			});
 			downloadUnsubscribe = this.fileDownloadManager.downloadStore.store.subscribe((): void => {
-				if (settled || this.fileDownloadManager.downloadStore.get(uploadId)) return;
+				if (settled || this.fileDownloadManager.downloadStore.get(scope)) return;
 				void filesDB
 					.findFile(scopeKey, uploadId)
 					.then((localFile: ILocalFile | undefined): void => {

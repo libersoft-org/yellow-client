@@ -6,6 +6,9 @@ import BasicStreamLoader from './loaders/BasicStreamLoader.ts';
 import _debounce from 'lodash/debounce';
 import WaveSurfer from 'wavesurfer.js';
 
+/** How many times one byte offset is re-queued before the stream is declared broken. */
+const MAX_OFFSET_ATTEMPTS = 3;
+
 class MediaService {
 	videoElement: HTMLVideoElement;
 	_getFileChunk: (args: { offsetBytes: number; chunkSize: number }) => Promise<{ chunk: { data: Uint8Array } }>;
@@ -19,9 +22,17 @@ class MediaService {
 	/* Every object URL handed to an element has to be revoked, otherwise the Blob behind it stays
 	 * alive for the lifetime of the document. */
 	private _objectUrls: string[] = [];
-	/* Byte ranges already fetched. video.buffered is measured in seconds and cannot answer this. */
+	/* Byte offsets already fetched successfully. video.buffered is measured in seconds and cannot
+	 * answer this. Offsets currently being requested are tracked separately: marking an offset as
+	 * fetched before its request completes meant a failed chunk was never retried and playback
+	 * stalled with no error. */
 	private _fetchedOffsets = new Set<number>();
+	private _inFlightOffsets = new Set<number>();
+	/** Reported once when a chunk can no longer be recovered, so the UI can stop waiting. */
+	onStreamError: ((error: unknown) => void) | null = null;
 	private _fullDownload: Promise<Blob> | null = null;
+	/** Failed attempts per offset, so a permanently broken chunk stops being retried. */
+	private _offsetAttempts = new Map<number, number>();
 
 	constructor(videoElement: HTMLVideoElement, getFileChunk: MediaService['_getFileChunk'], fileInfo: IMediaFileInfo) {
 		this.videoElement = videoElement;
@@ -204,18 +215,31 @@ class MediaService {
 		// if (offset >= totalSize) {
 		//  //mediaSource.endOfStream();
 		// }
-		if (this.isOffsetInBuffer(offset)) {
-			//console.warn('offset already fetched', offset);
+		if (this.isOffsetInBuffer(offset) || this._inFlightOffsets.has(offset)) {
+			//console.warn('offset already fetched or in flight', offset);
 			return;
 		}
-		this._fetchedOffsets.add(offset);
+		this._inFlightOffsets.add(offset);
 		try {
 			const { chunk } = await this._getFileChunk({ offsetBytes: offset, chunkSize });
 			const data = chunk.data as Uint8Array<ArrayBuffer>;
 			const nextOffset = this.getLoader().processChunk({ offset, chunkSize, data });
+			/* Only now is the offset really available - promoting it earlier made a failed request
+			 * look like a successful one forever. */
+			this._fetchedOffsets.add(offset);
 			if (typeof nextOffset === 'number' && nextOffset < totalSize) this.fetchQueue.push(nextOffset);
 		} catch (error) {
 			console.error('Error loading chunk:', error);
+			/* Put it back on the queue so the stream can recover from a transient failure. */
+			const attempts = (this._offsetAttempts.get(offset) ?? 0) + 1;
+			this._offsetAttempts.set(offset, attempts);
+			if (attempts < MAX_OFFSET_ATTEMPTS) this.fetchQueue.push(offset);
+			else {
+				console.error('Giving up on media chunk at offset', offset);
+				this.onStreamError?.(error);
+			}
+		} finally {
+			this._inFlightOffsets.delete(offset);
 		}
 	}
 
@@ -241,6 +265,8 @@ class MediaService {
 		}
 		this.fetchQueue = [];
 		this._fetchedOffsets.clear();
+		this._inFlightOffsets.clear();
+		this._offsetAttempts.clear();
 		for (const cleanup of this._cleanupListeners) cleanup();
 		this._cleanupListeners = [];
 		for (const url of this._objectUrls) URL.revokeObjectURL(url);

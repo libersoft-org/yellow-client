@@ -10,6 +10,7 @@
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
+	import { activeTransferScope } from '@/org.libersoft.messages/services/Files/accountScope.ts';
 	let { node, showHiddenImages, hiddenImages, siblings } = $props();
 	let file = $derived(node.attributes.file?.value);
 	const YELLOW_SRC_PROTOCOL = 'yellow:';
@@ -22,7 +23,7 @@
 	let imgUrl: string | null = $state(null);
 	let imgFileName: string | null = $state(null);
 	const upload = writable<any>(null);
-	const unsubscribeUploadStore = fileUploadStore.store.subscribe((): void => upload.set(fileUploadStore.get(yellowId) || null));
+	const unsubscribeUploadStore = fileUploadStore.store.subscribe((): void => upload.set(fileUploadStore.get(activeTransferScope(yellowId)) || null));
 
 	function makeFilesForGallery(): any[] {
 		const filesForGallery: any[] = [];

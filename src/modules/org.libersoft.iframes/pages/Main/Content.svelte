@@ -92,7 +92,10 @@
 
 	async function onMessage(event: MessageEvent): Promise<void> {
 		/* Identity check first: only the window we ourselves created may talk to us. */
-		if (!iframe || event.source !== iframe.contentWindow) return;
+		/* Capture the sender window: the identity check below has to compare the very same reference,
+		 * and holding it in a local also keeps the narrowing across the await. */
+		const source = event.source;
+		if (!source || !iframe || source !== iframe.contentWindow) return;
 		if (event.origin !== EXPECTED_ORIGIN) return;
 		const request = parseRequest(event.data);
 		if (!request) return;
@@ -102,11 +105,13 @@
 		} catch (e) {
 			payload = { error: 'Command failed' };
 		}
-		/* The component may have been destroyed while the command was in flight. */
-		if (!iframe || event.source !== iframe.contentWindow) return;
+		/* The component may have been destroyed, or the iframe navigated, while the command was in
+		 * flight - the reply must still go to the window that asked for it, and only if that window is
+		 * still the one we host. */
+		if (!iframe || source !== iframe.contentWindow) return;
 		/* An opaque origin cannot be named, so '*' is the only possible target here. This is safe only
 		 * because the recipient window is the one we hold a reference to. */
-		event.source.postMessage({ requestId: request.requestId, payload }, { targetOrigin: '*' });
+		source.postMessage({ requestId: request.requestId, payload }, { targetOrigin: '*' });
 	}
 
 	function messageListener(event: MessageEvent): void {

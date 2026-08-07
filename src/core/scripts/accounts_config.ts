@@ -139,16 +139,9 @@ export function validateAccountConfig(account: any): { valid: boolean; errors: s
 	if (!account.settings || typeof account.settings !== 'object' || Array.isArray(account.settings)) {
 		errors.push('Account must have settings object');
 	} else {
-		for (const key of Object.keys(account.settings)) {
-			if (FORBIDDEN_SETTINGS_KEYS.has(key)) {
-				errors.push(`Settings key "${key}" is not allowed`);
-				continue;
-			}
-			const value = account.settings[key];
-			if (value !== null && typeof value === 'object') {
-				errors.push(`Settings key "${key}" must hold a primitive value`);
-			}
-		}
+		/* Nested objects are a supported shape (grouped settings such as `notifications.enabled`), so
+		 * the check walks the whole tree instead of demanding primitives at the top level. */
+		collectForbiddenSettingsKeys(account.settings, '', errors, 0);
 		const title = account.settings['title'];
 		if (title !== undefined && typeof title !== 'string') errors.push('Settings "title" must be a string');
 	}
@@ -160,14 +153,51 @@ export function validateAccountConfig(account: any): { valid: boolean; errors: s
  * properties, so they survive validation unless rejected explicitly. */
 const FORBIDDEN_SETTINGS_KEYS: ReadonlySet<string> = new Set(['__proto__', 'constructor', 'prototype']);
 
+/** How deep a settings tree may nest before it is refused. */
+const MAX_SETTINGS_DEPTH = 8;
+
+function isPlainObject(value: unknown): value is Record<string, unknown> {
+	return typeof value === 'object' && value !== null && !Array.isArray(value);
+}
+
+/** Reports every prototype-polluting key anywhere in a settings tree. */
+function collectForbiddenSettingsKeys(value: unknown, path: string, errors: string[], depth: number): void {
+	if (depth > MAX_SETTINGS_DEPTH) {
+		errors.push(`Settings are nested too deeply${path ? ` at "${path}"` : ''}`);
+		return;
+	}
+	if (Array.isArray(value)) {
+		value.forEach((item, i) => collectForbiddenSettingsKeys(item, `${path}[${i}]`, errors, depth + 1));
+		return;
+	}
+	if (!isPlainObject(value)) return;
+	for (const key of Object.keys(value)) {
+		const childPath = path ? `${path}.${key}` : key;
+		if (FORBIDDEN_SETTINGS_KEYS.has(key)) {
+			errors.push(`Settings key "${childPath}" is not allowed`);
+			continue;
+		}
+		collectForbiddenSettingsKeys(value[key], childPath, errors, depth + 1);
+	}
+}
+
+/** Rebuilds a settings value with null-prototype objects and without polluting keys. */
+function sanitizeSettingsValue(value: unknown, depth: number): unknown {
+	if (depth > MAX_SETTINGS_DEPTH) return undefined;
+	if (Array.isArray(value)) return value.map(item => sanitizeSettingsValue(item, depth + 1)).filter(item => item !== undefined);
+	if (!isPlainObject(value)) return value;
+	const out: Record<string, unknown> = Object.create(null);
+	for (const [key, child] of Object.entries(value)) {
+		if (FORBIDDEN_SETTINGS_KEYS.has(key)) continue;
+		const sanitized = sanitizeSettingsValue(child, depth + 1);
+		if (sanitized !== undefined) out[key] = sanitized;
+	}
+	return out;
+}
+
 /** Rebuilds an imported account into a fresh object, dropping anything not part of the config shape. */
 export function sanitizeAccountConfig(account: any): IAccountConfig {
-	const settings: IAccountSettings = Object.create(null);
-	for (const [key, value] of Object.entries(account?.settings ?? {})) {
-		if (FORBIDDEN_SETTINGS_KEYS.has(key)) continue;
-		if (value !== null && typeof value === 'object') continue;
-		settings[key] = value;
-	}
+	const settings = sanitizeSettingsValue(account?.settings ?? {}, 0) as IAccountSettings;
 	return {
 		id: account.id,
 		enabled: account.enabled,

@@ -10,12 +10,13 @@
 	import _debug from 'debug';
 	import VideoView from '@/org.libersoft.messages/components/MessageContentVideo/VideoView.svelte';
 	import videoJS from 'video.js';
+	import { activeTransferScope } from '@/org.libersoft.messages/services/Files/accountScope.ts';
 	const debug = _debug('libersoft:messages:components:MessageContentVideo:Video');
 	let { uploadId } = $props();
 	let videoRef = $state<HTMLVideoElement>();
 	let upload = $state<IFileUpload | null>(null);
 	let download = $state<IFileDownload | null>(null);
-	const unsubDownloadStore = fileDownloadStore.store.subscribe(() => (download = fileDownloadStore.get(uploadId) || null));
+	const unsubDownloadStore = fileDownloadStore.store.subscribe(() => (download = fileDownloadStore.get(activeTransferScope(uploadId)) || null));
 	let thumbnailSrc = $state<string | null>(null);
 	//let videoUrl = $state<string | null>(null)
 	let posterError = $state(false);

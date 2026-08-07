@@ -11,8 +11,14 @@ vi.mock('@/core/scripts/stores.ts', async (): Promise<any> => {
 
 const { default: MessageContentLink } = await import('@/org.libersoft.messages/components/MessageContentLink/MessageContentLink.svelte');
 
+interface ILinkProps {
+	href: string;
+	node: HTMLAnchorElement;
+	children: Array<{ tagUniqueId: string; text: string; level: number }>;
+}
+
 /** Builds the props the renderer hands to a custom component for `<a href=...>text</a>`. */
-function linkProps(href: string, text: string): Record<string, unknown> {
+function linkProps(href: string, text: string): ILinkProps {
 	const template = document.createElement('template');
 	template.innerHTML = `<a href="${href}">${text}</a>`;
 	const node = template.content.firstElementChild as HTMLAnchorElement;

@@ -4,25 +4,31 @@ import { FileDownloadService } from '../../services/Files/FileDownloadService.ts
 import { sha256Hex } from '../../services/Files/utils.ts';
 import { FileUploadRecordStatus, type IFileDownload, type IFileUploadRecord } from '../../services/Files/types.ts';
 
+/* Mirrors the real store: entries are addressed by an explicit transfer scope. */
 function makeStore(): any {
 	const store = writable<IFileDownload[]>([]);
+	const matches = (d: IFileDownload, scope: any): boolean => d.record.id === scope.uploadId && d.accountKey === `${scope.server}\u0000${scope.accountId}`;
 	return {
 		store,
 		getAll: (): IFileDownload[] => get(store),
-		get: (id: string): IFileDownload | undefined => get(store).find(d => d.record.id === id),
-		set: (id: string, download: IFileDownload): void =>
+		getAllForAccount: (accountKey: string): IFileDownload[] => get(store).filter(d => d.accountKey === accountKey),
+		get: (scope: any): IFileDownload | undefined => (scope ? get(store).find(d => matches(d, scope)) : undefined),
+		set: (scope: any, download: IFileDownload): void =>
 			store.update(v => {
-				const i = v.findIndex(d => d.record.id === id);
+				const i = v.findIndex(d => matches(d, scope));
 				if (i === -1) v.push(download);
 				else v[i] = download;
 				return [...v];
 			}),
 		patch: (): void => {},
-		delete: (id: string): void => store.update(v => v.filter(d => d.record.id !== id)),
+		delete: (scope: any): void => store.update(v => v.filter(d => !matches(d, scope))),
 		updateDownloadRecord: (): void => {},
 		isAnyDownloadRunning: (): boolean => get(store).some(d => d.running),
 	};
 }
+
+/* Owner of every transfer in this file - the services now require it explicitly. */
+const OWNER = { accountId: 'account', server: 'wss://server.test', uploadId: 'upload-1' };
 
 const record: IFileUploadRecord = {
 	id: 'upload-1',
@@ -48,9 +54,14 @@ describe('FileDownloadService integrity checks', (): void => {
 		});
 		/* chunksReceived is released right after the finish callback returns, so inspect it there. */
 		let assembled: Uint8Array[] | null = null;
-		await service.startDownloadSerial([record], pullChunk as any, (d: IFileDownload): void => {
-			assembled = [...d.chunksReceived];
-		});
+		await service.startDownloadSerial(
+			[record],
+			pullChunk as any,
+			(d: IFileDownload): void => {
+				assembled = [...d.chunksReceived];
+			},
+			OWNER
+		);
 		expect(pullChunk).toHaveBeenCalledTimes(2);
 		expect(assembled).not.toBeNull();
 		expect((assembled as unknown as Uint8Array[]).length).toBe(2);
@@ -59,7 +70,7 @@ describe('FileDownloadService integrity checks', (): void => {
 
 	it('rejects an upload record with a zero chunk size instead of looping', async (): Promise<void> => {
 		const service = new FileDownloadService(makeStore());
-		await expect(service.startDownloadSerial([{ ...record, chunkSize: 0 }], vi.fn() as any, vi.fn())).rejects.toThrow('Invalid chunk size');
+		await expect(service.startDownloadSerial([{ ...record, chunkSize: 0 }], vi.fn() as any, vi.fn(), OWNER)).rejects.toThrow('Invalid chunk size');
 	});
 
 	it('never indexes the received array by a server-supplied chunk id', async (): Promise<void> => {
@@ -71,8 +82,8 @@ describe('FileDownloadService integrity checks', (): void => {
 			return { chunk: { chunkId: 2 ** 30, uploadId: record.id, offsetBytes, checksum: '', data } };
 		});
 		const finish = vi.fn();
-		await service.startDownloadSerial([record], pullChunk as any, finish);
-		const download = store.get(record.id);
+		await service.startDownloadSerial([record], pullChunk as any, finish, OWNER);
+		const download = store.get(OWNER);
 		expect(finish).not.toHaveBeenCalled();
 		/* Mismatching chunk id is refused, so nothing is stored at all. */
 		expect(download?.chunksReceived.length ?? 0).toBe(0);
@@ -85,9 +96,34 @@ describe('FileDownloadService integrity checks', (): void => {
 			chunk: { chunkId: offsetBytes / 4, uploadId: record.id, offsetBytes, checksum: 'deadbeef', data: new Uint8Array([1, 2, 3, 4]) },
 		}));
 		const finish = vi.fn();
-		await service.startDownloadSerial([record], pullChunk as any, finish);
+		await service.startDownloadSerial([record], pullChunk as any, finish, OWNER);
 		expect(finish).not.toHaveBeenCalled();
-		expect(store.get(record.id)?.chunksReceived.length ?? 0).toBe(0);
+		expect(store.get(OWNER)?.chunksReceived.length ?? 0).toBe(0);
+	});
+
+	/* A permanently failing transfer must leave the store and announce itself, otherwise whoever is
+	 * waiting on it (FilesService) never settles and the queue stalls behind a dead entry. */
+	it('removes a permanently failed download and emits an error', async (): Promise<void> => {
+		vi.useFakeTimers();
+		try {
+			const store = makeStore();
+			const service = new FileDownloadService(store);
+			const pullChunk = vi.fn(async () => {
+				throw new Error('network down');
+			});
+			const errors: any[] = [];
+			service.on('error', e => errors.push(e));
+			const started = service.startDownloadSerial([record], pullChunk as any, vi.fn(), OWNER);
+			/* Exhaust the retry budget - the backoff is scheduled with setTimeout. */
+			for (let i = 0; i < 12; i++) await vi.advanceTimersByTimeAsync(60_000);
+			await started;
+			expect(errors.length).toBe(1);
+			expect(errors[0].uploadId).toBe(record.id);
+			expect(errors[0].error).toBeInstanceOf(Error);
+			expect(store.get(OWNER)).toBeUndefined();
+		} finally {
+			vi.useRealTimers();
+		}
 	});
 
 	it('refuses a chunk of unexpected length', async (): Promise<void> => {
@@ -97,7 +133,7 @@ describe('FileDownloadService integrity checks', (): void => {
 			chunk: { chunkId: offsetBytes / 4, uploadId: record.id, offsetBytes, checksum: '', data: new Uint8Array([1, 2]) },
 		}));
 		const finish = vi.fn();
-		await service.startDownloadSerial([record], pullChunk as any, finish);
+		await service.startDownloadSerial([record], pullChunk as any, finish, OWNER);
 		expect(finish).not.toHaveBeenCalled();
 	});
 });

@@ -3,10 +3,11 @@ import { type Page } from '@playwright/test';
 import { setupConsoleLogging, openGlobalSettings, setupAccountInWizard, goToAccountManagement, addAccount, switchAccount, switchModule, closeWindow, goToRootSettingsSection, clickSettingsMenuButton } from '@/core/tests/e2e/test-utils.js';
 
 import { startNewConversation, openConversation, sendMessage, forwardLastMessage, forwardMessageToConversation, verifyForwardWindowWithPreview, searchConversationsInForwardWindow } from '@/modules/org.libersoft.messages/tests/e2e/_shared/utils.js';
+import { CLIENT_URL } from '@/core/tests/e2e/clientUrl.ts';
 
 test('Complete End-to-End Application Test', async ({ page }) => {
 	setupConsoleLogging(page);
-	await page.goto(process.env['PLAYWRIGHT_CLIENT_URL'] || 'http://localhost:3000/');
+	await page.goto(CLIENT_URL);
 	const serverUrl = process.env['PLAYWRIGHT_SERVER_URL'] || `ws://localhost:8084`;
 
 	await test.step('Initial Account Setup', async () => {
