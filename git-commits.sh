@@ -3,6 +3,7 @@
 set -euo pipefail
 
 NUMBER_WIDTH=5
+DATE_WIDTH=23
 MESSAGE_WIDTH=50
 COUNT_WIDTH=8
 
@@ -32,17 +33,26 @@ if ! git rev-parse --verify HEAD >/dev/null 2>&1; then
 	exit 1
 fi
 
+# The hash and the date get colours of their own so a row reads as separate
+# fields. The row number keeps the terminal's own colour: it is an index, and
+# colouring everything is the same as colouring nothing.
 if [[ -t 1 ]]; then
 	RED=$'\033[31m'
 	GREEN=$'\033[32m'
 	NET_PLUS=$'\033[93m'
 	NET_MINUS=$'\033[38;5;130m'
+	HASH_COLOUR=$'\033[36m'
+	# 208 rather than the 130 the negative net uses, so the two oranges in a row
+	# are not mistaken for each other.
+	DATE_COLOUR=$'\033[38;5;208m'
 	RESET=$'\033[0m'
 else
 	RED=""
 	GREEN=""
 	NET_PLUS=""
 	NET_MINUS=""
+	HASH_COLOUR=""
+	DATE_COLOUR=""
 	RESET=""
 fi
 
@@ -62,20 +72,36 @@ if [[ -n "$commit_count" ]]; then
 	fi
 fi
 
-printf '%*s %-7s %-*s %*s %*s %*s\n' "$NUMBER_WIDTH" "#" "Commit" "$MESSAGE_WIDTH" "Message" \
+# Header cells carry the same colour as the column below them, which is what
+# makes the mapping readable without counting fields.
+printf '%*s %s%-7s%s %s%-*s%s %-*s %*s %*s %*s\n' \
+	"$NUMBER_WIDTH" "#" \
+	"$HASH_COLOUR" "Commit" "$RESET" \
+	"$DATE_COLOUR" "$DATE_WIDTH" "Date" "$RESET" \
+	"$MESSAGE_WIDTH" "Message" \
 	"$COUNT_WIDTH" "Removed" "$COUNT_WIDTH" "Added" "$COUNT_WIDTH" "Net"
-printf '%s %-7s %-*s %s %s %s\n' "$(separator "$NUMBER_WIDTH")" "-------" \
+printf '%s %-7s %-*s %-*s %s %s %s\n' "$(separator "$NUMBER_WIDTH")" "-------" \
+	"$DATE_WIDTH" "$(separator "$DATE_WIDTH")" \
 	"$MESSAGE_WIDTH" "$(separator "$MESSAGE_WIDTH")" \
 	"$(separator "$COUNT_WIDTH")" "$(separator "$COUNT_WIDTH")" "$(separator "$COUNT_WIDTH")"
 
 # One traversal carries identity, subject and diff totals together. Asking git per commit
 # costs four processes each, and columns sized from the widest row cannot print until the
 # whole walk ends; fixed widths let every row leave as soon as it is read.
-git log "${log_args[@]}" --numstat --format=$'\x01%h\x02%s' HEAD |
+#
+# The date is the *author* date, which is when the work was done and survives a
+# rebase, rather than when the commit last entered this history. `format-local`
+# with `TZ=UTC` renders it in UTC instead of whatever zone each commit recorded,
+# so two rows are comparable - and the zone is written into every row rather than
+# only into the heading, so a row pasted somewhere else still says what it means.
+TZ=UTC git log "${log_args[@]}" --numstat \
+	--date=format-local:'%Y-%m-%d %H:%M:%S UTC' --format=$'\x01%h\x02%ad\x02%s' HEAD |
 	awk -v number_width="$NUMBER_WIDTH" -v number_offset="$number_offset" \
+		-v date_width="$DATE_WIDTH" \
 		-v message_width="$MESSAGE_WIDTH" -v count_width="$COUNT_WIDTH" \
 		-v red="$RED" -v green="$GREEN" -v net_plus="$NET_PLUS" \
-		-v net_minus="$NET_MINUS" -v reset="$RESET" '
+		-v net_minus="$NET_MINUS" -v reset="$RESET" \
+		-v hash_colour="$HASH_COLOUR" -v date_colour="$DATE_COLOUR" '
 		function emit(net, subject, net_colour) {
 			if (!pending) return
 			listed += 1
@@ -87,8 +113,13 @@ git log "${log_args[@]}" --numstat --format=$'\x01%h\x02%s' HEAD |
 				subject = substr(subject, 1, message_width - 3) "..."
 			}
 			net_colour = net < 0 ? net_minus : net_plus
-			printf "%*d %-7s %-*s %s%*s%s %s%*s%s %s%*s%s\n", \
-				number_width, number_offset + listed, hash, message_width, subject, \
+			# Colour wraps each padded field rather than sitting inside it,
+			# because the escape bytes would otherwise count toward the width.
+			printf "%*d %s%-7s%s %s%-*s%s %-*s %s%*s%s %s%*s%s %s%*s%s\n", \
+				number_width, number_offset + listed, \
+				hash_colour, hash, reset, \
+				date_colour, date_width, date, reset, \
+				message_width, subject, \
 				red, count_width, "-" removed, reset, \
 				green, count_width, "+" added, reset, \
 				net_colour, count_width, sprintf("%+d", net), reset
@@ -99,7 +130,10 @@ git log "${log_args[@]}" --numstat --format=$'\x01%h\x02%s' HEAD |
 			record = substr($0, 2)
 			split(record, field, "\002")
 			hash = field[1]
-			message = substr(record, length(field[1]) + 2)
+			date = field[2]
+			# Taken by offset rather than as field[3], so a subject containing the
+			# separator stays whole.
+			message = substr(record, length(field[1]) + length(field[2]) + 3)
 			added = 0
 			removed = 0
 			pending = 1

@@ -31,14 +31,16 @@ export let active_account = derived(active_account_store, ($active_account_store
 export function selectAccount(id: string): void {
 	log.debug('SELECT ACCOUNT', id);
 	if (get(active_account_id) === id) return;
-	/* here we temporarily set selected_module_id to null, so that the module components are forced to be destroyed and re-created, so that they can re-initialize their data.
-	 * This allows for modules to not be perfectly reactive. */
-	let old_selected_module = get(selected_module_id);
-	selected_module_id.set(null);
+	/* Validate first: closing the current module and then bailing out on an unknown id used to leave
+	 * the user with no module selected at all. */
 	if (!findAccount(id)) {
 		log.debug('account not found');
 		return;
 	}
+	/* here we temporarily set selected_module_id to null, so that the module components are forced to be destroyed and re-created, so that they can re-initialize their data.
+	 * This allows for modules to not be perfectly reactive. */
+	let old_selected_module = get(selected_module_id);
+	selected_module_id.set(null);
 	active_account_id.set(id);
 	tick().then(() => {
 		const activeAcc = get(active_account);
@@ -111,7 +113,7 @@ function updateLiveAccount(account: AccountStore, config: IAccountConfig): void 
 	}
 	if (acc.credentials.retry_nonce != config.credentials.retry_nonce || acc.credentials.server != config.credentials.server || acc.credentials.address != config.credentials.address || acc.credentials.password != config.credentials.password) {
 		acc.credentials = config.credentials;
-		log.debug('credentials changed:', acc.credentials);
+		log.debug('credentials changed for account:', acc.id);
 		if (acc.enabled) {
 			_disableAccount(account);
 			_enableAccount(account);
@@ -137,6 +139,14 @@ function updateLiveAccount(account: AccountStore, config: IAccountConfig): void 
 			//console.log('settings not updated:', key, value);
 		}
 	}
+	/* Keys that disappeared from the config have to disappear from the live account too, otherwise an
+	 * import or a downgrade leaves ghost settings behind. */
+	for (const key of Object.keys(acc.settings)) {
+		if (!Object.prototype.hasOwnProperty.call(config.settings, key)) {
+			delete acc.settings[key];
+			settings_updated = true;
+		}
+	}
 	if (settings_updated) {
 		log.debug('settings updated:', acc.settings);
 		account.update(v => v);
@@ -156,7 +166,7 @@ function removeLiveAccountsNotInConfig(accounts_list: AccountStore[], value: IAc
 	// remove accounts that are not in config
 	for (let account of accounts_list) {
 		if (!value.find(conf => conf.id === get(account).id)) {
-			console.log('REMOVE ACCOUNT', get(account));
+			log.debug('REMOVE ACCOUNT', get(account).id);
 			_disableAccount(account);
 			accounts.update(v => v.filter(a => get(a).id !== get(account).id));
 		}
@@ -323,6 +333,11 @@ function reconnectAccount(account: AccountStore): void {
 			log.debug('acc.status:', acc.status);
 			acc.lastCommsTs = Date.now();
 			account.update(v => v);
+			/* Start the heartbeat only once the socket is open. Starting it right after construction
+			 * meant the first tick saw CONNECTING, declared the connection dead and reconnected - on a
+			 * slow network that loops forever. */
+			clearPingTimer(acc);
+			setupPing(account);
 			sendLoginCommand(account);
 		};
 		acc.socket.onerror = event => {
@@ -351,13 +366,12 @@ function reconnectAccount(account: AccountStore): void {
 			}, 200);
 		};
 		clearPingTimer(acc);
-		setupPing(account);
 	}
 }
 
 function retry(account: AccountStore, msg: string): void {
 	let acc = get(account);
-	log.debug('RETRY ACCOUNT', acc);
+	log.debug('RETRY ACCOUNT', acc.id);
 	if (!acc.enabled || acc.suspended) return;
 	if (acc.status === 'Retrying...') {
 		log.debug('Already retrying.');
@@ -408,10 +422,10 @@ function sendLoginCommand(account: AccountStore): void {
 			acc.status = 'Login failed.';
 			acc.session_status = undefined;
 			acc.suspended = true;
-			console.debug('Login failed:', JSON.stringify(res, null, 2), res);
+			log.debug('Login failed:', res.message);
 		} else {
 			acc.session_status = 'Logged in.';
-			console.log('Logged in:', res);
+			log.debug('Logged in:', acc.id);
 			acc.error = null;
 			acc.sessionID = res.data.sessionID;
 			acc.wsGuid = res.data.wsGuid;
@@ -426,15 +440,27 @@ function sendLoginCommand(account: AccountStore): void {
 function saveOriginalWsGuid(acc: IAccount): void {
 	/* acc.original_wsGuid can be used to detect if a tab with an upload has been reloaded. Upload has to be paired with client wsGuid first. Module can then send a notification that asks clients with the original wsGuid if the file is still available. */
 	let sess = window.sessionStorage;
-	let json = sess.getItem('sessions') || '{}';
-	let sessions = JSON.parse(json);
+	let sessions: Record<string, Record<string, string>> = {};
+	try {
+		/* A single corrupt entry must not take down the whole post-login path. */
+		const parsed = JSON.parse(sess.getItem('sessions') || '{}');
+		if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) sessions = parsed;
+	} catch (e) {
+		log.debug('sessionStorage.sessions is corrupt, starting over:', e);
+	}
 	let original_wsGuid = sessions[acc.credentials.server]?.[acc.credentials.address];
 	if (!original_wsGuid) {
 		if (!sessions[acc.credentials.server]) sessions[acc.credentials.server] = {};
-		sessions[acc.credentials.server][acc.credentials.address] = acc.wsGuid;
-		sess.setItem('sessions', JSON.stringify(sessions));
+		sessions[acc.credentials.server]![acc.credentials.address] = acc.wsGuid as string;
+		try {
+			sess.setItem('sessions', JSON.stringify(sessions));
+		} catch (e) {
+			log.debug('could not persist sessions to sessionStorage:', e);
+		}
 	}
-	acc.original_wsGuid = original_wsGuid;
+	/* On the first session there is no stored guid yet, so fall back to the one we just recorded -
+	 * assigning the (still undefined) local variable left original_wsGuid unset forever. */
+	acc.original_wsGuid = original_wsGuid ?? acc.wsGuid;
 }
 
 function setupPing(account: AccountStore): void {

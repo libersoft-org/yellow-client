@@ -46,6 +46,8 @@ export interface IFileUpload {
 	role: FileUploadRole;
 	file: ICustomFile | null;
 	record: IFileUploadRecord;
+	/** Owning account scope - see services/Files/accountScope.ts. */
+	accountKey?: string | null;
 	chunksSent: number[];
 	uploadInterval: NodeJS.Timeout | null;
 	paused?: boolean;
@@ -57,6 +59,8 @@ export interface IFileUpload {
 
 export interface IFileDownload {
 	record: IFileUploadRecord;
+	/** Owning account scope - see services/Files/accountScope.ts. */
+	accountKey?: string | null;
 	chunksReceived: any[];
 	data: any;
 	createdAt: number;

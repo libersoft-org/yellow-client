@@ -11,6 +11,8 @@ export enum LocalFileStatus {
 
 export interface ILocalFile {
 	id: number;
+	/** Owning account scope - see services/Files/accountScope.ts. */
+	accountKey: string;
 	localFileStatus: LocalFileStatus;
 	fileTransferId: string;
 	fileOriginalName: string;
@@ -19,49 +21,41 @@ export interface ILocalFile {
 	fileBlob?: Blob;
 }
 
-// export interface ILocalFileChunk {
-//  id: number;
-//  fileTransferId: string;
-//  chunkId: number;
-//  checksum: string;
-//  chunkOffset: number;
-//  chunkSize: number;
-//  data: Blob;
-// }
-
 export class FilesLocalDB extends Dexie {
 	files!: Dexie.Table<ILocalFile, number>;
 	// filesChunks!: Dexie.Table<LocalFileChunk, number>;
 
 	constructor() {
 		super(FILES_DB_KEY);
+		/* v1 keyed rows by fileTransferId alone, which is only unique per server, and declared a string
+		 * primary key while the model (and every delete call) used a numeric id. Both are fixed here.
+		 * The old table is dropped rather than migrated: its rows carry no account attribution, so they
+		 * cannot be assigned to an account safely. The table is a cache - the files are re-downloadable. */
 		this.version(1).stores({
 			files: 'fileTransferId, internalStatus, fileOriginalName, fileMimeType, fileSize',
-			// filesChunks: 'id++, fileTransferId, chunkOffset, chunkSize, chunkId, checksum'
 		});
+		this.version(2).stores({
+			files: null,
+			localFiles: '++id, &[accountKey+fileTransferId], accountKey, fileTransferId, localFileStatus',
+		});
+		this.files = this.table('localFiles');
 	}
 
-	async addFile(file: Omit<ILocalFile, 'id'>) {
-		console.log('AAA adding file');
+	async addFile(file: Omit<ILocalFile, 'id'>): Promise<number> {
 		return this.files.add(file as ILocalFile);
 	}
 
-	async findFile(fileTransferId: string) {
-		return this.files.where({ fileTransferId }).first();
+	async findFile(accountKey: string, fileTransferId: string): Promise<ILocalFile | undefined> {
+		return this.files.where({ accountKey, fileTransferId }).first();
 	}
 
-	async updateFile(fileTransferId: string, update: Partial<ILocalFile>) {
-		// const f = await this.files.where({ fileTransferId }).first();
-		return await this.files.where({ fileTransferId }).modify(update);
+	async updateFile(accountKey: string, fileTransferId: string, update: Partial<ILocalFile>): Promise<number> {
+		return await this.files.where({ accountKey, fileTransferId }).modify(update);
 	}
 
-	// async addChunksToFile(fileTransferId: string, chunks: Omit<LocalFileChunk, 'id'>[]) {
-	//  const file = await this.findFile(fileTransferId);
-	//  if (!file) {
-	//   throw new Error('File not found');
-	//  }
-	//  await this.filesChunks.bulkAdd(chunks as LocalFileChunk[]);
-	// }
+	async deleteFile(id: number): Promise<void> {
+		return this.files.delete(id);
+	}
 }
 
 const filesDB = new FilesLocalDB();

@@ -29,24 +29,60 @@ if (typeof window !== 'undefined' && window.localStorage) {
 	};
 }
 
+export type StorageErrorKind = 'read' | 'write' | 'parse';
+
+export interface IStorageError {
+	key: string;
+	kind: StorageErrorKind;
+	message: string;
+	at: number;
+}
+
+/** Last failure per store key, so the UI can warn that settings are not being persisted. */
+export const storageErrors = writable<Record<string, IStorageError>>({});
+
+function reportStorageError(key: string, kind: StorageErrorKind, e: unknown): void {
+	const message = e instanceof Error ? `${e.name}: ${e.message}` : String(e);
+	console.error(`localStorage ${kind} failed for "${key}": ${message}`);
+	storageErrors.update(v => ({ ...v, [key]: { key, kind, message, at: Date.now() } }));
+}
+
+function clearStorageError(key: string): void {
+	storageErrors.update(v => {
+		if (!v[key]) return v;
+		const { [key]: _removed, ...rest } = v;
+		return rest;
+	});
+}
+
 export function localStorageSharedStore<T>(name: string, default_: T): Writable<T> {
 	function setStorage(value: T): void {
-		const str = JSON.stringify(value);
-		//console.log('SAVE', name, str);
-		storage.setItem(name, str);
+		try {
+			storage.setItem(name, JSON.stringify(value));
+			clearStorageError(name);
+		} catch (e) {
+			/* Quota exhausted, storage disabled by the browser, private mode, ... The in-memory store
+			 * keeps the new value, so without this the app would silently believe it persisted. */
+			reportStorageError(name, 'write', e);
+		}
 	}
 
 	function getStorage(): T {
-		const item = storage.getItem(name);
-		let result: T = default_;
+		let item: string | null = null;
 		try {
-			//console.log('LOAD', name, item);
-			if (item !== null) result = JSON.parse(item) as T;
+			item = storage.getItem(name);
 		} catch (e) {
-			console.error('trying to parse: "' + item + '"');
-			console.error(e);
+			reportStorageError(name, 'read', e);
+			return default_;
 		}
-		return result;
+		if (item === null) return default_;
+		try {
+			return JSON.parse(item) as T;
+		} catch (e) {
+			/* Never log the raw item - stored values are the app's own state, not debug material. */
+			reportStorageError(name, 'parse', e);
+			return default_;
+		}
 	}
 
 	// Create a writable store with a start function that properly handles the storage event listener
@@ -60,7 +96,7 @@ export function localStorageSharedStore<T>(name: string, default_: T): Writable<
 			try {
 				set(JSON.parse(newValue));
 			} catch (e) {
-				console.error(`Error parsing storage event value for ${name}:`, e);
+				reportStorageError(name, 'parse', e);
 			}
 		}
 
@@ -101,20 +137,29 @@ export function localStorageSharedStore<T>(name: string, default_: T): Writable<
 
 export function localStorageReadOnceSharedStore<T>(name: string, default_: T): Writable<T> {
 	function setStorage(value: T): void {
-		const str = JSON.stringify(value);
-		//console.log('SAVE', name, str);
-		storage.setItem(name, str);
+		try {
+			storage.setItem(name, JSON.stringify(value));
+			clearStorageError(name);
+		} catch (e) {
+			reportStorageError(name, 'write', e);
+		}
 	}
 
 	function getStorage(): T {
-		const item = storage.getItem(name);
+		let item: string | null = null;
+		try {
+			item = storage.getItem(name);
+		} catch (e) {
+			reportStorageError(name, 'read', e);
+			return default_;
+		}
 		let result: T = default_;
 		try {
 			if (item !== 'undefined' && item) result = JSON.parse(item) as T;
 			if (!result) result = default_;
 		} catch (e) {
-			console.log('trying to parse: "' + item + '"');
-			console.log(e);
+			reportStorageError(name, 'parse', e);
+			result = default_;
 		}
 		return result;
 	}

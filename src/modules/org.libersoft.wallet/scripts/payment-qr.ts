@@ -1,4 +1,4 @@
-import { formatUnits } from 'ethers';
+import { formatUnits, getAddress, isAddress } from 'ethers';
 import type { ICurrency } from 'libersoft-crypto/network';
 export interface ParsedQRData {
 	address?: string | undefined;
@@ -10,9 +10,26 @@ export interface ParsedQRData {
 	error?: string | undefined;
 }
 
+/* parseInt() would happily read "1xyz" as chain 1, so the whole string has to be digits. */
+function parseChainId(value: string): number | null {
+	if (!/^\d+$/.test(value)) return null;
+	const parsed = Number(value);
+	if (!Number.isSafeInteger(parsed) || parsed <= 0) return null;
+	return parsed;
+}
+
+/** Returns the checksummed form of an address, or null when it is not a valid address at all. */
+function normalizeAddress(value: string | null | undefined): string | null {
+	if (!value || !isAddress(value)) return null;
+	return getAddress(value);
+}
+
 export function parseQRData(data: string): ParsedQRData {
 	// Handle plain addresses
-	if (!data.startsWith('ethereum:')) return { address: data };
+	if (!data.startsWith('ethereum:')) {
+		const plain = normalizeAddress(data);
+		return plain ? { address: plain } : { address: data };
+	}
 	try {
 		// Parse ethereum: URLs (ERC-681 format)
 		// Format 1: ethereum:{address}@{chainID}?value={amount}
@@ -34,25 +51,37 @@ export function parseQRData(data: string): ParsedQRData {
 			chainID = remaining.slice(0, queryIndex);
 			remaining = remaining.slice(queryIndex);
 		}
-		const parsedChainID = parseInt(chainID, 10);
-		if (isNaN(parsedChainID)) return { error: 'Invalid chain ID in QR code' };
+		const parsedChainID = parseChainId(chainID);
+		if (parsedChainID === null) return { error: 'Invalid chain ID in QR code' };
 		if (remaining.startsWith('/transfer')) {
 			// ERC-20 token format
 			const params = new URLSearchParams(remaining.slice('/transfer'.length));
-			const address = params.get('address');
+			const address = normalizeAddress(params.get('address'));
+			const contractAddress = normalizeAddress(target);
 			const uint256 = params.get('uint256');
-			if (!address) return { error: 'Missing address in token payment' };
+			if (!address) return { error: 'Missing or invalid address in token payment' };
+			if (!contractAddress) return { error: 'Invalid token contract address in QR code' };
+			if (uint256 && !/^\d+$/.test(uint256)) return { error: 'Invalid token amount in QR code' };
 			// Don't convert token amount - decimals are unknown here (could be 6, 8, 18, etc.)
 			// Return rawAmount and let the caller convert using actual token decimals
-			return { address, rawAmount: uint256 || undefined, contractAddress: target, chainID: parsedChainID };
+			return { address, rawAmount: uint256 || undefined, contractAddress, chainID: parsedChainID };
 		} else if (remaining.startsWith('?')) {
 			// Native currency format
 			const params = new URLSearchParams(remaining);
 			const value = params.get('value');
 			let amount: string | undefined;
-			if (value) amount = formatUnits(value, 18);
-			return { address: target, amount, chainID: parsedChainID };
-		} else return { address: target, chainID: parsedChainID }; // Just an address
+			if (value) {
+				if (!/^\d+$/.test(value)) return { error: 'Invalid amount in QR code' };
+				amount = formatUnits(value, 18);
+			}
+			const recipient = normalizeAddress(target);
+			if (!recipient) return { error: 'Invalid recipient address in QR code' };
+			return { address: recipient, amount, chainID: parsedChainID };
+		} else {
+			const recipient = normalizeAddress(target);
+			if (!recipient) return { error: 'Invalid recipient address in QR code' };
+			return { address: recipient, chainID: parsedChainID }; // Just an address
+		}
 	} catch (e) {
 		return { error: 'Failed to parse QR code data' };
 	}

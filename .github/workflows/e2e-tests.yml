@@ -13,7 +13,9 @@ permissions:
 jobs:
   e2e-tests:
 
-    uses: koo5/yellow-dev/.github/workflows/shared-e2e.yml@master
+    # Pinned to an immutable commit SHA: @master would silently change what runs here, which is
+    # both irreproducible and a supply-chain risk. Bump deliberately after reviewing the diff.
+    uses: koo5/yellow-dev/.github/workflows/shared-e2e.yml@6dbb2c4d4b9fa6a79caa4bb7a9f0b96e3995653f
     with:
       client_repo: ${{ github.repository }}
       client_ref: ${{ github.ref }}

@@ -31,3 +31,5 @@ test-results
 client
 crypto-utils-storage/
 project.inlang/
+# hunkwise
+.vscode/hunkwise/

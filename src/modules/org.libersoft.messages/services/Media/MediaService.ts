@@ -16,6 +16,12 @@ class MediaService {
 	fetchQueue: number[] = [];
 	fetchQueueInterval: any | null = null;
 	private _cleanupListeners: Array<() => void> = [];
+	/* Every object URL handed to an element has to be revoked, otherwise the Blob behind it stays
+	 * alive for the lifetime of the document. */
+	private _objectUrls: string[] = [];
+	/* Byte ranges already fetched. video.buffered is measured in seconds and cannot answer this. */
+	private _fetchedOffsets = new Set<number>();
+	private _fullDownload: Promise<Blob> | null = null;
 
 	constructor(videoElement: HTMLVideoElement, getFileChunk: MediaService['_getFileChunk'], fileInfo: IMediaFileInfo) {
 		this.videoElement = videoElement;
@@ -23,10 +29,16 @@ class MediaService {
 		this.fileInfo = fileInfo;
 	}
 
+	private createObjectUrl(source: Blob | MediaSource): string {
+		const url = URL.createObjectURL(source as any);
+		this._objectUrls.push(url);
+		return url;
+	}
+
 	setupWavesurfer(element, options): WaveSurfer {
 		this.mediaSource = new MediaSource();
 		const mediaSource = this.mediaSource as MediaSource;
-		const url = URL.createObjectURL(mediaSource);
+		const url = this.createObjectUrl(mediaSource);
 		mediaSource.addEventListener('sourceopen', () => {
 			let pickedLoader: MediaLoader | null = null;
 			if (this.fileInfo.fileMime.startsWith('audio')) pickedLoader = new BasicStreamLoader(mediaSource, this.fileInfo, this._getFileChunk);
@@ -74,7 +86,7 @@ class MediaService {
 			// streaming
 			if (this.shouldStream()) {
 				this.mediaSource = new MediaSource();
-				videoElement.src = URL.createObjectURL(this.mediaSource);
+				videoElement.src = this.createObjectUrl(this.mediaSource);
 				const mediaSource = this.mediaSource as MediaSource;
 				mediaSource.addEventListener('sourceopen', () => {
 					let pickedLoader: MediaLoader | null = null;
@@ -106,22 +118,20 @@ class MediaService {
 			}
 		});
 		const playEl = this.videoElement.parentNode?.querySelector('.vjs-big-play-button');
+		/* Only one entry point: 'pointerdown' and 'click' both fire for a single tap, and each used to
+		 * start its own full download. Streaming formats are served by the fetch queue instead, so the
+		 * two paths never run at the same time either. */
 		const prep = () => {
-			console.log('clickeeed!!!');
-			this.downloadFullFile().then(blob => {
-				console.log('dw');
-				videoElement.src = URL.createObjectURL(blob);
-				player.play();
-			});
+			if (this.shouldStream()) return;
+			this.downloadFullFile()
+				.then(blob => {
+					videoElement.src = this.createObjectUrl(blob);
+					void player.play();
+				})
+				.catch(error => console.error('Failed to download media file:', error));
 		};
 		playEl?.addEventListener('click', prep);
-		playEl?.addEventListener('pointerdown', prep);
-		if (playEl) {
-			this._cleanupListeners.push(
-				() => playEl.removeEventListener('click', prep),
-				() => playEl.removeEventListener('pointerdown', prep)
-			);
-		}
+		if (playEl) this._cleanupListeners.push(() => playEl.removeEventListener('click', prep));
 		const EVENTS = ['loadstart', 'progress', 'suspend', 'abort', 'error', 'emptied', 'stalled', 'loadedmetadata', 'loadeddata', 'canplay', 'canplaythrough', 'playing', 'waiting', 'seeking', 'seeked', 'ended', 'durationchange', 'timeupdate', 'play', 'pause', 'ratechange', 'resize', 'volumechange'];
 		EVENTS.forEach(evt => {
 			player.on(evt, () => console.log('test evt', evt));
@@ -139,7 +149,19 @@ class MediaService {
 	}
 
 	async downloadFullFile(): Promise<Blob> {
+		/* Deduplicate concurrent callers - a second click must not start a second download. */
+		if (this._fullDownload) return this._fullDownload;
+		this._fullDownload = this.doDownloadFullFile().finally(() => {
+			this._fullDownload = null;
+		});
+		return this._fullDownload;
+	}
+
+	private async doDownloadFullFile(): Promise<Blob> {
 		const { chunkSize, totalSize, fileMime } = this.fileInfo;
+		/* A zero or negative chunk size would never advance the offset and loop forever. */
+		if (!Number.isFinite(chunkSize) || chunkSize <= 0) throw new Error('Invalid chunk size in media file info');
+		if (!Number.isFinite(totalSize) || totalSize < 0) throw new Error('Invalid total size in media file info');
 		const chunks: Uint8Array[] = [];
 		for (let offsetToFetch = 0; offsetToFetch < totalSize; offsetToFetch += chunkSize) {
 			const { chunk } = await this._getFileChunk({ offsetBytes: offsetToFetch, chunkSize });
@@ -183,9 +205,10 @@ class MediaService {
 		//  //mediaSource.endOfStream();
 		// }
 		if (this.isOffsetInBuffer(offset)) {
-			//console.warn('offset already in buffer', offset);
+			//console.warn('offset already fetched', offset);
 			return;
 		}
+		this._fetchedOffsets.add(offset);
 		try {
 			const { chunk } = await this._getFileChunk({ offsetBytes: offset, chunkSize });
 			const data = chunk.data as Uint8Array<ArrayBuffer>;
@@ -196,12 +219,10 @@ class MediaService {
 		}
 	}
 
+	/* Byte offsets, not playback time: video.buffered is expressed in seconds, so comparing a byte
+	 * offset against it produced meaningless results and re-fetched data that was already loaded. */
 	isOffsetInBuffer(offset: number): boolean {
-		const buffered = this.videoElement.buffered;
-		for (let i = 0; i < buffered.length; i++) {
-			if (offset >= buffered.start(i) && offset <= buffered.end(i)) return true;
-		}
-		return false;
+		return this._fetchedOffsets.has(offset);
 	}
 
 	setupFetchQueue(): void {
@@ -219,8 +240,11 @@ class MediaService {
 			this.fetchQueueInterval = null;
 		}
 		this.fetchQueue = [];
+		this._fetchedOffsets.clear();
 		for (const cleanup of this._cleanupListeners) cleanup();
 		this._cleanupListeners = [];
+		for (const url of this._objectUrls) URL.revokeObjectURL(url);
+		this._objectUrls = [];
 		if (this.player) {
 			this.player.dispose();
 			this.player = null;

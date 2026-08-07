@@ -38,7 +38,19 @@ git status
 if [ "$#" -eq 0 ]; then
 	echo "Generating commit message using Claude Code..."
 	# echo "Generating commit message using GitHub Copilot..."
-	COMMIT_MSG=$({
+	#
+	# Three things went wrong together and put an error message in the history, twice.
+	#
+	# The whole diff went into the prompt with no bound, so a large change asked for ~3.5 million
+	# tokens against a 200k limit. The generator then printed "Prompt is too long ..." ON STDOUT and
+	# exited 1 - and `2>/dev/null` catches nothing, because the failure is not on stderr. The status
+	# was invisible too: `$?` after a pipeline is the LAST command's, which was `head`. What was left
+	# was a check for empty and for "No changes", and an error sentence is neither.
+	#
+	# So: bound what is sent, read the generator's OWN status, and refuse a subject that is not one.
+	DIFF_LIMIT=200000
+	PROMPT_FILE=$(mktemp)
+	{
 		echo "Write exactly one Git commit subject."
 		echo "Max 250 characters."
 		echo "One line only."
@@ -55,22 +67,34 @@ if [ "$#" -eq 0 ]; then
 		echo "STAGED DIFF STAT:"
 		git diff --cached --stat
 		echo
-		echo "STAGED DIFF:"
-		git diff --cached --unified=0
+		echo "STAGED DIFF (truncated at $DIFF_LIMIT bytes):"
+		git diff --cached --unified=0 | head -c "$DIFF_LIMIT"
 		echo
 		echo "UNSTAGED DIFF STAT:"
 		git diff --stat
 		echo
-		echo "UNSTAGED DIFF:"
-		git diff --unified=0
-	} | claude -p --model haiku --output-format text --no-session-persistence \
+		echo "UNSTAGED DIFF (truncated at $DIFF_LIMIT bytes):"
+		git diff --unified=0 | head -c "$DIFF_LIMIT"
+	} >"$PROMPT_FILE"
+	RAW_MSG=$(claude -p --model haiku --output-format text --no-session-persistence \
 		--system-prompt "You output exactly one line of plain text and nothing else. Never use markdown, code fences, backticks, bullets, headings or commentary." \
-		--disallowedTools Bash Read Glob Grep Edit Write WebFetch WebSearch Task TodoWrite 2>/dev/null |
-		sed -e 's/`//g' -e '/^[[:space:]]*$/d' | head -n 1)
+		--disallowedTools Bash Read Glob Grep Edit Write WebFetch WebSearch Task TodoWrite <"$PROMPT_FILE" 2>/dev/null)
+	GEN_STATUS=$?
+	rm -f "$PROMPT_FILE"
+	COMMIT_MSG=$(printf '%s\n' "$RAW_MSG" | sed -e 's/`//g' -e '/^[[:space:]]*$/d' | head -n 1)
 	# Previous generator (GitHub Copilot CLI), kept for reference:
 	# } | copilot -s --no-ask-user 2>/dev/null)
-	if [ -z "$COMMIT_MSG" ] || [ "$COMMIT_MSG" = "No changes" ]; then
-		printf '\033[31mERROR:\033[0m Failed to generate commit message. Please provide one manually:\n'
+	# The generator's own status is the guard that matters, and it is sufficient: the failure was
+	# reproduced and it exits 1. The length check below is a weak backstop, not a classifier - the
+	# message that reached the history was about 290 characters and would be caught, but a shorter
+	# error sentence fits under the limit and would not. Do not read it as a second line of defence.
+	if [ "$GEN_STATUS" -ne 0 ]; then
+		printf '\033[31mERROR:\033[0m The commit message generator failed (exit %s). Its output was:\n%s\n' "$GEN_STATUS" "$RAW_MSG"
+		echo "Usage: $0 \"[COMMIT MESSAGE]\""
+		exit 1
+	fi
+	if [ -z "$COMMIT_MSG" ] || [ "$COMMIT_MSG" = "No changes" ] || [ "${#COMMIT_MSG}" -gt 250 ]; then
+		printf '\033[31mERROR:\033[0m Failed to generate a usable commit message. Got: %s\n' "$COMMIT_MSG"
 		echo "Usage: $0 \"[COMMIT MESSAGE]\""
 		exit 1
 	fi

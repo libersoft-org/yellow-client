@@ -10,6 +10,7 @@ import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore
 import { wrapConsecutiveElements, stripHtml } from '@/org.libersoft.messages/scripts/utils/htmlUtils.ts';
 import { splitAndLinkify } from './splitAndLinkify.ts';
 import { base64ToUint8Array, makeFileUpload, transformFilesForServer } from '@/org.libersoft.messages/services/Files/utils.ts';
+import { accountScopeKey } from '@/org.libersoft.messages/services/Files/accountScope.ts';
 import { active_account, active_account_module_data, getGuid, relay, selectAccount, setModule } from '@/core/scripts/core.ts';
 import type { IAccount } from '@/core/scripts/types.ts';
 import { active_account_id, hideSidebarMobile, isClientFocused } from '@/core/scripts/stores.ts';
@@ -34,6 +35,7 @@ export let conversationsArray = relay<any>(md, 'conversationsArray');
 export let events = relay<any>(md, 'events');
 export let messagesArray = relay<any>(md, 'messagesArray');
 export let messagesIsInitialLoading = relay<any>(md, 'messagesIsInitialLoading');
+export let messagesLoadError = relay<any>(md, 'messagesLoadError');
 export let selectedConversation = relay<any>(md, 'selectedConversation');
 export let emojiGroups = relay<any>(md, 'emojiGroups');
 export let emojisByCodepointsRgi = relay<any>(md, 'emojisByCodepointsRgi');
@@ -87,6 +89,7 @@ export function initData(_acc: any): Record<string, any> {
 		events: writable([]),
 		messagesArray: writable([]),
 		messagesIsInitialLoading: writable(false),
+		messagesLoadError: writable(null),
 		emojiGroups: writable([]),
 		emojisByCodepointsRgi: writable(null),
 		emojisLoading: writable(false),
@@ -157,6 +160,20 @@ function sanitizeConversation(acc: any, c: any): any {
 	c.acc = new WeakRef(acc);
 	c.last_message_text = stripHtml(c.last_message_text);
 	return c;
+}
+
+/* Conversations must not be compared by `id`: a conversation that has not been persisted yet has
+ * `id === undefined`, and two different new conversations would then compare as equal. The peer
+ * address exists from the moment the object is created and identifies it within one account. */
+export function isSameConversation(a: any, b: any): boolean {
+	if (!a || !b) return false;
+	if (a === b) return true;
+	if (!a.address || !b.address) return false;
+	if (a.address !== b.address) return false;
+	const accA = a.acc?.deref ? a.acc.deref() : a.acc;
+	const accB = b.acc?.deref ? b.acc.deref() : b.acc;
+	if (accA && accB && accA !== accB) return false;
+	return true;
 }
 
 // moduleEventSubscribe is now imported from connection.js
@@ -230,7 +247,9 @@ export async function initUpload(files: any, uploadType: any, recipients: any[])
 		'image/bmp', // .bmp
 	];
 
-	// send message
+	// build the message that will reference the uploads
+	const scopeKey = accountScopeKey(acc as IAccount);
+	const localFileWrites: Promise<unknown>[] = [];
 	let messageHtml = '';
 	uploads.forEach(upload => {
 		const fileMimeType = upload.record.fileMimeType;
@@ -238,14 +257,19 @@ export async function initUpload(files: any, uploadType: any, recipients: any[])
 		// handle images
 		if (isServerType && acceptedImageTypes.some(v => fileMimeType.startsWith(v))) {
 			messageHtml += `<Imaged file="yellow:${upload.record.id}"></Imaged>`;
-			filesDB.addFile({
-				localFileStatus: LocalFileStatus.READY,
-				fileTransferId: upload.record.id,
-				fileOriginalName: upload.record.fileOriginalName,
-				fileMimeType: upload.record.fileMimeType,
-				fileSize: upload.record.fileSize,
-				fileBlob: new Blob([upload.file ?? new Uint8Array()], { type: fileMimeType }),
-			});
+			if (scopeKey) {
+				localFileWrites.push(
+					filesDB.addFile({
+						accountKey: scopeKey,
+						localFileStatus: LocalFileStatus.READY,
+						fileTransferId: upload.record.id,
+						fileOriginalName: upload.record.fileOriginalName,
+						fileMimeType: upload.record.fileMimeType,
+						fileSize: upload.record.fileSize,
+						fileBlob: new Blob([upload.file ?? new Uint8Array()], { type: fileMimeType }),
+					})
+				);
+			}
 		}
 		// handle videos
 		else if (isServerType && acceptedVideoTypes.some(v => fileMimeType.startsWith(v))) {
@@ -258,10 +282,34 @@ export async function initUpload(files: any, uploadType: any, recipients: any[])
 			messageHtml += `<Attachment id="${upload.record.id}"></Attachment>`;
 		}
 	});
-	console.log('messageHtml', messageHtml);
-	await new Promise<void>((resolve: () => void): void => {
-		setTimeout(resolve, 100);
+	/* The local copy has to be on disk before the message referencing it goes out, otherwise a failed
+	 * write (quota, concurrent access) leaves the sender's own message pointing at nothing. */
+	try {
+		await Promise.all(localFileWrites);
+	} catch (error) {
+		for (const upload of uploads) fileUploadStore.delete(upload.record.id);
+		console.error('Failed to store local copies of attachments:', error);
+		throw error;
+	}
+
+	/* Reserve the upload on the server first. Sending the message before the server has accepted the
+	 * upload would leave a permanently broken attachment in the conversation if it refuses. */
+	const records = uploads.map(upload => upload.record);
+	const allowedRecords = await new Promise<any[] | null>(resolve => {
+		sendData(acc as IAccount, null, 'upload_begin', { records, recipients }, true, (_req, res) => {
+			if (res.error !== false) {
+				console.error('upload_begin was refused:', res.message);
+				resolve(null);
+				return;
+			}
+			resolve(res.allowedRecords ?? []);
+		});
 	});
+	if (allowedRecords === null) {
+		for (const upload of uploads) fileUploadStore.delete(upload.record.id);
+		throw new Error('The server refused the upload');
+	}
+
 	try {
 		await sendMessage(messageHtml, 'html');
 	} catch (error) {
@@ -269,18 +317,14 @@ export async function initUpload(files: any, uploadType: any, recipients: any[])
 		console.error('Failed to queue attachment message:', error);
 		return;
 	}
-	// send upload
-	const records = uploads.map(upload => upload.record);
-	sendData(acc as IAccount, null, 'upload_begin', { records, recipients }, true, (_req, res) => {
-		if (res.error !== false) {
-			return;
-		}
-		if (uploads?.[0]?.record.type === FileUploadRecordType.SERVER) {
-			fileUploadManager.startUploadSerial(res.allowedRecords, uploadChunkAsync);
-		} else {
-			console.error('Error starting upload'); // TODO: better error
-		}
-	});
+
+	if (uploads?.[0]?.record.type === FileUploadRecordType.SERVER) {
+		void fileUploadManager.startUploadSerial(allowedRecords, uploadChunkAsync).catch((error: unknown) => {
+			console.error('Upload failed:', error);
+		});
+	} else {
+		console.error('Error starting upload'); // TODO: better error
+	}
 }
 
 function uploadChunkAsync({ upload, chunk }: { upload: any; chunk: any }): Promise<void> {
@@ -326,8 +370,14 @@ function ask_for_chunk(event: any): void {
 	if (upload.record.status === FileUploadRecordStatus.BEGUN) {
 		upload.record.status = FileUploadRecordStatus.UPLOADING;
 		fileUploadStore.set(uploadId, upload);
-		fileUploadManager.startUploadSerial([upload.record], uploadChunkAsync);
-	} else fileUploadManager.continueP2PUpload(uploadId);
+		void fileUploadManager.startUploadSerial([upload.record], uploadChunkAsync).catch((error: unknown) => {
+			console.error('Upload failed:', error);
+		});
+	} else {
+		void fileUploadManager.continueP2PUpload(uploadId).catch((error: unknown) => {
+			console.error('P2P upload failed:', error);
+		});
+	}
 }
 
 function message_update(event: any): void {
@@ -370,7 +420,9 @@ function upload_update(event: any): void {
 export function downloadAttachmentsSerial(records: any[], finishCallback: (download: any) => void): any {
 	const acc = get(active_account);
 	// const records = recordIds.map(id => fileDownloadStore.get(id).record);
-	return fileDownloadManager.startDownloadSerial(records, makeDownloadChunkAsyncFn(acc), finishCallback);
+	return fileDownloadManager.startDownloadSerial(records, makeDownloadChunkAsyncFn(acc), finishCallback, accountScopeKey(acc as IAccount)).catch((error: unknown) => {
+		console.error('Attachment download failed:', error);
+	});
 }
 
 export function makeDownloadChunkAsyncFn(acc: any): (args: IPullChunkRequest) => Promise<any> {
@@ -543,13 +595,17 @@ export function loadMessages(acc: any, address: string, base: string | number, p
 	console.log('reason', reason, 'force_refresh', force_refresh);
 	return sendData(acc, null, 'messages_list', { address: address, base, prev, next }, true, (_req, res) => {
 		if (res.error !== false || !res.data?.messages) {
-			console.error(res);
-			console.error('Error while listing messages: ' + (res.message || JSON.stringify(res)));
+			/* The loading flag has to be cleared here too, otherwise a failed listing leaves the
+			 * conversation stuck on the initial loading placeholder forever. */
+			messagesIsInitialLoading.set(false);
+			messagesLoadError.set(res.message || 'Error while listing messages');
+			console.error('Error while listing messages:', res.message);
 			return;
 		}
 		let items = res.data.messages;
 		items = constructLoadedMessages(acc, items);
 		messagesIsInitialLoading.set(false);
+		messagesLoadError.set(null);
 		addMessagesToMessagesArray(items, reason, force_refresh);
 		if (cb) cb(res);
 	});
@@ -681,20 +737,25 @@ function findNext(messages: any[], i: any): number | undefined {
 
 export async function setMessageSeen(message: any, cb?: () => void, keep_unseen_bar: boolean = true): Promise<void> {
 	let acc = get(active_account) as IAccount;
-	log.debug('setMessageSeen', message);
-	deleteNotification(messageNotificationId(message));
+	log.debug('setMessageSeen', message.uid);
+	const was_seen = message.seen;
 	sendData(acc, active_account, 'message_seen', { uid: message.uid }, true, (_req, res) => {
 		if (res.error !== false) {
-			console.error('this is bad.');
+			/* The server did not accept it - undo the optimistic update instead of leaving the UI
+			 * claiming the message was read. */
+			console.error('Marking the message as seen failed:', res.message);
+			message.seen = was_seen;
+			messagesArray.update(v => v);
+			insertEvent({ type: 'message_seen', array: get(messagesArray) });
 			return;
 		}
-		//message.seen = true;
+		deleteNotification(messageNotificationId(message));
 		if (cb) cb();
 		// update conversationsArray:
 		/*
 		const conversation = get(conversationsArray).find(c => c.address === message.address_from);
 		if (conversation) {
-			conversation.unread_count--;
+			decrementUnreadCount(conversation);
 			conversationsArray.update(v => v);
 		}
 		*/
@@ -734,7 +795,7 @@ export async function sendMessage(text: string, format: string, acc: any = null,
 	await saveAndSendOutgoingMessage(acc, conversation, params, message);
 	// append to message array only when conversation is also selected (active)
 	const _selectedConversation = get(selectedConversation);
-	if (_selectedConversation && _selectedConversation.id === conversation.id) addMessagesToMessagesArray([message], 'send_message');
+	if (isSameConversation(_selectedConversation, conversation)) addMessagesToMessagesArray([message], 'send_message');
 	updateConversationsArray(acc, message);
 	return message.uid;
 }
@@ -756,9 +817,29 @@ export async function deleteMessage(message: any): Promise<void> {
 	});
 }
 
+/* Rows this tab is currently sending. The queue processor skips them, so a message can never be sent
+ * by the direct path and the queue at the same time. */
+const inflightOutgoing = new Set<number>();
+/* One in-flight queue run per account, chained rather than concurrent. */
+const outgoingQueueLocks = new Map<string, Promise<void>>();
+
+function withOutgoingQueueLock<T>(accountId: string, fn: () => Promise<T>): Promise<T> {
+	const previous = outgoingQueueLocks.get(accountId) ?? Promise.resolve();
+	const run = previous.then(fn, fn);
+	outgoingQueueLocks.set(
+		accountId,
+		run.then(
+			() => undefined,
+			() => undefined
+		)
+	);
+	return run;
+}
+
 async function saveAndSendOutgoingMessage(acc: any, conversation: any, params: any, message: any): Promise<void> {
 	let outgoing_message_id = await messages_db.outgoing.add({ account: acc.id, data: params });
-	//console.log('saveAndSendOutgoingMessage saved message:', message.uid);
+	/* Claim the row before sending so a concurrent queue run cannot pick it up as well. */
+	inflightOutgoing.add(outgoing_message_id);
 	sendOutgoingMessage(acc, conversation, params, message, outgoing_message_id);
 }
 
@@ -766,11 +847,17 @@ function sendOutgoingMessage(acc: any, conversation: any, params: any, message: 
 	sendData(acc, null, 'message_send', params, true, (_req, res) => {
 		//console.log('sendOutgoingMessage res', res);
 		if (res.error !== false) {
+			/* Leave the row in the queue - it will be retried, keyed by its uid. */
+			inflightOutgoing.delete(outgoing_message_id);
 			return;
 		}
-		messages_db.outgoing.delete(outgoing_message_id); // update the message status and trigger the update of the messagesArray:
+		void messages_db.outgoing
+			.delete(outgoing_message_id)
+			.catch((error: unknown) => console.error('Failed to remove sent message from the outgoing queue:', error))
+			.finally(() => inflightOutgoing.delete(outgoing_message_id));
+		// update the message status and trigger the update of the messagesArray:
 		message.received_by_my_homeserver = true;
-		if (get(active_account) === acc && get(acc.module_data[identifier].selectedConversation) === conversation) {
+		if (get(active_account) === acc && isSameConversation(get(acc.module_data[identifier].selectedConversation), conversation)) {
 			messagesArray.update(v => v);
 			insertEvent({ type: 'properties_update', array: get(messagesArray) });
 		}
@@ -852,22 +939,31 @@ export async function toggleMessageReaction(message: any, reaction: any): Promis
 }
 
 async function sendOutgoingMessages(acc: any): Promise<void> {
-	/* try to send outgoing messages. Ensure they are sent in creation order. Break on error */
-	//console.log('sendOutgoingMessages for acc', acc.id);
-	for (const message of await messages_db.outgoing.where('account').equals(acc.id).toArray()) {
-		//console.log('sendOutgoingMessages found queued message:', message.data.uid);
-		let res = await new Promise<any>(resolve => {
-			sendData(acc, active_account, 'message_send', message.data, true, (_req, res) => {
-				resolve(res);
-			});
-		});
-		if (res.error !== false) {
-			console.log('Temporary error while sending message ' + message.id + ': ' + res.message);
-			return;
+	/* try to send outgoing messages. Ensure they are sent in creation order. Break on error.
+	 * The queue is driven from several places (reconnect, refresh, a direct send), so it runs under a
+	 * per-account lock and skips rows this tab is already sending - otherwise the same row would go
+	 * out twice. Rows left over from a previous session are re-sent on purpose; message.data.uid is a
+	 * stable UUID and serves as the idempotency key for the server. */
+	return withOutgoingQueueLock(acc.id, async () => {
+		for (const message of await messages_db.outgoing.where('account').equals(acc.id).toArray()) {
+			if (inflightOutgoing.has(message.id)) continue;
+			inflightOutgoing.add(message.id);
+			try {
+				let res = await new Promise<any>(resolve => {
+					sendData(acc, active_account, 'message_send', message.data, true, (_req, res) => {
+						resolve(res);
+					});
+				});
+				if (res.error !== false) {
+					console.log('Temporary error while sending message ' + message.id + ': ' + res.message);
+					return;
+				}
+				await messages_db.outgoing.delete(message.id);
+			} finally {
+				inflightOutgoing.delete(message.id);
+			}
 		}
-		console.log('sendOutgoingMessages queued message sent:', message.data.uid);
-		await messages_db.outgoing.delete(message.id);
-	}
+	});
 }
 
 function updateConversationsArray(acc: any, msg: any): void {
@@ -968,6 +1064,11 @@ function eventSeenMessage(acc: any, event: any): void {
 	} else console.log('eventSeenMessage: message not found by uid:', res);
 }
 
+/* A repeated or out-of-order "seen" event must not push the badge below zero. */
+function decrementUnreadCount(conversation: any): void {
+	conversation.unread_count = Math.max(0, (conversation.unread_count || 0) - 1);
+}
+
 function eventSeenInboxMessage(acc: any, event: any): void {
 	// mark, as seen, a message sent to us. This can be triggered by another client.
 	if (acc !== get(active_account)) return;
@@ -978,7 +1079,7 @@ function eventSeenInboxMessage(acc: any, event: any): void {
 	//console.log(get(conversationsArray));
 	const conversation = get(conversationsArray).find(c => c.address === res.data.address_from);
 	if (conversation) {
-		conversation.unread_count--;
+		decrementUnreadCount(conversation);
 		conversationsArray.update(v => v);
 	} else console.log('eventSeenInboxMessage: conversation not found by address:', res);
 }
@@ -1074,8 +1175,20 @@ DOMPurify.addHook('uponSanitizeElement', (node, data) => {
 
 const CUSTOM_TAGS = ['sticker', 'gif', 'emoji', 'attachment', 'attachmentswrapper', 'imageswrapper', 'imaged', 'yellowvideo', 'yellowaudio', 'reply'];
 
+/* Standard HTML a message may contain. Deliberately narrow: this client shows passwords and a
+ * wallet, so a sender must not be able to build a login form, an overlay or anything that can be
+ * mistaken for the app's own UI. The app itself only ever emits <a>, <br> and the custom tags above;
+ * the rest of this list exists to render messages from other clients reasonably. */
+const ALLOWED_HTML_TAGS = ['a', 'b', 'blockquote', 'br', 'code', 'del', 'em', 'i', 'ins', 'li', 'ol', 'p', 'pre', 's', 'strong', 'u', 'ul'];
+
+/* href is the only attribute a standard element may keep - no style, class, id or event handlers. */
+const ALLOWED_HTML_ATTRS = ['href', 'file', 'set', 'codepoints', 'alt', 'id'];
+
 // Attributes that are only allowed on custom tags, not on standard HTML elements
-const CUSTOM_ONLY_ATTRS = new Set(['file', 'set', 'codepoints']);
+const CUSTOM_ONLY_ATTRS = new Set(['file', 'set', 'codepoints', 'alt', 'id']);
+
+/** Upper bound on the raw HTML of a single message, before sanitizing. */
+const MAX_MESSAGE_HTML_LENGTH = 256 * 1024;
 
 DOMPurify.addHook('uponSanitizeAttribute', (node, data) => {
 	if (CUSTOM_ONLY_ATTRS.has(data.attrName)) {
@@ -1088,10 +1201,14 @@ DOMPurify.addHook('uponSanitizeAttribute', (node, data) => {
 
 export function saneHtml(content: string): DocumentFragment {
 	//console.log('saneHtml:');
-	let sane = DOMPurify.sanitize(content, {
+	const bounded = typeof content === 'string' && content.length > MAX_MESSAGE_HTML_LENGTH ? content.slice(0, MAX_MESSAGE_HTML_LENGTH) : content;
+	let sane = DOMPurify.sanitize(bounded, {
+		ALLOWED_TAGS: ALLOWED_HTML_TAGS,
 		ADD_TAGS: CUSTOM_TAGS,
 		//FORBID_CONTENTS: ['sticker'],
-		ADD_ATTR: ['file', 'set', 'alt', 'codepoints', 'id'],
+		ALLOWED_ATTR: ALLOWED_HTML_ATTRS,
+		/* data-* attributes are allowed by DOMPurify by default and have no use in a message. */
+		ALLOW_DATA_ATTR: false,
 		RETURN_DOM_FRAGMENT: true,
 	});
 	/*

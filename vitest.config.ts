@@ -1,7 +1,10 @@
 import { defineConfig } from 'vitest/config';
+import { svelte } from '@sveltejs/vite-plugin-svelte';
 import path from 'node:path';
 
 export default defineConfig({
+	/* Needed so unit tests can render .svelte components (e.g. the message renderer). */
+	plugins: [svelte()],
 	test: {
 		environment: 'jsdom',
 		include: ['**/unit/*.{test,spec}.?(c|m)[jt]s?(x)'],
@@ -10,8 +13,11 @@ export default defineConfig({
 		globals: true,
 		server: {
 			deps: {
-				// Tell Vitest to handle this problematic package differently
-				inline: ['svelte-intersection-observer', 'ethers'],
+				// Tell Vitest to handle this problematic package differently.
+				// @ledgerhq/* ships extensionless ESM imports, which Node cannot resolve on its own -
+				// they have to go through Vite's resolver, which matters when libersoft-crypto is
+				// linked from a local checkout rather than installed from git.
+				inline: ['svelte-intersection-observer', 'ethers', /@ledgerhq/, 'libersoft-crypto'],
 			},
 		},
 	},

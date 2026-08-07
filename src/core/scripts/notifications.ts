@@ -10,7 +10,7 @@ import {
 	currentMonitor,
 	// getCurrentWindow,
 } from '@tauri-apps/api/window';
-import { isPermissionGranted, requestPermission, sendNotification, registerActionTypes, createChannel, Importance, Visibility, onAction } from '@tauri-apps/plugin-notification';
+import { isPermissionGranted, requestPermission, sendNotification, registerActionTypes, createChannel, Importance, Visibility, onAction, removeActive } from '@tauri-apps/plugin-notification';
 import { Mutex } from 'async-mutex';
 // import * as app from '@tauri-apps/api';
 
@@ -46,7 +46,9 @@ let counter = 0;
 let notifications: Map<string, IYellowNotification> = new Map();
 let _events;
 let browser_notifications: Map<string, Notification> = new Map();
-let tauri_notifications: Map<string, Notification> = new Map();
+/* Tauri addresses notifications by a 32-bit integer, our ids are strings - keep both directions. */
+let tauri_notification_ids: Map<string, number> = new Map();
+let tauri_notification_tags: Map<number, string> = new Map();
 export let exampleNotifications: Writable<Array<string>> = writable([]);
 
 const updateExampleNotificationMutex = new Mutex();
@@ -200,11 +202,15 @@ export async function addNotification(notification: Partial<IYellowNotification>
 	if (!enabled) return null;
 
 	let n: IYellowNotification = {
-		id: Math.random().toString(36),
+		id: newNotificationId(),
 		ts: Date.now(),
 		title: 'Notification ' + counter++,
 		...notification,
 	};
+
+	/* Registered for every backend, not just the custom one: the click handlers below look the
+	 * notification up by id to find its callback. */
+	notifications.set(n.id, n);
 
 	if (CUSTOM_NOTIFICATIONS && get(enableCustomNotifications)) {
 		sendCustomNotification(n);
@@ -221,7 +227,46 @@ export async function deleteNotification(id: string): Promise<void> {
 	log.debug('deleteNotification:', id);
 	await deleteCustomNotification(id);
 	await deleteBrowserNotification(id);
+	await deleteServiceWorkerNotification(id);
 	await deleteTauriNotification(id);
+	notifications.delete(id);
+}
+
+/** Collision-free, unpredictable id. Math.random() gave neither. */
+function newNotificationId(): string {
+	if (typeof globalThis.crypto?.randomUUID === 'function') return globalThis.crypto.randomUUID();
+	return `${Date.now()}-${counter++}`;
+}
+
+/** Called when the service worker reports a click on a notification it is showing. */
+export async function handleServiceWorkerNotificationClick(tag: string): Promise<void> {
+	const n = notifications.get(tag);
+	if (!n) return;
+	log.debug('service worker notification click:', tag);
+	await n.callback?.('click');
+	notifications.delete(tag);
+}
+
+/** Called when the service worker reports that one of its notifications was dismissed. */
+export function handleServiceWorkerNotificationClose(tag: string): void {
+	const n = notifications.get(tag);
+	if (!n) return;
+	stopNotificationSound(n);
+	notifications.delete(tag);
+}
+
+/* Notifications shown through the service worker registration are not owned by the page, so they
+ * have to be closed through the registration as well. */
+async function deleteServiceWorkerNotification(id: string): Promise<void> {
+	try {
+		if (typeof navigator === 'undefined' || !navigator.serviceWorker) return;
+		const registration = await navigator.serviceWorker.getRegistration();
+		if (!registration?.getNotifications) return;
+		const shown = await registration.getNotifications({ tag: id });
+		for (const n of shown) n.close();
+	} catch (e) {
+		log.debug('deleteServiceWorkerNotification failed:', e);
+	}
 }
 
 async function sendTauriNotification(notification: IYellowNotification): Promise<void> {
@@ -241,7 +286,18 @@ async function sendTauriNotification(notification: IYellowNotification): Promise
 	// let icon = await toPngBlob(notification.icon);
 	// icon = 'http://localhost:3000/favicon2.png';
 
+	/* The action listener and the channel are process-wide, not per notification. Registering them
+	 * per notification used to leave one live listener per notification ever shown, so a single click
+	 * eventually ran the callbacks of every historical notification. */
+	await ensureTauriNotificationSetup();
+
+	/* Remember the numeric id so the notification can be dismissed and its click routed back. */
+	const nativeId = nextTauriNotificationId();
+	tauri_notification_ids.set(notification.id, nativeId);
+	tauri_notification_tags.set(nativeId, notification.id);
+
 	sendNotification({
+		id: nativeId,
 		title: notification.title,
 		body: notification.body ?? '',
 		/* "On Android the icon must be placed in the app’s res/drawable folder."*/
@@ -249,39 +305,81 @@ async function sendTauriNotification(notification: IYellowNotification): Promise
 		// icon: icon,
 		silent: true,
 	});
-	await registerActionTypes([
-		{
-			id: 'tauri',
-			actions: [
-				{
-					id: 'my-action',
-					title: 'Settings',
-				},
-			],
-		},
-	]);
-	await createChannel({
-		id: 'new-messages',
-		name: 'New Messages',
-		lights: true,
-		vibration: true,
-		importance: Importance.Default,
-		visibility: Visibility.Private,
-	});
-	await onAction(async n => {
-		log.debug('notification onAction:', n);
-		await notification.callback?.('click');
-	});
+}
+
+let tauriNotificationCounter = 1;
+
+function nextTauriNotificationId(): number {
+	/* Must fit in a 32-bit signed integer. */
+	tauriNotificationCounter = (tauriNotificationCounter + 1) % 2_000_000_000;
+	return tauriNotificationCounter;
+}
+
+let tauriNotificationSetup: Promise<void> | null = null;
+let tauriActionUnsubscribe: (() => void) | null = null;
+
+function ensureTauriNotificationSetup(): Promise<void> {
+	if (tauriNotificationSetup) return tauriNotificationSetup;
+	tauriNotificationSetup = (async () => {
+		await registerActionTypes([
+			{
+				id: 'tauri',
+				actions: [
+					{
+						id: 'my-action',
+						title: 'Settings',
+					},
+				],
+			},
+		]);
+		await createChannel({
+			id: 'new-messages',
+			name: 'New Messages',
+			lights: true,
+			vibration: true,
+			importance: Importance.Default,
+			visibility: Visibility.Private,
+		});
+		const unsubscribe = await onAction(async n => {
+			log.debug('notification onAction:', (n as any)?.id);
+			/* Route to the notification the event actually belongs to, not to whichever one happened to
+			 * register this listener. */
+			const nativeId = typeof (n as any)?.id === 'number' ? (n as any).id : undefined;
+			const id = nativeId !== undefined ? tauri_notification_tags.get(nativeId) : undefined;
+			const target = id ? notifications.get(id) : undefined;
+			if (!target || !id) return;
+			await target.callback?.('click');
+			forgetTauriNotification(id);
+			notifications.delete(id);
+		});
+		tauriActionUnsubscribe = unsubscribe as unknown as () => void;
+	})();
+	return tauriNotificationSetup;
+}
+
+/** Releases the process-wide Tauri notification action listener. */
+export function teardownTauriNotifications(): void {
+	tauriActionUnsubscribe?.();
+	tauriActionUnsubscribe = null;
+	tauriNotificationSetup = null;
 }
 
 async function deleteTauriNotification(id: string): Promise<void> {
-	log.debug('deleteTauriNotification:', id);
-	let n = tauri_notifications.get(id);
-	if (n) {
-		log.debug('deleteTauriNotification:', id, n);
-		await n.close();
-		tauri_notifications.delete(id);
+	const nativeId = tauri_notification_ids.get(id);
+	if (nativeId === undefined) return;
+	log.debug('deleteTauriNotification:', id, nativeId);
+	forgetTauriNotification(id);
+	try {
+		await removeActive([{ id: nativeId }]);
+	} catch (e) {
+		log.debug('removeActive failed:', e);
 	}
+}
+
+function forgetTauriNotification(id: string): void {
+	const nativeId = tauri_notification_ids.get(id);
+	if (nativeId !== undefined) tauri_notification_tags.delete(nativeId);
+	tauri_notification_ids.delete(id);
 }
 
 async function sendCustomNotification(notification: IYellowNotification): Promise<void> {
@@ -302,7 +400,8 @@ async function sendCustomNotification(notification: IYellowNotification): Promis
 
 async function deleteCustomNotification(id: string): Promise<void> {
 	if (!CUSTOM_NOTIFICATIONS) return;
-	notifications[id] && notifications.delete(id);
+	/* `notifications` is a Map - the previous `notifications[id]` guard was always undefined, so the
+	 * entry was never removed. */
 	let s = await multiwindow_store('notifications');
 	await s.set(id, null);
 }

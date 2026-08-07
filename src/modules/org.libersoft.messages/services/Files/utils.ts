@@ -42,7 +42,10 @@ export function makeFileDownload(data: MakeFileDownloadData): IFileDownload {
 
 export async function blobToBase64(blob: Blob): Promise<string> {
 	const arrayBuffer = await blob.arrayBuffer(); // Get ArrayBuffer from the Blob
-	const bytes = new Uint8Array(arrayBuffer); // Convert ArrayBuffer to Uint8Array
+	return bytesToBase64(new Uint8Array(arrayBuffer));
+}
+
+export function bytesToBase64(bytes: Uint8Array): string {
 	let binaryString = '';
 
 	for (let i = 0; i < bytes.length; i++) {
@@ -56,6 +59,15 @@ export async function base64ToUint8Array(base64: string): Promise<Uint8Array> {
 	return Uint8Array.from(atob(base64), c => c.charCodeAt(0));
 }
 
+/** Hex SHA-256 of a chunk payload, used as the per-chunk integrity checksum. */
+export async function sha256Hex(data: Uint8Array | ArrayBuffer): Promise<string> {
+	const subtle = globalThis.crypto?.subtle;
+	if (!subtle) return '';
+	const buffer = data instanceof ArrayBuffer ? data : (data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength) as ArrayBuffer);
+	const digest = await subtle.digest('SHA-256', buffer);
+	return [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
 /**
  * Triggers client file download by providing url or blob
  *
@@ -64,7 +76,8 @@ export async function base64ToUint8Array(base64: string): Promise<Uint8Array> {
  */
 export function assembleFile(file: string | Blob, fileName?: string): void {
 	const downloadLink = document.createElement('a');
-	downloadLink.href = file instanceof Blob ? URL.createObjectURL(file) : file;
+	const objectUrl = file instanceof Blob ? URL.createObjectURL(file) : null;
+	downloadLink.href = objectUrl ?? (file as string);
 	downloadLink.download = fileName || (file instanceof File ? file.name : 'unknown_file'); // fixme: file is (string | Blob), but Blob does not have name property
 	downloadLink.target = '_blank';
 	downloadLink.style.display = 'none';
@@ -73,7 +86,9 @@ export function assembleFile(file: string | Blob, fileName?: string): void {
 	downloadLink.click();
 	document.body.removeChild(downloadLink);
 
-	console.log(`File download complete: ${fileName}`);
+	/* The browser has already started the save by the time click() returns, but the URL must outlive
+	 * the current task, so it is released on the next macrotask instead of leaking for the session. */
+	if (objectUrl) setTimeout(() => URL.revokeObjectURL(objectUrl), 60_000);
 }
 
 export async function transformFilesForServer(files: FileList): Promise<FileList> {

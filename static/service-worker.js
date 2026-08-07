@@ -1,4 +1,11 @@
 const MEDIA_BRIDGE_TIMEOUT_MS = 65_000;
+/* A range request is answered by asking the page for the whole span in one message, so the span has
+ * to be bounded - otherwise "bytes=0-" on a multi-gigabyte file would be assembled in memory. Larger
+ * ranges are served as a partial response; the media element then asks for the next span. */
+const MAX_RANGE_LENGTH = 4 * 1024 * 1024;
+/* Cap on ranges being served at the same time, so a page cannot be made to assemble many spans. */
+const MAX_CONCURRENT_RANGE_REQUESTS = 8;
+let inFlightRangeRequests = 0;
 
 function createErrorResponse(status, message, headers = {}) {
 	return new Response(message, {
@@ -63,6 +70,8 @@ async function handleRangeRequest(request, clientId) {
 	const client = await self.clients.get(clientId);
 	if (!client) return createErrorResponse(503, 'Media client is unavailable');
 
+	if (inFlightRangeRequests >= MAX_CONCURRENT_RANGE_REQUESTS) return createErrorResponse(503, 'Too many concurrent media requests');
+	inFlightRangeRequests++;
 	try {
 		const fileInfo = await postMessageWithResponse(client, {
 			type: 'GET_FILE_INFO',
@@ -74,6 +83,9 @@ async function handleRangeRequest(request, clientId) {
 
 		const range = parseRangeHeader(request.headers.get('Range'), fileSize);
 		if (!range) return createErrorResponse(416, 'Invalid media range', { 'Content-Range': `bytes */${fileSize}` });
+		/* Serve at most MAX_RANGE_LENGTH bytes per request; a 206 with a shorter span than asked for is
+		 * a valid partial response. */
+		if (range.end - range.start + 1 > MAX_RANGE_LENGTH) range.end = range.start + MAX_RANGE_LENGTH - 1;
 
 		const chunkResponse = await postMessageWithResponse(client, {
 			type: 'GET_CHUNK',
@@ -101,6 +113,8 @@ async function handleRangeRequest(request, clientId) {
 		console.error('Media bridge request failed:', error);
 		const message = error instanceof Error && error.message.includes('timed out') ? 'Media client did not respond in time' : 'Media bridge request failed';
 		return createErrorResponse(message.includes('time') ? 504 : 502, message);
+	} finally {
+		inFlightRangeRequests--;
 	}
 }
 
@@ -159,7 +173,46 @@ self.addEventListener('activate', function (event) {
 });
 
 self.addEventListener('fetch', function (event) {
-	if (event.request.url.includes('/yellow/media')) {
+	/* Match on the parsed pathname, not on a substring of the whole URL: a URL that merely contains
+	 * "/yellow/media" in its query string is not a media request and must not be intercepted. */
+	let mediaRequest = null;
+	try {
+		mediaRequest = getMediaRequestParts(new URL(event.request.url));
+	} catch (error) {
+		mediaRequest = null;
+	}
+	if (mediaRequest) {
 		event.respondWith(handleRangeRequest(event.request, event.clientId));
 	}
+});
+
+/* Notifications shown through registration.showNotification() are owned by this worker, so it has to
+ * handle the click itself - the page never receives the event. */
+self.addEventListener('notificationclick', function (event) {
+	const notification = event.notification;
+	notification.close();
+	event.waitUntil(
+		(async () => {
+			const tag = notification.tag || '';
+			const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+			for (const client of clients) {
+				client.postMessage({ type: 'NOTIFICATION_CLICK', payload: { tag, data: notification.data ?? null } });
+				if ('focus' in client) {
+					await client.focus();
+					return;
+				}
+			}
+			if (self.clients.openWindow) await self.clients.openWindow('/');
+		})()
+	);
+});
+
+self.addEventListener('notificationclose', function (event) {
+	const tag = event.notification.tag || '';
+	event.waitUntil(
+		(async () => {
+			const clients = await self.clients.matchAll({ type: 'window', includeUncontrolled: true });
+			for (const client of clients) client.postMessage({ type: 'NOTIFICATION_CLOSE', payload: { tag } });
+		})()
+	);
 });

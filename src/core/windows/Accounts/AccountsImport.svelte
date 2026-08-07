@@ -2,7 +2,7 @@
 	import { get } from 'svelte/store';
 	import { accounts_config, accountConfigExistsByCredentials, accounts, active_account } from '@/core/scripts/core.ts';
 	import { active_account_id } from '@/core/scripts/stores.ts';
-	import { validateAccountsArray, validateAccountConfig } from '@/core/scripts/accounts_config.ts';
+	import { validateAccountsArray, validateAccountConfig, sanitizeAccountConfig } from '@/core/scripts/accounts_config.ts';
 	import type { IValidationResult } from '@/core/types/validation.ts';
 	import { ImportSuccessWithWarnings } from '@/core/scripts/import.ts';
 	import { log } from '@/core/scripts/tauri.ts';
@@ -53,9 +53,17 @@
 		],
 	});
 
+	/* Bounds on imported data: a huge file would otherwise be parsed, validated and turned into
+	 * reactive updates one account at a time, blocking the UI for as long as it takes. */
+	const MAX_IMPORT_BYTES = 2 * 1024 * 1024;
+	const MAX_IMPORT_ACCOUNTS = 200;
+
 	function validateImport(text: string): IValidationResult {
 		if (!text.trim()) {
 			return { valid: false, error: 'No data provided' };
+		}
+		if (text.length > MAX_IMPORT_BYTES) {
+			return { valid: false, error: `Import is too large (limit is ${Math.floor(MAX_IMPORT_BYTES / 1024)} kB)` };
 		}
 
 		let newConfig;
@@ -66,6 +74,10 @@
 				valid: false,
 				error: 'Invalid JSON format: ' + (err instanceof Error ? err.message : 'Unknown error'),
 			};
+		}
+
+		if (Array.isArray(newConfig) && newConfig.length > MAX_IMPORT_ACCOUNTS) {
+			return { valid: false, error: `Import contains too many accounts (limit is ${MAX_IMPORT_ACCOUNTS})` };
 		}
 
 		const validation = validateAccountsArray(newConfig);
@@ -104,7 +116,18 @@
 		}
 	}
 
+	/* Iterative rather than recursive: one `await processNextAccount()` per account built a promise
+	 * chain as deep as the import was long. The loop returns as soon as a conflict dialog is opened
+	 * and is re-entered when the user answers it. */
 	async function processNextAccount(): Promise<void> {
+		while (true) {
+			const done = await processOneAccount();
+			if (done) return;
+		}
+	}
+
+	/** Returns true when processing must stop (finished, or waiting for the conflict dialog). */
+	async function processOneAccount(): Promise<boolean> {
 		log.debug('processNextAccount: remainingAccounts.length:', remainingAccounts.length, 'processedCount:', processedCount, 'skippedCount:', skippedCount);
 		if (remainingAccounts.length === 0) {
 			if (processedCount > 0) {
@@ -129,7 +152,7 @@
 				}
 				throw new Error(message);
 			}
-			return;
+			return true;
 		}
 
 		const account = remainingAccounts.shift();
@@ -143,21 +166,20 @@
 			const accountIdentifier = account?.credentials?.address || account?.address || `Account ${accountIndex}`;
 			invalidAccounts.push(`${accountIdentifier}: ${validation.errors.join(', ')}`);
 			// Skip this account and continue with the next one
-			await processNextAccount();
-			return;
+			return false;
 		}
 
 		if (accountConfigExistsByCredentials(account.credentials?.server, account.credentials?.address)) {
 			// Account exists, show conflict dialog
 			currentConflictAccount = account;
 			elDialogConflict?.open();
-		} else {
-			// Account doesn't exist, add it
-			accounts_config.update(current => [...current, account]);
-			maybeActivateAccount();
-			processedCount++;
-			await processNextAccount();
+			return true;
 		}
+		// Account doesn't exist, add it
+		accounts_config.update(current => [...current, sanitizeAccountConfig(account)]);
+		maybeActivateAccount();
+		processedCount++;
+		return false;
 	}
 
 	function maybeActivateAccount(): void {
@@ -185,7 +207,7 @@
 					const accountServer = account.credentials?.server;
 					const accountAddress = account.credentials?.address;
 					const accountIdentifier = `${accountAddress}@${accountServer}`;
-					return accountIdentifier === identifier ? JSON.parse(JSON.stringify(currentConflictAccount)) : account;
+					return accountIdentifier === identifier ? sanitizeAccountConfig(currentConflictAccount) : account;
 				});
 			});
 			maybeActivateAccount();
@@ -221,8 +243,12 @@
 		// Validate first before replacing
 		const validation = validateImport(text);
 		if (!validation.valid) throw new Error(validation.error || 'Invalid data');
-		const newConfig = JSON.parse(text);
+		const newConfig = JSON.parse(text).map((account: any) => sanitizeAccountConfig(account));
 		accounts_config.set(newConfig);
+		/* After a full replace the previously active id is gone; activate the first imported account
+		 * rather than relying on whatever the store settles on. */
+		const firstAccount = newConfig[0];
+		if (firstAccount?.id) active_account_id.set(firstAccount.id);
 		maybeActivateAccount();
 		elWindow?.close();
 	}

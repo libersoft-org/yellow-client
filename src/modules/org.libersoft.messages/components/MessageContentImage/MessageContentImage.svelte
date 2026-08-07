@@ -18,6 +18,7 @@
 	let yellowId = $derived(isYellow ? file.slice(YELLOW_SRC_PROTOCOL.length) : null);
 	let loading = $state(false);
 	let loaded = $state(false);
+	let loadError: string | null = $state(null);
 	let imgUrl: string | null = $state(null);
 	let imgFileName: string | null = $state(null);
 	const upload = writable<any>(null);
@@ -78,19 +79,41 @@
 			return;
 		}
 		loading = true;
+		loadError = null;
 		filesService
 			.getOrDownloadAttachment(yellowId)
 			.then(({ localFile }) => {
 				if (localFile.localFileStatus === LocalFileStatus.READY && localFile.fileBlob) {
+					revokeImgUrl();
 					imgUrl = URL.createObjectURL(localFile.fileBlob);
 					imgFileName = localFile.fileOriginalName;
-					loading = false;
 					loaded = true;
+				} else {
+					/* READY without a blob means the local record is broken - show that instead of
+					 * spinning forever. */
+					loadError = 'Image is unavailable';
 				}
 			})
 			.catch(err => {
 				console.error('error fetching image data for yellow id:', yellowId, err);
+				loadError = err instanceof Error ? err.message : 'Failed to load image';
+			})
+			.finally(() => {
+				/* Always leave the loading state, on every outcome. */
+				loading = false;
 			});
+	}
+
+	function retryDownload(): void {
+		loaded = false;
+		downloadImage();
+	}
+
+	function revokeImgUrl(): void {
+		if (imgUrl) {
+			URL.revokeObjectURL(imgUrl);
+			imgUrl = null;
+		}
 	}
 
 	const unsubUpload = upload.subscribe(u => {
@@ -102,6 +125,7 @@
 	onDestroy((): void => {
 		unsubscribeUploadStore();
 		unsubUpload();
+		revokeImgUrl();
 	});
 
 	onMount(() => {
@@ -147,6 +171,19 @@
 		border-radius: 4px;
 	}
 
+	.load-error {
+		display: flex;
+		align-items: center;
+		justify-content: center;
+		padding: 10px;
+		min-width: 120px;
+		min-height: 60px;
+		border: 1px solid var(--primary-foreground);
+		border-radius: 10px;
+		text-align: center;
+		font-size: 12px;
+	}
+
 	.hidden-images {
 		z-index: 1;
 		position: absolute;
@@ -184,6 +221,8 @@
 								+{hiddenImages.length}
 							</div>
 						{/if}
+					{:else if loadError}
+						<div class="load-error" role="button" tabindex="0" title={loadError} onclick={retryDownload} onkeydown={e => e.key === 'Enter' && retryDownload()}>Image failed to load - click to retry</div>
 					{:else}
 						no data?
 					{/if}

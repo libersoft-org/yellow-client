@@ -25,6 +25,15 @@
 	let fetchingPoster = $state(false);
 	let videoIsFullDownloading = $state(false);
 	let videoJsInstance = $state<ReturnType<typeof videoJS> | null>(null);
+	/* Object URLs created for the poster and for the fully downloaded video. Without revoking them the
+	 * Blobs stay in memory for as long as the document lives. */
+	let objectUrls: string[] = [];
+
+	function trackObjectUrl(blob: Blob): string {
+		const url = URL.createObjectURL(blob);
+		objectUrls.push(url);
+		return url;
+	}
 
 	function getFileChunkFactory(uploadId: string): (params: any) => any {
 		const fn = makeDownloadChunkAsyncFn(get(active_account));
@@ -51,7 +60,7 @@
 		downloadAttachmentsSerial([upload.record], download => {
 			videoIsFullDownloading = false;
 			const blob = new Blob(download.chunksReceived, { type: download.record.fileMimeType });
-			startVideoJS(URL.createObjectURL(blob)).finally(() => {
+			startVideoJS(trackObjectUrl(blob)).finally(() => {
 				videoStarting = false;
 				videoStarted = true;
 				videoJsInstance && videoJsInstance.show();
@@ -155,7 +164,7 @@
 			MediaUtils.extractThumbnail(new Blob([firstChunk.chunk.data], { type: upload.record.fileMimeType }))
 				.then(thumbnailBlob => {
 					// set thumbnailBlob to img src
-					thumbnailSrc = URL.createObjectURL(thumbnailBlob);
+					thumbnailSrc = trackObjectUrl(thumbnailBlob);
 					// mediaHandler.player.poster(thumbnailSrc);
 					// mediaHandler.player.width(140);
 					// mediaHandler.player.height(280);
@@ -179,7 +188,7 @@
 				if (record.metadata && record.metadata.thumbnail) {
 					const thumbnailUint8Array = await base64ToUint8Array(record.metadata.thumbnail);
 					const thumbnailBlob = new Blob([thumbnailUint8Array as BlobPart]);
-					thumbnailSrc = URL.createObjectURL(thumbnailBlob);
+					thumbnailSrc = trackObjectUrl(thumbnailBlob);
 				} else {
 					fetchPosterDynamically();
 				}
@@ -195,6 +204,8 @@
 			videoJsInstance = null;
 		}
 		unsubDownloadStore();
+		for (const url of objectUrls) URL.revokeObjectURL(url);
+		objectUrls = [];
 	});
 </script>
 

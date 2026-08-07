@@ -5,7 +5,7 @@
 	import { localStorageSharedStore } from '../lib/svelte-shared-store.ts';
 	import { init, active_account, accounts_config, setModule, updateLastModuleId } from '../core/scripts/core.ts';
 	import { isClientFocused, hideSidebarMobile, selected_corepage_id, selected_module_id, module_decls, product, debug, documentHeight, keyboardHeight, mobileWidth, mobileClass, isMobile, welcomeWizardWindow } from '@/core/scripts/stores.ts';
-	import { initBrowserNotifications, initCustomNotifications } from '@/core/scripts/notifications.ts';
+	import { initBrowserNotifications, initCustomNotifications, handleServiceWorkerNotificationClick, handleServiceWorkerNotificationClose } from '@/core/scripts/notifications.ts';
 	import { selected_theme_index, initBrowserThemeDetection } from '@/core/scripts/themes.ts';
 	import Menu from '@/core/components/Menu/Menu.svelte';
 	import MenuBar from '@/core/components/Menu/MenuBar.svelte';
@@ -58,6 +58,15 @@
 	let initCleanup: (() => void) | null = null;
 	let serviceWorkerMessageListener: ((event: MessageEvent) => void) | null = null;
 	let pageDestroyed = false;
+	/* Every listener registered on window/visualViewport is collected here, so a remount does not
+	 * leave a duplicate behind holding a stale closure. */
+	let globalListenerCleanups: Array<() => void> = [];
+
+	function addGlobalListener<T extends EventTarget>(target: T | null | undefined, type: string, handler: EventListenerOrEventListenerObject): void {
+		if (!target) return;
+		target.addEventListener(type, handler);
+		globalListenerCleanups.push(() => target.removeEventListener(type, handler));
+	}
 
 	setContext('menus', menus);
 	setContext('contentElement', contentElement);
@@ -88,6 +97,16 @@
 	}
 
 	async function handleServiceWorkerMessage(event: MessageEvent): Promise<void> {
+		/* Notification events come without a MessagePort - the worker owns the notification, so the
+		 * click has to be routed back here to reach the notification's callback. */
+		const data = event.data as { type?: unknown; payload?: any } | null;
+		if (data && (data.type === 'NOTIFICATION_CLICK' || data.type === 'NOTIFICATION_CLOSE')) {
+			const tag = typeof data.payload?.tag === 'string' ? data.payload.tag : '';
+			if (!tag) return;
+			if (data.type === 'NOTIFICATION_CLICK') await handleServiceWorkerNotificationClick(tag);
+			else handleServiceWorkerNotificationClose(tag);
+			return;
+		}
 		const port = event.ports[0];
 		if (!port) return;
 		if (!isServiceWorkerMediaRequest(event.data)) {
@@ -131,12 +150,18 @@
 			try {
 				//console.log('+page registering service worker');
 				const SW_VERSION = '_version_v2_'; // change this to force update the service worker
-				// TODO: rm after testing and dev
+				/* Drop our own outdated worker only. Other applications can be served from the same
+				 * origin, and unregistering their worker would break them. */
+				const ownScriptUrl = new URL('service-worker.js', window.location.href);
 				const existing = await navigator.serviceWorker.getRegistrations();
 				for (const reg of existing) {
-					if (reg.active && !reg.active.scriptURL.includes(SW_VERSION)) {
+					const active = reg.active;
+					if (!active) continue;
+					const scriptUrl = new URL(active.scriptURL);
+					const isOurs = scriptUrl.origin === ownScriptUrl.origin && scriptUrl.pathname === ownScriptUrl.pathname;
+					if (isOurs && !active.scriptURL.includes(SW_VERSION)) {
 						await reg.unregister();
-						console.log('Unregistered old SW:', reg.active.scriptURL);
+						console.log('Unregistered old SW:', active.scriptURL);
 					}
 				}
 				void navigator.serviceWorker
@@ -171,8 +196,8 @@
 		initWindow();
 		initBrowserThemeDetection();
 		if ($sidebarSize) setSidebarSize($sidebarSize);
-		window.addEventListener('focus', () => isClientFocused.set(true));
-		window.addEventListener('blur', () => isClientFocused.set(false));
+		addGlobalListener(window, 'focus', () => isClientFocused.set(true));
+		addGlobalListener(window, 'blur', () => isClientFocused.set(false));
 		//window.addEventListener('keydown', onkeydown);
 		(window as any)?.chrome?.webview?.postMessage('Testing message from JavaScript to native notification');
 		if ($accounts_config.length === 0) elWindowWelcome?.open();
@@ -183,9 +208,10 @@
 		//document.documentElement.style.touchAction = 'none';
 		const visualViewport = window.visualViewport;
 		if (visualViewport) {
-			visualViewport.addEventListener('resize', updateAppHeight);
-			visualViewport.addEventListener('scroll', updateAppHeight); // is this necessary?
-		} else window.addEventListener('resize', updateAppHeight);
+			addGlobalListener(visualViewport, 'resize', updateAppHeight);
+			addGlobalListener(visualViewport, 'scroll', updateAppHeight); // is this necessary?
+		} else addGlobalListener(window, 'resize', updateAppHeight);
+		addGlobalListener(window, 'resize', onZoomResize);
 		updateAppHeight();
 		initCleanup = await init();
 	}) as any);
@@ -194,6 +220,8 @@
 		console.log('+page onDestroy');
 		pageDestroyed = true;
 		if (serviceWorkerMessageListener && 'serviceWorker' in navigator) navigator.serviceWorker.removeEventListener('message', serviceWorkerMessageListener);
+		for (const cleanup of globalListenerCleanups) cleanup();
+		globalListenerCleanups = [];
 		initCleanup?.();
 		await destroyTrayIcon();
 	});
@@ -226,7 +254,7 @@
 		//console.log('document.documentElement.clientHeight:', document.documentElement.clientHeight);
 	}
 	let px_ratio = window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth;
-	window.addEventListener('resize', () => {
+	const onZoomResize = (): boolean => {
 		var newPx_ratio = window.devicePixelRatio || window.screen.availWidth / document.documentElement.clientWidth;
 		if (newPx_ratio != px_ratio) {
 			px_ratio = newPx_ratio;
@@ -236,7 +264,7 @@
 			//console.log('just resizing, px_ratio: ', px_ratio);
 			return false;
 		}
-	});
+	};
 
 	function setupIframeListener(): void {
 		// window.addEventListener('message', event => {

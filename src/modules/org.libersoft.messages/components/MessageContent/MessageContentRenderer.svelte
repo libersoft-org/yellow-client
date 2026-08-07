@@ -1,19 +1,24 @@
 <script lang="ts">
 	import { componentMap } from '@/org.libersoft.messages/scripts/message-content.ts';
-	import { onMount } from 'svelte';
 	import { debug } from '@/core/scripts/stores.ts';
 	import MessageContentRenderer from './MessageContentRenderer.svelte';
 	interface Props {
-		rootNode: any;
+		/** DOM node/fragment to render. Used at the top level. */
+		rootNode?: any;
+		/** Already-processed child descriptors. Used when this component renders itself recursively. */
+		nodes?: any[];
 	}
-	let { rootNode }: Props = $props();
+	let { rootNode, nodes }: Props = $props();
 
-	onMount(() => {
-		//console.log('rootNode:', rootNode);
-	});
+	/* Messages arrive from a remote peer, so the tree they describe has to be bounded before it is
+	 * turned into components. */
+	const MAX_DEPTH = 32;
+	const MAX_NODES = 2000;
 
 	// Recursive function to render nodes
-	function renderNode(node: any, parentNode: any = null, level = 0): any {
+	function renderNode(node: any, parentNode: any, level: number, budget: { remaining: number }): any {
+		if (budget.remaining <= 0) return null;
+		budget.remaining--;
 		const positionBetweenSiblings = parentNode && parentNode.childNodes ? Array.from(parentNode.childNodes).indexOf(node) : 0;
 		const tagUniqueId = `tag-unique-id-${node.tagName || node.nodeType}-${level}-${positionBetweenSiblings}`;
 
@@ -28,6 +33,15 @@
 
 		// Handle element nodes
 		if (node.nodeType === Node.ELEMENT_NODE) {
+			// Beyond the depth limit, keep the text content but stop building components
+			if (level >= MAX_DEPTH) {
+				return {
+					text: node.textContent,
+					level,
+					tagUniqueId,
+				};
+			}
+
 			// Check if it's a custom component
 			const componentName = node.tagName.toLowerCase();
 
@@ -42,29 +56,31 @@
 						num_siblings: parentNode && parentNode.childNodes ? parentNode.childNodes.length : 0,
 						level,
 					},
-					children: Array.from(node.childNodes)
-						.map(n => renderNode(n, node, level + 1))
-						.filter(child => child !== null),
+					children: renderChildren(node, level, budget),
 				};
 			}
 
 			// Regular HTML elements
 			return {
 				tagUniqueId,
-				tag: node.tagName.toLowerCase(),
+				tag: componentName,
 				attrs: getNodeProps(node),
 				props: {
 					node,
 				},
-				children: Array.from(node.childNodes)
-					.map(n => renderNode(n, node, level + 1))
-					.filter(child => child !== null),
+				children: renderChildren(node, level, budget),
 			};
 		}
 
 		// Unsupported node type
-		console.warn('Unsupported node type:', node);
+		console.warn('Unsupported node type:', node.nodeType);
 		return null;
+	}
+
+	function renderChildren(node: any, level: number, budget: { remaining: number }): any[] {
+		return Array.from(node.childNodes)
+			.map(n => renderNode(n, node, level + 1, budget))
+			.filter(child => child !== null);
 	}
 
 	// Extract attributes from a node
@@ -79,14 +95,14 @@
 	// Main rendering function
 	function processFragment(fragment: any): any[] {
 		try {
+			if (!fragment) return [];
 			if (fragment.childNodes) {
-				const res = Array.from(fragment.childNodes).map(n => renderNode(n, fragment));
-				//console.log('processFragment fragment:', fragment, 'res:', res);
-				return res;
-			} else {
-				//console.log('No child nodes found in fragment:', fragment);
-				return [fragment];
+				const budget = { remaining: MAX_NODES };
+				return Array.from(fragment.childNodes)
+					.map(n => renderNode(n, fragment, 0, budget))
+					.filter(child => child !== null);
 			}
+			return [fragment];
 		} catch (e) {
 			console.error('Error processing fragment:', e);
 			return [];
@@ -94,7 +110,7 @@
 	}
 
 	// Reactive rendering of the processed fragment
-	let renderedContent = $derived(processFragment(rootNode));
+	let renderedContent = $derived(nodes ?? processFragment(rootNode));
 </script>
 
 {#each renderedContent as item (item.tagUniqueId)}
@@ -118,10 +134,10 @@
 	{:else if item.tag}
 		{#key item.tagUniqueId}
 			<svelte:element this={item.tag} {...item.attrs}>
-				{#each item.children as child (child.tagUniqueId)}
-					{#if $debug}xxx{JSON.stringify(child)}xxx{/if}
-					<MessageContentRenderer rootNode={item.props.node} />
-				{/each}
+				{#if $debug}xxx{JSON.stringify(item.attrs)}xxx{/if}
+				{#if item.children.length}
+					<MessageContentRenderer nodes={item.children} />
+				{/if}
 			</svelte:element>
 		{/key}
 	{/if}

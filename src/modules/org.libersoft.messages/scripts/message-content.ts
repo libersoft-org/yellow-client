@@ -10,6 +10,7 @@ import ImagesWrapper from '@/org.libersoft.messages/components/MessageContentIma
 import VideosWrapper from '@/org.libersoft.messages/components/MessageContentVideo/VideosWrapper.svelte';
 import AudioWrapper from '@/org.libersoft.messages/components/MessageContentAudio/AudioWrapper.svelte';
 import MessageContentReply from '@/org.libersoft.messages/components/MessageContentReply/MessageContentReply.svelte';
+import MessageContentLink from '@/org.libersoft.messages/components/MessageContentLink/MessageContentLink.svelte';
 
 export let componentMap = {
 	sticker: MessageContentSticker,
@@ -24,4 +25,7 @@ export let componentMap = {
 	yellowaudio: MessageContentAudio,
 	audiowrapper: AudioWrapper,
 	reply: MessageContentReply,
+	/* Links are rendered by a component rather than as a bare <a>, so the real destination is always
+	 * shown and a link whose text impersonates another address has to be confirmed. */
+	a: MessageContentLink,
 };

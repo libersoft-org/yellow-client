@@ -43,11 +43,13 @@
 		else get(windowFileUploadStore)?.close();
 	}
 
-	// Set up context for expressions menu state (Android only)
+	/* Expressions menu state (Android only). Exposed as a store rather than a mutable callback:
+	 * consumers used to overwrite setOpen with their own wrapper and never restore it, so every
+	 * remount wrapped the previous wrapper and pinned a destroyed component's state. */
+	const expressionsMenuOpenStore = writable(false);
 	setContext('expressionsMenuOpen', {
-		setOpen: (_open: boolean) => {
-			// State tracked by context consumers
-		},
+		open: expressionsMenuOpenStore,
+		setOpen: (open: boolean) => expressionsMenuOpenStore.set(open),
 	});
 	setContext('FileUploadWindow', { fileUploadWindowFiles, setFileUploadWindow });
 </script>

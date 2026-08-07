@@ -206,13 +206,14 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 	});
 
 	await test.step('Module Navigation Test', async () => {
-		// Switch between modules
-		//await switchModule(page, 'org.libersoft.contacts');
-		//await switchModule(page, 'org.libersoft.dating');
-		//await switchModule(page, 'org.libersoft.wallet');
-		//await switchModule(page, 'org.libersoft.iframes');
-		//await switchModule(page, 'org.libersoft.contacts');
-		//await switchModule(page, 'org.libersoft.messages');
+		// Switch between modules and back, covering module lifecycle teardown/setup
+		await switchModule(page, 'org.libersoft.contacts');
+		await switchModule(page, 'org.libersoft.dating');
+		await switchModule(page, 'org.libersoft.wallet');
+		await switchModule(page, 'org.libersoft.contacts');
+		await switchModule(page, 'org.libersoft.messages');
+		// org.libersoft.iframes is intentionally not covered: it is disabled outside development
+		// builds until its postMessage bridge has a capability model.
 	});
 
 	await test.step('Account Management Operations', async () => {
@@ -226,8 +227,7 @@ test('Complete End-to-End Application Test', async ({ page }) => {
 			password: 'password',
 		});
 
-		// Export all accounts
-		//const download1 = await exportAccounts(page);
+		// Export is covered end to end in core/tests/e2e/accounts-import-export.test.ts
 
 		// Delete account
 		await deleteFirstAccount(page);

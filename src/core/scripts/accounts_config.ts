@@ -31,7 +31,7 @@ export function accounts_config_init(): () => void {
 }
 
 export function addAccount(config: Partial<IAccountConfig>, settings: IAccountSettings): string {
-	console.log('addAccount(config, settings)', config, settings);
+	log.debug('addAccount for server:', config.credentials?.server);
 	const id = getGuid();
 	accounts_config.update(v => [
 		...v,
@@ -47,7 +47,7 @@ export function addAccount(config: Partial<IAccountConfig>, settings: IAccountSe
 }
 
 export function saveAccount(id: string, config: Partial<IAccountConfig>, settings: IAccountSettings): void {
-	console.log('saveAccount', id, config, settings);
+	log.debug('saveAccount', id);
 	accounts_config.update(v => {
 		for (const acc of v) {
 			if (acc.id === id) {
@@ -62,7 +62,6 @@ export function saveAccount(id: string, config: Partial<IAccountConfig>, setting
 					acc.settings[key] = value;
 				});
 			}
-			console.log('saveAccount acc config:', JSON.stringify(acc));
 		}
 		return v;
 	});
@@ -137,11 +136,49 @@ export function validateAccountConfig(account: any): { valid: boolean; errors: s
 	}
 
 	// Validate settings (must be object, but can be empty)
-	if (!account.settings || typeof account.settings !== 'object') {
+	if (!account.settings || typeof account.settings !== 'object' || Array.isArray(account.settings)) {
 		errors.push('Account must have settings object');
+	} else {
+		for (const key of Object.keys(account.settings)) {
+			if (FORBIDDEN_SETTINGS_KEYS.has(key)) {
+				errors.push(`Settings key "${key}" is not allowed`);
+				continue;
+			}
+			const value = account.settings[key];
+			if (value !== null && typeof value === 'object') {
+				errors.push(`Settings key "${key}" must hold a primitive value`);
+			}
+		}
+		const title = account.settings['title'];
+		if (title !== undefined && typeof title !== 'string') errors.push('Settings "title" must be a string');
 	}
 
 	return { valid: errors.length === 0, errors };
+}
+
+/* Keys that would reach Object.prototype through a plain assignment. JSON.parse creates them as own
+ * properties, so they survive validation unless rejected explicitly. */
+const FORBIDDEN_SETTINGS_KEYS: ReadonlySet<string> = new Set(['__proto__', 'constructor', 'prototype']);
+
+/** Rebuilds an imported account into a fresh object, dropping anything not part of the config shape. */
+export function sanitizeAccountConfig(account: any): IAccountConfig {
+	const settings: IAccountSettings = Object.create(null);
+	for (const [key, value] of Object.entries(account?.settings ?? {})) {
+		if (FORBIDDEN_SETTINGS_KEYS.has(key)) continue;
+		if (value !== null && typeof value === 'object') continue;
+		settings[key] = value;
+	}
+	return {
+		id: account.id,
+		enabled: account.enabled,
+		credentials: {
+			server: account.credentials.server,
+			address: account.credentials.address,
+			password: account.credentials.password,
+			...(account.credentials.retry_nonce !== undefined ? { retry_nonce: account.credentials.retry_nonce } : {}),
+		},
+		settings,
+	};
 }
 
 export function validateAccountsArray(data: any): { valid: boolean; errors: string[] } {

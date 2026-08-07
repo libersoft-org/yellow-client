@@ -41,7 +41,10 @@ const defaultModules: { [moduleId: string]: IModuleConfig } = {
 		id: 'org.libersoft.iframes',
 		name: 'IFrames',
 		type: 'builtin',
-		enabled: true,
+		/* Experimental host for third-party iframe modules. Its postMessage bridge can issue server
+		 * commands on behalf of the user, so it stays off outside development until the capability
+		 * model is in place. */
+		enabled: import.meta.env.DEV,
 		order: 5,
 		serviceUrl: 'https://example.com/modules/iframes/service.js',
 	},

@@ -83,16 +83,14 @@
 	let expressionsMenuOpen = $state(false);
 
 	// Get the context and set up reactive updates
-	let expressionsMenuContext;
+	let unsubscribeExpressionsMenu: (() => void) | null = null;
 	try {
-		expressionsMenuContext = getContext('expressionsMenuOpen');
-		if (expressionsMenuContext) {
-			// Override the setOpen function to also update our local state
-			const originalSetOpen = expressionsMenuContext.setOpen;
-			expressionsMenuContext.setOpen = (open: boolean) => {
+		const expressionsMenuContext: any = getContext('expressionsMenuOpen');
+		/* Subscribe to the shared store instead of replacing the context's function. */
+		if (expressionsMenuContext?.open?.subscribe) {
+			unsubscribeExpressionsMenu = expressionsMenuContext.open.subscribe((open: boolean) => {
 				expressionsMenuOpen = open;
-				originalSetOpen(open);
-			};
+			});
 		}
 	} catch (e) {
 		// Context not available, ignore
@@ -149,12 +147,39 @@
 		return true;
 	});
 
+	/* Scroll state used to be polled every 50 ms regardless of activity. It is now driven by the
+	 * events that can actually change it, with a slow interval left as a safety net for layout
+	 * changes no observer reports. */
+	let scrollResizeObserver: ResizeObserver | null = null;
+
+	function checkScroll(): void {
+		scrolledToBottom0 = scrolledToBottom1;
+		scrolledToBottom1 = isScrolledToBottom();
+		fixScroll();
+	}
+
+	let scrollCheckScheduled = false;
+
+	function scheduleScrollCheck(): void {
+		if (scrollCheckScheduled) return;
+		scrollCheckScheduled = true;
+		requestAnimationFrame((): void => {
+			scrollCheckScheduled = false;
+			checkScroll();
+		});
+	}
+
 	onMount((): void => {
-		scrollCheckInterval = setInterval((): void => {
-			scrolledToBottom0 = scrolledToBottom1;
-			scrolledToBottom1 = isScrolledToBottom();
-			fixScroll();
-		}, 50);
+		if (elMessages) {
+			elMessages.addEventListener('scroll', scheduleScrollCheck, { passive: true });
+			if (typeof ResizeObserver !== 'undefined') {
+				scrollResizeObserver = new ResizeObserver(scheduleScrollCheck);
+				scrollResizeObserver.observe(elMessages);
+				if (elMessagesContainer) scrollResizeObserver.observe(elMessagesContainer);
+			}
+		}
+		scrollCheckInterval = setInterval(scheduleScrollCheck, 500);
+		checkScroll();
 	});
 
 	function disableScroll(): void {
@@ -218,6 +243,10 @@
 
 	onDestroy(() => {
 		if (scrollCheckInterval) clearInterval(scrollCheckInterval);
+		if (elMessages) elMessages.removeEventListener('scroll', scheduleScrollCheck);
+		scrollResizeObserver?.disconnect();
+		scrollResizeObserver = null;
+		unsubscribeExpressionsMenu?.();
 		unsubEvents();
 	});
 

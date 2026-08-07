@@ -23,11 +23,15 @@
 	const secondaryColor = getComputedStyle(document.documentElement).getPropertyValue('--disabled-background');
 	const unsubDownloadStore = fileDownloadStore.store.subscribe(() => download.set(fileDownloadStore.get(uploadId) || null));
 
+	/* Object URLs handed to wavesurfer; revoked on destroy so the audio Blob can be collected. */
+	let objectUrls: string[] = [];
+
 	const fullDownloadAudio = (): void => {
 		if (!upload) return;
 		downloadAttachmentsSerial([upload.record], download => {
 			const blob = new Blob(download.chunksReceived, { type: download.record.fileMimeType });
 			const url = URL.createObjectURL(blob);
+			objectUrls.push(url);
 			// @ts-ignore
 			wavesurfer.load(url, [upload.record.metadata?.peaks], upload.record.metadata?.duration);
 			wavesurfer.on('ready', () => {
@@ -103,6 +107,8 @@
 	onDestroy(() => {
 		if (wavesurfer) wavesurfer.destroy();
 		unsubDownloadStore();
+		for (const url of objectUrls) URL.revokeObjectURL(url);
+		objectUrls = [];
 	});
 
 	async function clickPlay(): Promise<void> {

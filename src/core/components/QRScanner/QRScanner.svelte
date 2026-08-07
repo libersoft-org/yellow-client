@@ -31,31 +31,53 @@
 	});
 
 	onDestroy(() => {
+		cameraGeneration++;
 		stopScanning();
-		if (stream) stream.getTracks().forEach(track => track.stop());
+		if (stream) {
+			stream.getTracks().forEach(track => track.stop());
+			stream = null;
+		}
 	});
 
+	/* startCamera() can be re-entered (autostart, scanAgain, the exported start/reset). Without a
+	 * generation guard a slower earlier getUserMedia() could resolve last and overwrite - or orphan -
+	 * the stream started by the later call, leaving the camera on. */
+	let cameraGeneration = 0;
+
 	async function startCamera(): Promise<void> {
+		const generation = ++cameraGeneration;
 		try {
 			if (stream) {
 				stream.getTracks().forEach(track => track.stop());
+				stream = null;
 			}
 
-			stream = await navigator.mediaDevices.getUserMedia({
+			const newStream = await navigator.mediaDevices.getUserMedia({
 				video: { facingMode: 'environment' },
 			});
+
+			if (generation !== cameraGeneration) {
+				// A newer startCamera() has taken over - drop this stream instead of publishing it.
+				newStream.getTracks().forEach(track => track.stop());
+				return;
+			}
+			stream = newStream;
 
 			if (elVideo) {
 				elVideo.srcObject = stream;
 				startScanning();
 			}
 		} catch (err) {
+			if (generation !== cameraGeneration) return;
 			const errorMessage = 'Camera access denied or not available';
 			alertText = errorMessage;
 			if (onError) onError(errorMessage);
 			console.debug('Camera error:', err);
 		}
 	}
+
+	/* Longest edge of the frame actually handed to jsQR. */
+	const MAX_SCAN_DIMENSION = 1024;
 
 	function startScanning(): void {
 		if (!elScannerDiv) return;
@@ -74,8 +96,11 @@
 			const ctx = elCanvas.getContext('2d');
 
 			if (ctx && elVideo && elVideo.readyState === elVideo.HAVE_ENOUGH_DATA) {
-				elCanvas.width = elVideo.videoWidth;
-				elCanvas.height = elVideo.videoHeight;
+				/* Scanning a full 4K frame ten times a second is pointless work - a QR code is legible
+				 * at a fraction of that, so downscale to a bounded working size. */
+				const scale = Math.min(1, MAX_SCAN_DIMENSION / Math.max(elVideo.videoWidth, elVideo.videoHeight || 1));
+				elCanvas.width = Math.max(1, Math.round(elVideo.videoWidth * scale));
+				elCanvas.height = Math.max(1, Math.round(elVideo.videoHeight * scale));
 
 				await tick();
 

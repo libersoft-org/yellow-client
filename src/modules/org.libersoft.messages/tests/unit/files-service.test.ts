@@ -16,6 +16,7 @@ vi.mock('@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts', (): any => 
 		findFile: mocks.findFile,
 		addFile: mocks.addFile,
 		updateFile: mocks.updateFile,
+		deleteFile: mocks.deleteFile,
 		files: { delete: mocks.deleteFile, where: vi.fn() },
 	},
 }));
@@ -23,7 +24,7 @@ vi.mock('@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts', (): any => 
 vi.mock('@/core/scripts/core.ts', async (): Promise<any> => {
 	const { writable: makeWritable } = await import('svelte/store');
 	return {
-		active_account: makeWritable({ id: 'account' }),
+		active_account: makeWritable({ id: 'account', credentials: { server: 'wss://server.test' } }),
 	};
 });
 
@@ -38,6 +39,9 @@ vi.mock('@/org.libersoft.messages/services/Files/FileUploadService.ts', (): any 
 vi.mock('@/org.libersoft.messages/services/Files/FileDownloadService.ts', (): any => ({ default: {} }));
 
 import { FilesService } from '../../services/Files/FilesService.ts';
+
+/* Must match accountScopeKey() for the mocked active account. */
+const ACCOUNT_KEY = 'wss://server.test\u0000account';
 
 const record: IFileUploadRecord = {
 	id: 'upload',
@@ -79,12 +83,13 @@ describe('FilesService', (): void => {
 	it('persists READY and the downloaded Blob before resolving', async (): Promise<void> => {
 		const service = new FilesService({} as any, makeDownloadManager());
 		const result = await service.getOrDownloadAttachment(record.id);
-		expect(mocks.updateFile).toHaveBeenCalledWith(record.id, {
+		expect(mocks.updateFile).toHaveBeenCalledWith(ACCOUNT_KEY, record.id, {
 			localFileStatus: 'READY',
 			fileBlob: expect.any(Blob),
 		});
 		expect(result.localFile).toMatchObject({
 			id: 1,
+			accountKey: ACCOUNT_KEY,
 			fileTransferId: record.id,
 			localFileStatus: 'READY',
 		});

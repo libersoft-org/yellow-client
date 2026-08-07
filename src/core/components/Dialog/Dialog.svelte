@@ -22,6 +22,8 @@
 		expand?: boolean;
 		testId?: string;
 		focus?: boolean;
+		enabled?: boolean;
+		loading?: boolean;
 	}
 	let { data, width }: Props = $props();
 	let elWindow: Window;

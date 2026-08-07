@@ -1,5 +1,6 @@
 import { invoke } from '@tauri-apps/api/core';
 import * as app from '@tauri-apps/api';
+import { redactAll } from './redact.ts';
 const hasWindow = typeof window !== 'undefined';
 
 declare global {
@@ -8,22 +9,28 @@ declare global {
 	}
 }
 
+/* Everything logged here can end up in the native log file, an exported support bundle or a Sentry
+ * breadcrumb, so secrets are stripped centrally rather than trusting every call site. */
 export const log = {
 	debug: (...args: any[]) => {
-		console.log(...args);
-		if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(args) });
+		const safe = redactAll(args);
+		console.log(...safe);
+		if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(safe) });
 	},
 	info: (...args: any[]) => {
-		console.info(...args);
-		if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(args), level: 'info' });
+		const safe = redactAll(args);
+		console.info(...safe);
+		if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(safe), level: 'info' });
 	},
 	warn: (...args: any[]) => {
-		console.warn(...args);
-		if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(args), level: 'warn' });
+		const safe = redactAll(args);
+		console.warn(...safe);
+		if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(safe), level: 'warn' });
 	},
 	error: (...args: any[]) => {
-		console.error(...args);
-		if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(args), level: 'error' });
+		const safe = redactAll(args);
+		console.error(...safe);
+		if (hasWindow && window.__TAURI__) invoke('log', { message: formatNoColor(safe), level: 'error' });
 	},
 };
 

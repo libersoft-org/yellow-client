@@ -2,7 +2,7 @@
 	import { onMount } from 'svelte';
 	import { get } from 'svelte/store';
 	import { debug } from '@/core/scripts/stores.ts';
-	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type FeeEstimate, type IPayment, estimatedTransactionTimes, avgBlockTimeStore, confirmationBlocksStore, sendTransaction } from 'libersoft-crypto/transaction';
+	import { getEtherAmount, estimateTransactionFee, updateFeeFromLevel, feeLoading, transactionTimeLoading, feeLevel, fee, transactionTime, type FeeEstimate, type IPayment, estimatedTransactionTimes, avgBlockTimeStore, confirmationBlocksStore, sendTransaction, getSelectedFeeParams, feeParamsMaxCost, type ITransactionFeeParams } from 'libersoft-crypto/transaction';
 	import { sendAddress, sendCurrency } from 'libersoft-crypto/wallet';
 	import { selectedNetwork, selectedNetworkID, networks, type ICurrency } from 'libersoft-crypto/network';
 	import { currencies } from 'libersoft-crypto/currencies';
@@ -53,7 +53,11 @@
 	let feeReady = $state(false);
 	let latestFeeEstimate: { context: string; values: FeeEstimate } | null = null;
 	let paymentContext: string | null = null;
-	let paymentDecimals: number | undefined;
+	/* Both are handed to the confirmation dialog as props, so they have to be reactive - otherwise the
+	 * dialog keeps describing the previous transaction. */
+	let paymentDecimals: number | undefined = $state();
+	/* Exact gas parameters the user confirmed; handed to the signer unchanged. */
+	let paymentFeeParams: ITransactionFeeParams | undefined = $state();
 	let balancesReady = $derived(!!currency && !!currentBalanceData && (!currency.contract_address || (currentBalanceData.decimals !== undefined && !!nativeBalanceData)));
 
 	let remainingBalanceObj: IBalance | undefined = $derived.by(() => {
@@ -301,7 +305,13 @@
 		const context = getRequestContext();
 		feeReady = false;
 		console.log(`Send: Estimating transaction fee - ${reason}`);
-		const values = await estimateTransactionFee(contractAddress);
+		/* Estimate the transaction that will actually be signed - a token transfer can cost very
+		 * different gas depending on the recipient and the amount. */
+		const values = await estimateTransactionFee({
+			contractAddress,
+			to: $sendAddress ? $sendAddress.toString() : undefined,
+			amount: currentAmountInBaseUnits(),
+		});
 		if (generation !== feeRequestGeneration || context !== getRequestContext()) {
 			applyLatestFeeEstimate();
 			return;
@@ -311,6 +321,16 @@
 		applyLatestFeeEstimate();
 		feeReady = true;
 		updateRemainingBalance();
+	}
+
+	/* The amount currently entered, in the currency's base units, or undefined while it is not a
+	 * usable number yet. */
+	function currentAmountInBaseUnits(): bigint | undefined {
+		if (!amount) return undefined;
+		const decimals = currentBalanceData?.decimals ?? (currency?.contract_address ? undefined : 18);
+		if (decimals === undefined) return undefined;
+		const parsed = parseTransferAmount(amount, decimals);
+		return parsed && parsed > 0n ? parsed : undefined;
 	}
 
 	function scanQRCode(): void {
@@ -538,9 +558,21 @@
 			return;
 		}
 		const etherAmount = parseTransferAmount(amount!, decimals);
-		const etherFee = getEtherAmount($fee);
-		if (!etherAmount || !etherFee) {
-			error = 'Invalid amount or transaction fee';
+		if (!etherAmount) {
+			error = 'Invalid amount';
+			return;
+		}
+		/* The concrete gas parameters behind the selected fee level. These - not a formatted total -
+		 * are what gets signed, so the balance check, the confirmation dialog and the signature all
+		 * work from the same numbers. */
+		const feeParams = getSelectedFeeParams();
+		if (!feeParams) {
+			error = 'Transaction fee is not available. Re-check the fee and try again.';
+			return;
+		}
+		const etherFee = feeParamsMaxCost(feeParams);
+		if (etherFee <= 0n) {
+			error = 'Invalid transaction fee';
 			return;
 		}
 		const balanceError = validateSufficientBalance({
@@ -557,12 +589,13 @@
 		payment = {
 			address: $sendAddress!.toString(),
 			amount: etherAmount,
-			fee: etherFee!,
+			fee: etherFee,
 			symbol: currency?.symbol,
 			...(currency?.contract_address !== undefined && { contractAddress: currency.contract_address }),
 		};
 		paymentContext = getRequestContext();
 		paymentDecimals = decimals;
+		paymentFeeParams = feeParams;
 		elDialogSend?.open();
 	}
 
@@ -580,7 +613,8 @@
 			console.log('ensureWalletConnection passed, sending transaction...');
 
 			try {
-				const hash = await sendTransaction(params.address, params.amount, params.fee, params.contractAddress, selectedCurrencySymbol, paymentDecimals);
+				if (!paymentFeeParams) throw new Error('Transaction fee parameters are missing');
+				const hash = await sendTransaction(params.address, params.amount, paymentFeeParams, params.contractAddress, selectedCurrencySymbol, paymentDecimals);
 
 				console.log('Transaction sent, hash:', hash);
 
@@ -757,4 +791,4 @@
 		<Button img="modules/{module.identifier}/img/send.svg" text="Send" enabled={canSubmit} onClick={send} data-testid="wallet-send-submit-btn" />
 	</Form>
 </div>
-<DialogSend params={payment} bind:this={elDialogSend} {onYes} />
+<DialogSend params={payment} signingDecimals={paymentDecimals} feeParams={paymentFeeParams} bind:this={elDialogSend} {onYes} />

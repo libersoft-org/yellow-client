@@ -46,7 +46,7 @@
 		console.log('[loadForm] params.id =', params.id);
 		if (params.id !== null) {
 			let found = findAccountConfig(params.id);
-			console.log('[loadForm] Loaded existing config:', found);
+			console.log('[loadForm] Loaded existing config for account:', found?.id);
 			if (found?.credentials) {
 				credentials_address = found.credentials.address;
 				credentials_server = found.credentials.server;

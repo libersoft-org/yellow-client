@@ -24,12 +24,14 @@ export function getGitBranch() {
 	}
 }
 
-export default defineConfig(() => {
+export default defineConfig(({ command, mode }) => {
 	// Load environment variables from .env.local if it exists
 	dotenv.config({ path: '.env.local' });
 
 	// Check if Sentry is enabled
 	const sentryEnabled = /^(true|1|yes|on)$/i.test((process.env['VITE_SENTRY_ENABLED'] || '').trim());
+
+	const isProductionBuild = command === 'build' && mode === 'production';
 
 	return {
 		resolve: {
@@ -67,6 +69,21 @@ export default defineConfig(() => {
 			__COMMIT_HASH__: JSON.stringify(getGitCommitHash()),
 			__BRANCH__: JSON.stringify(getGitBranch()),
 			global: 'globalThis',
+			/* Diagnostic console output is compiled out of production builds - roughly 500 call sites
+			 * print arbitrary objects, and anything printed can end up in devtools, an exported log or
+			 * a Sentry breadcrumb. console.error and console.warn are deliberately kept: they are what
+			 * a user can be asked to read back. Anything that must survive should go through `log.*`
+			 * (src/core/scripts/log.ts), which redacts secrets centrally.
+			 * The replacement is a no-op call rather than a removal, so argument side effects are
+			 * preserved and the minifier can drop what is left. */
+			...(isProductionBuild
+				? {
+						'console.log': '((...args)=>{})',
+						'console.debug': '((...args)=>{})',
+						'console.info': '((...args)=>{})',
+						'console.trace': '((...args)=>{})',
+					}
+				: {}),
 		},
 		server: {
 			https: /** @type {any} */ (
@@ -86,6 +103,11 @@ export default defineConfig(() => {
 			host: true,
 			port: 3000,
 		},
+		/* Diagnostic console output is stripped from production builds. Errors and warnings are kept:
+		 * they are what a user can be asked to read back, and they carry no payloads the way the
+		 * debug logs do. Anything that must survive should go through `log.*` from
+		 * src/core/scripts/log.ts, which is redacted centrally. */
+
 		build: {
 			chunkSizeWarningLimit: 6000,
 			minify: process.env['VITE_BUILD_MINIFY'] !== 'false',
