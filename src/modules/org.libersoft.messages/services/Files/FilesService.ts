@@ -5,7 +5,7 @@ import { loadUploadData, makeDownloadChunkAsyncFn } from '@/org.libersoft.messag
 import fileUploadManager, { type FileUploadService } from './FileUploadService.ts';
 import fileDownloadManager, { DOWNLOAD_ERROR_EVENT, type FileDownloadService, type IDownloadErrorEvent } from './FileDownloadService.ts';
 import { accountScopeKey, scopeAccountKey, transferKey, transferScope, type ITransferScope } from './accountScope.ts';
-import type { IFileDownload } from './types.ts';
+import type { IFileDownload, IFileUploadRecord } from './types.ts';
 import { liveQuery } from 'dexie';
 
 export class FilesService {
@@ -92,7 +92,9 @@ export class FilesService {
 					if (updatedCount === 0) throw new Error('Downloaded attachment record is missing from IndexedDB');
 					complete((): void => resolve({ localFile: completedFile }));
 				},
-				scope
+				scope,
+				/* Only consulted while waiting for the sender's `upload_commit` to publish the digest. */
+				async (): Promise<IFileUploadRecord | null> => (await loadUploadData(scope))?.record ?? null
 			);
 			unsubscribe = this.fileDownloadManager.downloadStore.store.subscribe((): void => {
 				if (!settled && !this.fileDownloadManager.downloadStore.get(scope)) complete((): void => reject(new Error('Attachment download was canceled or failed')));

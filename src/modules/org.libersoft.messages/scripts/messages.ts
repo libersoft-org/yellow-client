@@ -9,7 +9,7 @@ import fileUploadStore from '@/org.libersoft.messages/stores/FileUploadStore.ts'
 import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
 import { wrapConsecutiveElements, stripHtml } from '@/org.libersoft.messages/scripts/utils/htmlUtils.ts';
 import { splitAndLinkify } from './splitAndLinkify.ts';
-import { base64ToUint8Array, makeFileUpload, transformFilesForServer } from '@/org.libersoft.messages/services/Files/utils.ts';
+import { base64ToUint8Array, isCryptoDigestAvailable, makeFileUpload, transformFilesForServer } from '@/org.libersoft.messages/services/Files/utils.ts';
 import { accountScopeKey, activeTransferScope, transferScope, type ITransferScope } from '@/org.libersoft.messages/services/Files/accountScope.ts';
 import { active_account, active_account_module_data, findAccount, getGuid, relay, selectAccount, setModule } from '@/core/scripts/core.ts';
 import type { IAccount } from '@/core/scripts/types.ts';
@@ -230,6 +230,10 @@ async function refresh(acc: any): Promise<void> {
 export async function initUpload(files: any, uploadType: any, recipients: any[]): Promise<void> {
 	console.log('2222', files, uploadType, recipients);
 	const acc = get(active_account);
+	/* The receiver refuses an attachment it cannot verify, so a sender that cannot hash would be
+	 * publishing a message whose attachment is rejected on arrival - with nothing to say why. Check
+	 * once, before anything is created, rather than after the file has been read. */
+	if (!isCryptoDigestAvailable()) throw new Error('Cannot send attachments: file integrity hashing is unavailable in this environment.');
 	try {
 		files = await transformFilesForServer(files);
 	} catch (error) {
@@ -287,23 +291,6 @@ export async function initUpload(files: any, uploadType: any, recipients: any[])
 			messageHtml += `<Attachment id="${upload.record.id}"></Attachment>`;
 		}
 	});
-	/* Publish a digest of the whole file so the receiver can verify the assembled result, not just
-	 * the individual chunks. It travels in the record metadata, which the server round-trips.
-	 *
-	 * A failure here is fatal rather than logged: the receiver requires checksums and a digest, so
-	 * continuing would send a message whose attachment is refused on arrival - with nothing to tell
-	 * the sender why. */
-	for (const upload of uploads) {
-		try {
-			const fileDigest = await fileUploadManager.computeFileDigest(upload);
-			upload.record.metadata = { ...(upload.record.metadata ?? {}), fileDigest };
-		} catch (error) {
-			for (const u of uploads) fileUploadStore.delete({ accountId: acc!.id, server: acc!.credentials?.server ?? '', uploadId: u.record.id });
-			console.error('Could not compute the file digest for', upload.record.fileOriginalName, error);
-			throw new Error(`Cannot send "${upload.record.fileOriginalName}": file integrity hashing is unavailable in this environment.`, { cause: error });
-		}
-	}
-
 	/* The local copy has to be on disk before the message referencing it goes out, otherwise a failed
 	 * write (quota, concurrent access) leaves the sender's own message pointing at nothing. */
 	try {
@@ -341,7 +328,7 @@ export async function initUpload(files: any, uploadType: any, recipients: any[])
 	}
 
 	if (uploads?.[0]?.record.type === FileUploadRecordType.SERVER) {
-		void fileUploadManager.startUploadSerial(allowedRecords, uploadChunkAsync, transferScope(acc as IAccount, '')).catch((error: unknown) => {
+		void fileUploadManager.startUploadSerial(allowedRecords, uploadChunkAsync, transferScope(acc as IAccount, ''), uploadCommitAsync).catch((error: unknown) => {
 			console.error('Upload failed:', error);
 		});
 	} else {
@@ -385,6 +372,30 @@ function uploadChunkAsync({ upload, chunk }: { upload: any; chunk: any }): Promi
 	});
 }
 
+/**
+ * Publishes the whole-file digest once every chunk has been accepted.
+ *
+ * The digest used to be computed and sent with `upload_begin`, which meant reading the entire file
+ * before the first chunk could move. It is now folded out of the per-chunk hashes gathered during
+ * the upload itself, and published here.
+ *
+ * Not retried: unlike a chunk, a refused commit means the server disagrees about the transfer
+ * (wrong sender, already committed, not finished), and repeating the request will not change that.
+ */
+function uploadCommitAsync({ upload, fileDigest }: { upload: any; fileDigest: string }): Promise<void> {
+	return new Promise<void>((resolve, reject) => {
+		const to = setTimeout(() => reject(new Error('Timed out publishing the file digest')), 15000);
+		sendData(upload.acc, null, 'upload_commit', { uploadId: upload.record.id, fileDigest }, true, (_req, res) => {
+			clearTimeout(to);
+			if (res.error !== false) {
+				reject(new Error(res.message || 'The server refused the file digest'));
+				return;
+			}
+			resolve();
+		});
+	});
+}
+
 function ask_for_chunk(acc: IAccount, event: any): void {
 	const { uploadId } = event.detail.data;
 	/* The owning account, not the visible one. */
@@ -394,7 +405,7 @@ function ask_for_chunk(acc: IAccount, event: any): void {
 	if (upload.record.status === FileUploadRecordStatus.BEGUN) {
 		upload.record.status = FileUploadRecordStatus.UPLOADING;
 		fileUploadStore.set(scope, upload);
-		void fileUploadManager.startUploadSerial([upload.record], uploadChunkAsync, scope).catch((error: unknown) => {
+		void fileUploadManager.startUploadSerial([upload.record], uploadChunkAsync, scope, uploadCommitAsync).catch((error: unknown) => {
 			console.error('Upload failed:', error);
 		});
 	} else {
@@ -446,9 +457,18 @@ function upload_update(acc: IAccount, event: any): void {
 export function downloadAttachmentsSerial(records: any[], finishCallback: (download: any) => void): any {
 	const acc = get(active_account);
 	// const records = recordIds.map(id => fileDownloadStore.get(id).record);
-	return fileDownloadManager.startDownloadSerial(records, makeDownloadChunkAsyncFn(acc), finishCallback, transferScope(acc as IAccount, '')).catch((error: unknown) => {
-		console.error('Attachment download failed:', error);
-	});
+	return fileDownloadManager
+		.startDownloadSerial(
+			records,
+			makeDownloadChunkAsyncFn(acc),
+			finishCallback,
+			transferScope(acc as IAccount, ''),
+			/* Only consulted while waiting for the sender's `upload_commit` to publish the digest. */
+			async (uploadId: string) => (await loadUploadData(transferScope(acc as IAccount, uploadId)))?.record ?? null
+		)
+		.catch((error: unknown) => {
+			console.error('Attachment download failed:', error);
+		});
 }
 
 export function makeDownloadChunkAsyncFn(acc: any): (args: IPullChunkRequest) => Promise<any> {

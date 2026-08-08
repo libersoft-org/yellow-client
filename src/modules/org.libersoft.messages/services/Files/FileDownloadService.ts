@@ -37,15 +37,24 @@ const MAX_CHUNK_SIZE = 8 * 1024 * 1024;
  * Structural verification (chunk id, offset, length, total size) applies either way. */
 export const REQUIRE_CHUNK_CHECKSUMS = true;
 
+/** How long to wait for the sender's `upload_commit` before giving up on the digest. */
+const DIGEST_WAIT_MS = 30_000;
+const DIGEST_POLL_MS = 500;
+
+/** Re-reads the transfer record from the server, used only while waiting for a digest. */
+export type RefreshRecordFn = (uploadId: string) => Promise<IFileUploadRecord | null | undefined>;
+
 export class FileDownloadService extends EventEmitter {
 	downloadStore: FileDownloadStoreType;
+	/* Overridable so tests do not have to sit through the real wait. */
+	digestWaitMs = DIGEST_WAIT_MS;
 
 	constructor(downloadStore: FileDownloadStoreType) {
 		super();
 		this.downloadStore = downloadStore;
 	}
 
-	async startDownloadSerial(records: IFileUploadRecord[], pullChunkFn: PullChunkFn, finishCallback: (download: IFileDownload) => void | Promise<void>, owner: ITransferScope | null): Promise<void> {
+	async startDownloadSerial(records: IFileUploadRecord[], pullChunkFn: PullChunkFn, finishCallback: (download: IFileDownload) => void | Promise<void>, owner: ITransferScope | null, refreshRecordFn?: RefreshRecordFn): Promise<void> {
 		if (!owner) throw new Error('Cannot download without an owning account');
 		const accountKey = scopeAccountKey(owner);
 		for (const record of records) {
@@ -75,7 +84,6 @@ export class FileDownloadService extends EventEmitter {
 			const totalChunks = Math.ceil(record.fileSize / record.chunkSize);
 			/* Per-chunk hashes in arrival order, folded into the whole-file digest at the end. */
 			const chunkHashes: string[] = [];
-			const expectedFileDigest = typeof (record.metadata as any)?.fileDigest === 'string' ? ((record.metadata as any).fileDigest as string) : null;
 			let retries = 0;
 			download.pullChunk = async () => {
 				const retry = (error: unknown) => {
@@ -109,7 +117,7 @@ export class FileDownloadService extends EventEmitter {
 				 * zero-byte transfer look corrupt. The sender already finishes these without sending. */
 				if (totalChunks === 0) {
 					try {
-						await this.verifyFileDigest([], expectedFileDigest);
+						await this.verifyFileDigest([], download, refreshRecordFn);
 						setRunning(false);
 						await finishCallback(download);
 						download.chunksReceived = [];
@@ -163,7 +171,7 @@ export class FileDownloadService extends EventEmitter {
 						if (assembledSize !== record.fileSize) throw new TransferIntegrityError(`Assembled file size ${assembledSize} does not match declared size ${record.fileSize}`);
 						/* The whole file, not just its pieces: this pins content, order and chunk count
 						 * against the digest the sender published. */
-						await this.verifyFileDigest(chunkHashes, expectedFileDigest);
+						await this.verifyFileDigest(chunkHashes, download, refreshRecordFn);
 						setRunning(false);
 						await finishCallback(download);
 						download.chunksReceived = [];
@@ -188,8 +196,46 @@ export class FileDownloadService extends EventEmitter {
 		}
 	}
 
+	/** The digest the sender published, read live - it can arrive after the download has started. */
+	private publishedDigest(download: IFileDownload): string | null {
+		const value = (download.record?.metadata as any)?.fileDigest;
+		return typeof value === 'string' && value.length > 0 ? value : null;
+	}
+
+	/**
+	 * Waits for the sender's `upload_commit` to land.
+	 *
+	 * The digest is published after the last chunk rather than before the first, so that the sender
+	 * does not have to read the whole file twice. That puts the commit and the receiver's assembly in
+	 * a genuine race - on a small file, or a P2P transfer where both sides run in lockstep, the
+	 * receiver can finish first by a few milliseconds. Failing on the first look would turn that
+	 * ordinary ordering into a refused transfer.
+	 */
+	private async awaitPublishedDigest(download: IFileDownload, refreshRecordFn?: RefreshRecordFn): Promise<string | null> {
+		let digest = this.publishedDigest(download);
+		if (digest || this.digestWaitMs <= 0) return digest;
+		const deadline = Date.now() + this.digestWaitMs;
+		while (!digest && Date.now() < deadline) {
+			await new Promise(resolve => setTimeout(resolve, DIGEST_POLL_MS));
+			if (download.canceledLocally) return null;
+			/* An `upload_update` notification patches download.record in place, but relying on it alone
+			 * would strand a receiver that was not connected when the commit went out. */
+			if (refreshRecordFn) {
+				try {
+					const record = await refreshRecordFn(download.record.id);
+					if (record) download.record = record;
+				} catch (error) {
+					console.warn('Could not re-read the transfer record while waiting for its digest:', error);
+				}
+			}
+			digest = this.publishedDigest(download);
+		}
+		return digest;
+	}
+
 	/** Checks the assembled file against the digest the sender published. */
-	private async verifyFileDigest(chunkHashes: string[], expectedFileDigest: string | null): Promise<void> {
+	private async verifyFileDigest(chunkHashes: string[], download: IFileDownload, refreshRecordFn?: RefreshRecordFn): Promise<void> {
+		const expectedFileDigest = await this.awaitPublishedDigest(download, refreshRecordFn);
 		if (!expectedFileDigest) {
 			if (REQUIRE_CHUNK_CHECKSUMS) throw new TransferIntegrityError('The sender published no file digest');
 			return;

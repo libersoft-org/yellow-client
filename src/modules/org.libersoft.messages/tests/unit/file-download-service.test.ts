@@ -204,15 +204,63 @@ describe('FileDownloadService integrity checks', (): void => {
 		expect(store.get(OWNER)).toBeUndefined();
 	});
 
-	/* A record the server already declared dead must settle, not sit in the store forever. */
-	it('refuses a zero-byte file that carries no digest', async (): Promise<void> => {
+	it('refuses a zero-byte file whose sender never committed a digest', async (): Promise<void> => {
 		const record = makeRecord({ fileSize: 0 });
 		const store = makeStore();
 		const service = new FileDownloadService(store);
+		/* Do not sit through the grace period the real service gives a late commit. */
+		service.digestWaitMs = 0;
 		const finish = vi.fn();
 		await service.startDownloadSerial([record], vi.fn() as any, finish, OWNER);
 		expect(finish).not.toHaveBeenCalled();
 		expect(store.get(OWNER)).toBeUndefined();
+	});
+
+	/* The sender publishes the digest with `upload_commit`, after its last chunk rather than before
+	 * its first, so it can hash the chunks it is already reading instead of making a whole extra pass
+	 * over the file. That leaves the commit racing the receiver's assembly, which the receiver has to
+	 * tolerate - on a small file it can finish first by a few milliseconds. */
+	it('accepts a digest that only arrives after the file has been assembled', async (): Promise<void> => {
+		const record = makeRecord();
+		const store = makeStore();
+		const service = new FileDownloadService(store);
+		const chunks = [new Uint8Array([1, 2, 3, 4]), new Uint8Array([5, 6, 7, 8])];
+		const digest = await fileDigestFromChunkHashes(await Promise.all(chunks.map(c => sha256Hex(c))));
+		const pullChunk = vi.fn(async ({ offsetBytes }: any) => {
+			const chunkId = offsetBytes / 4;
+			const data = chunks[chunkId]!;
+			return { chunk: { chunkId, uploadId: record.id, offsetBytes, checksum: await sha256Hex(data), data } };
+		});
+		/* The record carries no digest at all until the second time it is re-read. */
+		let reads = 0;
+		const refreshRecord = vi.fn(async () => {
+			reads++;
+			return reads >= 2 ? ({ ...record, metadata: { fileDigest: digest } } as IFileUploadRecord) : record;
+		});
+		const finish = vi.fn();
+		await service.startDownloadSerial([record], pullChunk as any, finish, OWNER, refreshRecord);
+		expect(finish).toHaveBeenCalledTimes(1);
+		expect(refreshRecord).toHaveBeenCalled();
+		expect(store.get(OWNER)).toBeUndefined();
+	});
+
+	it('gives up on a digest that never arrives', async (): Promise<void> => {
+		const record = makeRecord();
+		const store = makeStore();
+		const service = new FileDownloadService(store);
+		/* Long enough to poll twice, short enough not to slow the suite down. */
+		service.digestWaitMs = 1200;
+		const chunks = [new Uint8Array([1, 2, 3, 4]), new Uint8Array([5, 6, 7, 8])];
+		const pullChunk = vi.fn(async ({ offsetBytes }: any) => {
+			const chunkId = offsetBytes / 4;
+			const data = chunks[chunkId]!;
+			return { chunk: { chunkId, uploadId: record.id, offsetBytes, checksum: await sha256Hex(data), data } };
+		});
+		const refreshRecord = vi.fn(async () => record);
+		const finish = vi.fn();
+		await expect(service.startDownloadSerial([record], pullChunk as any, finish, OWNER, refreshRecord)).rejects.toThrow('published no file digest');
+		expect(finish).not.toHaveBeenCalled();
+		expect(refreshRecord).toHaveBeenCalled();
 	});
 
 	it('settles a transfer the server reports as ERROR', async (): Promise<void> => {

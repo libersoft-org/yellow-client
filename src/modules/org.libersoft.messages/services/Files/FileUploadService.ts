@@ -34,8 +34,6 @@ export class FileUploadService extends EventEmitter {
 				fromUserUid: acc.id,
 				metadata: file.metadata,
 			});
-			/* The whole-file digest is computed while the chunks are read and published in the record's
-			 * metadata, which the server round-trips untouched (the same path video thumbnails use). */
 			const accountKey = accountScopeKey(acc);
 			if (!accountKey) throw new Error('Cannot begin an upload without an account');
 			const upload = makeFileUpload({
@@ -60,9 +58,9 @@ export class FileUploadService extends EventEmitter {
 		const blob = upload.file.slice(chunkId * chunkSize, chunkId * chunkSize + chunkSize);
 		/* Read the slice once and derive both the checksum and the wire encoding from it. */
 		const bytes = new Uint8Array(await blob.arrayBuffer());
-		/* Reuse the hash computed for the file digest rather than hashing the same bytes twice. */
-		const cached = this.chunkHashCache.get(scopeKey(scope))?.[chunkId];
-		const checksum = cached ?? (await sha256Hex(bytes));
+		const checksum = await sha256Hex(bytes);
+		/* Keep it: the whole-file digest is folded out of these at commit time. */
+		this.rememberChunkHash(scope, chunkId, checksum);
 		const chunk = {
 			chunkId,
 			uploadId,
@@ -73,31 +71,49 @@ export class FileUploadService extends EventEmitter {
 		return { chunk, upload, blob };
 	}
 
-	/* Per-chunk hashes computed while the digest is built, reused when the chunk is actually sent.
-	 * Without this the file is read and hashed twice: once for the digest, once for the upload. */
-	private chunkHashCache = new Map<string, string[]>();
+	/* Per-chunk hashes, collected as the chunks are read for sending.
+	 *
+	 * The whole-file digest used to be built in a separate pass over the entire file before
+	 * `upload_begin`, which meant the file was read twice and nothing moved until that first pass
+	 * finished - on a large file, a long silent wait before the first chunk. The chunks are hashed
+	 * anyway for their own checksums, so the digest is folded out of those at commit time instead. */
+	private chunkHashes = new Map<string, string[]>();
 
-	/** Hashes the whole file so the receiver can verify the assembled result, not just each chunk. */
-	async computeFileDigest(upload: IFileUpload): Promise<string> {
-		if (!upload.file) throw new Error('File is not set in file transfer');
-		const { chunkSize, fileSize } = upload.record;
-		const total = Math.ceil(fileSize / chunkSize);
-		const hashes: string[] = [];
-		for (let i = 0; i < total; i++) {
-			const slice = upload.file.slice(i * chunkSize, i * chunkSize + chunkSize);
-			hashes.push(await sha256Hex(new Uint8Array(await slice.arrayBuffer())));
+	private rememberChunkHash(scope: ITransferScope, chunkId: number, hash: string): void {
+		const key = scopeKey(scope);
+		const hashes = this.chunkHashes.get(key) ?? [];
+		hashes[chunkId] = hash;
+		this.chunkHashes.set(key, hashes);
+	}
+
+	/**
+	 * The digest of the chunks sent so far, in chunk order.
+	 *
+	 * Throws on a gap rather than hashing over it: publishing a digest that does not describe the
+	 * file would make every download of it fail verification, with nothing to say why.
+	 */
+	async fileDigestFor(scope: ITransferScope, totalChunks: number): Promise<string> {
+		const hashes = this.chunkHashes.get(scopeKey(scope)) ?? [];
+		const ordered: string[] = [];
+		for (let i = 0; i < totalChunks; i++) {
+			const hash = hashes[i];
+			if (typeof hash !== 'string' || hash.length === 0) throw new Error(`Cannot publish a file digest: chunk ${i} was never hashed`);
+			ordered.push(hash);
 		}
-		const cacheKey = upload.accountKey ? `${upload.accountKey}\u0000${upload.record.id}` : upload.record.id;
-		this.chunkHashCache.set(cacheKey, hashes);
-		return fileDigestFromChunkHashes(hashes);
+		return fileDigestFromChunkHashes(ordered);
 	}
 
-	/** Drops the cached hashes of a finished or abandoned transfer. */
+	/** Drops the hashes of a finished or abandoned transfer. */
 	private forgetChunkHashes(scope: ITransferScope): void {
-		this.chunkHashCache.delete(scopeKey(scope));
+		this.chunkHashes.delete(scopeKey(scope));
 	}
 
-	async startUploadSerial(records: IFileUploadRecord[], pushFn: (data: { chunk: any; upload: IFileUpload }) => Promise<void>, owner: ITransferScope | null): Promise<void> {
+	/**
+	 * @param commitFn Publishes the whole-file digest once the last chunk has been accepted. The
+	 * receiver refuses an attachment without one, so a transfer that cannot be committed is an
+	 * error, not a transfer that merely lacks a nicety.
+	 */
+	async startUploadSerial(records: IFileUploadRecord[], pushFn: (data: { chunk: any; upload: IFileUpload }) => Promise<void>, owner: ITransferScope | null, commitFn?: (data: { upload: IFileUpload; fileDigest: string }) => Promise<void>): Promise<void> {
 		if (!owner) throw new Error('Cannot upload without an owning account');
 		for (let i = 0; i < records.length; i++) {
 			const record = records[i]!;
@@ -130,7 +146,18 @@ export class FileUploadService extends EventEmitter {
 							return;
 						}
 						if (upload.record.status === FileUploadRecordStatus.PAUSED) return;
+						/* Already committed. Resume and the P2P batch loop can both re-enter here after
+						 * the last chunk; without this the transfer would be committed twice. */
+						if (upload.record.status === FileUploadRecordStatus.FINISHED) return;
 						if (chunksSent.length === totalChunks) {
+							/* Publish the digest before calling the transfer finished. It is folded out of
+							 * the chunk hashes gathered on the way, so this costs one hash of a short
+							 * string - not a second pass over the file. */
+							if (commitFn) {
+								const fileDigest = await this.fileDigestFor(scope, totalChunks);
+								await commitFn({ upload, fileDigest });
+								upload.record.metadata = { ...((upload.record.metadata as object) ?? {}), fileDigest };
+							}
 							upload.record.status = FileUploadRecordStatus.FINISHED;
 							this.uploadsStore.set(scope, upload);
 							this.p2pThrottleMemory.delete(guardKey);
