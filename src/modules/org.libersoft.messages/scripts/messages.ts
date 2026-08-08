@@ -10,8 +10,8 @@ import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore
 import { wrapConsecutiveElements, stripHtml } from '@/org.libersoft.messages/scripts/utils/htmlUtils.ts';
 import { splitAndLinkify } from './splitAndLinkify.ts';
 import { base64ToUint8Array, makeFileUpload, transformFilesForServer } from '@/org.libersoft.messages/services/Files/utils.ts';
-import { accountScopeKey, activeTransferScope, transferScope } from '@/org.libersoft.messages/services/Files/accountScope.ts';
-import { active_account, active_account_module_data, getGuid, relay, selectAccount, setModule } from '@/core/scripts/core.ts';
+import { accountScopeKey, activeTransferScope, transferScope, type ITransferScope } from '@/org.libersoft.messages/services/Files/accountScope.ts';
+import { active_account, active_account_module_data, findAccount, getGuid, relay, selectAccount, setModule } from '@/core/scripts/core.ts';
 import type { IAccount } from '@/core/scripts/types.ts';
 import { active_account_id, hideSidebarMobile, isClientFocused } from '@/core/scripts/stores.ts';
 import { localStorageSharedStore } from '@/lib/svelte-shared-store.ts';
@@ -192,9 +192,14 @@ export function initComms(acc: any): void {
 	acc.events.addEventListener('seen_message', data.seen_message_listener);
 	acc.events.addEventListener('seen_inbox_message', data.seen_inbox_message_listener);
 	acc.events.addEventListener('message_update', message_update);
-	// file transfer events
-	acc.events.addEventListener('upload_update', upload_update);
-	acc.events.addEventListener('ask_for_chunk', ask_for_chunk);
+	/* File transfer events carry the account with them: they arrive for whichever account is
+	 * connected, not for whichever one the user happens to be looking at. Deriving the transfer scope
+	 * from the foreground account here would stall a background account's transfer - or, with
+	 * colliding upload ids, touch the wrong one. */
+	data.upload_update_listener = (event: any) => upload_update(acc, event);
+	data.ask_for_chunk_listener = (event: any) => ask_for_chunk(acc, event);
+	acc.events.addEventListener('upload_update', data.upload_update_listener);
+	acc.events.addEventListener('ask_for_chunk', data.ask_for_chunk_listener);
 	refresh(acc);
 }
 
@@ -283,13 +288,19 @@ export async function initUpload(files: any, uploadType: any, recipients: any[])
 		}
 	});
 	/* Publish a digest of the whole file so the receiver can verify the assembled result, not just
-	 * the individual chunks. It travels in the record metadata, which the server round-trips. */
+	 * the individual chunks. It travels in the record metadata, which the server round-trips.
+	 *
+	 * A failure here is fatal rather than logged: the receiver requires checksums and a digest, so
+	 * continuing would send a message whose attachment is refused on arrival - with nothing to tell
+	 * the sender why. */
 	for (const upload of uploads) {
 		try {
 			const fileDigest = await fileUploadManager.computeFileDigest(upload);
 			upload.record.metadata = { ...(upload.record.metadata ?? {}), fileDigest };
 		} catch (error) {
+			for (const u of uploads) fileUploadStore.delete({ accountId: acc!.id, server: acc!.credentials?.server ?? '', uploadId: u.record.id });
 			console.error('Could not compute the file digest for', upload.record.fileOriginalName, error);
+			throw new Error(`Cannot send "${upload.record.fileOriginalName}": file integrity hashing is unavailable in this environment.`, { cause: error });
 		}
 	}
 
@@ -374,9 +385,10 @@ function uploadChunkAsync({ upload, chunk }: { upload: any; chunk: any }): Promi
 	});
 }
 
-function ask_for_chunk(event: any): void {
+function ask_for_chunk(acc: IAccount, event: any): void {
 	const { uploadId } = event.detail.data;
-	const scope = activeTransferScope(uploadId);
+	/* The owning account, not the visible one. */
+	const scope = transferScope(acc, uploadId);
 	const upload = fileUploadManager.uploadsStore.get(scope);
 	if (!upload || !scope) return;
 	if (upload.record.status === FileUploadRecordStatus.BEGUN) {
@@ -414,9 +426,10 @@ function message_update(event: any): void {
 	}
 }
 
-function upload_update(event: any): void {
+function upload_update(acc: IAccount, event: any): void {
 	const { record, uploadData } = event.detail.data;
-	const scope = activeTransferScope(record.id);
+	/* The owning account, not the visible one. */
+	const scope = transferScope(acc, record.id);
 	const currentUpload = fileUploadStore.get(scope);
 	if (currentUpload) {
 		if (currentUpload.file && [FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.BEGUN, FileUploadRecordStatus.PAUSED].includes(record.status)) {
@@ -524,14 +537,28 @@ export function cancelDownload(uploadId: string): void {
 	}
 }
 
-export function loadUploadData(uploadId: string): Promise<any> {
+export function loadUploadData(scope: ITransferScope | null): Promise<any> {
 	return new Promise((resolve, reject) => {
-		const existingUpload = fileUploadStore.get(activeTransferScope(uploadId));
+		/* The owning account is passed in, never derived from whichever account happens to be in the
+		 * foreground: callers reach this after awaiting IndexedDB, so the user may well have switched
+		 * accounts in between - and asking the wrong server for an upload id both returns the wrong
+		 * metadata and discloses the id. */
+		if (!scope) {
+			reject(new Error('Cannot load upload data without an owning account'));
+			return;
+		}
+		const uploadId = scope.uploadId;
+		const existingUpload = fileUploadStore.get(scope);
 		if (existingUpload) {
 			resolve(existingUpload);
 			return;
 		}
-		let acc = get(active_account) as IAccount;
+		const account = findAccount(scope.accountId);
+		const acc = account ? (get(account) as IAccount) : null;
+		if (!acc) {
+			reject(new Error('The account that owns this upload is no longer available'));
+			return;
+		}
 		const op = retry.operation({
 			retries: 3,
 			factor: 1.5,
@@ -549,9 +576,8 @@ export function loadUploadData(uploadId: string): Promise<any> {
 				}
 				const { record, uploadData } = res.data;
 				const accountKey = accountScopeKey(acc);
-				const scope = transferScope(acc, uploadId);
-				if (!accountKey || !scope) {
-					reject(new Error('Cannot load upload data without an active account'));
+				if (!accountKey) {
+					reject(new Error('Cannot load upload data without an owning account'));
 					return;
 				}
 				const upload = makeFileUpload({
@@ -586,8 +612,8 @@ export function deinitData(acc: any): void {
 	acc.events.removeEventListener('seen_inbox_message', data.seen_inbox_message_listener);
 	acc.events.removeEventListener('message_update', message_update);
 	// file transfer events
-	acc.events.removeEventListener('upload_update', upload_update);
-	acc.events.removeEventListener('ask_for_chunk', ask_for_chunk);
+	acc.events.removeEventListener('upload_update', data.upload_update_listener);
+	acc.events.removeEventListener('ask_for_chunk', data.ask_for_chunk_listener);
 	data.online.set(false);
 	data.events.set([]);
 	data.messagesArray.set([]);

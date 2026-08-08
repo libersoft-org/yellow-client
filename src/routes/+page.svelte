@@ -30,6 +30,7 @@
 	import type { IAccount } from '@/core/scripts/types.ts';
 	import { setDefaultWindowSize, initWindow } from '../core/scripts/tauri-app.ts';
 	import { initZoom } from '@/core/scripts/zoom.ts';
+	import { transferScope } from '@/org.libersoft.messages/services/Files/accountScope.ts';
 	const wizardData = {
 		steps: [
 			{ title: 'Welcome', component: WizardWelcomeStep1 },
@@ -124,7 +125,8 @@
 
 		try {
 			if (type === 'GET_FILE_INFO') {
-				const upload = await loadUploadData(uploadId);
+				/* `acc` was already checked against the requested accId above - use it directly. */
+				const upload = await loadUploadData(transferScope(acc, uploadId));
 				if (!upload?.record) throw new Error('Media file metadata is unavailable');
 				respondToServiceWorker(port, upload.record);
 				return;

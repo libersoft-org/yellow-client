@@ -60,7 +60,9 @@ export class FileUploadService extends EventEmitter {
 		const blob = upload.file.slice(chunkId * chunkSize, chunkId * chunkSize + chunkSize);
 		/* Read the slice once and derive both the checksum and the wire encoding from it. */
 		const bytes = new Uint8Array(await blob.arrayBuffer());
-		const checksum = await sha256Hex(bytes);
+		/* Reuse the hash computed for the file digest rather than hashing the same bytes twice. */
+		const cached = this.chunkHashCache.get(scopeKey(scope))?.[chunkId];
+		const checksum = cached ?? (await sha256Hex(bytes));
 		const chunk = {
 			chunkId,
 			uploadId,
@@ -70,6 +72,10 @@ export class FileUploadService extends EventEmitter {
 		};
 		return { chunk, upload, blob };
 	}
+
+	/* Per-chunk hashes computed while the digest is built, reused when the chunk is actually sent.
+	 * Without this the file is read and hashed twice: once for the digest, once for the upload. */
+	private chunkHashCache = new Map<string, string[]>();
 
 	/** Hashes the whole file so the receiver can verify the assembled result, not just each chunk. */
 	async computeFileDigest(upload: IFileUpload): Promise<string> {
@@ -81,7 +87,14 @@ export class FileUploadService extends EventEmitter {
 			const slice = upload.file.slice(i * chunkSize, i * chunkSize + chunkSize);
 			hashes.push(await sha256Hex(new Uint8Array(await slice.arrayBuffer())));
 		}
+		const cacheKey = upload.accountKey ? `${upload.accountKey}\u0000${upload.record.id}` : upload.record.id;
+		this.chunkHashCache.set(cacheKey, hashes);
 		return fileDigestFromChunkHashes(hashes);
+	}
+
+	/** Drops the cached hashes of a finished or abandoned transfer. */
+	private forgetChunkHashes(scope: ITransferScope): void {
+		this.chunkHashCache.delete(scopeKey(scope));
 	}
 
 	async startUploadSerial(records: IFileUploadRecord[], pushFn: (data: { chunk: any; upload: IFileUpload }) => Promise<void>, owner: ITransferScope | null): Promise<void> {
@@ -121,6 +134,7 @@ export class FileUploadService extends EventEmitter {
 							upload.record.status = FileUploadRecordStatus.FINISHED;
 							this.uploadsStore.set(scope, upload);
 							this.p2pThrottleMemory.delete(guardKey);
+							this.forgetChunkHashes(scope);
 							setTimeout(() => this.startNextUpload(upload));
 							return;
 						}

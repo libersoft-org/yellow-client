@@ -8,6 +8,12 @@ import fileDownloadStore from '../../stores/FileDownloadStore.ts';
 const RETRY_BASE_MS = 1000;
 const RETRY_MAX_MS = 30_000;
 const MAX_RETRIES = 8;
+/* Failures that cannot possibly succeed on a retry: the data is wrong, not late. Retrying them let
+ * a broken or hostile server hold a transfer for the whole backoff budget before it gave up. */
+export class TransferIntegrityError extends Error {
+	override name = 'TransferIntegrityError';
+}
+
 /** Event emitted once a transfer has failed for good. See the note at the emit site. */
 export const DOWNLOAD_ERROR_EVENT = 'download-error';
 
@@ -52,6 +58,20 @@ export class FileDownloadService extends EventEmitter {
 				download = makeFileDownload({ record, accountKey });
 				this.downloadStore.set(scope, download);
 			}
+			/* Every terminal path goes through here: the record leaves the store, the failure is
+			 * announced, and the account's queue moves on. Anything that only sets a status leaves the
+			 * waiting FilesService promise unsettled forever. */
+			const settleTerminally = (download: IFileDownload, error: Error): void => {
+				download.running = false;
+				download.record.status = FileUploadRecordStatus.ERROR;
+				download.error = error;
+				this.downloadStore.set(scope, download);
+				console.error('Download failed permanently:', record.id, error);
+				this.emit(DOWNLOAD_ERROR_EVENT, { uploadId: record.id, accountKey: download.accountKey, error });
+				this.downloadStore.delete(scope);
+				setTimeout(() => this.startNextDownload(download));
+			};
+
 			const totalChunks = Math.ceil(record.fileSize / record.chunkSize);
 			/* Per-chunk hashes in arrival order, folded into the whole-file digest at the end. */
 			const chunkHashes: string[] = [];
@@ -59,21 +79,11 @@ export class FileDownloadService extends EventEmitter {
 			let retries = 0;
 			download.pullChunk = async () => {
 				const retry = (error: unknown) => {
-					if (retries >= MAX_RETRIES) {
-						/* Terminal failure. The record has to leave the store and an explicit failure has
-						 * to be emitted: anyone waiting on this transfer watches the store, so leaving a
-						 * dead entry behind meant their promise never settled and the queue stalled. */
-						setRunning(false);
-						download.record.status = FileUploadRecordStatus.ERROR;
-						download.error = error instanceof Error ? error : new Error(String(error));
-						console.error('Download failed permanently:', record.id, error);
-						/* Deliberately not called 'error': an EventEmitter with no 'error' listener rethrows
-						 * the payload as an unhandled exception, and downloadAttachmentsSerial() uses this
-						 * service without attaching one. */
-						this.emit(DOWNLOAD_ERROR_EVENT, { uploadId: record.id, accountKey: download.accountKey, error: download.error });
-						this.downloadStore.delete(scope);
-						/* Do not leave the rest of the queue waiting on a transfer that will never finish. */
-						setTimeout(() => this.startNextDownload(download));
+					const asError = error instanceof Error ? error : new Error(String(error));
+					/* An integrity or protocol failure is deterministic - retrying it only wastes the
+					 * backoff budget. */
+					if (asError instanceof TransferIntegrityError || retries >= MAX_RETRIES) {
+						settleTerminally(download, asError);
 						return;
 					}
 					/* Exponential backoff with jitter, so a server that keeps refusing does not turn into
@@ -95,6 +105,21 @@ export class FileDownloadService extends EventEmitter {
 					this.downloadStore.delete(scope);
 					return;
 				}
+				/* An empty file has no chunks to fetch. Asking for chunk 0 anyway made a perfectly valid
+				 * zero-byte transfer look corrupt. The sender already finishes these without sending. */
+				if (totalChunks === 0) {
+					try {
+						await this.verifyFileDigest([], expectedFileDigest);
+						setRunning(false);
+						await finishCallback(download);
+						download.chunksReceived = [];
+						setTimeout(() => this.startNextDownload(download));
+						this.downloadStore.delete(scope);
+					} catch (e) {
+						settleTerminally(download, e instanceof Error ? e : new Error(String(e)));
+					}
+					return;
+				}
 				if (
 					// check for server pause status
 					download.record.status === FileUploadRecordStatus.PAUSED ||
@@ -110,8 +135,9 @@ export class FileDownloadService extends EventEmitter {
 					return;
 				}
 				if (download?.record.status === FileUploadRecordStatus.CANCELED || download?.record.status === FileUploadRecordStatus.ERROR) {
-					setRunning(false);
-					// TODO: clear memory
+					/* The server has declared this transfer dead. Settle it like any other terminal
+					 * failure - just stopping here left the waiter hanging forever. */
+					settleTerminally(download, new Error(`The server reported this transfer as ${download.record.status}`));
 					return;
 				}
 				try {
@@ -134,15 +160,10 @@ export class FileDownloadService extends EventEmitter {
 					// Check if all chunks have been received
 					if (totalReceived >= totalChunks) {
 						const assembledSize = download.chunksReceived.reduce((sum: number, c: any) => sum + (c?.byteLength ?? c?.length ?? 0), 0);
-						if (assembledSize !== record.fileSize) throw new Error(`Assembled file size ${assembledSize} does not match declared size ${record.fileSize}`);
+						if (assembledSize !== record.fileSize) throw new TransferIntegrityError(`Assembled file size ${assembledSize} does not match declared size ${record.fileSize}`);
 						/* The whole file, not just its pieces: this pins content, order and chunk count
 						 * against the digest the sender published. */
-						if (expectedFileDigest) {
-							const actualFileDigest = await fileDigestFromChunkHashes(chunkHashes);
-							if (actualFileDigest !== expectedFileDigest) throw new Error('Assembled file does not match the digest the sender published');
-						} else if (REQUIRE_CHUNK_CHECKSUMS) {
-							throw new Error('The sender published no file digest');
-						}
+						await this.verifyFileDigest(chunkHashes, expectedFileDigest);
 						setRunning(false);
 						await finishCallback(download);
 						download.chunksReceived = [];
@@ -167,26 +188,36 @@ export class FileDownloadService extends EventEmitter {
 		}
 	}
 
+	/** Checks the assembled file against the digest the sender published. */
+	private async verifyFileDigest(chunkHashes: string[], expectedFileDigest: string | null): Promise<void> {
+		if (!expectedFileDigest) {
+			if (REQUIRE_CHUNK_CHECKSUMS) throw new TransferIntegrityError('The sender published no file digest');
+			return;
+		}
+		const actual = await fileDigestFromChunkHashes(chunkHashes);
+		if (actual !== expectedFileDigest) throw new TransferIntegrityError('Assembled file does not match the digest the sender published');
+	}
+
 	/** Structural and cryptographic validation of a single chunk. Returns the chunk's hash. */
 	private async verifyChunk(chunk: any, context: { record: IFileUploadRecord; expectedChunkId: number; offsetBytes: number; totalChunks: number }): Promise<string> {
 		const { record, expectedChunkId, offsetBytes, totalChunks } = context;
-		if (!chunk || !chunk.data) throw new Error('Empty chunk received');
-		if (chunk.uploadId !== undefined && chunk.uploadId !== record.id) throw new Error('Chunk belongs to a different upload');
-		if (chunk.chunkId !== undefined && chunk.chunkId !== expectedChunkId) throw new Error(`Unexpected chunk id ${chunk.chunkId}, expected ${expectedChunkId}`);
-		if (chunk.offsetBytes !== undefined && chunk.offsetBytes !== offsetBytes) throw new Error(`Unexpected chunk offset ${chunk.offsetBytes}, expected ${offsetBytes}`);
+		if (!chunk || !chunk.data) throw new TransferIntegrityError('Empty chunk received');
+		if (chunk.uploadId !== undefined && chunk.uploadId !== record.id) throw new TransferIntegrityError('Chunk belongs to a different upload');
+		if (chunk.chunkId !== undefined && chunk.chunkId !== expectedChunkId) throw new TransferIntegrityError(`Unexpected chunk id ${chunk.chunkId}, expected ${expectedChunkId}`);
+		if (chunk.offsetBytes !== undefined && chunk.offsetBytes !== offsetBytes) throw new TransferIntegrityError(`Unexpected chunk offset ${chunk.offsetBytes}, expected ${offsetBytes}`);
 		const isLastChunk = expectedChunkId === totalChunks - 1;
 		const expectedLength = isLastChunk ? record.fileSize - offsetBytes : record.chunkSize;
 		const actualLength = chunk.data.byteLength ?? chunk.data.length;
-		if (actualLength !== expectedLength) throw new Error(`Chunk length ${actualLength} does not match expected ${expectedLength}`);
+		if (actualLength !== expectedLength) throw new TransferIntegrityError(`Chunk length ${actualLength} does not match expected ${expectedLength}`);
 		const actual = await sha256Hex(chunk.data);
 		const hasChecksum = typeof chunk.checksum === 'string' && chunk.checksum.length > 0;
 		if (!hasChecksum) {
 			/* Senders that predate per-chunk checksums send an empty string. */
-			if (REQUIRE_CHUNK_CHECKSUMS) throw new Error('Chunk is missing its checksum');
+			if (REQUIRE_CHUNK_CHECKSUMS) throw new TransferIntegrityError('Chunk is missing its checksum');
 			console.warn('Accepting a chunk without a checksum from an outdated sender:', record.id);
 			return actual;
 		}
-		if (actual && actual !== chunk.checksum) throw new Error('Chunk checksum mismatch');
+		if (actual && actual !== chunk.checksum) throw new TransferIntegrityError('Chunk checksum mismatch');
 		return chunk.checksum;
 	}
 

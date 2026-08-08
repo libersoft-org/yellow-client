@@ -64,6 +64,14 @@ export function createBeforeSendHook(isServer: boolean = false): BeforeSendHook 
 		if (event.contexts) event.contexts = redact(event.contexts);
 		if (event.request) event.request = redact(event.request);
 		if (Array.isArray(event.breadcrumbs)) event.breadcrumbs = event.breadcrumbs.map((crumb: any) => redactBreadcrumb(crumb));
+		/* The exception itself is the most likely place for a secret to appear: an error message
+		 * routinely quotes the value that failed to parse or authenticate, and that text ends up in
+		 * exception.values[].value. Scrubbing only the surrounding context left the payload itself
+		 * untouched. */
+		if (typeof event.message === 'string') event.message = redact(event.message);
+		else if (event.message) event.message = redact(event.message);
+		if (event.logentry) event.logentry = redact(event.logentry);
+		if (event.exception) event.exception = redact(event.exception);
 
 		// Add custom tags for filtering
 		event.tags = {

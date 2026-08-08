@@ -181,7 +181,7 @@
 
 	onMount(() => {
 		loadingData = true;
-		loadUploadData(uploadId)
+		loadUploadData(activeTransferScope(uploadId))
 			.then(async uploadData => {
 				upload = uploadData;
 				const { record } = uploadData;

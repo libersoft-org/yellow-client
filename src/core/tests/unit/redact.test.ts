@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { redact, redactAll, REDACTED } from '@/core/scripts/redact.ts';
+import { createBeforeSendHook } from '@/core/scripts/sentry-config.ts';
 
 describe('redact', (): void => {
 	it('removes credentials from an account-shaped object', (): void => {
@@ -74,6 +75,24 @@ describe('redact', (): void => {
 		expect(safe.credentials.server).toBe('wss://x');
 		// the original is untouched
 		expect(error.message).toContain('hunter2');
+	});
+
+	/* The exception payload is where a secret is most likely to appear: an error message quotes what
+	 * failed. Scrubbing only extra/contexts/breadcrumbs left it untouched. */
+	it('scrubs the Sentry exception payload, not just its context', (): void => {
+		const event: any = {
+			message: 'login failed password=hunter2',
+			logentry: { message: 'token=abc123def' },
+			exception: { values: [{ type: 'Error', value: 'authentication failed for password=hunter2' }] },
+			extra: { credentials: { password: 'hunter2' } },
+		};
+		const out = createBeforeSendHook(false)(event, {});
+		expect(out.message).not.toContain('hunter2');
+		expect(JSON.stringify(out.logentry)).not.toContain('abc123def');
+		expect(out.exception.values[0].value).not.toContain('hunter2');
+		expect(out.extra.credentials.password).toBe(REDACTED);
+		/* Our own tags still get through untouched. */
+		expect(out.tags.isServer).toBe('false');
 	});
 
 	it('redacts every argument of a log call', (): void => {

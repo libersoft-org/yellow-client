@@ -73,10 +73,18 @@ export async function fileDigestFromChunkHashes(chunkHashes: string[]): Promise<
 	return sha256Hex(new TextEncoder().encode(chunkHashes.join('')));
 }
 
+/** True when the platform can hash at all. Integrity is mandatory, so this gates sending. */
+export function isCryptoDigestAvailable(): boolean {
+	return !!globalThis.crypto?.subtle;
+}
+
 /** Hex SHA-256 of a chunk payload, used as the per-chunk integrity checksum. */
 export async function sha256Hex(data: Uint8Array | ArrayBuffer): Promise<string> {
 	const subtle = globalThis.crypto?.subtle;
-	if (!subtle) return '';
+	/* Returning an empty string here used to let a sender build a message whose attachment the
+	 * receiver then refused, because checksums are mandatory on that side. Fail where the problem
+	 * is. */
+	if (!subtle) throw new Error('Cryptographic hashing is unavailable in this environment');
 	const buffer = data instanceof ArrayBuffer ? data : (data.buffer.slice(data.byteOffset, data.byteOffset + data.byteLength) as ArrayBuffer);
 	const digest = await subtle.digest('SHA-256', buffer);
 	return [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, '0')).join('');

@@ -99,7 +99,7 @@
 	};
 
 	onMount(() => {
-		loadUploadData(uploadId).then(uploadData => {
+		loadUploadData(activeTransferScope(uploadId)).then(uploadData => {
 			upload = uploadData;
 			setupWavesurfer('');
 		});

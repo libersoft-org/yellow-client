@@ -8,6 +8,8 @@
 	interface Props {
 		upload: IFileUpload;
 		download: IFileDownload | null;
+		/** Reason a download failed for good; the transfer itself is gone from the store by then. */
+		downloadError?: string | null;
 		pauseUpload: (uploadId: string) => void;
 		resumeUpload: (uploadId: string) => void;
 		cancelUpload: (uploadId: string) => void;
@@ -17,7 +19,7 @@
 		onDownload: (e: Event) => void;
 		changingStatus: boolean;
 	}
-	let { upload, download, changingStatus, pauseUpload, resumeUpload, cancelUpload, resumeDownload, pauseDownload, cancelDownload, onDownload }: Props = $props();
+	let { upload, download, downloadError = null, changingStatus, pauseUpload, resumeUpload, cancelUpload, resumeDownload, pauseDownload, cancelDownload, onDownload }: Props = $props();
 	const uploadId = $derived(upload ? upload.record.id : null) as string;
 	const uploaded = $derived(upload ? Math.min(upload.chunksSent.length * upload.record.chunkSize, upload.record.fileSize) : 0);
 	const downloaded = $derived(download ? Math.min(download.chunksReceived.length * download.record.chunkSize, download.record.fileSize) : 0);
@@ -100,7 +102,12 @@
 	{/if}
 {/snippet}
 {#snippet errors()}
-	{#if upload && upload.record}
+	<!-- A failed *download* used to render nothing at all: only the upload record was consulted, so a
+	     refused transfer - an integrity check that did not pass, a server-side cancellation, a
+	     retry budget that ran out - simply stopped with no explanation. -->
+	{#if downloadError}
+		<div class="errors" data-testid="attachment-download-error">{downloadError}</div>
+	{:else if upload && upload.record}
 		<div class="errors">
 			{#if upload.record.errorType === FileUploadRecordErrorType.TIMEOUT_BY_SERVER}
 				Upload was canceled by server due to timeout limit
@@ -137,6 +144,11 @@
 	{/if}
 {/snippet}
 {#snippet renderReceiverUpload()}
+	<!-- A failed download leaves no transfer behind, so the reason has to be shown next to the retry
+	     button rather than in the fallback branch, which this state never reaches. -->
+	{#if downloadError && !download}
+		{@render errors()}
+	{/if}
 	<!-- DOWNLOAD DOWNLOADING - receiving -->
 	{#if download}
 		<FileTransfer uploaded={downloaded} total={upload.record.fileSize} status={statusString} />
@@ -183,6 +195,9 @@
 	{/if}
 {/snippet}
 {#snippet renderReceiverP2P()}
+	{#if downloadError && !download}
+		{@render errors()}
+	{/if}
 	<!-- P2P DOWNLOADING - receiving -->
 	{#if download && (download.record.status === FileUploadRecordStatus.UPLOADING || download.record.status === FileUploadRecordStatus.BEGUN || download.record.status === FileUploadRecordStatus.PAUSED)}
 		<FileTransfer uploaded={downloaded} total={upload.record.fileSize} status={statusString} />

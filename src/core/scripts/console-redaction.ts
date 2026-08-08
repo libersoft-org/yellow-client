@@ -1,4 +1,4 @@
-import { redactAll } from './redact.ts';
+import { redact } from './redact.ts';
 
 /* The central redactor only protects what goes through `log.*`. The codebase also has several
  * hundred direct `console.*` calls, and production builds keep `console.error` and `console.warn`
@@ -20,11 +20,21 @@ export function installConsoleRedaction(methods: Array<'log' | 'info' | 'debug' 
 		const original = console[method];
 		if (typeof original !== 'function') continue;
 		console[method] = (...args: unknown[]): void => {
+			/* Fail closed. Falling back to the raw arguments when redaction throws would defeat the
+			 * point of the wrapper - and redact() walks objects with Object.keys(), which a hostile
+			 * proxy can be made to throw. Each argument is redacted on its own so one unreadable value
+			 * cannot suppress the rest of the line. */
+			const safe = args.map(arg => {
+				try {
+					return redact(arg);
+				} catch {
+					return '[redaction failed]';
+				}
+			});
 			try {
-				original.apply(console, redactAll(args));
+				original.apply(console, safe);
 			} catch {
-				/* Redaction must never be the reason a diagnostic disappears. */
-				original.apply(console, args);
+				original.call(console, '[log suppressed]');
 			}
 		};
 	}

@@ -45,7 +45,7 @@ export class FilesService {
 		if (localFile && this.fileDownloadManager.downloadStore.get(scope)) return this.waitForExistingDownload(scopeKey, scope);
 		if (localFile) await filesDB.deleteFile(localFile.id);
 
-		const { record } = await loadUploadData(uploadId);
+		const { record } = await loadUploadData(scope);
 		const newLocalFile: Omit<ILocalFile, 'id'> = {
 			accountKey: scopeKey,
 			localFileStatus: LocalFileStatus.DOWNLOADING,

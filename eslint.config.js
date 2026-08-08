@@ -3,6 +3,7 @@ import globals from 'globals';
 import svelte from 'eslint-plugin-svelte';
 import svelteParser from 'svelte-eslint-parser';
 import tseslint from 'typescript-eslint';
+import { consoleBaseline } from './eslint.console-baseline.js';
 
 /* This config exists for one rule: no-console.
  *
@@ -10,10 +11,10 @@ import tseslint from 'typescript-eslint';
  * src/core/scripts/console-redaction.ts - but neither can help code that has not been written yet
  * if it reaches for console directly. New code should use `log.*`.
  *
- * The rule is a warning, not an error: the repository has several hundred existing console calls and
- * turning them into build failures overnight would mean a mechanical rewrite of unrelated code. CI
- * runs `npm run lint`, which fails on *errors* only, so this surfaces the problem without blocking.
- * Tighten to 'error' once the existing call sites have been migrated.
+ * The rule is an ERROR, with a baseline: every file that already had console calls when the rule was
+ * introduced is listed in eslint.console-baseline.js and stays at 'warn'. So the existing debt does
+ * not break the build, while any *new* file that reaches for console fails CI. Shrinking the
+ * baseline is how the debt gets paid down.
  */
 export default tseslint.config(
 	{
@@ -27,7 +28,7 @@ export default tseslint.config(
 		rules: {
 			/* console.error and console.warn survive the production build on purpose and are wrapped by
 			 * the runtime redactor; everything else should go through log.*. */
-			'no-console': ['warn', { allow: ['error', 'warn'] }],
+			'no-console': ['error', { allow: ['error', 'warn'] }],
 			/* Rules that only produce noise on this codebase's existing style. */
 			'no-empty': 'off',
 			'no-unused-vars': 'off',
@@ -56,6 +57,11 @@ export default tseslint.config(
 			parserOptions: { parser: tseslint.parser },
 		},
 		plugins: { svelte },
+	},
+	{
+		/* Pre-existing debt: see eslint.console-baseline.js. */
+		files: consoleBaseline,
+		rules: { 'no-console': ['warn', { allow: ['error', 'warn'] }] },
 	},
 	{
 		/* Tests and stories print deliberately. */

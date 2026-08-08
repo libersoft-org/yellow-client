@@ -189,6 +189,63 @@ describe('FileDownloadService integrity checks', (): void => {
 		expect(finish).not.toHaveBeenCalled();
 	});
 
+	/* An empty file has no chunks; asking for chunk 0 anyway made a valid transfer look corrupt. */
+	it('completes a zero-byte file without fetching anything', async (): Promise<void> => {
+		const record = makeRecord({ fileSize: 0 });
+		/* A real sender publishes the digest of an empty chunk list. */
+		record.metadata = { fileDigest: await fileDigestFromChunkHashes([]) } as any;
+		const store = makeStore();
+		const service = new FileDownloadService(store);
+		const pullChunk = vi.fn();
+		const finish = vi.fn();
+		await service.startDownloadSerial([record], pullChunk as any, finish, OWNER);
+		expect(pullChunk).not.toHaveBeenCalled();
+		expect(finish).toHaveBeenCalledTimes(1);
+		expect(store.get(OWNER)).toBeUndefined();
+	});
+
+	/* A record the server already declared dead must settle, not sit in the store forever. */
+	it('refuses a zero-byte file that carries no digest', async (): Promise<void> => {
+		const record = makeRecord({ fileSize: 0 });
+		const store = makeStore();
+		const service = new FileDownloadService(store);
+		const finish = vi.fn();
+		await service.startDownloadSerial([record], vi.fn() as any, finish, OWNER);
+		expect(finish).not.toHaveBeenCalled();
+		expect(store.get(OWNER)).toBeUndefined();
+	});
+
+	it('settles a transfer the server reports as ERROR', async (): Promise<void> => {
+		const record = makeRecord({ status: FileUploadRecordStatus.ERROR });
+		const store = makeStore();
+		const service = new FileDownloadService(store);
+		const errors: any[] = [];
+		service.on(DOWNLOAD_ERROR_EVENT, e => errors.push(e));
+		const finish = vi.fn();
+		await service.startDownloadSerial([record], vi.fn() as any, finish, OWNER);
+		expect(finish).not.toHaveBeenCalled();
+		expect(errors.length).toBe(1);
+		expect(errors[0].error.message).toContain('ERROR');
+		expect(store.get(OWNER)).toBeUndefined();
+	});
+
+	/* A deterministic integrity failure cannot be fixed by waiting - it must not burn the backoff
+	 * budget before giving up. */
+	it('fails immediately on an integrity error instead of retrying', async (): Promise<void> => {
+		const record = makeRecord();
+		const store = makeStore();
+		const service = new FileDownloadService(store);
+		const errors: any[] = [];
+		service.on(DOWNLOAD_ERROR_EVENT, e => errors.push(e));
+		const pullChunk = vi.fn(async ({ offsetBytes }: any) => ({
+			chunk: { chunkId: offsetBytes / 4, uploadId: record.id, offsetBytes, checksum: 'deadbeef', data: new Uint8Array([1, 2, 3, 4]) },
+		}));
+		await service.startDownloadSerial([record], pullChunk as any, vi.fn(), OWNER);
+		expect(pullChunk).toHaveBeenCalledTimes(1);
+		expect(errors.length).toBe(1);
+		expect(store.get(OWNER)).toBeUndefined();
+	});
+
 	it('refuses a chunk of unexpected length', async (): Promise<void> => {
 		const record = makeRecord();
 		const store = makeStore();

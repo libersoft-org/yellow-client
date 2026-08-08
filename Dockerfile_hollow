@@ -12,7 +12,17 @@ ENV TMPDIR=/var/tmp
 RUN mkdir -p /var/tmp
 
 
-RUN apt-get update && apt-get install -y tini curl unzip nodejs npm
+# Ubuntu 24.04 ships Node 18, which Vite 8 refuses to run on
+# ("node:util does not provide an export named 'styleText'"), so the dev server never starts and the
+# whole E2E suite fails before a single test executes. Install the version this repo actually targets
+# (see .nvmrc) from NodeSource instead of taking the distro default.
+RUN apt-get update && apt-get install -y tini curl unzip ca-certificates gnupg \
+ && mkdir -p /etc/apt/keyrings \
+ && curl -fsSL https://deb.nodesource.com/gpgkey/nodesource-repo.gpg.key | gpg --dearmor -o /etc/apt/keyrings/nodesource.gpg \
+ && echo "deb [signed-by=/etc/apt/keyrings/nodesource.gpg] https://deb.nodesource.com/node_22.x nodistro main" > /etc/apt/sources.list.d/nodesource.list \
+ && apt-get update && apt-get install -y nodejs \
+ && node --version \
+ && rm -rf /var/lib/apt/lists/*
 ENTRYPOINT ["/usr/bin/tini", "--"]
 
 RUN mkdir -p /.npm && chown -R $USER_ID:$GROUP_ID /.npm

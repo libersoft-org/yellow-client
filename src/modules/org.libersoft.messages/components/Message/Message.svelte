@@ -26,7 +26,6 @@
 	let observer: IntersectionObserver;
 	let elIntersectionObserver: HTMLDivElement;
 	let isVisible: boolean;
-	let elCaret: any;
 	let menu: any;
 	let elMessage: HTMLDivElement;
 	let touchStartX = 0;
@@ -434,7 +433,9 @@
 		</div>
 	</div>
 </div>
-<ContextMenu bind:this={menu} target={elCaret}>
+<!-- No `target`: this menu is opened programmatically from the message's oncontextmenu handler,
+     not by subscribing ContextMenu to an element. -->
+<ContextMenu bind:this={menu}>
 	{#if message.format === 'plaintext'}
 		<ContextMenuItem img="img/copy.svg" label="Copy" onClick={copyOriginal} testId={'message-context-menu-' + message.uid + '-copy'} />
 	{:else}

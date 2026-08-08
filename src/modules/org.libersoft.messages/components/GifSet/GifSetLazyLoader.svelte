@@ -10,7 +10,6 @@
 	let loaderElement: HTMLDivElement;
 	let _loaderIsVisible: boolean = true;
 	let observer: IntersectionObserver;
-	let timer: ReturnType<typeof setTimeout> | undefined;
 	let contentElement = getContext('contentElement') as Element | null;
 
 	onMount(async () => {
@@ -21,7 +20,6 @@
 
 	onDestroy(() => {
 		if (observer) observer.disconnect();
-		if (timer) clearTimeout(timer);
 	});
 
 	async function loadMore(): Promise<void> {
