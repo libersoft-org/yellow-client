@@ -1,0 +1,88 @@
+import type { Writable } from 'svelte/store';
+
+export interface IAccountCredentials {
+	server: string;
+	address: string;
+	password: string;
+	retry_nonce?: number;
+}
+
+export interface IAccountSettings {
+	[key: string]: any;
+}
+
+export interface IAccountRequest {
+	req: any;
+	callback: ((req: any, res: any) => void) | null;
+	quiet?: boolean;
+	timeoutId: ReturnType<typeof setTimeout>;
+}
+
+export interface IAccount {
+	id: string;
+	socket_id: number;
+	settings: IAccountSettings;
+	credentials: IAccountCredentials;
+	enabled: boolean;
+	suspended?: boolean;
+	status?: string | undefined;
+	error?: string | null | undefined;
+	session_status?: string | undefined;
+	sessionID?: string | undefined;
+	wsGuid?: string | undefined;
+	original_wsGuid?: string | undefined;
+	lastCommsTs?: number;
+	lastTransmissionTs?: number;
+	bufferedAmount?: number;
+	requests: Record<number, IAccountRequest>;
+	module_data: { [moduleId: string]: any };
+	available_modules: { [moduleId: string]: any };
+	socket?: WebSocket | undefined;
+	events?: EventTarget;
+	pingTimer?: ReturnType<typeof setInterval> | undefined;
+	reconnectTimer?: ReturnType<typeof setTimeout> | undefined;
+	modulesAvailableHandler?: ((event: Event) => void) | undefined;
+	sessionErrorHandler?: ((event: Event) => void) | undefined;
+}
+
+export type AccountStore = Writable<IAccount>;
+
+export interface IAccountConfig {
+	id: string;
+	credentials: IAccountCredentials;
+	enabled: boolean;
+	settings: IAccountSettings;
+}
+
+export interface IModuleDeclaration {
+	id: string;
+	order?: number;
+	callbacks: {
+		init?: () => (() => void) | void;
+		initData?: (acc: IAccount) => any;
+		initComms?: (acc: IAccount) => void;
+		deinitComms?: (acc: IAccount) => void;
+		deinitData?: (acc: IAccount) => void;
+		onModuleSelected?: (selected: boolean) => void;
+	};
+	panels?: {
+		sidebar?: any;
+		content?: any;
+	};
+	deinit?: () => void;
+}
+
+export type ModuleType = 'builtin' | 'iframe';
+
+export interface IModuleConfig {
+	id: string;
+	name: string;
+	type: ModuleType;
+	enabled: boolean;
+	serviceUrl?: string | undefined;
+	order?: number;
+}
+
+export interface IModulesConfiguration {
+	modules: { [moduleId: string]: IModuleConfig };
+}

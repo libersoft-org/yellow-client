@@ -1,10 +1,13 @@
 import type { DeepPartial } from '@/types.ts';
-import { type CustomFile, type FileDownload, type FileUpload, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/Files/types.ts';
+import { type ICustomFile, type IFileDownload, type IFileUpload, FileUploadRecordType, FileUploadRole } from '@/org.libersoft.messages/services/Files/types.ts';
 import { makeFileDownload, makeFileUpload, makeFileUploadRecord } from '@/org.libersoft.messages/services/Files/utils.ts';
 import _merge from 'lodash/merge';
 import { defineMeta } from '@storybook/addon-svelte-csf';
 //import FileView from '../FileView.svelte';
-import { fn } from '@storybook/test';
+import { fn } from 'storybook/test';
+
+/* Transfers are owned by an account; the stories run without one, so they use a fixed placeholder. */
+const STORY_ACCOUNT_KEY = 'storybook';
 
 class FileViewStoriesUtils {
 	static makeDefaultStoryArgs(mergeWithMeta?: Parameters<typeof defineMeta>[0]) {
@@ -31,7 +34,7 @@ class FileViewStoriesUtils {
 		);
 	}
 
-	static makeUpload(mergeWithData: DeepPartial<FileUpload>) {
+	static makeUpload(mergeWithData: DeepPartial<IFileUpload>) {
 		const file = {
 			name: 'test-file.pdf',
 			type: 'application/pdf',
@@ -39,7 +42,7 @@ class FileViewStoriesUtils {
 			metadata: {
 				test: 'test',
 			},
-		} as CustomFile;
+		} as ICustomFile;
 		const acc = {
 			id: 123,
 			uid: 'test-uid',
@@ -58,13 +61,14 @@ class FileViewStoriesUtils {
 			file,
 			record,
 			acc,
+			accountKey: STORY_ACCOUNT_KEY,
 			chunksSent: [1, 2, 3],
 		});
 
 		return _merge(upload, mergeWithData);
 	}
 
-	static makeDownload(mergeWithData: DeepPartial<FileDownload>) {
+	static makeDownload(mergeWithData: DeepPartial<IFileDownload>) {
 		const file = {
 			name: 'test-file.pdf',
 			type: 'application/pdf',
@@ -72,12 +76,13 @@ class FileViewStoriesUtils {
 			metadata: {
 				test: 'test',
 			},
-		} as CustomFile;
+		} as ICustomFile;
 		const acc = {
 			id: 123,
 			uid: 'test-uid',
 		};
 		const download = makeFileDownload({
+			accountKey: STORY_ACCOUNT_KEY,
 			record: makeFileUploadRecord({
 				type: FileUploadRecordType.SERVER,
 				fileOriginalName: file.name,
@@ -92,7 +97,7 @@ class FileViewStoriesUtils {
 		return _merge(download, mergeWithData);
 	}
 
-	static makeServerSenderUpload(mergeWithData: DeepPartial<FileUpload>) {
+	static makeServerSenderUpload(mergeWithData: DeepPartial<IFileUpload>) {
 		return this.makeUpload(
 			_merge(
 				{
@@ -106,7 +111,7 @@ class FileViewStoriesUtils {
 		);
 	}
 
-	static makeServerReceiverUpload(mergeWithData: DeepPartial<FileUpload>) {
+	static makeServerReceiverUpload(mergeWithData: DeepPartial<IFileUpload>) {
 		return this.makeUpload(
 			_merge(
 				{
@@ -120,7 +125,7 @@ class FileViewStoriesUtils {
 		);
 	}
 
-	static makeP2PSenderUpload(mergeWithData: DeepPartial<FileUpload>) {
+	static makeP2PSenderUpload(mergeWithData: DeepPartial<IFileUpload>) {
 		return this.makeUpload(
 			_merge(
 				{
@@ -134,7 +139,7 @@ class FileViewStoriesUtils {
 		);
 	}
 
-	static makeP2PReceiverUpload(mergeWithData: DeepPartial<FileUpload>) {
+	static makeP2PReceiverUpload(mergeWithData: DeepPartial<IFileUpload>) {
 		return this.makeUpload(
 			_merge(
 				{
@@ -148,7 +153,7 @@ class FileViewStoriesUtils {
 		);
 	}
 
-	static makeP2PReceiverDownload(mergeWithData: DeepPartial<FileUpload>) {
+	static makeP2PReceiverDownload(_mergeWithData: DeepPartial<IFileUpload>) {
 		return;
 	}
 }

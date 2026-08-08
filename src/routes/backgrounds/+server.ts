@@ -8,7 +8,6 @@ async function getDirectoryContents(dirPath: string): Promise<any> {
 	const contents: any = [];
 
 	for (const item of items) {
-		const itemPath = join(dirPath, item.name);
 		if (item.isFile()) contents.push(item.name);
 	}
 	return contents;

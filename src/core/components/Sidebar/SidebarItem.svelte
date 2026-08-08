@@ -1,16 +1,16 @@
 <script lang="ts">
-	import Clickable from '../Clickable/Clickable.svelte';
+	import Clickable from '@/core/components/Clickable/Clickable.svelte';
 	import type { Snippet } from 'svelte';
 	interface Props {
 		children?: Snippet;
 		even?: boolean;
 		active?: boolean;
-		onClick?: (e: Event) => void;
+		onClick?: ((e: Event) => void) | undefined;
 		[key: string]: any;
 	}
 	let { children, even = false, active = false, onClick, ...restProps }: Props = $props();
 
-	function handleClick(e) {
+	function handleClick(e: Event): void {
 		console.log('SidebarItem clicked');
 		if (onClick) onClick(e);
 	}
@@ -35,7 +35,9 @@
 		background-color: var(--primary-softer-background);
 	}
 
-	.sidebar-item:hover {
+	.sidebar-item:hover,
+	:global(.clickable:focus-visible) .sidebar-item,
+	:global(.clickable.focused) .sidebar-item {
 		background-color: var(--primary-background);
 	}
 

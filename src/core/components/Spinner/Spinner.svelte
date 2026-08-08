@@ -3,22 +3,20 @@
 		show?: boolean;
 		colorVariable?: string;
 		size?: string;
-		containerMinHeight?: string;
 	}
-
-	let { show = true, colorVariable = '--default-foreground', size = '40px', containerMinHeight = '72px' }: Props = $props();
+	let { show = true, colorVariable = '--primary-foreground', size = '40px' }: Props = $props();
+	let thickness = $derived(`calc(${size} * 0.25)`);
 </script>
 
 <style>
 	.spinner {
-		padding: 10px;
 		margin: 0 auto;
 		border-radius: 50%;
 		background:
-			radial-gradient(farthest-side, var(--spinner-color) 94%, transparent) top/8px 8px no-repeat,
+			radial-gradient(farthest-side, var(--spinner-color) 94%, transparent) top/var(--spinner-thickness) var(--spinner-thickness) no-repeat,
 			conic-gradient(transparent 30%, var(--spinner-color));
-		mask: radial-gradient(farthest-side, transparent calc(100% - 8px), var(--spinner-color) 0);
-		-webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 8px), var(--spinner-color) 0);
+		mask: radial-gradient(farthest-side, transparent calc(100% - var(--spinner-thickness)), var(--spinner-color) 0);
+		-webkit-mask: radial-gradient(farthest-side, transparent calc(100% - var(--spinner-thickness)), var(--spinner-color) 0);
 		animation: spinner 1s infinite linear;
 	}
 
@@ -29,8 +27,6 @@
 	}
 </style>
 
-<div class="container" style="--spinner-color: var({colorVariable})" style:min-height={containerMinHeight}>
-	{#if show}
-		<div class="spinner" style:width={size} style:height={size}></div>
-	{/if}
-</div>
+{#if show}
+	<div class="spinner" style:width={size} style:min-width={size} style:max-width={size} style:height={size} style:min-height={size} style:max-height={size} style:--spinner-color="var({colorVariable})" style:--spinner-thickness={thickness}></div>
+{/if}

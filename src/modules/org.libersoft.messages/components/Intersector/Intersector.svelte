@@ -1,53 +1,37 @@
-<script>
+<script lang="ts">
+	import { onDestroy } from 'svelte';
 	let { items, item_slot } = $props();
-	let observer;
-	let itemsEls = $state([]);
-	let itemsById = {};
-	let heights = {};
 	let visibility = $state({});
+	let observer = new IntersectionObserver(intersecting, { threshold: 0.01 });
 
-	$effect(() => {
-		itemsById = {};
-		items.forEach(item => {
-			itemsById[item.id] = item;
-		});
-		update_observers(itemsEls);
+	onDestroy(() => {
+		observer.disconnect();
 	});
 
-	function update_observers(itemsEls) {
-		if (observer) observer.disconnect();
-		observer = new IntersectionObserver(intersecting, { threshold: 0.01, delay: 10 });
-		itemsEls.forEach(itemEl => {
-			if (itemEl) observer.observe(itemEl);
-		});
+	function observeItem(node: HTMLElement): { destroy(): void } {
+		observer.observe(node);
+		return {
+			destroy() {
+				observer.unobserve(node);
+			},
+		};
 	}
 
-	function intersecting(entries) {
+	function intersecting(entries: IntersectionObserverEntry[]): void {
 		setTimeout(() => {
 			entries.forEach(entry => {
-				entry.target.dataset.intersecting = entry.isIntersecting;
-				let n = Number(entry.target.dataset.id);
-				//console.log('n:', n, 'entry.target.dataset.id:', entry.target.dataset.id, 'intersection:', entry.isIntersecting);
-				//itemsById[n]._intersecting = entry.isIntersecting;
+				(entry.target as HTMLElement).dataset['intersecting'] = String(entry.isIntersecting);
+				let n = Number((entry.target as HTMLElement).dataset['id']);
 				visibility[n] = entry.isIntersecting;
-				//visibility[entry.target.dataset.id] = entry.isIntersecting;
 			});
 		}, 60);
 	}
 </script>
 
-{#each items as item, i (item.id)}
-	<div class="item" data-id={item.id} bind:this={itemsEls[i]}>
-		<!--
-  {JSON.stringify(typeof item.id)}
-  {JSON.stringify(item.id)}
-  {JSON.stringify(visibility[item.id])}
-   -->
+{#each items as item (item.id)}
+	<div class="item" data-id={item.id} use:observeItem>
 		<div style="min-height: {200}px;">
-			<!-- background-color: #19f; border-radius: 10px;-->
-			<!--{#if visibility[item.id]}-->
 			{@render item_slot(item, visibility[item.id] ? true : false)}
-			<!--{/if}-->
 		</div>
 	</div>
 {/each}

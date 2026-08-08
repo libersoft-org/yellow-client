@@ -1,12 +1,15 @@
-<script>
+<script lang="ts">
 	import HtmlEditor from './HtmlEditor.svelte';
 	import HtmlEditorPreview from './HtmlEditorPreview.svelte';
 	import Tabs from '@/core/components/Tabs/Tabs.svelte';
 	import TabsItem from '@/core/components/Tabs/TabsItem.svelte';
-	export let text;
-	let activeTab = 'editor';
+	interface Props {
+		text?: string;
+	}
+	let { text = $bindable('') }: Props = $props();
+	let activeTab = $state('editor');
 
-	function setTab(e, name) {
+	function setTab(_e: Event, name: string): void {
 		activeTab = name;
 	}
 </script>

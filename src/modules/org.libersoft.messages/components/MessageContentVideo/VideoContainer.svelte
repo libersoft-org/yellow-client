@@ -1,38 +1,24 @@
 <script lang="ts">
-	import { loadUploadData, makeDownloadChunkAsyncFn, identifier, downloadAttachmentsSerial } from '../../messages.js';
-	import { active_account } from '@/core/core.ts';
-	import { onMount } from 'svelte';
-	import MediaService from '@/org.libersoft.messages/services/Media/MediaService.ts';
-	import { humanSize } from '@/core/utils/fileUtils.js';
-	import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
-	import Button from '@/core/components/Button/Button.svelte';
+	import { onMount, onDestroy } from 'svelte';
+	import { get } from 'svelte/store';
+	import { loadUploadData, makeDownloadChunkAsyncFn, downloadAttachmentsSerial } from '@/org.libersoft.messages/scripts/messages.ts';
+	import { active_account } from '@/core/scripts/core.ts';
 	import { assembleFile, base64ToUint8Array } from '@/org.libersoft.messages/services/Files/utils.ts';
-	import { writable, get } from 'svelte/store';
+	import MediaUtils from '@/org.libersoft.messages/services/Media/MediaUtils.ts';
 	import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
-	import MessageContentAttachment from '@/org.libersoft.messages/components/MessageContentFile/MessageContentAttachment.svelte';
-	import type { FileDownload, FileUpload, FileUploadRecord } from '@/org.libersoft.messages/services/Files/types.ts';
-	import { truncateText } from '@/core/utils/textUtils.js';
+	import type { IFileDownload, IFileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
 	import _debug from 'debug';
-	import Spinner from '@/core/components/Spinner/Spinner.svelte';
 	import VideoView from '@/org.libersoft.messages/components/MessageContentVideo/VideoView.svelte';
 	import videoJS from 'video.js';
-
+	import { activeTransferScope } from '@/org.libersoft.messages/services/Files/accountScope.ts';
 	const debug = _debug('libersoft:messages:components:MessageContentVideo:Video');
-
 	let { uploadId } = $props();
 	let videoRef = $state<HTMLVideoElement>();
-	let thumbnailRef = null;
-	let mediaHandler = $state<MediaService | null>(null);
-	let upload = $state<FileUpload | null>(null);
-	let download = $state<FileDownload | null>(null);
-	fileDownloadStore.store.subscribe(() => (download = fileDownloadStore.get(uploadId) || null));
-
-	let acc = $derived(get(active_account));
+	let upload = $state<IFileUpload | null>(null);
+	let download = $state<IFileDownload | null>(null);
+	const unsubDownloadStore = fileDownloadStore.store.subscribe(() => (download = fileDownloadStore.get(activeTransferScope(uploadId)) || null));
 	let thumbnailSrc = $state<string | null>(null);
-
 	//let videoUrl = $state<string | null>(null)
-
-	let videoJSEnabled = true;
 	let posterError = $state(false);
 	let videoStarted = $state(false);
 	let videoStarting = $state(false);
@@ -40,13 +26,22 @@
 	let fetchingPoster = $state(false);
 	let videoIsFullDownloading = $state(false);
 	let videoJsInstance = $state<ReturnType<typeof videoJS> | null>(null);
+	/* Object URLs created for the poster and for the fully downloaded video. Without revoking them the
+	 * Blobs stay in memory for as long as the document lives. */
+	let objectUrls: string[] = [];
 
-	function getFileChunkFactory(uploadId) {
+	function trackObjectUrl(blob: Blob): string {
+		const url = URL.createObjectURL(blob);
+		objectUrls.push(url);
+		return url;
+	}
+
+	function getFileChunkFactory(uploadId: string): (params: any) => any {
 		const fn = makeDownloadChunkAsyncFn(get(active_account));
 		return params => fn({ uploadId, ...params });
 	}
 
-	function onDownload() {
+	function onDownload(): void {
 		if (!upload) {
 			debug('No upload data available');
 			return;
@@ -57,7 +52,7 @@
 		});
 	}
 
-	const fullDownloadVideo = () => {
+	const fullDownloadVideo = (): void => {
 		if (!upload) {
 			debug('No upload data available');
 			return;
@@ -66,7 +61,7 @@
 		downloadAttachmentsSerial([upload.record], download => {
 			videoIsFullDownloading = false;
 			const blob = new Blob(download.chunksReceived, { type: download.record.fileMimeType });
-			startVideoJS(URL.createObjectURL(blob)).finally(() => {
+			startVideoJS(trackObjectUrl(blob)).finally(() => {
 				videoStarting = false;
 				videoStarted = true;
 				videoJsInstance && videoJsInstance.show();
@@ -74,7 +69,7 @@
 		});
 	};
 
-	async function startVideo() {
+	async function startVideo(): Promise<void> {
 		debug('Starting video');
 		if (!upload) {
 			debug('No upload data available');
@@ -159,7 +154,7 @@
 		});
 	};
 
-	const fetchPosterDynamically = () => {
+	const fetchPosterDynamically = (): Promise<void> => {
 		fetchingPoster = true;
 		const getFileChunk = getFileChunkFactory(uploadId);
 		return getFileChunk({ offsetBytes: 0, chunkSize: 1024 * 512 }).then(firstChunk => {
@@ -170,12 +165,12 @@
 			MediaUtils.extractThumbnail(new Blob([firstChunk.chunk.data], { type: upload.record.fileMimeType }))
 				.then(thumbnailBlob => {
 					// set thumbnailBlob to img src
-					thumbnailSrc = URL.createObjectURL(thumbnailBlob);
+					thumbnailSrc = trackObjectUrl(thumbnailBlob);
 					// mediaHandler.player.poster(thumbnailSrc);
 					// mediaHandler.player.width(140);
 					// mediaHandler.player.height(280);
 				})
-				.catch(err => {
+				.catch(_err => {
 					posterError = true;
 				})
 				.finally(() => {
@@ -186,15 +181,15 @@
 
 	onMount(() => {
 		loadingData = true;
-		loadUploadData(uploadId)
+		loadUploadData(activeTransferScope(uploadId))
 			.then(async uploadData => {
 				upload = uploadData;
 				const { record } = uploadData;
 
 				if (record.metadata && record.metadata.thumbnail) {
 					const thumbnailUint8Array = await base64ToUint8Array(record.metadata.thumbnail);
-					const thumbnailBlob = new Blob([thumbnailUint8Array]);
-					thumbnailSrc = URL.createObjectURL(thumbnailBlob);
+					const thumbnailBlob = new Blob([thumbnailUint8Array as BlobPart]);
+					thumbnailSrc = trackObjectUrl(thumbnailBlob);
 				} else {
 					fetchPosterDynamically();
 				}
@@ -202,6 +197,16 @@
 			.finally(() => {
 				loadingData = false;
 			});
+	});
+
+	onDestroy(() => {
+		if (videoJsInstance) {
+			videoJsInstance.dispose();
+			videoJsInstance = null;
+		}
+		unsubDownloadStore();
+		for (const url of objectUrls) URL.revokeObjectURL(url);
+		objectUrls = [];
 	});
 </script>
 

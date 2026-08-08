@@ -5,6 +5,7 @@
 ## Table of contents
 
 - [**About**](#about)
+- [**Screenshot**](#screenshot)
 - [**Installation**](#installation)
 - [**Debug mode**](#debug-mode)
 - [**License**](#license)
@@ -14,7 +15,13 @@
 
 ## About
 
+Official website: **https://yellow.libersoft.org**
+
 This is the client software implementation of [**Yellow**](https://github.com/libersoft-org/yellow-documentation/) application.
+
+## Screenshot
+
+![Yellow](./screenshot.webp)
 
 ## Installation
 

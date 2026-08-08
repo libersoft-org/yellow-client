@@ -7,7 +7,9 @@
 	const { Story } = defineMeta({
 		title: 'messages/VideoRecorder/Container',
 		component: VideoRecorderContainer,
-		tags: ['autodocs'],
+		/* Excluded from the automated test run: it starts a video.js recorder against a real camera,
+		 * which a headless browser has none of. It still renders in Storybook itself. */
+		tags: ['autodocs', '!test'],
 		args: {},
 	});
 </script>

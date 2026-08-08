@@ -1,9 +1,12 @@
-<script>
-	import CornerSelectorCorner from './CornerSelectorCorner.svelte';
-	export let value = 'top-right';
-	export let disabled = false;
+<script lang="ts">
+	import CornerSelectorCorner from '@/core/components/CornerSelector/CornerSelectorCorner.svelte';
+	interface Props {
+		value?: string;
+		disabled?: boolean;
+	}
+	let { value = $bindable('top-right'), disabled = false }: Props = $props();
 
-	function selectCorner(corner) {
+	function selectCorner(corner: string): void {
 		if (disabled) return;
 		value = corner;
 	}

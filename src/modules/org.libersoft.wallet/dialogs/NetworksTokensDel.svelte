@@ -1,0 +1,49 @@
+<script lang="ts">
+	import { deleteToken } from 'libersoft-crypto/network';
+	import type { ITokenConf } from 'libersoft-crypto/tokens';
+	import Dialog from '@/core/components/Dialog/Dialog.svelte';
+	interface Props {
+		networkGuid: string;
+		token: ITokenConf;
+		tokenInfo?: { name: string; symbol: string } | null | undefined;
+	}
+	let { networkGuid, token, tokenInfo }: Props = $props();
+	let elDialog;
+	let dialogData = {
+		title: 'Delete token',
+		body: question as any,
+		icon: 'img/del.svg',
+		buttons: [
+			{ img: 'img/check.svg', text: 'Yes', onClick: clickYes, focus: true },
+			{ img: 'img/cross.svg', text: 'No', onClick: clickNo },
+		],
+	};
+
+	function clickYes(): void {
+		deleteToken(networkGuid, token.guid);
+		elDialog?.close();
+	}
+
+	function clickNo(): void {
+		elDialog?.close();
+	}
+
+	export function open(): void {
+		elDialog?.open();
+	}
+</script>
+
+{#snippet question()}
+	<div>Would you like to delete this token?<br /><br /></div>
+	{#if tokenInfo}
+		<div>
+			<span class="bold">Token:</span>
+			<span>{tokenInfo.name} ({tokenInfo.symbol})</span>
+		</div>
+	{/if}
+	<div>
+		<span class="bold">Contract Address:</span>
+		<span>{token.contract_address || 'Unknown'}</span>
+	</div>
+{/snippet}
+<Dialog data={dialogData} bind:this={elDialog} />

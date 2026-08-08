@@ -1,11 +1,14 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
 	import L from 'leaflet';
 	import 'leaflet/dist/leaflet.css';
-	export let latitude;
-	export let longitude;
+	interface Props {
+		latitude?: string;
+		longitude?: string;
+	}
+	let { latitude, longitude }: Props = $props();
 	let map;
-	let mapContainer;
+	let mapContainer = $state();
 
 	onMount(() => {
 		map = L.map(mapContainer).setView([latitude, longitude], 13);

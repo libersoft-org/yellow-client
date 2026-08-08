@@ -1,24 +1,27 @@
-<script>
-	import { identifier } from '../../messages.js';
-	import Emojis from '../Emoji/Emojis.svelte';
-	import Stickers from '../Stickers/Stickers.svelte';
-	import GifSet from '../GifSet/GifSet.svelte';
-	import ExpressionsItem from './ExpressionsItem.svelte';
-	import ExpressionsSettings from './ExpressionsSettings.svelte';
+<script lang="ts">
+	import { identifier } from '@/org.libersoft.messages/scripts/messages.ts';
+	import Emojis from '@/org.libersoft.messages/components/Emoji/Emojis.svelte';
+	import Stickers from '@/org.libersoft.messages/components/Stickers/Stickers.svelte';
+	import GifSet from '@/org.libersoft.messages/components/GifSet/GifSet.svelte';
+	import ExpressionsItem from '@/org.libersoft.messages/components/Expressions/ExpressionsItem.svelte';
+	import ExpressionsSettings from '@/org.libersoft.messages/components/Expressions/ExpressionsSettings.svelte';
 	import { onMount, tick } from 'svelte';
-	export let height;
-
-	let expression = 'emojis';
-	let elExpression;
-
+	interface Props {
+		height?: string;
+		isBottomSheet?: boolean;
+	}
+	let { height, isBottomSheet: _isBottomSheet = false }: Props = $props();
 	const expressions = {
 		emojis: Emojis,
 		stickers: Stickers,
 		gifs: GifSet,
 		settings: ExpressionsSettings,
 	};
+	let expression = $state('emojis');
+	let Expression = $derived(expressions[expression]);
+	let elExpression;
 
-	export async function setCategory(e, name) {
+	export async function setCategory(e: Event | null, name: string): Promise<void> {
 		expression = name;
 		e?.stopPropagation();
 		e?.preventDefault();
@@ -29,7 +32,7 @@
 		await currentTabOnShow();
 	});
 
-	async function currentTabOnShow() {
+	async function currentTabOnShow(): Promise<void> {
 		await tick();
 		console.log('currentTabOnShow:', expression);
 		elExpression?.onShow?.();
@@ -53,10 +56,11 @@
 
 <div class="expressions" style="height: {height}">
 	<div class="categories" role="none">
-		<ExpressionsItem label="Emojis" icon={'modules/' + identifier + '/img/emoji.svg'} active={expression === 'emojis'} onClick={e => setCategory(e, 'emojis')} />
-		<ExpressionsItem label="Stickers" icon={'modules/' + identifier + '/img/sticker.svg'} active={expression === 'stickers'} onClick={e => setCategory(e, 'stickers')} />
-		<ExpressionsItem label="GIFs" icon={'modules/' + identifier + '/img/gif.svg'} active={expression === 'gifs'} onClick={e => setCategory(e, 'gifs')} />
-		<ExpressionsItem label="Settings" icon={'img/settings.svg'} active={expression === 'settings'} onClick={e => setCategory(e, 'settings')} />
+		<ExpressionsItem label="Emojis" icon="modules/{identifier}/img/emoji.svg" active={expression === 'emojis'} onClick={e => setCategory(e, 'emojis')} mobileNoText />
+		<ExpressionsItem label="Stickers" icon="modules/{identifier}/img/sticker.svg" active={expression === 'stickers'} onClick={e => setCategory(e, 'stickers')} mobileNoText />
+		<ExpressionsItem label="GIFs" icon="modules/{identifier}/img/gif.svg" active={expression === 'gifs'} onClick={e => setCategory(e, 'gifs')} mobileNoText />
+		<ExpressionsItem label="Settings" icon="img/settings.svg" active={expression === 'settings'} onClick={e => setCategory(e, 'settings')} mobileNoText />
 	</div>
-	<svelte:component this={expressions[expression]} bind:this={elExpression} />
+	<!--<svelte:component this={expressions[expression]} bind:this={elExpression} />-->
+	<Expression bind:this={elExpression} />
 </div>

@@ -19,7 +19,7 @@
 // const activeAccountId = '0';
 //
 // test.beforeEach(async ({ page }) => {
-//  await page.goto('http://localhost:3000'); // Avoid possible race conditions
+//  await page.goto(CLIENT_URL); // Avoid possible race conditions
 //  await page.evaluate(
 //   async ({ accountsConfig, activeAccountId }) => {
 //    console.log('accountsConfig', accountsConfig);
@@ -32,7 +32,7 @@
 // });
 //
 // test('Test with manually set localStorage', async ({ page }) => {
-//  await page.goto('http://localhost:3000');
+//  await page.goto(CLIENT_URL);
 //
 //  // Verify localStorage
 //  const active_account_id = await page.evaluate(() => JSON.parse(localStorage.getItem('active_account_id') || ''));
@@ -46,7 +46,7 @@
 // });
 //
 // test('Test with account import', async ({ page }) => {
-//  await page.goto('http://localhost:3000/');
+//  await page.goto(CLIENT_URL);
 //  await page.getByRole('button', { name: 'CREATE ACCOUNT FIRST ▼' }).click();
 //  await page.getByRole('button', { name: 'Account management Account management', exact: true }).click();
 //  await page.getByRole('button', { name: 'X', exact: true }).click();

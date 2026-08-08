@@ -1,11 +1,14 @@
-<script>
+<script lang="ts">
 	import { tick } from 'svelte';
 	import Intersector from '../Intersector/Intersector.svelte';
 	import StickerSet from './StickerSet.svelte';
-	export let items;
+	interface Props {
+		items: any[];
+	}
+	let { items }: Props = $props();
 	let container;
 
-	export async function scroll_to_top() {
+	export async function scroll_to_top(): Promise<void> {
 		//window.scrollTo(0, 0);
 		await tick();
 		console.log('scroll_to_top, container:', container, 'container.scrollTop:', container?.scrollTop);

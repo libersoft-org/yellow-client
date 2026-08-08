@@ -1,6 +1,6 @@
 import { describe, expect, test, beforeEach } from 'vitest';
 import { get } from 'svelte/store';
-import { GalleryStore, type GalleryFile } from '../../stores/GalleryStore.ts';
+import { GalleryStore, type IGalleryFile } from '../../stores/GalleryStore.ts';
 
 describe('GalleryStore', () => {
 	let store: GalleryStore;
@@ -22,7 +22,7 @@ describe('GalleryStore', () => {
 	});
 
 	test('setFiles updates files array', () => {
-		const files: GalleryFile[] = [
+		const files: IGalleryFile[] = [
 			{ id: 1, loaded: false, fileName: 'test1.jpg' },
 			{ id: 2, loaded: true, fileName: 'test2.jpg' },
 		];
@@ -31,7 +31,7 @@ describe('GalleryStore', () => {
 	});
 
 	test('updateFile modifies an existing file', () => {
-		const files: GalleryFile[] = [
+		const files: IGalleryFile[] = [
 			{ id: 1, loaded: false, fileName: 'test1.jpg' },
 			{ id: 2, loaded: true, fileName: 'test2.jpg' },
 		];

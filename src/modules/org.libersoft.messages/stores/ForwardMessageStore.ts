@@ -1,58 +1,70 @@
-import { derived, writable } from 'svelte/store';
-import type { Message } from '../types.ts';
+import { derived, get, writable, type Readable } from 'svelte/store';
+import type { Message, Conversation } from '@/org.libersoft.messages/scripts/types.ts';
+
+export let windowForwardMessageStore = writable<any>(null);
 
 export enum ForwardedMessageType {
 	MESSAGE = 'message',
 }
 
-export interface ForwardedMessage {
+export interface IForwardedMessage {
 	type: ForwardedMessageType;
 	data: Message;
 }
 
-export interface ForwardMessageStoreValue {
-	open: boolean;
-	forwardedMessage: ForwardedMessage | null;
+export interface IForwardMessageStoreValue {
+	forwardedMessage: IForwardedMessage | null;
+	sentToConversations: Conversation[];
 }
 
 export class ForwardMessageStore {
-	store = writable<ForwardMessageStoreValue>({
-		open: false,
+	store = writable<IForwardMessageStoreValue>({
 		forwardedMessage: null,
+		sentToConversations: [],
 	});
 
-	isOpen() {
-		return derived(this.store, $store => $store.open);
-	}
-
-	setForwardedMessage(forwardedMessage: ForwardedMessage | null) {
+	setForwardedMessage(forwardedMessage: IForwardedMessage | null): void {
 		this.store.update(store => {
 			store.forwardedMessage = forwardedMessage;
 			return store;
 		});
 	}
 
-	setOpen(open: boolean) {
+	getForwardedMessage(): Readable<IForwardedMessage | null> {
+		return derived(this.store, $store => $store.forwardedMessage);
+	}
+
+	getSentToConversations(): Readable<Conversation[]> {
+		return derived(this.store, $store => $store.sentToConversations);
+	}
+
+	addSentToConversation(conversation: Conversation): void {
 		this.store.update(store => {
-			store.open = open;
+			store.sentToConversations.push(conversation);
 			return store;
 		});
 	}
 
-	getForwardedMessage() {
-		return derived(this.store, $store => $store.forwardedMessage);
+	clearSentToConversations(): void {
+		this.store.update(store => {
+			store.sentToConversations = [];
+			return store;
+		});
 	}
 
-	startForwardedMessage(forwardedMessage: ForwardedMessage) {
+	startForwardedMessage(forwardedMessage: IForwardedMessage): void {
+		console.log('startForwardedMessage:', forwardedMessage);
+		// Clear sent conversations when starting a new forward operation
+		this.clearSentToConversations();
 		this.setForwardedMessage(forwardedMessage);
-		this.setOpen(true);
+		get(windowForwardMessageStore)?.open();
 	}
 
-	close() {
+	close(): void {
 		this.setForwardedMessage(null);
-		this.setOpen(false);
+		this.clearSentToConversations();
+		get(windowForwardMessageStore)?.close();
 	}
 }
 
-const forwardMessageStore = new ForwardMessageStore();
-export default forwardMessageStore;
+export const forwardMessageStore = new ForwardMessageStore();

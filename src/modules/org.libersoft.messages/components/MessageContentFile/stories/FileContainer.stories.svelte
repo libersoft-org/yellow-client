@@ -9,7 +9,10 @@
 	const { Story } = defineMeta({
 		title: 'messages/FileContainer',
 		component: FileContainer,
-		tags: ['autodocs'],
+		/* Excluded from the automated test run: the component loads its upload record over the
+		 * account's socket, which does not exist outside a running app. It still renders in
+		 * Storybook itself. */
+		tags: ['autodocs', '!test'],
 	});
 </script>
 

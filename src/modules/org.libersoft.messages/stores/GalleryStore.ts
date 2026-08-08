@@ -1,74 +1,74 @@
-import { get, writable, derived } from 'svelte/store';
+import { get, writable, derived, type Readable } from 'svelte/store';
 //import filesService from '@/org.libersoft.messages/services/Files/FilesService.ts';
 //import { LocalFileStatus } from '@/org.libersoft.messages/services/LocalDB/FilesLocalDB.ts';
 
-export interface GalleryFile {
+export interface IGalleryFile {
 	id: string | number;
 	loaded: boolean;
-	url?: string;
-	fileName?: string;
-	alt?: string; // fallbacks to fileName
+	url?: string | undefined;
+	fileName?: string | undefined;
+	alt?: string | undefined; // fallbacks to fileName
 	// fileMimeType: string;
-	loadFile?: () => Promise<Omit<GalleryFile, 'loadFile'>>;
+	loadFile?: (() => Promise<Omit<IGalleryFile, 'loadFile'>>) | undefined;
 }
 
-export interface GalleryStoreValue {
+export interface IGalleryStoreValue {
 	show: boolean;
-	files: GalleryFile[];
-	currentId: GalleryFile['id'] | null;
+	files: IGalleryFile[];
+	currentId: IGalleryFile['id'] | null;
 }
 
 export class GalleryStore {
-	store = writable<GalleryStoreValue>({
+	store = writable<IGalleryStoreValue>({
 		show: false,
 		files: [],
 		currentId: null,
 	});
 
-	value() {
+	value(): IGalleryStoreValue {
 		return get(this.store);
 	}
 
-	setShow(show: boolean) {
+	setShow(show: boolean): void {
 		this.store.update(store => {
 			store.show = show;
 			return store;
 		});
 	}
 
-	setFiles(files: GalleryFile[]) {
+	setFiles(files: IGalleryFile[]): void {
 		this.store.update(store => {
 			store.files = files;
 			return store;
 		});
 	}
 
-	updateFile(id: GalleryFile['id'], file: Omit<GalleryFile, 'id'>) {
+	updateFile(id: IGalleryFile['id'], file: Omit<IGalleryFile, 'id'>): void {
 		this.store.update(store => {
 			const index = store.files.findIndex(f => f.id === id);
 			if (index === -1) {
 				return store;
 			}
 			store.files[index] = {
-				...store.files[index],
+				...store.files[index]!,
 				...file,
 			};
 			return store;
 		});
 	}
 
-	setCurrentId(currentIndex: number) {
+	setCurrentId(currentIndex: number): void {
 		this.store.update(store => {
 			store.currentId = currentIndex;
 			return store;
 		});
 	}
 
-	getFile(id: GalleryFile['id']) {
+	getFile(id: IGalleryFile['id']): IGalleryFile | undefined {
 		return get(this.store).files.find(file => file.id === id);
 	}
 
-	currentFile() {
+	currentFile(): Readable<IGalleryFile | null | undefined> {
 		return derived(this.store, $store => {
 			if ($store.currentId === null) {
 				return null;
@@ -77,7 +77,7 @@ export class GalleryStore {
 		});
 	}
 
-	previous() {
+	previous(): void {
 		this.store.update(store => {
 			if (store.currentId === null) {
 				return store;
@@ -87,41 +87,33 @@ export class GalleryStore {
 			if (nextIndex < 0) {
 				return store;
 			}
-			store.currentId = store.files[nextIndex].id;
+			store.currentId = store.files[nextIndex]!.id;
 			return store;
 		});
 	}
 
-	next() {
+	next(): void {
 		this.store.update(store => {
-			if (store.currentId === null) {
-				return store;
-			}
+			if (store.currentId === null) return store;
 			const currentIndex = store.files.findIndex(file => file.id === store.currentId);
 			const nextIndex = currentIndex + 1;
-			if (nextIndex >= store.files.length) {
-				return store;
-			}
-			store.currentId = store.files[nextIndex].id;
+			if (nextIndex >= store.files.length) return store;
+			store.currentId = store.files[nextIndex]!.id;
 			return store;
 		});
 	}
 
-	canPrevious() {
+	canPrevious(): Readable<boolean> {
 		return derived(this.store, $store => {
-			if ($store.currentId === null) {
-				return false;
-			}
+			if ($store.currentId === null) return false;
 			const currentIndex = $store.files.findIndex(file => file.id === $store.currentId);
 			return currentIndex > 0;
 		});
 	}
 
-	canNext() {
+	canNext(): Readable<boolean> {
 		return derived(this.store, $store => {
-			if ($store.currentId === null) {
-				return false;
-			}
+			if ($store.currentId === null) return false;
 			const currentIndex = $store.files.findIndex(file => file.id === $store.currentId);
 			return currentIndex < $store.files.length - 1;
 		});
