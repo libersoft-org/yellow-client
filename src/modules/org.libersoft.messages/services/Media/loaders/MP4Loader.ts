@@ -1,10 +1,10 @@
-import mp4box, { type MP4ArrayBuffer, type MP4File } from '@webav/mp4box.js';
+import mp4box, { type MP4ArrayBuffer, type IMP4File } from '@webav/mp4box.js';
 import { MediaLoader } from './types.ts';
 
 class MP4Loader extends MediaLoader {
-	mp4boxFile: MP4File | null = null;
+	mp4boxFile: IMP4File | null = null;
 
-	async setup() {
+	async setup(): Promise<void> {
 		const mp4boxFile = mp4box.createFile();
 		this.mp4boxFile = mp4boxFile;
 
@@ -34,7 +34,7 @@ class MP4Loader extends MediaLoader {
 				}
 			};
 
-			info.tracks.forEach((track, i) => {
+			info.tracks.forEach((track, _i) => {
 				//console.log('MP4BOX: track ' + i, track);
 				let mime = '';
 				if (track.type === 'video') {
@@ -77,8 +77,8 @@ class MP4Loader extends MediaLoader {
 		return nextOffset;
 	};
 
-	seek = (time: number) => {
-		const mp4boxFile = this.mp4boxFile as MP4File;
+	override seek = (time: number): number => {
+		const mp4boxFile = this.mp4boxFile as IMP4File;
 		const specialTime = Math.max(Math.floor(time - 2), 0);
 		// console.log('MP4BOX: seek specialTime:', specialTime);
 		const seek = mp4boxFile.seek(specialTime);

@@ -1,4 +1,5 @@
 import type { Writable } from 'svelte/store';
+import type { ITransferScope } from './accountScope.ts';
 
 export enum FileUploadRole {
 	ACTIVE_UPLOAD = 'ACTIVE_UPLOAD',
@@ -24,11 +25,11 @@ export enum FileUploadRecordErrorType {
 	TIMEOUT_BY_SERVER = 'TIMEOUT_BY_SERVER',
 }
 
-export interface CustomFile extends File {
+export interface ICustomFile extends File {
 	metadata: object | null;
 }
 
-export interface FileUploadRecord {
+export interface IFileUploadRecord {
 	id: string;
 	type: FileUploadRecordType;
 	status: FileUploadRecordStatus;
@@ -42,21 +43,27 @@ export interface FileUploadRecord {
 	metadata: object | null;
 }
 
-export interface FileUpload {
+export interface IFileUpload {
 	role: FileUploadRole;
-	file: CustomFile | null;
-	record: FileUploadRecord;
+	file: ICustomFile | null;
+	record: IFileUploadRecord;
+	/** Owning account scope, captured at creation - see services/Files/accountScope.ts. */
+	accountKey: string;
 	chunksSent: number[];
 	uploadInterval: NodeJS.Timeout | null;
 	paused?: boolean;
 	running?: boolean; // TODO: maybe refactor to setTimeout (see upload.pushChunk)
 	uploadedBytes?: number; // only for non senders
-	pushChunk?: () => Promise<void>;
+	pushChunk?: (() => Promise<void>) | undefined;
 	acc: any;
 }
 
-export interface FileDownload {
-	record: FileUploadRecord;
+export interface IFileDownload {
+	record: IFileUploadRecord;
+	/** Owning account scope, captured at creation - see services/Files/accountScope.ts. */
+	accountKey: string;
+	/** Set when the transfer failed terminally, so waiters can report the real cause. */
+	error?: Error;
 	chunksReceived: any[];
 	data: any;
 	createdAt: number;
@@ -66,7 +73,7 @@ export interface FileDownload {
 	pullChunk?: () => Promise<void>;
 }
 
-export interface FileUploadChunk {
+export interface IFileUploadChunk {
 	chunkId: number;
 	uploadId: string;
 	checksum: string;
@@ -75,35 +82,59 @@ export interface FileUploadChunk {
 	data: Uint8Array;
 }
 
-export interface FileUploadBeginOptions {
+export interface IFileUploadBeginOptions {
 	chunkSize?: number;
 }
 
-export type MakeFileUploadRecordData = Partial<FileUploadRecord> & Pick<FileUploadRecord, 'type' | 'fileOriginalName' | 'fileMimeType' | 'fileSize' | 'chunkSize' | 'fromUserUid' | 'metadata'>;
+export type MakeFileUploadRecordData = Partial<IFileUploadRecord> & Pick<IFileUploadRecord, 'type' | 'fileOriginalName' | 'fileMimeType' | 'fileSize' | 'chunkSize' | 'fromUserUid' | 'metadata'>;
 
-export type MakeFileUploadData = Partial<FileUpload> & Pick<FileUpload, 'role' | 'file' | 'record' | 'acc'>;
+export type MakeFileUploadData = Partial<IFileUpload> & Pick<IFileUpload, 'role' | 'file' | 'record' | 'acc' | 'accountKey'>;
 
-export type MakeFileDownloadData = Partial<FileDownload> & Pick<FileDownload, 'record'>;
+export type MakeFileDownloadData = Partial<IFileDownload> & Pick<IFileDownload, 'record' | 'accountKey'>;
 
-export type FileUploadStoreValue = FileUpload[];
+export type FileUploadStoreValue = IFileUpload[];
 
-export type FileDownloadStoreValue = FileDownload[];
+export type FileDownloadStoreValue = IFileDownload[];
 
 export type BaseStoreType<StoreValue, Item> = {
 	store: Writable<StoreValue>;
 	getAll: () => StoreValue;
-	get: (id: string) => Item | undefined;
-	set: (id: string, download: Item) => void;
-	patch: (id: string, data: Partial<Item>) => void;
-	delete: (id: string) => void;
+	getAllForAccount: (accountKey: string) => StoreValue;
+	/* Every lookup carries the owning scope explicitly - the stores never consult the active
+	 * account on their own. */
+	get: (scope: ITransferScope | null) => Item | undefined;
+	set: (scope: ITransferScope, item: Item) => void;
+	patch: (scope: ITransferScope, data: Partial<Item>) => void;
+	delete: (scope: ITransferScope) => void;
 };
 
 export type FileUploadStoreType = {
-	updateUploadRecord: (id: string, record: FileUploadRecord) => void;
-	isAnyUploadRunning: () => boolean;
-} & BaseStoreType<FileUploadStoreValue, FileUpload>;
+	updateUploadRecord: (scope: ITransferScope, record: IFileUploadRecord) => void;
+	isAnyUploadRunning: (accountKey?: string) => boolean;
+} & BaseStoreType<FileUploadStoreValue, IFileUpload>;
 
 export type FileDownloadStoreType = {
-	updateDownloadRecord: (id: string, record: FileUploadRecord) => void;
-	isAnyDownloadRunning: () => boolean;
-} & BaseStoreType<FileDownloadStoreValue, FileDownload>;
+	updateDownloadRecord: (scope: ITransferScope, record: IFileUploadRecord) => void;
+	isAnyDownloadRunning: (accountKey?: string) => boolean;
+} & BaseStoreType<FileDownloadStoreValue, IFileDownload>;
+
+export interface IFileChunkData {
+	chunkId: number;
+	uploadId: string;
+	checksum: string;
+	data: string;
+}
+
+export interface IGetChunkResult {
+	chunk: IFileChunkData;
+	upload: IFileUpload;
+	blob: Blob;
+}
+
+export interface IPullChunkRequest {
+	uploadId: string;
+	offsetBytes: number;
+	chunkSize: number;
+}
+
+export type PullChunkFn = (data: IPullChunkRequest) => Promise<{ chunk: IFileUploadChunk }>;

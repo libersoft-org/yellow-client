@@ -13,7 +13,7 @@
 	});
 </script>
 
-<script>
+<script lang="ts">
 	import { FileUploadRecordType } from '@/org.libersoft.messages/services/Files/types.ts';
 </script>
 

@@ -1,11 +1,10 @@
 <script lang="ts">
-	import { version, build, commit, branch } from '../../core.ts';
-	import { log, TAURI } from '@/core/tauri.ts';
-	import { getNativeClientBuildCommitHash, getNativeClientBuildBranch, getNativeClientBuildTs } from '@/core/tauri-app.ts';
-	import MenuAppSection from '../Menu/MenuAppSection.svelte';
-	import { friendlyTimestamp } from '@/core/utils/dateTime.ts';
+	import { version, build, commit, branch } from '@/core/scripts/stores.ts';
+	import { log, TAURI } from '@/core/scripts/tauri.ts';
+	import { getNativeClientBuildCommitHash, getNativeClientBuildBranch, getNativeClientBuildTs } from '@/core/scripts/tauri-app.ts';
+	import MenuAppSection from '@/core/components/Menu/MenuAppSection.svelte';
+	import { friendlyTimestamp } from '@/core/scripts/utils/dateTime.ts';
 	import { onMount } from 'svelte';
-
 	interface Props {
 		showVersion?: boolean;
 		showBuild?: boolean;
@@ -14,9 +13,7 @@
 		showNativeApp?: boolean;
 		className?: string;
 	}
-
 	let { showVersion = true, showBuild = true, showCommit = true, showBranch = true, showNativeApp = true, className = '' }: Props = $props();
-
 	let native_client_build_ts = $state<string | null>(null);
 
 	onMount(async () => {

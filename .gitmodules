@@ -1,0 +1,3 @@
+[submodule "src/modules/org.libersoft.wallet/scripts/crypto-utils"]
+	path = src/modules/org.libersoft.wallet/scripts/crypto-utils
+	url = https://github.com/libersoft-org/crypto-utils.git

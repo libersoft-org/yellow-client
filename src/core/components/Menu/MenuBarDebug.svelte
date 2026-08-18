@@ -1,20 +1,19 @@
-<script>
-	import Modal from '../Modal/Modal.svelte';
-	import Files from '../../debug/Files.svelte';
+<script lang="ts">
+	import { debug } from '@/core/scripts/stores.ts';
+	import { log } from '@/core/scripts/tauri.ts';
+	import { addNotification } from '@/core/scripts/notifications.ts';
+	import Window from '@/core/components/Window/Window.svelte';
+	import Files from '@/core/debug/Files.svelte';
 	import Button from '@/core/components/Button/Button.svelte';
 	import Switch from '@/core/components/Switch/Switch.svelte';
-	import { addNotification } from '../../notifications.ts';
-	import { debug } from '../../core.ts';
-	import { log } from '../../tauri.ts';
+	let elWindowFiles1;
+	let elWindowFiles2;
 
-	let showFilesModal1 = false;
-	let showFilesModal2 = false;
-
-	async function err() {
+	async function err(): Promise<void> {
 		throw new Error('Test exception!');
 	}
 
-	async function notification() {
+	async function notification(): Promise<void> {
 		//log.debug('addNotification...');
 		await addNotification({
 			body: 'Notification body',
@@ -24,20 +23,22 @@
 		});
 	}
 
-	function openFiles1() {
-		showFilesModal1 = !showFilesModal1;
+	function openFiles1(): void {
+		elWindowFiles1?.open();
 	}
-	function openFiles2() {
-		showFilesModal2 = !showFilesModal2;
+
+	function openFiles2(): void {
+		elWindowFiles2?.open();
 	}
 </script>
 
-{#if import.meta.env.VITE_YELLOW_CLIENT_DEBUG}<Switch bind:checked={$debug} />
-	<Button onClick={err}>/0</Button>
-	<Button onClick={notification}>N</Button>
-	<Button onClick={openFiles1}>F1</Button>
-	<Button onClick={openFiles2}>F2</Button>
+{#if import.meta.env['VITE_YELLOW_CLIENT_DEBUG']}
+	<Switch bind:checked={$debug} label="Debug" />
+	<Button onClick={err} text="/0" />
+	<Button onClick={notification} text="N" />
+	<Button onClick={openFiles1} text="F1" />
+	<Button onClick={openFiles2} text="F2" />
 {/if}
 
-<Modal title="File Operations Test1" body={Files} bind:show={showFilesModal1} width="90%" />
-<Modal title="File Operations Test2" body={Files} bind:show={showFilesModal2} width="90%" />
+<Window title="File Operations Test1" body={Files} bind:this={elWindowFiles1} width="90%" />
+<Window title="File Operations Test2" body={Files} bind:this={elWindowFiles2} width="90%" />

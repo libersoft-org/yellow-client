@@ -4,7 +4,7 @@ import mediaInfoFactory from 'mediainfo.js';
 class BasicStreamLoader extends MediaLoader {
 	sourceBuffer: SourceBuffer | null = null;
 
-	async setup() {
+	async setup(): Promise<void> {
 		const mediainfo = await mediaInfoFactory({
 			format: 'object',
 		});

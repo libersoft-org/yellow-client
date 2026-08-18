@@ -1,7 +1,22 @@
-<script>
-	export let account;
-
-	$: status_class = !account ? 'status-default' : $account.session_status === 'Logged in.' ? 'status-logged-in' : $account.status === 'Connecting...' ? 'status-connecting' : $account.status === 'Connected, logging in...' ? 'status-logging-in' : $account.status === 'Connected.' ? 'status-connected' : $account.status === 'Retrying...' ? 'status-retrying' : $account.status === 'Login failed.' ? 'status-login-failed' : $account.status === 'Disabled.' ? 'status-disabled' : $account.status === 'Enabled.' ? 'status-enabled' : 'status-default';
+<script lang="ts">
+	interface Props {
+		account?: any;
+	}
+	let { account }: Props = $props();
+	const statusMap = {
+		'Logged in.': 'status-logged-in',
+		'Connecting...': 'status-connecting',
+		'Connected, logging in...': 'status-logging-in',
+		'Connected.': 'status-connected',
+		'Retrying...': 'status-retrying',
+		'Login failed.': 'status-login-failed',
+		'Disabled.': 'status-disabled',
+		'Enabled.': 'status-enabled',
+	};
+	let status_class = $derived.by(() => {
+		if (!account) return 'status-default';
+		return statusMap[$account.session_status] ?? statusMap[$account.status] ?? 'status-default';
+	});
 </script>
 
 <style>

@@ -1,13 +1,20 @@
-<script>
+<script lang="ts">
 	import SidebarItem from '@/core/components/Sidebar/SidebarItem.svelte';
-	import Photo from '@/core/Photo/Photo.svelte';
-	import { selectedConversation, ensureConversationDetails, photoRadius } from '../../messages.js';
-	export let c;
-	export let clickItem;
+	import Photo from '@/core/components/Photo/Photo.svelte';
+	import { selectedConversation, ensureConversationDetails, photoRadius } from '@/org.libersoft.messages/scripts/messages.ts';
 
-	$: ensureConversationDetails(c);
-	let testid;
-	$: testid = 'conversation ' + c.address;
+	interface Props {
+		c: any;
+		clickItem: (c: any) => void;
+	}
+
+	let { c, clickItem }: Props = $props();
+
+	let _ensureDetails = $derived.by((): boolean => {
+		ensureConversationDetails(c);
+		return true;
+	});
+	let testid = $derived('conversation ' + c.address);
 </script>
 
 <style>
@@ -49,7 +56,8 @@
 		text-overflow: ellipsis;
 		overflow: hidden;
 		margin-top: 8px;
-		color: #555;
+		color: var(--primary-foreground);
+		font-size: 14px;
 	}
 
 	.item .item-row .count {
@@ -61,12 +69,12 @@
 		border-radius: 50%;
 		font-size: 13px;
 		font-weight: bold;
-		background-color: #c00;
-		color: #fff;
+		background-color: var(--primary-harder-background);
+		color: var(--primary-foreground);
 	}
 </style>
 
-<SidebarItem data-testid={testid} active={c.address === $selectedConversation?.address} onClick={() => clickItem(c)}>
+<SidebarItem data-testid={testid} data-details-ensured={_ensureDetails || undefined} active={c.address === $selectedConversation?.address} onClick={() => clickItem(c)}>
 	<div class="item">
 		<div class="item-row">
 			<Photo size="50px" radius={$photoRadius} />

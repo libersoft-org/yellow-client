@@ -1,7 +1,7 @@
 import { writable, get, type Writable } from 'svelte/store';
 import { getCurrentWindow, PhysicalPosition, PhysicalSize, availableMonitors, type Monitor } from '@tauri-apps/api/window';
-import { selectedMonitorName, selectedNotificationsCorner, mainWindowMonitor } from '../../core/notifications_settings.ts';
-import { BROWSER, log } from '../../core/tauri.ts';
+import { selectedMonitorName, selectedNotificationsCorner, mainWindowMonitor } from '@/core/scripts/notifications_settings.ts';
+import { BROWSER, log } from '@/core/scripts/tauri.ts';
 import { invoke } from '@tauri-apps/api/core';
 import type { Unsubscriber } from 'svelte/store';
 type Position = {
@@ -18,7 +18,7 @@ type Corner = 'top-right' | 'top-left' | 'bottom-right' | 'bottom-left';
 //type Direction = 'up' | 'down';
 const monitors: Writable<Monitor[]> = writable([]);
 const actualMonitorName: Writable<string | null> = writable(null);
-let monitorInterval: Timer | undefined;
+let monitorInterval: ReturnType<typeof setInterval> | undefined;
 const width = 400;
 const height: Writable<number> = writable(100);
 const position: Writable<Position> = writable({ x: 0, y: 0 });
@@ -38,19 +38,19 @@ export async function heightLogicalChanged(value: number): Promise<void> {
 export async function initPositioning(): Promise<() => void> {
 	let unsubscribers: Unsubscriber[] = [];
 	unsubscribers.push(
-		monitors.subscribe(v => {
+		monitors.subscribe(_v => {
 			//log.debug('/notifications monitors:', v);
 			updateNotificationsMonitor();
 		})
 	);
 	unsubscribers.push(
-		selectedMonitorName.subscribe(v => {
+		selectedMonitorName.subscribe(_v => {
 			//log.debug('/notifications selectedMonitor:', v);
 			updateNotificationsMonitor();
 		})
 	);
 	unsubscribers.push(
-		mainWindowMonitor.subscribe(v => {
+		mainWindowMonitor.subscribe(_v => {
 			//log.debug('/notifications mainWindowMonitor:', v);
 			updateNotificationsMonitor();
 		})
@@ -108,7 +108,7 @@ function setActualMonitorName(monitor_name: string | null): void {
 	if (!mons) {
 		monitor_name = null;
 	} else if (mons.find(m => m.name === monitor_name) === undefined) {
-		monitor_name = mons[0]?.name;
+		monitor_name = mons[0]?.name ?? null;
 	}
 	actualMonitorName.set(monitor_name);
 }

@@ -1,4 +1,4 @@
-export function setupMicPulseIndicator(stream: MediaStream, micIndicator: HTMLElement) {
+export function setupMicPulseIndicator(stream: MediaStream, micIndicator: HTMLElement): void {
 	// @ts-ignore
 	const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 	const micSource = audioContext.createMediaStreamSource(stream);
@@ -11,12 +11,12 @@ export function setupMicPulseIndicator(stream: MediaStream, micIndicator: HTMLEl
 	let smoothedVolume = 0;
 	const smoothingFactor = 0.2; // smaller = smoother (try 0.1–0.3)
 
-	function animateMic() {
+	function animateMic(): void {
 		analyser.getByteFrequencyData(dataArray);
 
 		let sum = 0;
 		for (let i = 0; i < dataArray.length; i++) {
-			sum += dataArray[i] * dataArray[i];
+			sum += dataArray[i]! * dataArray[i]!;
 		}
 		const rms = Math.sqrt(sum / dataArray.length);
 

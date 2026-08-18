@@ -1,25 +1,23 @@
-<script>
+<script lang="ts">
 	import { onDestroy } from 'svelte';
+	import type { TransitionConfig } from 'svelte/transition';
 	import { get } from 'svelte/store';
-	import { debug, active_account, accounts, selectAccount, selected_corepage_id, hideSidebarMobile } from '../../core.ts';
+	import { active_account, accounts, selectAccount, setCorePage } from '@/core/scripts/core.ts';
+	import { hideSidebarMobile, debug } from '@/core/scripts/stores.ts';
 	import Icon from '@/core/components/Icon/Icon.svelte';
 	import Clickable from '@/core/components/Clickable/Clickable.svelte';
-	import ItemAccount from './AccountBarItemAccount.svelte';
-	import ItemBase from './AccountBarItemBase.svelte';
-	import AccountStatusIcon from './AccountStatusIcon.svelte';
-	import AccountTitle from './AccountTitle.svelte';
+	import ItemAccount from '@/core/components/Account/AccountBarItemAccount.svelte';
+	import ItemBase from '@/core/components/Account/AccountBarItemBase.svelte';
+	import AccountStatusIcon from '@/core/components/Account/AccountStatusIcon.svelte';
+	import AccountTitle from '@/core/components/Account/AccountTitle.svelte';
 	let accountsVisible = $state(false);
-	let accountBar;
+	let accountBar: HTMLElement | undefined;
 
 	onDestroy(() => {
 		document.removeEventListener('click', handleClickOutside);
 	});
 
-	//$: console.log('account-bar.svelte: account: ', $active_account);
-	//$: console.log('account-bar.svelte: accounts: ', $accounts);
-	//$: console.log('accountsVisible: ', accountsVisible);
-
-	function animateHeight(node, { duration = 220 } = {}) {
+	function animateHeight(node, { duration = 220 } = {}): TransitionConfig {
 		const style = getComputedStyle(node);
 		const paddingTop = parseFloat(style.paddingTop);
 		const paddingBottom = parseFloat(style.paddingBottom);
@@ -33,39 +31,31 @@
 		};
 	}
 
-	function open() {
+	function open(): void {
 		accountsVisible = true;
-		if (!$debug) {
-			document.addEventListener('click', handleClickOutside);
-		}
+		if (!$debug) document.addEventListener('click', handleClickOutside);
 	}
 
-	function close() {
+	function close(): void {
 		accountsVisible = false;
 		document.removeEventListener('click', handleClickOutside);
 	}
 
-	function toggle() {
-		if (accountsVisible) {
-			close();
-		} else {
-			open();
-		}
+	function toggle(): void {
+		accountsVisible ? close() : open();
 	}
 
-	function clickSelectAccount(id) {
+	function clickSelectAccount(id): void {
 		selectAccount(id);
 		close();
 	}
 
-	function handleClickOutside(event) {
-		if (accountBar && !accountBar.contains(event.target)) {
-			close();
-		}
+	function handleClickOutside(event): void {
+		if (accountBar && !accountBar.contains(event.target)) close();
 	}
 
-	function clickAccountManagement() {
-		selected_corepage_id.set('accounts');
+	function clickAccountManagement(): void {
+		setCorePage('accounts');
 		hideSidebarMobile.set(true);
 		close();
 	}
@@ -102,44 +92,39 @@
 	.dropdown .text {
 		display: flex;
 		align-items: center;
+		flex: 1;
 		gap: 10px;
-		flex: 1 1 auto;
 		min-width: 0;
 		/* width: 100%; */
 	}
 
 	.items {
+		z-index: 10;
 		display: flex;
 		flex-direction: column;
 		position: absolute;
 		top: 100%;
 		left: 0;
 		background-color: var(--secondary-background);
-		z-index: 1000;
+
 		width: 100%;
 		overflow: hidden;
 		transition: none;
+		border-bottom: 1px solid var(--secondary-softer-background);
 	}
 
 	.account-bar > :global(.clickable) {
 		width: 100%;
 	}
-
-	/* TODO: experimental highlight for accessibility, in future this should be defined globally as class and support themes */
-	.account-bar > :global(.clickable:focus-visible),
-	.account-bar .items :global(.clickable:focus-visible) {
-		outline: none;
-		box-shadow: inset 0 0 0 2px white; /* Inside highlight */
-	}
 </style>
 
 <div class="account-bar" bind:this={accountBar}>
-	<Clickable data-testid="account-bar-toggle" name="account-bar-toggle" onClick={toggle}>
+	<Clickable data-testid="account-bar-toggle" onClick={toggle}>
 		<div class={`dropdown`} class:is-expanded={accountsVisible}>
 			{#if $active_account}
 				<div class="text">
 					<AccountStatusIcon account={active_account} />
-					<AccountTitle a={active_account} />
+					<AccountTitle account={active_account} />
 				</div>
 			{:else}
 				{#if $accounts.length > 0}
@@ -157,7 +142,7 @@
 			{#each $accounts as account (get(account).id)}
 				<ItemAccount {account} {clickSelectAccount} />
 			{/each}
-			<ItemBase img="img/accounts.svg" title="Account management" onClick={clickAccountManagement} />
+			<ItemBase img="img/accounts.svg" title="Account management" onClick={clickAccountManagement} testId="account-management-button" />
 		</div>
 	{/if}
 </div>

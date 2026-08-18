@@ -1,56 +1,65 @@
-<script>
-	import { debug } from '@/core/core.ts';
-	import { identifier } from '../../messages.js';
-	import { sticker_server, stickerLibraryUpdaterState, updateStickerLibrary } from '../../stickers.js';
+<script lang="ts">
 	import { liveQuery } from 'dexie';
-	import { stickers_db } from '../../db.ts';
+	import { isMobile } from '@/core/scripts/stores.ts';
+	import { sticker_server, updateStickerLibrary } from '@/org.libersoft.messages/scripts/stickers.ts';
+	import { stickers_db } from '@/org.libersoft.messages/scripts/db.ts';
 	import FuzzySearch from 'fuzzy-search';
-	import { writable, get } from 'svelte/store';
+	import { get } from 'svelte/store';
 	import Option from '@/core/components/Select/SelectOption.svelte';
 	import Select from '@/core/components/Select/Select.svelte';
-	import InputButton from '@/core/components/Input/InputButton.svelte';
+	import Input from '@/core/components/Input/Input.svelte';
 	import StickersSearchResults from './StickersSearchResults.svelte';
-	import { isMobile } from '@/core/core.ts';
 	import Spinner from '@/core/components/Spinner/Spinner.svelte';
-	import { onMount, untrack } from 'svelte';
-
+	import { onMount, onDestroy, untrack } from 'svelte';
 	let { stickerset_favorites } = $props();
 	let fulltext_search_element;
 	let fulltext_search_filter = $state('');
 	let animated_filter_dropdown_value = $state('all');
-	let scroll_to_top = $state(null);
-	$effect(() => console.log('animated_filter_dropdown_value:', animated_filter_dropdown_value));
 	let animated_filter = $derived(animated_filter_dropdown_value === 'all' ? [1, 0] : animated_filter_dropdown_value === 'animated' ? [1] : [0]);
-
 	let items = $state([]);
 	let loading = $state(true);
+	let elStickersSearchResults: StickersSearchResults | null = $state(null);
 
-	export function onShow() {
+	export function onShow(): void {
 		if (!get(isMobile)) fulltext_search_element.focus();
 	}
 
-	onMount(async () => {
+	onMount(() => {
 		console.log('stickers-view onMount');
 	});
 
 	let query_store_unsubscribe;
 
-	$effect(async () => {
-		console.log('stickerset_favorites:', stickerset_favorites, '$sticker_server:', $sticker_server, 'fulltext_search_filter:', fulltext_search_filter, 'animated_filter:', animated_filter);
+	function triggerQuery(): void {
+		const server = get(sticker_server);
+		if (server) live_query(server, fulltext_search_filter, animated_filter);
+	}
+
+	function handleFilterChange(): void {
+		triggerQuery();
+	}
+
+	function handleAnimatedFilterChange(): void {
+		triggerQuery();
+	}
+
+	const unsubSticker = sticker_server.subscribe(() => triggerQuery());
+
+	onDestroy(() => {
+		unsubSticker();
+		if (query_store_unsubscribe) query_store_unsubscribe.unsubscribe();
 	});
 
-	$effect(async () => live_query($sticker_server, fulltext_search_filter, animated_filter));
-
-	async function live_query(server, fulltext_search_filter, animated_filter) {
+	async function live_query(server: string, fulltext_search_filter: string, animated_filter: number[]): Promise<any> {
 		loading = true;
 		untrack(async () => {
-			console.log('scroll_to_top:', scroll_to_top);
-			await scroll_to_top?.();
+			console.log('scroll_to_top:', elStickersSearchResults?.scroll_to_top);
+			await elStickersSearchResults?.scroll_to_top?.();
 		});
 		console.log('update_live_query', fulltext_search_filter, animated_filter);
 		let query_store = liveQuery(async () => {
 			loading = true;
-			let x = stickers_db.stickersets;
+			let x = (stickers_db as any).stickersets;
 			//console.log('x:', x);
 			// TODO: x is now a dexie Table. We have one shot at ordering or filtering it at db level: https://dexie.org/docs/Dexie/Dexie.[table]
 			x = x.orderBy('id');
@@ -75,12 +84,10 @@
 		return query_store;
 	}
 
-	//$effect(() => console.log('Stickers.svelte items $effect:', $items));
-
-	async function maybe_trigger_auto_update(count) {
+	async function maybe_trigger_auto_update(count: number): Promise<void> {
 		if (count === 0) {
 			console.log('No items found');
-			let state = window.stickerLibraryUpdaterState;
+			let state = (window as any).stickerLibraryUpdaterState;
 			console.log('state:', state);
 			if (state.updated_once) return;
 			await updateStickerLibrary();
@@ -94,26 +101,31 @@
 		gap: 10px;
 		padding: 0 10px 10px 10px;
 	}
+
+	.loading {
+		display: flex;
+		justify-content: center;
+	}
 </style>
 
 <div class="filter">
-	<InputButton img="modules/{identifier}/img/search.svg" colorVariable="--default-foreground" alt="Search" bind:this={fulltext_search_element} bind:value={fulltext_search_filter} placeholder="Search ..." />
-	<Select bind:value={animated_filter_dropdown_value}>
+	<Input icon={{ img: 'img/search.svg', alt: 'Search' }} bind:this={fulltext_search_element} bind:value={fulltext_search_filter} onChange={handleFilterChange} placeholder="Search ..." />
+	<Select bind:value={animated_filter_dropdown_value} onchange={handleAnimatedFilterChange}>
 		<Option text="All" value="all" />
 		<Option text="Animated only" value="animated" />
 		<Option text="Static only" value="static" />
 	</Select>
 </div>
-
-<!--{#if $debug}-->
-<!-- <pre>-->
-<!-- stickerset_favorites: {JSON.stringify(stickerset_favorites)}-->
-<!-- animated_filter: {JSON.stringify(animated_filter)}-->
-<!-- fulltext_search_filter: {JSON.stringify(fulltext_search_filter)}-->
-<!-- items.length: {items.length}-->
-<!--  </pre>-->
-<!--{/if}-->
-
+<!--
+{#if $debug}
+ <pre>
+  stickerset_favorites: {JSON.stringify(stickerset_favorites)}
+  animated_filter: {JSON.stringify(animated_filter)}
+  fulltext_search_filter: {JSON.stringify(fulltext_search_filter)}
+  items.length: {items.length}
+ </pre>
+{/if}
+-->
 {#if loading}
 	<Spinner />
 {:else if items.length === 0}
@@ -121,5 +133,5 @@
 		<div class="status">No items found</div>
 	</div>
 {:else}
-	<StickersSearchResults bind:scroll_to_top {items} />
+	<StickersSearchResults {items} bind:this={elStickersSearchResults} />
 {/if}

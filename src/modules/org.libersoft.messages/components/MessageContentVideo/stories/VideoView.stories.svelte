@@ -1,7 +1,35 @@
 <script lang="ts" module>
-	// @ts-nocheck TODO rm
 	import { defineMeta } from '@storybook/addon-svelte-csf';
 	import VideoView from '@/org.libersoft.messages/components/MessageContentVideo/VideoView.svelte';
+	import { FileUploadRecordStatus, FileUploadRecordType, FileUploadRole, type IFileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
+
+	/* A complete upload fixture. The stories used to pass `{ fileOriginalName, fileSize }` only, which
+	 * does not satisfy IFileUploadRecord - svelte-check flags every one of them. */
+	function makeUpload(fileOriginalName: string, fileSize: number): IFileUpload {
+		return {
+			role: FileUploadRole.RECEIVER,
+			file: null,
+			acc: null,
+			/* Transfers are owned by an account; the stories run without one. */
+			accountKey: 'storybook',
+			chunksSent: [],
+			uploadInterval: null,
+			record: {
+				id: 'test-upload-id',
+				type: FileUploadRecordType.SERVER,
+				status: FileUploadRecordStatus.FINISHED,
+				errorType: null,
+				fileOriginalName,
+				fromUserUid: 'test-user',
+				fileMimeType: 'video/mp4',
+				fileSize,
+				chunkSize: 64 * 1024,
+				metadata: null,
+			},
+		};
+	}
+
+	const videoUpload = makeUpload('longer-name-of-this-video-file.mp4', 1024 * 1024 * 64);
 
 	// More on how to set up stories at: https://storybook.js.org/docs/writing-stories
 	const { Story } = defineMeta({
@@ -40,12 +68,7 @@
 <Story
 	name="Loading poster"
 	args={{
-		upload: {
-			record: {
-				fileOriginalName: 'longer-name-of-this-video-file.mp4',
-				fileSize: 1024 * 1024 * 64,
-			},
-		},
+		upload: videoUpload,
 		loadingData: false,
 		fetchingPoster: true,
 	}}
@@ -54,12 +77,7 @@
 <Story
 	name="Poster loaded (vertical)"
 	args={{
-		upload: {
-			record: {
-				fileOriginalName: 'longer-name-of-this-video-file.mp4',
-				fileSize: 1024 * 1024 * 64,
-			},
-		},
+		upload: videoUpload,
 		loadingData: false,
 		fetchingPoster: false,
 		thumbnailSrc: 'https://picsum.photos/200/300',
@@ -69,12 +87,7 @@
 <Story
 	name="Poster loaded (horizontal)"
 	args={{
-		upload: {
-			record: {
-				fileOriginalName: 'longer-name-of-this-video-file.mp4',
-				fileSize: 1024 * 1024 * 64,
-			},
-		},
+		upload: videoUpload,
 		loadingData: false,
 		fetchingPoster: false,
 		thumbnailSrc: 'https://picsum.photos/300/200',
@@ -84,12 +97,7 @@
 <Story
 	name="Poster loaded & starting (horizontal)"
 	args={{
-		upload: {
-			record: {
-				fileOriginalName: 'longer-name-of-this-video-file.mp4',
-				fileSize: 1024 * 1024 * 64,
-			},
-		},
+		upload: videoUpload,
 		loadingData: false,
 		fetchingPoster: false,
 		videoStarting: true,
@@ -100,12 +108,7 @@
 <Story
 	name="Poster loading error (horizontal)"
 	args={{
-		upload: {
-			record: {
-				fileOriginalName: 'longer-name-of-this-video-file.mp4',
-				fileSize: 1024 * 1024 * 64,
-			},
-		},
+		upload: videoUpload,
 		loadingData: false,
 		fetchingPoster: false,
 		videoStarting: false,

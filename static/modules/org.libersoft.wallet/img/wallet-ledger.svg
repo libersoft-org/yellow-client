@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 100 100" style="enable-background:new 0 0 100 100;" xml:space="preserve">
+ <path fill="#000" d="M83.77,0h-45.7v61.67h61.67v-45.7C99.74,7.12,92.62,0,83.77,0L83.77,0z"/>
+ <path fill="#000" d="M23.82,0h-7.86C7.11,0-0.01,7.12-0.01,15.97v7.86h23.83V0z"/>
+ <rect fill="#000" x="-0.01" y="38.07" width="23.83" height="23.83"/>
+ <path fill="#000" d="M76.16,99.75h7.86c8.85,0,15.97-7.12,15.97-15.97v-7.61H76.16V99.75z"/>
+ <rect fill="#000" x="38.07" y="76.17" width="23.83" height="23.83"/>
+ <path fill="#000" d="M-0.01,76.17v7.86c0,8.85,7.12,15.97,15.97,15.97h7.86V76.17H-0.01z"/>
+</svg>

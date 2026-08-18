@@ -1,20 +1,35 @@
 import { get, writable } from 'svelte/store';
-import { type FileUpload, type FileUploadRecord, FileUploadRecordStatus, type FileUploadStoreType, type FileUploadStoreValue } from '@/org.libersoft.messages/services/Files/types.ts';
+import { type IFileUpload, type IFileUploadRecord, FileUploadRecordStatus, type FileUploadStoreType, type FileUploadStoreValue } from '@/org.libersoft.messages/services/Files/types.ts';
+import { scopeAccountKey, type ITransferScope } from '@/org.libersoft.messages/services/Files/accountScope.ts';
+
+export let windowFileUploadStore = writable<any>(null);
+
+/* See FileDownloadStore: transfers are addressed by an explicit scope captured at creation. */
+function matches(upload: IFileUpload, scope: ITransferScope): boolean {
+	return upload.record.id === scope.uploadId && upload.accountKey === scopeAccountKey(scope);
+}
 
 export class FileUploadStore implements FileUploadStoreType {
 	store = writable<FileUploadStoreValue>([]);
 
-	getAll() {
+	/** Every upload, regardless of owner - used by the serial queue. */
+	getAll(): FileUploadStoreValue {
 		return get(this.store);
 	}
 
-	get(id: string) {
-		return get(this.store).find(upload => upload.record.id === id);
+	/** Uploads owned by one account. */
+	getAllForAccount(accountKey: string): FileUploadStoreValue {
+		return get(this.store).filter(upload => upload.accountKey === accountKey);
 	}
 
-	set(id: string, upload: FileUpload) {
+	get(scope: ITransferScope | null): IFileUpload | undefined {
+		if (!scope) return undefined;
+		return get(this.store).find(upload => matches(upload, scope));
+	}
+
+	set(scope: ITransferScope, upload: IFileUpload): void {
 		this.store.update(store => {
-			const index = store.findIndex(d => d.record.id === id);
+			const index = store.findIndex(u => matches(u, scope));
 			if (index !== -1) {
 				store[index] = upload;
 			} else {
@@ -24,10 +39,10 @@ export class FileUploadStore implements FileUploadStoreType {
 		});
 	}
 
-	patch(id: string, data: Partial<FileUpload>) {
+	patch(scope: ITransferScope, data: Partial<IFileUpload>): void {
 		// patch but dont change ref
 		this.store.update(store => {
-			const oldUpload = store.find(upload => upload.record.id === id);
+			const oldUpload = store.find(upload => matches(upload, scope));
 			if (!oldUpload) {
 				return store;
 			}
@@ -40,16 +55,17 @@ export class FileUploadStore implements FileUploadStoreType {
 		});
 	}
 
-	delete(id: string) {
-		this.store.update(store => store.filter(upload => upload.record.id !== id));
+	delete(scope: ITransferScope): void {
+		this.store.update(store => store.filter(upload => !matches(upload, scope)));
 	}
 
-	updateUploadRecord(id: string, record: FileUploadRecord) {
-		this.patch(id, { record });
+	updateUploadRecord(scope: ITransferScope, record: IFileUploadRecord): void {
+		this.patch(scope, { record });
 	}
 
-	isAnyUploadRunning() {
-		return this.getAll().some(upload => upload && [FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.BEGUN].includes(upload.record.status) && upload.file && upload.running);
+	/** Whether an upload is running, optionally limited to one account's queue. */
+	isAnyUploadRunning(accountKey?: string): boolean {
+		return get(this.store).some(upload => upload && [FileUploadRecordStatus.UPLOADING, FileUploadRecordStatus.BEGUN].includes(upload.record.status) && upload.file && upload.running && (accountKey === undefined || upload.accountKey === accountKey));
 	}
 }
 

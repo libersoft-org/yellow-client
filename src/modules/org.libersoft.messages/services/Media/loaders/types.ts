@@ -1,6 +1,6 @@
 export type NextByteOffset = number;
 
-export interface MediaFileInfo {
+export interface IMediaFileInfo {
 	id: string;
 	fileMime: string;
 	chunkSize: number;
@@ -9,16 +9,16 @@ export interface MediaFileInfo {
 
 export abstract class MediaLoader {
 	mediaSource: MediaSource;
-	mediaFileInfo: MediaFileInfo;
+	mediaFileInfo: IMediaFileInfo;
 	getFileChunk: any;
 
-	constructor(mediaSource: MediaSource, mediaFileInfo: MediaFileInfo, getFileChunk: any) {
+	constructor(mediaSource: MediaSource, mediaFileInfo: IMediaFileInfo, getFileChunk: any) {
 		this.mediaSource = mediaSource;
 		this.mediaFileInfo = mediaFileInfo;
 		this.getFileChunk = getFileChunk;
 	}
 
-	abstract setup(mediaFileInfo: MediaFileInfo): Promise<void>;
+	abstract setup(mediaFileInfo: IMediaFileInfo): Promise<void>;
 	// abstract loadChunk(offset: number): Promise<Uint8Array>;
 	abstract processChunk(chunk: { offset: number; chunkSize: number; data: Uint8Array<ArrayBuffer> }): NextByteOffset | void;
 

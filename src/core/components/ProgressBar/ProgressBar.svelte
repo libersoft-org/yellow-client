@@ -1,13 +1,19 @@
-<script>
-	export let moving = false;
-	export let value = 0;
+<script lang="ts">
+	interface Props {
+		moving?: boolean;
+		value?: number;
+		color?: string;
+	}
+	let { moving = false, value = 0, color: _color }: Props = $props();
 </script>
 
 <style>
 	.progress-bar {
-		width: calc(100% - 6px);
-		height: 10px;
-		border: 3px solid var(--default-foreground);
+		box-sizing: border-box;
+		border: 2px solid var(--default-foreground);
+		width: 100%;
+		height: 15px;
+		box-sizing: border-box;
 		background: var(--default-background);
 		overflow: hidden;
 		position: relative;

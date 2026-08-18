@@ -1,11 +1,14 @@
 import { InvalidFileReaderResult } from './errors.ts';
 import _debug from 'debug';
-
 const debug = _debug('libersoft:messages:services:MediaUtils');
+interface IAudioData {
+	duration: number;
+	peaks: number[];
+}
 
 class MediaUtils {
 	static PROGRESSIVE_DOWNLOAD_MEDIA_ENDPOINT = '/yellow/media';
-	static makeProgressiveDownloadUrl = (localAccountId: string, uploadId: string) => {
+	static makeProgressiveDownloadUrl = (localAccountId: string, uploadId: string): string => {
 		return `${MediaUtils.PROGRESSIVE_DOWNLOAD_MEDIA_ENDPOINT}/${localAccountId}/${uploadId}`;
 	};
 
@@ -78,7 +81,7 @@ class MediaUtils {
 		});
 	}
 
-	static getAudioDataFromFile(file: File) {
+	static getAudioDataFromFile(file: File): Promise<IAudioData> {
 		return new Promise((resolve, reject) => {
 			const reader = new FileReader();
 
@@ -95,7 +98,7 @@ class MediaUtils {
 		});
 	}
 
-	static async getAudioDataFromArrayBuffer(arrayBuffer: ArrayBuffer) {
+	static async getAudioDataFromArrayBuffer(arrayBuffer: ArrayBuffer): Promise<IAudioData> {
 		// @ts-ignore
 		const audioContext = new (window.AudioContext || window.webkitAudioContext)();
 		const audioBuffer = await audioContext.decodeAudioData(arrayBuffer);
@@ -119,13 +122,13 @@ class MediaUtils {
 		return { duration, peaks };
 	}
 
-	static extractPeaks(audioBuffer: AudioBuffer, samplesPerPeak = 1000) {
+	static extractPeaks(audioBuffer: AudioBuffer, samplesPerPeak = 1000): number[] {
 		const channelData = audioBuffer.getChannelData(0); // Use the first channel
 		const peaks: number[] = [];
 		let max = 0;
 
 		for (let i = 0; i < channelData.length; i++) {
-			max = Math.max(max, Math.abs(channelData[i]));
+			max = Math.max(max, Math.abs(channelData[i]!));
 			if (i % samplesPerPeak === 0) {
 				peaks.push(max);
 				max = 0;
@@ -134,7 +137,7 @@ class MediaUtils {
 		return peaks;
 	}
 
-	static async checkProgressiveDownloadAvailability(url: string) {
+	static async checkProgressiveDownloadAvailability(url: string): Promise<boolean> {
 		try {
 			debug('Trying to check progressive download availability for', url);
 
