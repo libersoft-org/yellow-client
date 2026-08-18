@@ -1,6 +1,6 @@
 import { type ICustomFile, type IFileUpload, type IFileUploadBeginOptions, type IFileUploadRecord, FileUploadRecordStatus, FileUploadRecordType, FileUploadRole, type FileUploadStoreType, type IGetChunkResult } from './types.ts';
 import { bytesToBase64, fileDigestFromChunkHashes, makeFileUpload, makeFileUploadRecord, sha256Hex } from './utils.ts';
-import { accountScopeKey, scopeKey, type ITransferScope } from './accountScope.ts';
+import { accountScopeKey, scopeKey, type ITransferOwner, type ITransferScope } from './accountScope.ts';
 import EventEmitter from 'events';
 import fileUploadStore from '../../stores/FileUploadStore.ts';
 
@@ -113,7 +113,7 @@ export class FileUploadService extends EventEmitter {
 	 * receiver refuses an attachment without one, so a transfer that cannot be committed is an
 	 * error, not a transfer that merely lacks a nicety.
 	 */
-	async startUploadSerial(records: IFileUploadRecord[], pushFn: (data: { chunk: any; upload: IFileUpload }) => Promise<void>, owner: ITransferScope | null, commitFn?: (data: { upload: IFileUpload; fileDigest: string }) => Promise<void>): Promise<void> {
+	async startUploadSerial(records: IFileUploadRecord[], pushFn: (data: { chunk: any; upload: IFileUpload }) => Promise<void>, owner: ITransferOwner | null, commitFn?: (data: { upload: IFileUpload; fileDigest: string }) => Promise<void>): Promise<void> {
 		if (!owner) throw new Error('Cannot upload without an owning account');
 		for (let i = 0; i < records.length; i++) {
 			const record = records[i]!;

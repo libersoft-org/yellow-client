@@ -1,7 +1,7 @@
 import { describe, expect, it } from 'vitest';
 import { FileDownloadStore } from '@/org.libersoft.messages/stores/FileDownloadStore.ts';
 import { FileUploadStore } from '@/org.libersoft.messages/stores/FileUploadStore.ts';
-import { scopeAccountKey, type ITransferScope } from '@/org.libersoft.messages/services/Files/accountScope.ts';
+import { scopeAccountKey, transferOwner, transferScope, type ITransferScope } from '@/org.libersoft.messages/services/Files/accountScope.ts';
 import type { IFileDownload, IFileUpload } from '@/org.libersoft.messages/services/Files/types.ts';
 
 /* Two accounts on two servers that happen to hand out the same upload id. Before transfers carried
@@ -79,5 +79,21 @@ describe('transfer scoping', (): void => {
 		const store = new FileDownloadStore();
 		store.set(A, download(A, 'a.bin'));
 		expect(store.get(null)).toBeUndefined();
+	});
+
+	/* A scope names one transfer, so it refuses to be built without an upload id. Callers that only
+	 * need to say which account owns a batch have to ask for the owner instead of passing an empty
+	 * upload id and getting a null they then hand to a transfer runner. */
+	it('names the owning account without naming a transfer', (): void => {
+		const acc = { id: A.accountId, credentials: { server: A.server } } as any;
+
+		expect(transferScope(acc, '')).toBeNull();
+		expect(transferOwner(acc)).toEqual({ accountId: A.accountId, server: A.server });
+		expect(scopeAccountKey(transferOwner(acc)!)).toBe(scopeAccountKey(A));
+	});
+
+	it('has no owner when there is no account', (): void => {
+		expect(transferOwner(null)).toBeNull();
+		expect(transferOwner({ credentials: { server: A.server } } as any)).toBeNull();
 	});
 });

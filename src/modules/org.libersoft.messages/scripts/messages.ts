@@ -10,7 +10,7 @@ import fileDownloadStore from '@/org.libersoft.messages/stores/FileDownloadStore
 import { wrapConsecutiveElements, stripHtml } from '@/org.libersoft.messages/scripts/utils/htmlUtils.ts';
 import { splitAndLinkify } from './splitAndLinkify.ts';
 import { base64ToUint8Array, isCryptoDigestAvailable, makeFileUpload, transformFilesForServer } from '@/org.libersoft.messages/services/Files/utils.ts';
-import { accountScopeKey, activeTransferScope, transferScope, type ITransferScope } from '@/org.libersoft.messages/services/Files/accountScope.ts';
+import { accountScopeKey, activeTransferScope, transferOwner, transferScope, type ITransferScope } from '@/org.libersoft.messages/services/Files/accountScope.ts';
 import { active_account, active_account_module_data, findAccount, getGuid, relay, selectAccount, setModule } from '@/core/scripts/core.ts';
 import type { IAccount } from '@/core/scripts/types.ts';
 import { active_account_id, hideSidebarMobile, isClientFocused } from '@/core/scripts/stores.ts';
@@ -328,7 +328,7 @@ export async function initUpload(files: any, uploadType: any, recipients: any[])
 	}
 
 	if (uploads?.[0]?.record.type === FileUploadRecordType.SERVER) {
-		void fileUploadManager.startUploadSerial(allowedRecords, uploadChunkAsync, transferScope(acc as IAccount, ''), uploadCommitAsync).catch((error: unknown) => {
+		void fileUploadManager.startUploadSerial(allowedRecords, uploadChunkAsync, transferOwner(acc as IAccount), uploadCommitAsync).catch((error: unknown) => {
 			console.error('Upload failed:', error);
 		});
 	} else {
@@ -462,7 +462,7 @@ export function downloadAttachmentsSerial(records: any[], finishCallback: (downl
 			records,
 			makeDownloadChunkAsyncFn(acc),
 			finishCallback,
-			transferScope(acc as IAccount, ''),
+			transferOwner(acc as IAccount),
 			/* Only consulted while waiting for the sender's `upload_commit` to publish the digest. */
 			async (uploadId: string) => (await loadUploadData(transferScope(acc as IAccount, uploadId)))?.record ?? null
 		)

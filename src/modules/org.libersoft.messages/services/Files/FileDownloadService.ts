@@ -1,6 +1,6 @@
 import { type IFileDownload, type FileDownloadStoreType, type IFileUploadRecord, FileUploadRecordStatus, type PullChunkFn } from './types.ts';
 import { fileDigestFromChunkHashes, makeFileDownload, sha256Hex } from './utils.ts';
-import { scopeAccountKey, type ITransferScope } from './accountScope.ts';
+import { scopeAccountKey, type ITransferOwner, type ITransferScope } from './accountScope.ts';
 import EventEmitter from 'events';
 import fileDownloadStore from '../../stores/FileDownloadStore.ts';
 
@@ -54,7 +54,7 @@ export class FileDownloadService extends EventEmitter {
 		this.downloadStore = downloadStore;
 	}
 
-	async startDownloadSerial(records: IFileUploadRecord[], pullChunkFn: PullChunkFn, finishCallback: (download: IFileDownload) => void | Promise<void>, owner: ITransferScope | null, refreshRecordFn?: RefreshRecordFn): Promise<void> {
+	async startDownloadSerial(records: IFileUploadRecord[], pullChunkFn: PullChunkFn, finishCallback: (download: IFileDownload) => void | Promise<void>, owner: ITransferOwner | null, refreshRecordFn?: RefreshRecordFn): Promise<void> {
 		if (!owner) throw new Error('Cannot download without an owning account');
 		const accountKey = scopeAccountKey(owner);
 		for (const record of records) {
